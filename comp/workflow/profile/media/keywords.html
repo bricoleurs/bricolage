@@ -1,9 +1,40 @@
+<& /widgets/wrappers/header.mc, 
+        title => 'Edit Keywords',
+        context => $context . $r->pnotes('media_prof|title') . ' | Keywords'
+&>
+<form action="<% $r->uri %>" method="post" name="theForm">
+<% $content %>
+</form>
+
+<& /widgets/wrappers/footer.mc &>
+
+
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name('media');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+<%args>
+$id => undef
+</%args>
+
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
+                        id      => $id,
+                        section => 'keyword',
+                        param => \%ARGS);
+</%init>
+
 <%doc>
 ###############################################################################
 
 =head1 NAME
 
-<name> -- <description>
+keywords.html -- Keyword section of the media profile
 
 =head1 VERSION
 
@@ -19,42 +50,3 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Once Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name('media');
-my $context = "Workflow | Profile | $disp | ";
-</%once>
-
-%#-- Args Section --#
-<%args>
-$id => undef
-</%args>
-
-%#-- Init Section --#
-<%init>
-# Do any redirects first.
-do_queued_redirect();
-
-my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
-                        id      => $id,
-                        section => 'keyword',
-                        param => \%ARGS);
-</%init>
-
-%#-- Begin HTML --#
-
-<& /widgets/wrappers/header.mc, 
-        title => 'Edit Keywords',
-        context => $context . $r->pnotes('media_prof|title') . ' | Keywords'
-&>
-<form action="<% $r->uri %>" method="post" name="theForm">
-<% $content %>
-</form>
-
-<& /widgets/wrappers/footer.mc &>
-
-%#-- End HTML --#
-
-

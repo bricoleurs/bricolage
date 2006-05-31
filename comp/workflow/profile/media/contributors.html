@@ -1,9 +1,41 @@
+<& /widgets/wrappers/header.mc,
+        title => 'Contributor Association',
+        context => $context . $r->pnotes('media_prof|title') . ' | Contributors'
+&>
+
+<form action="<% $r->uri %>" method="post" name="theForm">
+<% $content %>
+</form>
+
+<& /widgets/wrappers/footer.mc &>
+
+
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name('story');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+<%args>
+$id => undef
+</%args>
+
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+# Grab the content.
+my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
+                        section => 'contributors',
+                        param   => \%ARGS);
+</%init>
+
 <%doc>
 ###############################################################################
 
 =head1 NAME
 
-<name> -- <description>
+contributors.html -- Contributor section of the media profile
 
 =head1 VERSION
 
@@ -19,43 +51,3 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Once Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name('story');
-my $context = "Workflow | Profile | $disp | ";
-</%once>
-
-%#-- Args Section --#
-<%args>
-$id => undef
-</%args>
-
-%#-- Init Section --#
-<%init>
-# Do any redirects first.
-do_queued_redirect();
-
-# Grab the content.
-my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
-                        section => 'contributors',
-                        param   => \%ARGS);
-</%init>
-
-%#-- Begin HTML --#
-
-<& /widgets/wrappers/header.mc,
-        title => 'Contributor Association',
-        context => $context . $r->pnotes('media_prof|title') . ' | Contributors'
-&>
-
-<form action="<% $r->uri %>" method="post" name="theForm">
-<% $content %>
-</form>
-
-<& /widgets/wrappers/footer.mc &>
-
-%#-- End HTML --#
-
-

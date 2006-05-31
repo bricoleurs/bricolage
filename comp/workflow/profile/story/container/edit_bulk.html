@@ -1,3 +1,30 @@
+<& /widgets/wrappers/header.mc,
+    title => "$disp Profile",
+    context => $context . get_state_data('container_prof', 'crumb') || '' .
+        ' | &quot;' . get_state_data('container_prof', 'field') || '' . '&quot;'
+&>
+
+<form action="<% $r->uri %>" method="post" name="theForm">
+
+<& /widgets/container_prof/container_prof.mc,
+    element_type => 'story',
+    action       => 'edit_bulk',
+    show_summary => 1,
+    args         => \%ARGS,
+&>
+
+</form>
+
+<& /widgets/wrappers/footer.mc &>
+
+
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name($type);
+my $sdisp = get_disp_name('story');
+my $context = "Workflow | Profile | $sdisp | $disp |";
+</%once>
+
 <%doc>
 ###############################################################################
 
@@ -19,45 +46,3 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Once Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name($type);
-my $sdisp = get_disp_name('story');
-my $context = "Workflow | Profile | $sdisp | $disp |";
-</%once>
-
-%#-- Args Section --#
-<%args>
-</%args>
-
-%#-- Init Section --#
-<%init>;
-</%init>
-
-%#-- Begin HTML --#
-
-
-<& /widgets/wrappers/header.mc,
-    title => "$disp Profile",
-    context => $context . get_state_data('container_prof', 'crumb') || '' .
-        ' | &quot;' . get_state_data('container_prof', 'field') || '' . '&quot;'
-&>
-
-<form action="<% $r->uri %>" method="post" name="theForm">
-
-<& /widgets/container_prof/container_prof.mc,
-    element_type => 'story',
-    action       => 'edit_bulk',
-    show_summary => 1,
-    args         => \%ARGS,
-&>
-
-</form>
-
-<& /widgets/wrappers/footer.mc &>
-
-%#-- End HTML --#
-
-

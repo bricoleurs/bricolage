@@ -1,3 +1,33 @@
+<& '/widgets/wrappers/header.mc',
+    title => "$disp Profile",
+    context => $context . get_state_data('container_prof', 'crumb'),
+    scrollx => $scrollx,
+    scrolly => $scrolly,
+&>
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges('theForm')">
+    <& /widgets/container_prof/container_prof.mc,
+       element_type    => 'story',
+       num          => 2,
+       action       => 'edit',
+       show_summary => 1,
+    &>
+</form>
+
+<& /widgets/wrappers/footer.mc &>
+
+
+<%args>
+$scrollx => 0
+$scrolly => 0
+</%args>
+
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name($type);
+my $sdisp = get_disp_name('story');
+my $context = "Workflow | Profile | $sdisp | $disp |";
+</%once>
+
 <%doc>
 ###############################################################################
 
@@ -19,49 +49,3 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Args Section --#
-<%args>
-$scrollx => 0
-$scrolly => 0
-</%args>
-
-%#-- Args Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name($type);
-my $sdisp = get_disp_name('story');
-my $context = "Workflow | Profile | $sdisp | $disp |";
-</%once>
-
-%#-- Init Section --#
-<%init>
-</%init>
-
-%#-- Begin HTML --#
-<& '/widgets/wrappers/header.mc',
-    title => "$disp Profile",
-    context => $context . get_state_data('container_prof', 'crumb'),
-    scrollx => $scrollx,
-    scrolly => $scrolly,
-&>
-% #<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
-<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges('theForm')">
-<%doc>
-<& '/widgets/profile/hidden.mc', name => 'scrollx', value => 0 &>
-<& '/widgets/profile/hidden.mc', name => 'scrolly', value => 0 &>
-</%doc>
-<& /widgets/container_prof/container_prof.mc,
-   element_type    => 'story',
-   num          => 2,
-   action       => 'edit',
-   show_summary => 1,
-&>
-
-</form>
-
-<& /widgets/wrappers/footer.mc &>
-
-%#-- End HTML --#
-
-
