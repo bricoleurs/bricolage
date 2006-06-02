@@ -43,6 +43,13 @@ Sozonoff. [David]
 
 Added tests for C<Bric::SOAP::Auth>. [Scott]
 
+=item *
+
+The number of items on a desk can now be displayed next to the desk's name
+in the navigation menu, e.g. "Edit (10)". It is configurable on a per-user 
+basis via the new "Show Desk Asset Counts" preference.  Based heavily on a 
+patch from Alex Howarth. [Marshall]
+
 =back
 
 =head2 Bug Fixes

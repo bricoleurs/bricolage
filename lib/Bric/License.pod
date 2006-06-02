@@ -219,6 +219,8 @@ Folks who have submitted patches include:
 
 =item * Alexey Dvoychenkov
 
+=item * Alex Howarth
+
 =back
 
 Friends who have spotted bugs include:
