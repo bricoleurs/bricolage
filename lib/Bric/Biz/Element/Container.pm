@@ -901,7 +901,7 @@ sub add_field {
 
     # have to do this after add_element() since add_element() modifies place
     $field->set_place($place) if defined $place;
-    return $self;
+    return $field;
 }
 
 sub add_data { shift->add_field(@_) }

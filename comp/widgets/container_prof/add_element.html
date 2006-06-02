@@ -1,0 +1,30 @@
+<%once>
+my $widget = 'container_prof';
+</%once>
+
+<%init>
+my $element = get_state_data($widget, 'element');
+my $field = $ARGS{"$widget|add_element"};
+
+my ($type, $id) = unpack('A5 A*', $field);
+
+if ($type eq 'cont_') {
+    my $subelem = $element->add_container(Bric::Biz::ElementType->lookup({ id => $id }));
+    $element->save();
+    $m->comp("container.mc",
+        widget  => $widget,
+        element => $subelem
+    );
+} else {
+    my $subelem = $element->add_field(Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id }));
+    $element->save();
+    $m->comp("field.mc",
+        widget  => $widget,
+        element => $subelem
+    );
+}
+</%init>
+
+<%flags>
+inherit => undef
+</%flags>

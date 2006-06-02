@@ -22,11 +22,11 @@
 <script type="text/javascript">
 Sortable.create('element_<% $id %>', { 
     onUpdate: function(elem) { 
-        Container.update('container_prof_element_<% $id %>', elem); 
+        Container.updateOrder(elem); 
     }, 
     handle: 'name' 
 });
-Container.update('container_prof_element_<% $id %>', 'element_<% $id %>');
+Container.updateOrder('element_<% $id %>');
 </script>
 
 % if ($type->is_related_media || $type->is_related_story) {

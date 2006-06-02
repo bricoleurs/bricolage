@@ -1015,15 +1015,25 @@ document.getParentByTagName = function(element, tagName) {
  * Container profile
  */
 var Container = {
-    update: function(element, list) {
-        $(element).value = Sortable.sequence(list);
+    updateOrder: function(list) {
+        list = $(list);
+
+        // We must do this so that new elements are sortable
+        Sortable.create(list, { 
+            onUpdate: function(elem) { 
+                Container.updateOrder(elem); 
+            }, 
+            handle: 'name'
+        });
+        
+        $('container_prof_' + list.id).value = Sortable.sequence(list);
     },
     
     deleteElement: function(element) {
         var list = document.getParentByTagName(element, "ul");
         if (confirm("Are you sure you want to remove this element?\n\n" +
                     "It will not be permanently deleted until you save your changes.")) {
-            Element.remove(element); Container.update($('container_prof_' + list.id), list);
+            Element.remove(element); Container.updateOrder(list);
         }
         return false;
     }

@@ -47,13 +47,7 @@ if ($dt->is_container) {
 
 <input type="hidden" name="container_prof|element_<% $element->get_id %>" id="container_prof_element_<% $element->get_id %>" value="" />
 <script type="text/javascript">
-Sortable.create('element_<% $element->get_id %>', { 
-    onUpdate: function(elem) { 
-        Container.update('container_prof_element_<% $element->get_id %>', elem); 
-    }, 
-    handle: 'name'
-});
-Container.update('container_prof_element_<% $element->get_id %>', 'element_<% $element->get_id %>');
+Container.updateOrder('element_<% $element->get_id %>');
 </script>
 
 % }
@@ -67,13 +61,10 @@ Container.update('container_prof_element_<% $element->get_id %>', 'element_<% $e
         useTable => 0
     &>
 % if (@$elem_opts) {
-    <& '/widgets/profile/button.mc',
-        widget  => $widget,
-        cb      => "add_element_cb",
-        button  => "add_element_lgreen",
-        alt     => 'Add Element',
-        useTable => 0
-    &>
+
+%   # XXX mroch: Don't leave this hard-coded! Make a component.
+    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="new Ajax.Updater('element_<% $element->get_id %>',  '/widgets/container_prof/add_element.html', { parameters: Form.serialize('theForm'), asynchronous: true, insertion: Insertion.Bottom, onComplete: function(request) { Container.updateOrder('element_<% $element->get_id %>')} } ); return false" />
+    
     <& /widgets/profile/select.mc, name     => $widget.'|add_element',
                                    options  => $elem_opts,
                                    useTable => 0,
