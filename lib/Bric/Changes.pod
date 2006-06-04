@@ -12,6 +12,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.11.0 ()
 
+=head2 New Features
+
+=over
+
+=item *
+
+Added pick-a-type dropdown to Job Manager, so you can constrain the jobs
+listed to for example only today's job or only failed jobs. [Scott]
+
+=back
+
 =head2 Improvements
 
 =over

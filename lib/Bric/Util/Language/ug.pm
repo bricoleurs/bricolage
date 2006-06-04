@@ -45,6 +45,12 @@ our %Lexicon =
 
 To translate:
 
+  "All jobs" => "All jobs",
+  "Today's jobs" => "Today's jobs",
+  "Future jobs" => "Future jobs",
+  "Expire jobs" => "Expire jobs",
+  "Failed jobs" => "Failed jobs",
+  "My jobs" => "My jobs",
           'Slug required for non-fixed (non-cover) story type.'
 
           'Cannot both delete and make primary a single output channel.'
