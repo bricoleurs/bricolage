@@ -156,6 +156,14 @@ textarea {
 .lightHeader    {background-color: #cccc99;}
 .aliasHeader    {background:#99Cc99; font-style:italic;}
 
+div.debug .hide    { display: none; }
+div.debug .content { display: none; }
+
+div.debug.expanded .show    { display: none; }
+div.debug.expanded .hide    { display: block; }
+div.debug.expanded .hide a  { font-size: .8em; font-weight: normal; }
+div.debug.expanded .content { display: block; }
+
 div.debug dt {
     float: left;
     margin-right: 2px;
