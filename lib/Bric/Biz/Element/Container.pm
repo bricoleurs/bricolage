@@ -908,7 +908,7 @@ sub add_data { shift->add_field(@_) }
 
 ################################################################################
 
-=item $new_container = $container->add_container($element)
+=item $new_container = $container->add_container($element_type)
 
 Adds a new container subelement to this container element. Pass in the
 required element type (Bric::Biz::ElementType) object specifying the structure
