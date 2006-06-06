@@ -593,8 +593,7 @@ div.addelement { text-align: right;}
 #containerprof ul li.element .name { 
   margin: 0; clear: both;
   float: left; width: 75px;
-  line-height: 2em;
-  padding: 0 !important;
+  padding: 3px 7px 0 0 !important;
   background: transparent !important;
 }
 #containerprof ul li.container .name {
