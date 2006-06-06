@@ -25,6 +25,7 @@ if (@elements || @$elem_opts ) {
 <div style="padding: 5px;"><% $lang->maketext('No elements have been added.') %></div>
 % } else {
 
+<input type="hidden" name="container_prof|add_element_container" id="container_prof_add_element_container" value="" />
 <ul id="element_<% $element->get_id %>">
 
 % my $no_hide; my $num = 0;

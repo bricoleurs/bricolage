@@ -4,7 +4,11 @@ my $widget = 'container_prof';
 
 <%init>
 my $element = get_state_data($widget, 'element');
-my $field = $ARGS{"$widget|add_element"};
+my $container_id = $ARGS{"$widget|add_element_container"};
+my $field = $ARGS{"$widget|add_element_to_$container_id"} || $ARGS{"$widget|add_element"};
+
+# Find the right subelement to add the new element to
+$element = (grep { $_->get_id == $container_id } $element->get_containers)[0] if $container_id;
 
 my ($type, $id) = unpack('A5 A*', $field);
 

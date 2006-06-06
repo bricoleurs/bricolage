@@ -34,11 +34,11 @@ Container.updateOrder('element_<% $id %>');
 % }
 <p>
     <& '/widgets/profile/button.mc',
-         widget     => 'container_prof',
-         cb         => 'edit_cb',
-         button     => 'edit_lgreen',
-         value      => $id,
-         useTable   => 0
+        disp      => $lang->maketext("Delete"),
+        name      => 'delete_' . $name,
+        button    => 'delete_red',
+        js        => qq{onclick="Container.deleteElement('subelement_$name'); return false;"},
+        useTable  => 0 
     &>
     <& '/widgets/profile/button.mc',
         widget     => 'container_prof',
@@ -47,13 +47,15 @@ Container.updateOrder('element_<% $id %>');
         value      => $id,
         useTable   => 0
     &>
-
-    <& '/widgets/profile/button.mc',
-        disp      => $lang->maketext("Delete"),
-        name      => 'delete_' . $name,
-        button    => 'delete_red',
-        js        => qq{onclick="Container.deleteElement('subelement_$name'); return false;"},
-        useTable  => 0 
+    
+%   # XXX mroch: Don't leave this hard-coded! Make a component.
+    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="$('container_prof_add_element_container').value = '<% $id %>'; new Ajax.Updater('element_<% $id %>',  '/widgets/container_prof/add_element.html', { parameters: Form.serialize(this.form), asynchronous: true, insertion: Insertion.Bottom, onComplete: function(request) { Container.updateOrder('element_<% $id %>')} } ); return false" />
+    
+    <& /widgets/profile/select.mc, name     => $widget.'|add_element_to_'.$id,
+                                   options  => $elem_opts,
+                                   useTable => 0,
+                                   multiple => 0,
+                                   size     => 1,
     &>
 </p>
 </div>
@@ -80,13 +82,15 @@ if ($type->is_related_media || $type->is_related_story) {
     }
 }
 
-# Find a suitable element to display
-my ($disp_buf, $value_buf);
-foreach my $field ($element->get_fields) {
-    if (my $value = $field->get_value) {
-        $disp_buf  = $field->get_name;
-        $value_buf = substr($value, 0, 64);
-        last;
+# Get the list of fields and subelements that can be added.
+my $elem_opts = [
+    map  { $_->[1] }
+    sort { $a->[0] cmp $b->[0] }
+    map  {
+        my $key = $_->can('get_sites') ? 'cont_' : 'data_';
+        [ lc $_->get_name => [ $key . $_->get_id => $_->get_name ] ]
     }
-}
+        $element->get_possible_field_types,
+        grep { chk_authz($_, READ, 1) } $element->get_possible_containers
+];
 </%init>
