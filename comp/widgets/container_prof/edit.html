@@ -26,54 +26,13 @@ if (@elements || @$elem_opts ) {
 % } else {
 
 <input type="hidden" name="container_prof|add_element_container" id="container_prof_add_element_container" value="" />
-<ul id="element_<% $element->get_id %>">
 
-% my $no_hide; my $num = 0;
-% foreach my $dt (@elements) {
-<%perl>
-if ($dt->is_container) {
-    $m->comp('container.mc',
-        widget  => $widget,
-        element => $dt
-    );
-} else {
-    $m->comp('field.mc',
-        widget  => $widget,
-        element => $dt
-    );
-}
-</%perl>
-% }
-</ul>
-
-<input type="hidden" name="container_prof|element_<% $element->get_id %>" id="container_prof_element_<% $element->get_id %>" value="" />
-<script type="text/javascript">
-Container.updateOrder('element_<% $element->get_id %>');
-</script>
+<& 'container.mc',
+    widget  => $widget,
+    element => $element
+&>
 
 % }
-
-<div class="actions">
-    <& '/widgets/profile/button.mc',
-        widget  => $widget,
-        cb      => "bulk_edit_this_cb",
-        button  => "bulk_edit_lgreen",
-        alt     => 'Bulk Edit',
-        useTable => 0
-    &>
-% if (@$elem_opts) {
-
-%   # XXX mroch: Don't leave this hard-coded! Make a component.
-    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="new Ajax.Updater('element_<% $element->get_id %>',  '/widgets/container_prof/add_element.html', { parameters: Form.serialize('theForm'), asynchronous: true, insertion: Insertion.Bottom, onComplete: function(request) { Container.updateOrder('element_<% $element->get_id %>')} } ); return false" />
-    
-    <& /widgets/profile/select.mc, name     => $widget.'|add_element',
-                                   options  => $elem_opts,
-                                   useTable => 0,
-                                   multiple => 0,
-                                   size     => 1,
-    &>
-% }
-</div>
 
 <& "/widgets/wrappers/table_bottom.mc" &>
 

@@ -1,4 +1,3 @@
-<li id="subelement_<% $name %>" class="element clearboth">
 <h3 class="name"><% $vals->{props}{disp} %>:</h3>
 <div class="content">
 <& '/widgets/profile/displayFormElement.mc',
@@ -32,7 +31,6 @@
     &>
 % }
 </div>
-</li>
 
 <%args>
 $widget

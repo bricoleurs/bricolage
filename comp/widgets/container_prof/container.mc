@@ -1,21 +1,24 @@
-<li id="subelement_<% $name %>" class="container clearboth">
+% unless ($top_level) {
 <h3 class="name"><% $element->get_name %>:</h3>
+% }
 <div class="content">
 <ul id="element_<% $id %>" class="elements">
 % foreach my $dt ($element->get_elements()) {
-<%perl>
-    if ($dt->is_container) {
-        $m->comp('container.mc',
-            widget  => $widget,
-            element => $dt
-        );
-    } else {
-        $m->comp('field.mc',
-            widget  => $widget,
-            element => $dt
-        );
-    }
-</%perl>
+%   if ($dt->is_container) {
+    <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
+    <& 'container.mc',
+        widget  => $widget,
+        element => $dt
+    &>
+    </li>
+%   } else {
+    <li id="subelement_dat<% $dt->get_id %>" class="element clearboth">
+    <& 'field.mc',
+        widget  => $widget,
+        element => $dt
+    &>
+    </li>
+%   }
 % }
 </ul>
 <input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
@@ -29,10 +32,8 @@ Sortable.create('element_<% $id %>', {
 Container.updateOrder('element_<% $id %>');
 </script>
 
-% if ($type->is_related_media || $type->is_related_story) {
-<p><b><% $lang->maketext($type->is_related_media ? "URL" : "Title" )%>:</b><% $info %></p>
-% }
 <p>
+% unless ($top_level) {
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
         name      => 'delete_' . $name,
@@ -40,9 +41,10 @@ Container.updateOrder('element_<% $id %>');
         js        => qq{onclick="Container.deleteElement('subelement_$name'); return false;"},
         useTable  => 0 
     &>
+% }
     <& '/widgets/profile/button.mc',
         widget     => 'container_prof',
-        cb         => 'bulk_edit_cb',
+        cb         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_cb',
         button     => 'bulk_edit_lgreen',
         value      => $id,
         useTable   => 0
@@ -59,7 +61,6 @@ Container.updateOrder('element_<% $id %>');
     &>
 </p>
 </div>
-</li>
 
 <%args>
 $widget
@@ -70,17 +71,7 @@ $element
 my $type = $element->get_element_type;
 my $id   = $element->get_id;
 my $name = 'con' . $id;
-
-my $info = '';
-if ($type->is_related_media || $type->is_related_story) {
-    if ($type->is_related_media) {
-        my $rel = $element->get_related_media;
-        $info = $rel->get_uri if $rel;
-    } else {
-        my $rel = $element->get_related_story;
-        $info = $rel->get_title if $rel;
-    }
-}
+my $top_level = (get_state_data($widget, 'element') == $element);
 
 # Get the list of fields and subelements that can be added.
 my $elem_opts = [
