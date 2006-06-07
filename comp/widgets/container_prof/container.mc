@@ -32,7 +32,7 @@ Sortable.create('element_<% $id %>', {
 Container.updateOrder('element_<% $id %>');
 </script>
 
-<p>
+<div class="actions">
 % unless ($top_level) {
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -59,7 +59,7 @@ Container.updateOrder('element_<% $id %>');
                                    multiple => 0,
                                    size     => 1,
     &>
-</p>
+</div>
 </div>
 
 <%args>
