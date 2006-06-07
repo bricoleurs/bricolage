@@ -559,6 +559,12 @@ our %Lexicon =
 =begin comment
 
 To translate:
+  "All jobs" => "All jobs",
+  "Today's jobs" => "Today's jobs",
+  "Future jobs" => "Future jobs",
+  "Expire jobs" => "Expire jobs",
+  "Failed jobs" => "Failed jobs",
+  "My jobs" => "My jobs",
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'All Categories' => 'All Categories',
   'All' => 'All',
