@@ -25,7 +25,8 @@ if (@elements || @$elem_opts ) {
 <div style="padding: 5px;"><% $lang->maketext('No elements have been added.') %></div>
 % } else {
 
-<input type="hidden" name="container_prof|add_element_container" id="container_prof_add_element_container" value="" />
+<input type="hidden" name="container_prof|add_element_cb" id="container_prof_add_element_cb" value="" />
+<input type="hidden" name="container_prof|delete_cb" id="container_prof_delete_cb" value="" />
 
 <& 'container.mc',
     widget  => $widget,

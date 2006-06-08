@@ -1,7 +1,7 @@
+<div id="element_<% $id %>_content" class="content">
 % unless ($top_level) {
 <h3 class="name"><% $element->get_name %>:</h3>
 % }
-<div class="content">
 <ul id="element_<% $id %>" class="elements">
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {
@@ -38,7 +38,7 @@ Container.updateOrder('element_<% $id %>');
         disp      => $lang->maketext("Delete"),
         name      => 'delete_' . $name,
         button    => 'delete_red',
-        js        => qq{onclick="Container.deleteElement('subelement_$name'); return false;"},
+        js        => qq{onclick="if (Container.confirmDelete()) \{ $('container_prof_delete_cb').value = '$name'; Container.refresh($id); $('container_prof_delete_cb').value = ''; \} return false;"},
         useTable  => 0 
     &>
 % }
@@ -51,7 +51,7 @@ Container.updateOrder('element_<% $id %>');
     &>
     
 %   # XXX mroch: Don't leave this hard-coded! Make a component.
-    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="$('container_prof_add_element_container').value = '<% $id %>'; new Ajax.Updater('element_<% $id %>',  '/widgets/container_prof/add_element.html', { parameters: Form.serialize(this.form), asynchronous: true, insertion: Insertion.Bottom, onComplete: function(request) { Container.updateOrder('element_<% $id %>')} } ); return false" />
+    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="$('container_prof_add_element_cb').value = '<% $id %>'; Container.refresh(<% $id %>); $('container_prof_add_element_cb').value = ''; return false" />
     
     <& /widgets/profile/select.mc, name     => $widget.'|add_element_to_'.$id,
                                    options  => $elem_opts,

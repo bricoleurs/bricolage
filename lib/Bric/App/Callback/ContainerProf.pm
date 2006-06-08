@@ -129,46 +129,40 @@ sub add_element : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $r = $self->apache_req;
-
+    
+    my $widget = $self->class_key;
+    
     # get the element
-    my $element = get_state_data($self->class_key, 'element');
+    my $element = get_state_data($widget, 'element');
     my $key = $element->get_object_type();
+    
+    # Get the container to which we will add the new subelement
+    my $container_id = $param->{"$widget|add_element_cb"};
+    my $field = $param->{"$widget|add_element_to_$container_id"};
+    
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
     if (Bric::Biz::ElementType->lookup({id => $element->get_element_type_id})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
-    my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
-
-    foreach my $f (@$fields) {
-        my ($type,$id) = unpack('A5 A*', $f);
-        my $at;
-        if ($type eq 'cont_') {
-            $at = Bric::Biz::ElementType->lookup({id=>$id});
-            my $cont = $element->add_container($at);
-            $element->save();
-            $self->_push_element_stack($cont);
-
-            if ($key eq 'story') {
-                # Don't redirect if we're already at the edit page.
-                $self->set_redirect("$CONT_URL/edit.html")
-                  unless $r->uri eq "$CONT_URL/edit.html";
-            } else {
-                $self->set_redirect("$MEDIA_CONT/edit.html")
-                  unless $r->uri eq "$MEDIA_CONT/edit.html";
-            }
-
-        } elsif ($type eq 'data_') {
-            $at = Bric::Biz::ElementType::Parts::FieldType->lookup({id=>$id});
-            $element->add_field($at);
-            $element->save();
-            set_state_data($self->class_key, 'element', $element);
-        }
-        log_event($key.'_add_element', $a_obj, {Element => $at->get_key_name})
-          if $a_obj;
+    
+    # Find the right subelement to add the new element to
+    $element = (grep { $_->get_id == $container_id } $element->get_containers)[0] 
+        if $container_id && $element->get_id != $container_id;
+    
+    my ($type, $id) = unpack('A5 A*', $field);
+    
+    my $element_type;
+    if ($type eq 'cont_') {
+        $element_type = Bric::Biz::ElementType->lookup({ id => $id });
+        $element->add_container($element_type);
+    } else {
+        $element_type = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id });
+        $element->add_field($element_type);
     }
+    $element->save();
+    log_event($key.'_add_element', $a_obj, { Element => $element_type->get_key_name }) 
+        if $a_obj;
 }
 
 sub update : Callback(priority => 1) {
@@ -597,16 +591,19 @@ sub _update_subelements {
                     $param->{$object_type .'_prof|save_cb'} ||
                     $param->{$object_type .'_prof|save_and_stay_cb'};
     
-    # Build a map from element names to their order
+    # Build a map from element names to their order, making sure we don't include
+    # deleted elements
     my $i = 1;
-    my %elements = map { $_ => $i++ } split ",", $param->{"container_prof|element_" . $element->get_id};
+    my %elements = map  { $_ => $i++ } 
+                   grep { $_ ne $param->{$widget . '|delete_cb'} }
+                   split ",", $param->{"container_prof|element_" . $element->get_id};
     
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
         my $id      = $t->get_id;
         my $is_cont = $t->is_container;
         my $name    = ($is_cont ? 'con' : 'dat') . $id;
-        my $deleted = !(defined $elements{$name});
+        my $deleted = ($param->{$widget.'|delete_cb'} eq $name);
         
         # Grab the element we're looking for
         {

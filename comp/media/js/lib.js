@@ -1015,6 +1015,17 @@ document.getParentByTagName = function(element, tagName) {
  * Container profile
  */
 var Container = {
+    refresh: function(container_id) {
+        var element = $('element_' + container_id + '_content');
+        new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', { 
+            parameters: 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form")), 
+            asynchronous: true, 
+            onComplete: function(request) { 
+                Container.updateOrder('element_' + container_id)
+            } 
+        });
+    },
+    
     updateOrder: function(list) {
         list = $(list);
 
@@ -1029,12 +1040,8 @@ var Container = {
         $('container_prof_' + list.id).value = Sortable.sequence(list);
     },
     
-    deleteElement: function(element) {
-        var list = document.getParentByTagName(element, "ul");
-        if (confirm("Are you sure you want to remove this element?\n\n" +
-                    "It will not be permanently deleted until you save your changes.")) {
-            Element.remove(element); Container.updateOrder(list);
-        }
-        return false;
+    confirmDelete: function() {
+        return confirm("Are you sure you want to remove this element?\n\n" +
+                       "It will not be permanently deleted until you save your changes.");
     }
 };

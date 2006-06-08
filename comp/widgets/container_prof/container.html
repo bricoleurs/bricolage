@@ -1,0 +1,21 @@
+<& 'container.mc',
+    widget  => $widget,
+    element => $element
+&>
+
+<%once>
+my $widget = 'container_prof';
+</%once>
+
+<%init>
+my $element = get_state_data($widget, 'element');
+my $container_id = $ARGS{"container_id"};
+
+# XXX mroch: We need to make this recursive, or it'll only work one level deep
+$element = (grep { $_->get_id == $container_id } $element->get_containers)[0] 
+    if $container_id && $element->get_id != $container_id;
+</%init>
+
+<%flags>
+inherit => undef
+</%flags>
