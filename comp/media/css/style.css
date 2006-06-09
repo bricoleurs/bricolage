@@ -601,7 +601,8 @@ div.addelement { text-align: right;}
 #containerprof ul li.element .name { 
   margin: 0; clear: both;
   float: left; width: 75px;
-  padding: 3px 7px 0 0 !important;
+  text-align: right;
+  padding: 3px 10px 0 0 !important;
   background: transparent !important;
 }
 #containerprof ul li.container .name {
