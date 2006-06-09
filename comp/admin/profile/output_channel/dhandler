@@ -4,6 +4,8 @@ my $oc = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id ||= $oc->get_id;
 
+my $num = 1;
+
 # Check authorization.
 chk_authz($oc, $id ? READ : CREATE);
 my $no_edit = !chk_authz($oc, ($id ? EDIT : CREATE), 1);
@@ -30,7 +32,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id'
 
 $m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Properties",
-	 number  => 1);
+	 number  => $num++);
 
 # Dump out the fields for display.
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
@@ -120,7 +122,7 @@ var selectOrderNames = new Array("include_pos")
         $m->comp(
             '/widgets/wrappers/table_top.mc',
             caption => 'Template Includes',
-            number => 2,
+            number => $num++,
         );
         $m->comp('/widgets/listManager/listManager.mc',
                  object         => 'output_channel',
@@ -163,7 +165,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'oc_profile',
          no_edit => $no_edit,
          widget  => $type,
-         num => 3
+         num => $num++
 );
 
 # Add the form buttons and other necessities.
