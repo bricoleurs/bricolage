@@ -32,6 +32,14 @@ Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
 first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
 an object (it could also be an ID number). [Scott]
 
+=item *
+
+Added F<README.Ubuntu>. [Christian Muise]
+
+=item *
+
+Silenced warnings from Net::SFTP when distributing via SFTP. [David]
+
 =back
 
 =head2 Bug Fixes
