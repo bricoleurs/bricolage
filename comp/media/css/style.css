@@ -613,10 +613,6 @@ div.addelement { text-align: right;}
   float: left;
   padding: 0;
 }
-#containerprof ul li.element .delete { 
-  position: absolute; top: 0; right: 0;
-  padding: 3px 5px;
-}
 
 /******************************************************
  * DIFFS                                              *

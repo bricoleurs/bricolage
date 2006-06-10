@@ -41,8 +41,7 @@ my %conf = (
 
 my ($base_handler, $do_contrib_type, $do_element_type, $clean_param,
     $delete_ocs, $delete_sites, $check_save_element_type, $get_obj,
-    $set_key_name, $update_element_type_attrs, $get_data_href,
-    $delete_element_type_attrs, $set_primary_ocs, $add_new_attrs,
+    $set_key_name, $get_data_href, $set_primary_ocs, $add_new_attrs, 
     $save_element_type_etc);
 
 
@@ -137,9 +136,10 @@ $do_contrib_type = sub {
     my $data_href = $obj->get_member_attr_hash || {};
     $data_href = { map { lc($_) => 1 } keys %$data_href };
 
-    # Update existing attributes.
-    my $i = 0;
-    my $pos = mk_aref($param->{attr_pos});
+    # Build a map from element names to their order
+    my $i = 1;
+    my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
+    
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
         next if $del_attrs{$aname};
 
@@ -149,8 +149,7 @@ $do_contrib_type = sub {
                                 value => $param->{"attr|$aname"} });
         $obj->set_member_meta({ name => $aname,
                                 field => 'pos',
-                                value => $pos->[$i] });
-        ++$i;
+                                value => $pos{$aname} });
     }
     my $no_save;
     # Add in any new attributes.
@@ -223,11 +222,10 @@ $do_element_type = sub {
     my $param      = $self->params;
     my $name       = $param->{name};
     my $disp_name  = $conf{$key}{disp_name};
-    my %del_attrs  = map {$_ => 1} @{ mk_aref($param->{delete_attr}) };
     my $key_name   = exists $param->{key_name} ? $param->{key_name} : undef;
     my $widget     = $self->class_key;
     my $cb_key     = $self->cb_key;
-
+    
     # Make sure the name isn't already in use.
     my $no_save;
     # ElementType has been updated to take an existing but undefined 'active'
@@ -283,12 +281,33 @@ $do_element_type = sub {
     my $enabled = $set_primary_ocs->($self, $obj, \$no_save);
 
     my $data_href = $get_data_href->($param, $key);
-
-    $update_element_type_attrs->(\%del_attrs, $param, $data_href);
-
+    
+    # Build a map from element names to their order.  This also
+    # serves as a list of elements that haven't been deleted.
+    my $i = 1;
+    my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
+    
+    # Update existing attributes
+    my $del = [];
+    foreach my $attr ($obj->get_field_types) {
+        my $aname = lc $attr->get_key_name;
+        if ($pos{$aname}) {
+            $attr->set_place($pos{$aname});
+            my $val = $param->{"attr|$aname"};
+            $val = join '__OPT__', @$val if ref $val;
+            $attr->set_default_val($val);
+            $attr->save;
+        } else {
+            # Must have been deleted
+            push @$del, $attr;
+            log_event('field_type_rem', $obj, { Name => $aname });
+            log_event('field_type_deact', $attr);
+        }
+    }
+    $obj->del_field_types($del) if ($cb_key eq 'save' || $cb_key eq 'save_n_stay');
+    
     $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
-    $delete_element_type_attrs->($obj, $param, $key, $cb_key, \%del_attrs, $data_href);
-
+    
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
 
@@ -419,23 +438,6 @@ $set_key_name = sub {
     $obj->set_key_name($kn);
 };
 
-$update_element_type_attrs = sub {
-    my ($del_attrs, $param, $data_href) = @_;
-    # Update existing field types.
-    my $pos = mk_aref($param->{attr_pos});
-    my $i = 0;
-    foreach my $aname (@{ mk_aref($param->{attr_name}) }) {
-        unless ($del_attrs->{$aname}) {
-            my $field = $data_href->{$aname};
-            $field->set_place($pos->[$i++]);
-            my $val = $param->{"attr|$aname"};
-            $val = join '__OPT__', @$val if ref $val;
-            $field->set_default_val($val);
-            $field->save;
-        }
-    }
-};
-
 $get_data_href = sub {
     my ($param, $key) = @_;
 
@@ -446,22 +448,6 @@ $get_data_href = sub {
         element_type_id => $param->{"$key\_id"}
     });
     return { map { $_->get_key_name => $_ } @$all_data };
-};
-
-$delete_element_type_attrs = sub {
-    my ($obj, $param, $key, $cb_key, $del_attrs, $data_href) = @_;
-
-    # Delete any attributes that are no longer needed.
-    if ($param->{delete_attr} && ($cb_key eq 'save' || $cb_key eq 'save_n_stay')) {
-        my $del = [];
-        foreach my $attr (keys %$del_attrs) {
-            my $atd = $data_href->{lc $attr};
-            push @$del, $atd;
-            log_event('field_type_rem', $obj, { Name => $attr });
-            log_event('field_type_deact', $atd);
-        }
-        $obj->del_field_types($del);
-    }
 };
 
 $set_primary_ocs = sub {
