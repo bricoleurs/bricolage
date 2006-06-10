@@ -83,8 +83,14 @@ have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
 =item *
 
-The code of a template no longer disappears when you click "Trail" in the 
+The code of a template no longer disappears when you click "Trail" in the
 Template Profile. (bug 1204) [Marshall]
+
+=item *
+
+F<bric_soap> is now more intelligent about parsing IDs from XML elements with
+either single or double quotes, and from multiple tags. [Christian Niles and
+David]
 
 =back
 

@@ -194,6 +194,8 @@ Folks who have submitted patches include:
 
 =item Christian Muise
 
+=item Christian Niles
+
 =back
 
 Friends who have spotted bugs include:
