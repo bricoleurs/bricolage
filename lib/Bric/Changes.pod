@@ -46,6 +46,12 @@ The metadata for related media now include preview links. The same goes for
 the medadata about a media document when editing a subelement of that media
 document. [David]
 
+=item *
+
+The status message when a document is published now reports the site with
+which the document is associated, to help distinguish documents from their
+aliases in the status message. Reported by Marshall. [David]
+
 =back
 
 =head2 Bug Fixes

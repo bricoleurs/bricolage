@@ -213,9 +213,13 @@ sub record_action {
     my $expired  = $exp_date && $exp_date lt $job->get_sched_time(ISO_8601_FORMAT);
     if ($$count_ref <= 3) {
         my $saved = $expired
-            ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
-            : $job->get_comp_time ? 'published' : 'scheduled for publication';
-        add_msg(ucfirst($doc->key_name) . qq{ "[_1]" $saved.},  $doc->get_title);
+            ? $job->get_comp_time ? 'expired from '   : 'scheduled for expiration from'
+            : $job->get_comp_time ? 'published to' : 'scheduled for publication to';
+        add_msg(
+            ucfirst($doc->key_name) . qq{ "[_1]" ${saved} [_2].},
+            $doc->get_title,
+            Bric::Biz::Site->lookup({ id => $doc->get_site_id })->get_name
+        );
     } else {
         if ($expired) {
             $$exp_count_ref++;
