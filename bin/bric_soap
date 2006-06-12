@@ -526,7 +526,7 @@ sub update {
 	}
 
 	my @update_ids = grep { /\d/ } $document =~ /<$module.*?id=(["'])(\d+)\1/g
-        or die "No $module ids found in update document.\n"
+        or die "No $module ids found in update document.\n";
         if ($verbose) {
             print STDERR "$module $command: Found ids for update: ",
               join(', ', @update_ids), "\n";
