@@ -42,13 +42,21 @@ $LastChangedDate$
  $field = $field->set_max_length($max_length)
  $max   = $field->get_max_length()
 
- # Get/Set whether this field is required or not.
+ # (deprecated) Get/Set whether this field is required or not.
  $field       = $field->set_required(1 || undef)
  (1 || undef) = $field->get_required()
 
- # Get/Set the quantifier flag.
+ # (deprecated) Get/Set the quantifier flag.
  $field      = $field->set_quantifier( $quantifier )
  $quantifier = $field->get_quantifier()
+ 
+ # Get/Set min occurrence specification limit
+ $field = $field->set_min_occurrence($amount)
+ $min = $field->get_min_occurrence()
+ 
+ # Get/Set max occurrence specification limit
+ $field = $field->set_max_occurrence($amount)
+ $max = $filed->get_max_occurrence()
 
  # Get/Set the data type (or SQL type) of this field.
  $field    = $field->set_sql_type();
@@ -140,6 +148,8 @@ my @COLS = qw(
     multiple
     default_val
     active
+    max_occurrence
+    min_occurrence
 );
 
 my @ATTRS = qw(
@@ -162,6 +172,8 @@ my @ATTRS = qw(
     multiple
     default_val
     active
+    max_occurrence
+    min_occurrence
 );
 
 use constant ORD => qw(
@@ -180,6 +192,8 @@ use constant ORD => qw(
     vals
     multiple
     active
+    max_occurrence
+    min_occurrence
 );
 
 #==============================================================================#
@@ -220,6 +234,8 @@ BEGIN {
         default_val     => Bric::FIELD_RDWR,
         autopopulated   => Bric::FIELD_READ,
         active          => Bric::FIELD_READ,
+	max_occurrence	=> Bric::FIELD_RDWR,
+	min_occurrence	=> Bric::FIELD_RDWR
         _attr           => Bric::FIELD_NONE,
         _meta           => Bric::FIELD_NONE,
         _attr_obj       => Bric::FIELD_NONE,
@@ -286,6 +302,14 @@ sql_type
 =item *
 
 active
+
+=item *
+
+max_occurrence
+
+=item *
+
+min_occurrence
 
 =back
 
@@ -477,6 +501,16 @@ of possible values.
 =item active
 
 Boolean valule indicating whether or not the field is active.
+	
+=item max_occurrence
+
+Specifies an upper limit to how many instances there may be of this field type.
+0 represents unlimited.
+
+=item min_occurrence
+
+Specifies a lower limit to how many instances there may be of this field type.
+0 indicates that it is not required.
 
 =back
 
@@ -937,6 +971,38 @@ sub my_meths {
                       type => 'checkbox',
                   },
               },
+              max_occurrence    => {
+                  name      => 'max_occurrence',
+                  get_meth  => sub { shift->get_max_occurrence() },
+                  get_args  => [],
+                  set_meth  => sub { shift->set_max_occurrence(@_) },
+                  set_args  => [],
+                  disp      => 'Maximum Occurrence',
+                  search    => 1,
+                  len       => 8,
+                  type      => 'short',
+                  props     => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              min_occurrence    => {
+                  name      => 'min_occurrence',
+                  get_meth  => sub { shift->get_min_occurrence() },
+                  get_args  => [],
+                  set_meth  => sub { shift->set_min_occurrence(@_) },
+                  set_args  => [],
+                  disp      => 'Minimum Occurrence',
+                  search    => 1,
+                  len       => 8,
+                  type      => 'short',
+                  props     => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
           };
 
     if ($ord) {
@@ -1104,6 +1170,46 @@ repeatable within the element.
 
 B<Throws:> NONE.
 
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $max = $field->get_max_occurrence()
+
+Return the maximum occurrence
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_max_occurrence($max)
+
+Sets the maximum occurrence this field type may occur.
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $min = $field->get_min_occurrence()
+
+Return the minimum occurrence
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_min_occurrence($min)
+
+Sets the minimum occurrence this field type may occur.
+
+B<Throws:> NONE.
+    
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1647,6 +1753,8 @@ sub _do_list {
         cols            => 'cols',
         rows            => 'cols',
         length          => 'length',
+        max_occurrence  => 'max_occurrence',
+        min_occurrence  => 'min_occurrence',
     );
 
     my %bools = (
