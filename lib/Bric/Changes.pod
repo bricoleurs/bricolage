@@ -40,6 +40,12 @@ Added F<README.Ubuntu>. [Christian Muise]
 
 Silenced warnings from Net::SFTP when distributing via SFTP. [David]
 
+=item *
+
+The metadata for related media now include preview links. The same goes for
+the medadata about a media document when editing a subelement of that media
+document. [David]
+
 =back
 
 =head2 Bug Fixes

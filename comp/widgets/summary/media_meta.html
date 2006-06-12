@@ -33,7 +33,12 @@
 <tr>
     <td class="medHeader"><img src="/media/images/spacer.gif" height="18" width="1" /></td>
     <td width="100" align="right" class="medHeader"><span class="label"><% $lang->maketext('URI') %>:&nbsp;</span></td>
-    <td width="400">&nbsp;<% $media->get_uri %></td>
+    <td width="400">&nbsp;<% $m->comp(
+        '/widgets/profile/preview_link.mc',
+        doc   => $media,
+        type  => 'media',
+        title => $media->get_uri,
+    ) %></td>
 </tr>
   </table>
 % if ($frame) {

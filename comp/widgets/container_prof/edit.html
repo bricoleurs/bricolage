@@ -488,7 +488,7 @@ my $repeatable_elem_opts = sub {
 my $related_summary = sub {
   my ($tile, $type, $widget) = @_;
 
-  my $rel = $type eq 'story' ? $tile->get_related_story 
+  my $rel = $type eq 'story' ? $tile->get_related_story
                              : $tile->get_related_media;
 
   my $button = $m->scomp( '/widgets/profile/imageSubmit.mc',
@@ -508,7 +508,12 @@ my $related_summary = sub {
       my $thumb = '';
       if (USE_THUMBNAILS && $type ne 'story') {
           if ($thumb =  $rel->thumbnail_uri) {
-              $thumb = qq{<img src="$thumb" />&nbsp;};
+              $thumb = $m->comp(
+                  '/widgets/profile/preview_link.mc',
+                  doc   => $rel,
+                  title => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                  type  => $type,
+              );
           }
       }
       # The summary info
