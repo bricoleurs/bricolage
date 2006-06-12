@@ -11,7 +11,7 @@ exit if fetch_sql "SELECT 1 FROM pref WHERE id = 18";
 do_sql
 
   "INSERT INTO pref (id, name, description, value, def, manual, opt_type, can_be_overridden)
-   VALUES (18, 'Show Desk Asset Counts', 'Show the number of assets on each desk in the navigation.', '0', '0', 0, 'select', '0')",
+   VALUES (18, 'Show Desk Asset Counts', 'Show the number of assets on each desk in the navigation.', '0', '0', '0', 'select', '0')",
 
   "INSERT INTO member (id, grp__id, class__id, active)
    VALUES (904, 22, 48, '1')",
