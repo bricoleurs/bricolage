@@ -50,6 +50,12 @@ in the navigation menu, e.g. "Edit (10)". It is configurable on a per-user
 basis via the new "Show Desk Asset Counts" preference.  Based heavily on a 
 patch from Alex Howarth. [Marshall]
 
+=item *
+
+Updated F<README.MacOSX> with instructions on how to use the built-in version
+of Apache instead of compiling everything yourself.  Also fixed a broken link
+and an outdated warning about Apache::SizeLimit. [Marshall]
+
 =back
 
 =head2 Bug Fixes
