@@ -190,6 +190,7 @@ BEGIN {
                         _update_attrs     => Bric::FIELD_NONE,
                         _versions         => Bric::FIELD_NONE,
                         _desk             => Bric::FIELD_NONE,
+                        _site             => Bric::FIELD_NONE,
         });
 }
 
@@ -847,7 +848,7 @@ sub get_site {
     my $site;
     unless ($site = $self->_get('_site')) {
         $self->_set(
-            ['site'],
+            ['_site'],
             [ $site = Bric::Biz::Site->lookup({ id => $self->get_site_id }) ]
         );
     }
