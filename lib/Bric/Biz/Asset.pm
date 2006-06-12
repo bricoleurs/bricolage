@@ -818,7 +818,7 @@ NONE
 
 =item $site_id = $workflow->get_site_id
 
-Returns the ID of the site this Workflow is a part of
+Returns the ID of the site this asset is a part of.
 
 B<Throws:> NONE.
 
@@ -827,6 +827,32 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+################################################################################
+
+=item $site = $workflow->get_site
+
+Returns the the site this asset is a part of.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_site {
+    my $self = shift;
+    my $site;
+    unless ($site = $self->_get('_site')) {
+        $self->_set(
+            ['site'],
+            [ $site = Bric::Biz::Site->lookup({ id => $self->get_site_id }) ]
+        );
+    }
+    return $site;
+}
 
 ################################################################################
 
