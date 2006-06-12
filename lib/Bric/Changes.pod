@@ -104,6 +104,12 @@ F<bric_soap> is now more intelligent about parsing IDs from XML elements with
 either single or double quotes, and from multiple tags. [Christian Niles and
 David]
 
+=item *
+
+Failing to fill in either the "To" or "Bcc" fields of an Email distribution
+action no longer throws you back a screen, but stays in the Email action
+profile. Reported by Scott. [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
