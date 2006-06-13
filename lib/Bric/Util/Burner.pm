@@ -1067,9 +1067,7 @@ sub publish {
             return 1 unless $ba->get_publish_status;
             my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
-                $key eq 'story'
-                    ? (path => "$base_path/%")
-                    : (uri => $ba->get_uri($oc))
+                oc_id      => $oc->get_id,
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
