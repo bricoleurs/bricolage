@@ -1868,9 +1868,8 @@ $get_em = sub {
                      . 'server_type__output_channel stoc';
             $wheres .= ' AND r.id = jrr.resource__id '
                      . 'AND jrr.job__id = jst.job__id '
-                     . 'AND jst.server_type__id = stoc.server_type__id '
-                     . 'AND stoc.output_channel__id = ?';
-            push @params, $v;
+                     . 'AND jst.server_type__id = stoc.server_type__id AND '
+                     . any_where $v, 'stoc.output_channel__id = ?', \@params;
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";
