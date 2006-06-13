@@ -1,19 +1,31 @@
 Bricolage Ubuntu README
 -----------------------
 
-There are a few peculiarities that one faces when trying to install this on an Ubuntu distro. This readme is intended to address workarounds for a few of those.
+There are a few peculiarities that one faces when trying to install this on an
+Ubuntu distro. This readme is intended to address workarounds for a few of
+those.
 
-Please refer to README.Debian and INSTALL documents first for further information on getting most of the Bricolage system installed.
+Please refer to README.Debian and INSTALL documents first for further
+information on getting most of the Bricolage system installed.
 
 Test::Class
-  While this should install ok, it fails the tests. If you are installing your perl modules from CPAN then doing this should work:
-force install Test::Class
+
+  While this should install ok, it fails the tests. If you are installing your
+  perl modules from CPAN then doing this should work: force install
+  Test::Class
 
 Apache Service Location
-  Under normal circumstances this would be /usr/sbin/httpd, but on the Ubuntu system it should be /usr/sbin/apache(-perl). This will arise when you try to install Bricolage as one of the questions.
+
+  Under normal circumstances this would be /usr/sbin/httpd, but on the Ubuntu
+  system it should be /usr/sbin/apache(-perl). This will arise when you try to
+  install Bricolage as one of the questions.
 
 Postgres Setup
-  You will need to configure the postgres installation from the default settings:
+
+  You will need to configure the postgres installation from the default
+  settings:
+
 - As root you need to edit the file /etc/postgresql/pg_hba.conf
-- Near the bottom looks for the line that resembles "local   all   all   ident sameuser"
+- Near the bottom looks for the line that resembles "local all all ident
+  sameuser"
 - Change the "ident sameuser" -> "trust"
