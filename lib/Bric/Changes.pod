@@ -1585,6 +1585,37 @@ Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
 first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
 an object (it could also be an ID number). [Scott]
 
+=item *
+
+Added F<README.Ubuntu>. [Christian Muise]
+
+=item *
+
+Silenced warnings from Net::SFTP when distributing via SFTP. [David]
+
+=item *
+
+The metadata for related media now include preview links. The same goes for
+the medadata about a media document when editing a subelement of that media
+document. [David]
+
+=item *
+
+The status message when a document is published now reports the site with
+which the document is associated, to help distinguish documents from their
+aliases in the status message. Reported by Marshall. [David]
+
+=item *
+
+Added C<get_site()> to L<Bric::Biz::Asset|Bric::Biz::Asset>, and therefore to
+the story, media, and template classes. Suggested by Marshall. [David]
+
+=item *
+
+Added support for the the C<oc_id> parameter to
+L<Bric::Dist::Resource|Bric::Dist::Resource> to simplify looking up stale
+story and media files for expiration. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -1628,8 +1659,43 @@ have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
 =item *
 
-The code of a template no longer disappears when you click "Trail" in the 
+The code of a template no longer disappears when you click "Trail" in the
 Template Profile. (bug 1204) [Marshall]
+
+=item *
+
+F<bric_soap> is now more intelligent about parsing IDs from XML elements with
+either single or double quotes, and from multiple tags. [Christian Niles and
+David]
+
+=item *
+
+Failing to fill in either the "To" or "Bcc" fields of an Email distribution
+action no longer throws you back a screen, but stays in the Email action
+profile. Reported by Scott. [David]
+
+=item *
+
+Fixed media publishing so that when a media document is published to more than
+one output channel and there are differences in the URIs for that media
+document between the output channels that they won't trigger the expriration
+of each other's files. Reported by Rod Taylor. [David]
+
+=item *
+
+Fixed bug where users granted CREATE permission were unexpectedly allowed to
+PUBLISH items on the Publish Desk. [Christian Niles]
+
+=item *
+
+F<bric_queued> now works with all burners, not just the Mason burner. Reported
+by Christian Niles. [Scott]
+
+=item *
+
+A required field deleted from an element definition will now be deletable in
+the stories and media in which it appears, instead of remaining required. [Rod
+Taylor]
 
 =back
 

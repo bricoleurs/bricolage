@@ -164,6 +164,13 @@ name suffix or suffixes. Again, see the existing subclasses for some examples.
 
 =item *
 
+Modify Bric::Util::Burner to load your burner subclass, provided the necessary
+prerequisites are installed. For example, the PHP burner is loaded like so:
+
+    require Bric::Util::Burner::PHP if eval { require PHP::Interpreter };
+
+=item *
+
 If all of your tests pass, you're done! You must have a freshly-built
 Bricolage database to successfully run the tests. To just run your new
 burner's tests, use this command:
@@ -1237,8 +1244,8 @@ sub publish {
             my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
                 $key eq 'story'
-                    ? (path => "$base_path/%")
-                    : (uri => $ba->get_uri($oc))
+                    ? (path  => "$base_path/%")
+                    : (oc_id => $oc->get_id ),
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
@@ -1301,8 +1308,8 @@ sub publish {
                 "$key\_id" => $baid,
                 not_job_id => $job->get_id,
                 $key eq 'story'
-                    ? (path => "$base_path/%")
-                    : (not_uri => $ba->get_uri($oc))
+                    ? (path  => "$base_path/%")
+                    : (oc_id => $oc->get_id ),
             })) {
                 # Yep, there are old resources to expire.
                 my $expname = 'Expire stale "' . $ba->get_name .
@@ -2142,6 +2149,13 @@ if (my $code = delete $Bric::Config::INC{PERL_LOADER}) {
     # Just die if there was an error.
     die $@ if $@;
 }
+
+# These *must* come after the above code to ensure that all the symbols
+# are available to be loaded.
+require Bric::Util::Burner::Template if eval { require HTML::Template };
+require Bric::Util::Burner::TemplateToolkit
+    if eval { require Template && $Template::VERSION >= 2.14 };
+require Bric::Util::Burner::PHP if eval { require PHP::Interpreter };
 
 1;
 __END__

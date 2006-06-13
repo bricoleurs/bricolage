@@ -209,6 +209,10 @@ Folks who have submitted patches include:
 
 =item * Benjamin Franz
 
+=item * Christian Muise
+
+=item * Christian Niles
+
 =item * Alexey Sheynuk
 
 =item * Christian Niles

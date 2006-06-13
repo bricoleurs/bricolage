@@ -6,15 +6,15 @@ use strict;
 use warnings;
 
 use base qw(Bric::Test::Base);
-use Test::More skip_all => "SOAP tests are under construction";
+use Test::More;
+__PACKAGE__->SKIP_CLASS( 'SOAP tests are under construction' );
 
 use SOAP::Lite;
 import SOAP::Data 'name';
 use HTTP::Cookies;
 
-
-BAIL_OUT("BRICOLAGE_SERVER environment variable isn't set")
-  unless exists $ENV{BRICOLAGE_SERVER};
+__PACKAGE__->SKIP_CLASS("BRICOLAGE_SERVER environment variable isn't set")
+    unless exists $ENV{BRICOLAGE_SERVER} || __PACKAGE__->SKIP_CLASS;
 my $server = $ENV{BRICOLAGE_SERVER};
 $server = "http://$server" unless $server =~ m!^https?://!;
 $server =~ s|/$||;

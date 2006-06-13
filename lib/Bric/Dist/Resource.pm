@@ -1859,6 +1859,18 @@ $get_em = sub {
             $tables .= ', job__resource jr';
             $wheres .= ' AND r.id = jr.resource__id AND '
                     . any_where $v, 'jr.job__id = ?', \@params;
+        } elsif ($k eq 'oc_id') {
+            # if job_id is undef, just return no hits rather than toast the
+            # database with the index-defeating query
+            # "WHERE outut_channel__id = NULL"
+            return ($href ? {} : []) unless defined $v;
+            $tables .= ', job__resource jrr, job__server_type jst, '
+                     . 'server_type__output_channel stoc';
+            $wheres .= ' AND r.id = jrr.resource__id '
+                     . 'AND jrr.job__id = jst.job__id '
+                     . 'AND jst.server_type__id = stoc.server_type__id '
+                     . 'AND stoc.output_channel__id = ?';
+            push @params, $v;
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";

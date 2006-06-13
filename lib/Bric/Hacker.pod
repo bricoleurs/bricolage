@@ -498,12 +498,17 @@ Say you need to distribute files via a protocol that Bricolage doesn't currently
 support -- say, an new variant of FTP called "FooTP." You'll need to create a
 new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 
-=head1 MERGING CHANGES FROM BRANCH TO TRUNK
+=head1 MERGING CHANGES BETWEEN BRANCHES
 
 If you're a Bricolage developer with permission to commit to the Subversion
-repository, you may occasionally have to merge changes from a release branch
-(where bug fixes are generally committed) into the trunk. Here's how to do it
-with a minimum of hassle.
+repository, you may occasionally have to merge changes from one branch to
+another.
+
+By far, the most common merge will be from a release branch (e.g. rev_1_8) to
+trunk. For this reason, the documentation below will assume that you are
+merging from a branch to trunk; however, there is still occasion to merge
+between branches, e.g. rev_1_6 to rev_1_8. In these cases, use "rev_1_X"
+instead of "trunk".
 
 =over 4
 
@@ -547,20 +552,24 @@ directory, and branches in the F<branches> subdirectory. The other half of the
 convention is that no one should ever commit changes to a tag after it has
 been created.
 
-Tags are named for the branch name, the word "merge", and the revision number
-up to which the merge was made. For example, if a merge was committed to the
-trunk from the rev_1_8 branch in Subversion revision # 5694, the branch would
-be tagged "rev_1_8_merge_5694".
+Tags are stored in subdirectories of F<tags> based on the branch you are
+merging I<from>.  For example, if you are merging from rev_1_8 to Ftrunk,
+the tag belongs in F<tags/rev_1_8/>.
+
+Tags are then named for the branch you are merging I<to> and the revision
+number of the merge itself. For example, if a merge was committed to the trunk
+from the rev_1_8 branch in revision 5694, the branch would be located at
+F<tags/rev_1_8/trunk-5694>.
 
 So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
-  % svn list https://svn.bricolage.cc/bricolage/tags | grep rev_1_8
-  rev_1_8_merge_5694/
-  rev_1_8_merge_5825/
-  rev_1_8_merge_5902/
-  rev_1_8_merge_5995/
+  % svn list https://svn.bricolage.cc/bricolage/tags/rev_1_8 | grep trunk
+  trunk-5694/
+  trunk-5825/
+  trunk-5902/
+  trunk-5995/
 
 If the branch has never been merged into the trunk you can get the revision
 number at the time the branch was created using C<svn log> command:
@@ -618,16 +627,16 @@ in, and the name of the new tag you'll create for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
-  % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8_merge_6123.'
+  % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8/trunk-6123.'
 
 =item 7
 
 Tag the branch with the last revision, so that future merges can find it and
 know to merge only from that revision on.
 
-  % svn cp https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    https://svn.bricolage.cc/bricolage/tags/rev_1_8_merge_6123 \
-    -m 'Merge tag for rev_1_8 to revision 6123.'
+  % svn cp -m 'Tag for merge to trunk revision 6123.' \
+    https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    https://svn.bricolage.cc/bricolage/tags/rev_1_8/trunk-6123
 
 =back
 
@@ -696,9 +705,9 @@ release!
 Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:
 
-  % svn cp https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    https://svn.bricolage.cc/bricolage/tags/rel_1_8_0 \
-    -m 'Tag for the 1.8.0 release of Bricolage.'
+  % svn cp -m 'Tag for the 1.8.0 release of Bricolage.' \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
+    http://svn.bricolage.cc/bricolage/tags/releases/1.8.0
 
 The tag is mainly kept for the purposes of record-keeping. And since copies
 are cheap in Subversion, it's worthwhile.
