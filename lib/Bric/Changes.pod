@@ -57,6 +57,12 @@ aliases in the status message. Reported by Marshall. [David]
 Added C<get_site()> to L<Bric::Biz::Asset|Bric::Biz::Asset>, and therefore to
 the story, media, and template classes. Suggested by Marshall. [David]
 
+=item *
+
+Added support for the the C<oc_id> parameter to
+L<Bric::Dist::Resource|Bric::Dist::Resource> to simplify looking up stale
+story and media files for expiration. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -114,6 +120,13 @@ David]
 Failing to fill in either the "To" or "Bcc" fields of an Email distribution
 action no longer throws you back a screen, but stays in the Email action
 profile. Reported by Scott. [David]
+
+=item *
+
+Fixed media publishing so that when a media document is published to more than
+one output channel and there are differences in the URIs for that media
+document between the output channels that they won't trigger the expriration
+of each other's files. Reported by Rod Taylor. [David]
 
 =back
 

@@ -1840,6 +1840,18 @@ $get_em = sub {
             $wheres .= " AND r.id NOT IN (SELECT resource__id FROM "
                           . "job__resource WHERE job__id = ?)";
             push @params, $v;
+        } elsif ($k eq 'oc_id') {
+            # if job_id is undef, just return no hits rather than toast the
+            # database with the index-defeating query
+            # "WHERE outut_channel__id = NULL"
+            return ($href ? {} : []) unless defined $v;
+            $tables .= ', job__resource jrr, job__server_type jst, '
+                     . 'server_type__output_channel stoc';
+            $wheres .= ' AND r.id = jrr.resource__id '
+                     . 'AND jrr.job__id = jst.job__id '
+                     . 'AND jst.server_type__id = stoc.server_type__id '
+                     . 'AND stoc.output_channel__id = ?';
+            push @params, $v;
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";
@@ -1854,6 +1866,12 @@ $get_em = sub {
     # Prepare the SELECT statement.
     local $" = ', ';
     my $qry_cols = $ids ? ['r.id'] : \@cols;
+    print STDERR qq{
+        SELECT @$qry_cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY path
+    };
     my $sel = prepare_ca(qq{
         SELECT @$qry_cols
         FROM   $tables
