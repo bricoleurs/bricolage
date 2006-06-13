@@ -1866,12 +1866,6 @@ $get_em = sub {
     # Prepare the SELECT statement.
     local $" = ', ';
     my $qry_cols = $ids ? ['r.id'] : \@cols;
-    print STDERR qq{
-        SELECT @$qry_cols
-        FROM   $tables
-        WHERE  $wheres
-        ORDER BY path
-    };
     my $sel = prepare_ca(qq{
         SELECT @$qry_cols
         FROM   $tables
