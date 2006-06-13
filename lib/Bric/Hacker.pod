@@ -501,14 +501,14 @@ new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 =head1 MERGING CHANGES BETWEEN BRANCHES
 
 If you're a Bricolage developer with permission to commit to the Subversion
-repository, you may occasionally have to merge changes from one branch to 
-another.  
+repository, you may occasionally have to merge changes from one branch to
+another.
 
-By far, the most common merge will be from a release branch (e.g.
-rev_1_8) to trunk.  For this reason, the documentation below will assume
-that you are merging from a branch to trunk; however, there is still occasion 
-to merge between branches, e.g. rev_1_6 to rev_1_8.  In these cases, use 
-"rev_1_X" instead of "trunk".
+By far, the most common merge will be from a release branch (e.g. rev_1_8) to
+trunk. For this reason, the documentation below will assume that you are
+merging from a branch to trunk; however, there is still occasion to merge
+between branches, e.g. rev_1_6 to rev_1_8. In these cases, use "rev_1_X"
+instead of "trunk".
 
 =over 4
 
@@ -556,10 +556,10 @@ Tags are stored in subdirectories of F<tags> based on the branch you are
 merging I<from>.  For example, if you are merging from rev_1_8 to Ftrunk,
 the tag belongs in F<tags/rev_1_8/>.
 
-Tags are then named for the branch you are merging I<to> and the revision 
-number of the merge itself.  For example, if a merge was committed to the
-trunk from the rev_1_8 branch in revision 5694, the branch would be located
-at F<tags/rev_1_8/trunk-5694>.
+Tags are then named for the branch you are merging I<to> and the revision
+number of the merge itself. For example, if a merge was committed to the trunk
+from the rev_1_8 branch in revision 5694, the branch would be located at
+F<tags/rev_1_8/trunk-5694>.
 
 So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
@@ -637,7 +637,6 @@ know to merge only from that revision on.
   % svn cp -m 'Tag for merge to trunk revision 6123.' \
     https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
     https://svn.bricolage.cc/bricolage/tags/rev_1_8/trunk-6123
-    
 
 =back
 
