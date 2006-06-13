@@ -194,6 +194,11 @@ rather than EDIT. Spot and quasi-patch by Chris Sutton.
 New fields now are properly configured with the their C<multiple> attribute
 copied from the field type. [Alexey Sheynuk]
 
+=item *
+
+New destinations can now be created via
+L<Bric::Soap::Destination|Bric::Soap::Destination>. [Christian Niles]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

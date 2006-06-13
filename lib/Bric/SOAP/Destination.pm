@@ -398,8 +398,10 @@ sub load_asset {
 
             # then set, save, and re-instantiate
             $asset->set_move_method($adata->{move_method});
-            $asset->save();
-            $asset = Bric::Dist::ServerType->lookup({ id => $id });
+            if ($update) {
+                $asset->save();
+                $asset = Bric::Dist::ServerType->lookup({ id => $id });
+            }
         }
 
         # Site
