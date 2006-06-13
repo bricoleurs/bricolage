@@ -138,6 +138,12 @@ PUBLISH items on the Publish Desk. [Christian Niles]
 F<bric_queued> now works with all burners, not just the Mason burner. Reported
 by Christian Niles. [Scott]
 
+=item *
+
+A required field deleted from an element definition will now be deletable in
+the stories and media in which it appears, instead of remaining required. [Rod
+Taylor]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
