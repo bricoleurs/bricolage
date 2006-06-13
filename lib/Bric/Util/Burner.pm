@@ -103,6 +103,16 @@ constant.
 
 =item *
 
+Modify Bric::Util::Burner.
+
+Look for this line:
+
+  require Bric::Util::Burner::Template if eval { require HTML::Template };
+
+Just below it, add similar code to load your templating subclass.
+
+=item *
+
 Done! Now start testing...
 
 =back
@@ -145,6 +155,9 @@ use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
 use URI;
+require Bric::Util::Burner::Template if eval { require HTML::Template };
+require Bric::Util::Burner::TemplateToolkit
+    if eval { require Template && $Template::VERSION >= 2.14 };
 
 #=============================================================================#
 # Function Prototypes                  #

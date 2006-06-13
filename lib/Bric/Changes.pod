@@ -133,6 +133,11 @@ of each other's files. Reported by Rod Taylor. [David]
 Fixed bug where users granted CREATE permission were unexpectedly allowed to
 PUBLISH items on the Publish Desk. [Christian Niles]
 
+=item *
+
+F<bric_queued> now works with all burners, not just the Mason burner. Reported
+by Christian Niles. [Scott]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
