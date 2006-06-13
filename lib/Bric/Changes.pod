@@ -144,6 +144,11 @@ A required field deleted from an element definition will now be deletable in
 the stories and media in which it appears, instead of remaining required. [Rod
 Taylor]
 
+=item *
+
+Adding a new source to a group when you create it no longer causes an error.
+Thanks to Alex Howarth for the spot! [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
