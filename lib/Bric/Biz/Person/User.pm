@@ -994,7 +994,7 @@ sub what_can {
             # group.
             $chk_admin ||= $gid == ADMIN_GRP_ID;
             # Grab the greatest permission.
-            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+            $priv = $acl->{$gid} if exists $acl->{$gid} && $acl->{$gid} > $priv;
         }
         # If they're in the global admins group, allow no greater access than
         # READ access.
@@ -1003,7 +1003,7 @@ sub what_can {
     } else {
         # Grab the greatest permission.
         for my $gid (@gids) {
-            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+            $priv = $acl->{$gid} if exists $acl->{$gid} && $acl->{$gid} > $priv;
         }
     }
     return $priv;

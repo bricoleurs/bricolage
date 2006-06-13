@@ -128,6 +128,11 @@ one output channel and there are differences in the URIs for that media
 document between the output channels that they won't trigger the expriration
 of each other's files. Reported by Rod Taylor. [David]
 
+=item *
+
+Fixed bug where users granted CREATE permission were unexpectedly allowed to
+PUBLISH items on the Publish Desk. [Christian Niles]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
