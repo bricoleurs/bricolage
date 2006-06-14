@@ -61,6 +61,12 @@ and an outdated warning about Apache::SizeLimit. [Marshall]
 Internationalized the JavaScript messages for the Find/Replace dialog box,
 although there are currently no translations. [David]
 
+=item *
+
+Added a close icon to the drag bar of the dialog box. This is useful when the
+dialog box is bigger than the browser window and the close button therefore is
+off-screen. [David]
+
 =back
 
 =head2 Bug Fixes

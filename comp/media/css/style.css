@@ -647,6 +647,18 @@ button:active {
     border-bottom-color: #e8e8cd;
 }
 
+button.dclose {
+    font-weight: 900;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: #993300;
+    margin: 0;
+    font-size: 160%;
+}
+
+button.dclose:active { color: black; }
+
 /******************************************************
  * HACKS                                              *
  ******************************************************/

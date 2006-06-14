@@ -1,5 +1,8 @@
 <div class="dialog" id="<% $id %>">
-  <div class="dragger" onmousedown="beginDrag(event, this.parentNode);"><% $lang->maketext($title) %></div>
+  <div class="dragger" onmousedown="beginDrag(event, this.parentNode);">
+    <button class="dclose" title="<% $lang->maketext('Close this dialog box') . ' ' . $lang->maketext('(Access Key: c)') %>" accesskey="c" onclick="return closeDialog(document.getElementById('<% $id %>'));">&#x00d7;</button>
+    <% $lang->maketext($title) %>
+  </div>
   <div class="dialogcontent">
 <%perl>;
 $m->print($m->content, qq{<ul class="buttons">\n});
