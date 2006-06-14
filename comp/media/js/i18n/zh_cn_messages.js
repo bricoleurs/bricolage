@@ -15,5 +15,12 @@ var empty_field_msg = "你必须给定这个的值 ";
 var illegal_chars_msg = " 内含非法字元！";
 var warn_delete_msg = "这样会把好些内容都删除了，您确定要继续？";
 var uri_format_msg = "URI formats must contain %{categories}";
-
-
+var no_search_string = 'No search string specified';
+var none_found = 'None found';
+var no_more_instances = 'No more instances found';
+var replaced_none = 'Replaced 0 occurrences';
+var found_from = 'Found from character ';
+var found_to = ' to character ';
+var replaced = 'Replaced ';
+var occurrence = ' occurrence';
+var occurrences = ' occurrences';

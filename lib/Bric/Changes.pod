@@ -56,6 +56,11 @@ Updated F<README.MacOSX> with instructions on how to use the built-in version
 of Apache instead of compiling everything yourself.  Also fixed a broken link
 and an outdated warning about Apache::SizeLimit. [Marshall]
 
+=item *
+
+Internationalized the JavaScript messages for the Find/Replace dialog box,
+although there are currently no translations. [David]
+
 =back
 
 =head2 Bug Fixes
