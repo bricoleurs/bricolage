@@ -26,18 +26,18 @@ if ($object) {
 } elsif ($type && defined $id) {
     if ($type eq 'story') {
         $object = get_state_data('story_prof', 'story');
-        unless ($object && $object->get_id != $id) {
+        unless ($object && $object->get_id == $id) {
             $object = Bric::Biz::Asset::Business::Story->lookup({ 'id' => $id });
         }
     } elsif ($type eq 'template') {
         $object = get_state_data('tmpl_prof', 'template');
-        unless ($object && $object->get_id != $id) {
+        unless ($object && $object->get_id == $id) {
             $object = Bric::Biz::Asset::Template->lookup({ 'id' => $id });
         }
 
     } elsif ($type eq 'media') {
         $object = get_state_data('media_prof', 'media');
-        unless ($object && $object->get_id != $id) {
+        unless ($object && $object->get_id == $id) {
             $object = Bric::Biz::Asset::Business::Media->lookup({ 'id' => $id });
         }
     }
