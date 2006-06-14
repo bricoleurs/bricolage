@@ -487,18 +487,20 @@ sub load_asset {
 
         # avoid complex code if path hasn't changed on update
         if (not $update or $category->get_uri ne $cdata->{path}) {
-            (my $path = $cdata->{path}) =~ s/([_%\\])/\\$1/g;
+            my $path = $cdata->{path};
+            (my $esc_path = $path) =~ s/([_%\\])/\\$1/g;
 
             # check that the requested path doesn't already exist.
-            throw_ap(error => __PACKAGE__ . " : requested path \"$cdata->{path}\""
+            throw_ap(error => __PACKAGE__ . " : requested path \"$path\""
                        . " is already in use.")
               if $paths{$path} ||= Bric::Biz::Category->lookup({
-                  uri => $path,
-                  site_id => $site_id });
+                  uri     => $esc_path,
+                  site_id => $site_id,
+              });
 
             # special-case root category
             if ($path eq '/') {
-                $category->set_directory("");
+                $category->set_directory('');
             } else {
                 # get directory and parent
                 my ($parent_path, $directory) = $path =~ m!(.*)/([^/]+)$!;
@@ -506,11 +508,14 @@ sub load_asset {
                            . " path \"$path\"")
                   unless defined $directory;
                 $parent_path = '/' unless length $parent_path;
+                (my $esc_parent_path = $parent_path) =~ s/([_%\\])/\\$1/g;
 
                 # make sure we've got a parent
                 my $parent = $paths{$parent_path} ||=
-                  Bric::Biz::Category->lookup({ uri => $parent_path,
-                                                site_id => $site_id });
+                    Bric::Biz::Category->lookup({
+                        uri => $esc_parent_path,
+                        site_id => $site_id,
+                    });
                 throw_ap(error => __PACKAGE__ . " : couldn't find category object "
                            . "for path \"$parent_path\"")
                   unless $parent;
@@ -519,8 +524,9 @@ sub load_asset {
                 $category->set_parent_id($parent->get_id);
                 $category->set_directory($directory);
 
-                # save category
+                # save category and cache it for possible subcategories.
                 $category->save;
+                $paths{$category->get_uri} = $category;
             }
         }
 

@@ -155,6 +155,12 @@ Changing an asset note and then going back to the notes screen before saving
 the asset now properly shows the changed note instead of the old note.
 Reported by Phillip Smith. [David]
 
+=item *
+
+New categories created via the SOAP interface with underscores in their URIs
+no longer end up with backslashes in the URIs. Reported by Ashlee Caul.
+[David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
