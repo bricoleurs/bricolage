@@ -174,7 +174,7 @@ Reported by Marshall. [David]
 
 =item *
 
-The C<get_attr_hash()> method of L<Bric::Util::Attribut|Bric::Util::Attribute>
+The C<get_attr_hash()> method of L<Bric::Util::Attribute|Bric::Util::Attribute>
 now excludes deleted attributes in its return value. [David]
 
 =back
