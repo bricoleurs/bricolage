@@ -172,6 +172,11 @@ Marshall. [David]
 Status message now appear after saving or deleting a contributor type.
 Reported by Marshall. [David]
 
+=item *
+
+The C<get_attr_hash()> method of L<Bric::Util::Attribut|Bric::Util::Attribute>
+now excludes deleted attributes in its return value. [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)

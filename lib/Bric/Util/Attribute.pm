@@ -742,7 +742,11 @@ sub get_attr_hash {
 
     my $val = $self->_get_val($param);
 
-    return { map { $_ => $val->{$_}->{'value'} } keys %$val };
+    return {
+        map  { $_ => $val->{$_}->{value} }
+        grep { !$val->{$_}->{_delete} }
+        keys %$val
+    };
 }
 
 #------------------------------------------------------------------------------#
