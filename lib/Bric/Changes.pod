@@ -233,6 +233,10 @@ Using Internet Explorer to create a media document via a the upload field in a
 related media element no longer uses a full Windows file system path. Reported
 by Tom Kjeldsen. [David]
 
+=item *
+
+Fixed caching issue with reversion of assets to earlier versions. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

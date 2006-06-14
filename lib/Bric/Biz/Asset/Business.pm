@@ -1649,9 +1649,9 @@ NONE
 
 sub get_element {
     my $self = shift;
-    my $object = $self->_get_alias || $self;
     my $element = $self->_get('_element');
     unless ($element) {
+        my $object = $self->_get_alias || $self;
         $element = Bric::Biz::Element::Container->lookup({
             object    => $object,
             parent_id => undef,
