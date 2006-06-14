@@ -216,6 +216,11 @@ Fields in an element that are based on field types deleted from the element
 type can now still be edited in Bulk Edit. Thanks to Nate Perry-Thistle for
 the spot. [David]
 
+=item *
+
+New users can once again be created when using the LDAP authentication engine.
+Reported by Christian Niles. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
