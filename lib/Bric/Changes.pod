@@ -237,6 +237,11 @@ by Tom Kjeldsen. [David]
 
 Fixed caching issue with reversion of assets to earlier versions. [David]
 
+=item *
+
+The category SOAP interface now allows the C<< <path> >> XML element to not
+have a trailing slash, as was the case in Bricolge 1.8 and earlier. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
