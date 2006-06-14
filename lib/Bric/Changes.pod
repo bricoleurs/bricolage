@@ -161,6 +161,12 @@ New categories created via the SOAP interface with underscores in their URIs
 no longer end up with backslashes in the URIs. Reported by Ashlee Caul.
 [David]
 
+=item *
+
+Users attempting to access the "New Alias" link without permission to create
+an alias will now be told so, instead of getting an error. Reported by
+Marshall. [David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)
