@@ -253,6 +253,12 @@ Aliases are once again identifyable on desks by a different background color
 for the title, and now also with an arrow icon that appears just before the
 story title. [David]
 
+=item *
+
+A field deleted from the contributor profile no longer continues to appear in
+the profile when pressing the "Save and Stay" button. Reported by Marshall.
+[David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
