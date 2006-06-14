@@ -2227,7 +2227,7 @@ sub _deserialize_pod {
                 unless ($field_type) {
                     _bad_field(\%field_types, $kn, $line_num)
                         unless $fields_for{$kn} && @{$fields_for{$kn}};
-                    $field_type = shift @{$fields_for{$kn}};
+                    $field_type = shift( @{$fields_for{$kn}} )->get_field_type;
                 }
 
                 # Make sure that it's okay if it's repeatable.
@@ -2307,7 +2307,7 @@ sub _deserialize_pod {
             }
 
             # Fix up the content.
-            if ($field_types{$kn}->get_sql_type eq 'date') {
+            if ($field_type->get_sql_type eq 'date') {
                 # Eliminate white space to set date.
                 $content =~ s/^\s+//;
                 $content =~ s/\s+$//;

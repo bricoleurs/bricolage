@@ -140,7 +140,7 @@ their respective folders in comp/media/. [Marshall]
 
 =item *
 
-Slightly tweaked the background color on table rows to make them easier to 
+Slightly tweaked the background color on table rows to make them easier to
 read. [Marshall]
 
 =item *
@@ -150,13 +150,13 @@ glitches. [Marshall]
 
 =item *
 
-Aliases no longer show up in the search results of the "New Alias" screen, 
-since aliases can't be aliased.  The "New Alias" screen now also shows the site
+Aliases no longer show up in the search results of the "New Alias" screen,
+since aliases can't be aliased. The "New Alias" screen now also shows the site
 an asset belongs to if there are multiple sites. [Marshall]
 
 =item *
 
-Fixed appearance of template diffs.  Insertions and deletions now have color
+Fixed appearance of template diffs. Insertions and deletions now have color
 and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
 
 =item *
@@ -166,7 +166,7 @@ find/replace and cheat sheet buttons to the top right of the box. [Marshall]
 
 =item *
 
-Character counts in Bulk Edit are now properly updated after using 
+Character counts in Bulk Edit are now properly updated after using
 Find/Replace. [Marshall]
 
 =item *
@@ -181,7 +181,7 @@ on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
 
 =item *
 
-Fixed a warning from bric_republish when run without a password.  Thanks to
+Fixed a warning from F<bric_republish> when run without a password. Thanks to
 John Gillis for the spot. (bug 1188) [Marshall]
 
 =item *
@@ -198,6 +198,12 @@ copied from the field type. [Alexey Sheynuk]
 
 New destinations can now be created via
 L<Bric::Soap::Destination|Bric::Soap::Destination>. [Christian Niles]
+
+=item *
+
+Fields in an element that are based on field types deleted from the element
+type can now still be edited in Bulk Edit. Thanks to Nate Perry-Thistle for
+the spot. [David]
 
 =back
 
