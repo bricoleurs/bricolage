@@ -119,7 +119,7 @@ sub revert : Callback(priority => 6) {
     # Deploy the template to the user's sandbox.
     my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
     $sb->deploy($fa);
-
+    $self->params->{checkout} = 1; # Reload checked-out template.
     clear_state($widget);
 }
 

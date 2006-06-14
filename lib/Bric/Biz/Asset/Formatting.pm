@@ -1841,6 +1841,8 @@ sub revert {
         throw_gen "May not revert a non checked out version";
     }
 
+    # Clear out the cache and look up the old version.
+    $self->uncache_me;
     my $revert_obj = __PACKAGE__->lookup({
         id              => $self->_get_id,
         version         => $version
