@@ -73,6 +73,11 @@ Optimized the C<get_notes()> and C<has_notes()> methods of
 L<Bric::Biz::Asset|Bric::Biz::Asset> and therefore of the story, media, and
 template classes. [David]
 
+=item *
+
+Aliases are now indicated in Find Stories by an arrow icon just before the
+story title. Suggested by Paul Orrock. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -241,6 +246,12 @@ Fixed caching issue with reversion of assets to earlier versions. [David]
 
 The category SOAP interface now allows the C<< <path> >> XML element to not
 have a trailing slash, as was the case in Bricolge 1.8 and earlier. [David]
+
+=item *
+
+Aliases are once again identifyable on desks by a different background color
+for the title, and now also with an arrow icon that appears just before the
+story title. [David]
 
 =back
 

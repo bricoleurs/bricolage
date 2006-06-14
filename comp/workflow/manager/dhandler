@@ -126,10 +126,17 @@ my $alter = {
     },
 
     title => sub {
-        $m->comp('/widgets/profile/preview_link.mc',
-                 type  => $type,
-                 value => '<span class="l10n">' . shift() . '</span>',
-                 doc   => shift)
+        my ($title, $obj) = @_;
+        my $format = '%s';
+        if (my $meth = $obj->can('get_alias_id')) {
+            $format = '<span class="alias">%s</span>' if $obj->$meth;
+        }
+        sprintf $format, $m->comp(
+            '/widgets/profile/preview_link.mc',
+            type  => $type,
+            value => $title,
+            doc   => $obj,
+        );
     }
 };
 

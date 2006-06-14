@@ -1,7 +1,7 @@
 <div class="item">
   <div class="head">
     <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
-    <div class="title<% ($highlight eq 'name' ? ' sorted' : '') %>"><% $uri || $name %></div>
+    <div class="title<% ($highlight eq 'name' ? ' sorted' : $alias ? $alias : '') %>"><% $uri || $name %></div>
     <% $m->comp('publish_status_span.mc',
                 sorted => $highlight eq 'name' ? ' sorted' : '',
                 asset => $obj) %>
@@ -87,34 +87,24 @@ my $user_id = $obj->get_user__id;
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);
 my $header_class = 'lightHeader';
-
+my $alias = '';
 my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
-my $alias = '';
-my $title_class = 'title';
 my $idv_class = 'idv';
+
 if ($class eq 'template') {
-    $date = $obj->get_deploy_date;
+    $date       = $obj->get_deploy_date;
     $date_label = 'Deployed Date';
-    $name = $obj->get_uri;
+    $name       = $obj->get_uri;
 } else {
-    $name = $obj->get_name;
-    $date = $obj->get_cover_date;
+    $name       = $obj->get_name;
+    $date       = $obj->get_cover_date;
     $date_label = 'Cover Date';
-    $type_label = $disp  . ' Type';
-    my $co = $vlabel eq 'Edit';
-    $uuid = $obj->get_uuid;
-    $alias = 'alias' if $obj->get_alias_id;
-    if ($highlight eq 'name') {
-        $title_class .= "sorted";
-    } elsif ($alias) {
-        $title_class .= $alias;
-    }
-    if ($highlight eq 'id') {
-        $idv_class .= "sorted";
-    } elsif ($alias) {
-        $idv_class .= $alias;
-    }
+    $type_label = "$disp Type";
+    my $co      = $vlabel eq 'Edit';
+    $uuid       = $obj->get_uuid;
+    $alias      = ' alias' if $obj->get_alias_id;
+
     if ($class eq 'media') {
         $uri = $m->comp(
             '/widgets/profile/preview_link.mc',
@@ -130,7 +120,6 @@ if ($class eq 'template') {
             value => $name,
         );
     }
-    $header_class = 'aliasHeader' if $obj->get_alias_id;
 }
 
 my $classes = { $highlight => ' class="sorted"' };
