@@ -237,6 +237,11 @@ automatically gets the focus. [David]
 Added upload and download feature to the template interface, so that templates
 can optionally be uploaded or downloaded. Suggested by Chris Sutton. [David]
 
+=item *
+
+Eliminated an endless loop in prompting for the PostgreSQL user during
+installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
+
 =back
 
 =head2 Improvements
