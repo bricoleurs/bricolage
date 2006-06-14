@@ -221,6 +221,12 @@ the spot. [David]
 New users can once again be created when using the LDAP authentication engine.
 Reported by Christian Niles. [David]
 
+=item *
+
+Using Internet Explorer to create a media document via a the upload field in a
+related media element no longer uses a full Windows file system path. Reported
+by Tom Kjeldsen. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
