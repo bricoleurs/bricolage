@@ -105,6 +105,7 @@ number the same but will associate a user with the object.
 # Standard Dependencies
 
 use strict;
+use List::Util qw(first);
 
 #--------------------------------------#
 # Programmatic Dependencies
@@ -188,6 +189,7 @@ BEGIN {
                         _active           => Bric::FIELD_NONE,
                         _delete           => Bric::FIELD_NONE,
                         _notes            => Bric::FIELD_NONE,
+                        _got_notes        => Bric::FIELD_NONE,
                         _versions         => Bric::FIELD_NONE,
                         _desk             => Bric::FIELD_NONE,
                         _site             => Bric::FIELD_NONE,
@@ -1038,7 +1040,7 @@ NONE
 
 =item $user__id = $asset->get_modifier()
 
-Returns the user id of the person who edited this version of the asset.   If 
+Returns the user id of the person who edited this version of the asset.   If
 the asset is checked out it will be the same as the user who checked it out.
 
 B<Throws:>
@@ -1516,21 +1518,30 @@ B<Notes:> NONE.
 
 sub get_notes {
     my $self  = shift;
-    my $table = $self->VERSION_TABLE;
-    my $col   = $self->TABLE . '__id';
-    my $sel   = prepare_c("
-        SELECT version, note
-        FROM   $table
-        WHERE  $col = ?
-        ORDER BY id DESC"
-    );
-    execute($sel, $self->get_id);
-    bind_columns($sel, \my ($version, $note));
-    my %notes;
-    while (fetch($sel)) {
-        $notes{$version} = $note;
+    my $notes = $self->_get('_notes');
+
+    unless ($notes) {
+        my $table = $self->VERSION_TABLE;
+        my $col   = $self->TABLE . '__id';
+        my $sel   = prepare_c("
+            SELECT version, note
+            FROM   $table
+            WHERE  $col = ?
+            ORDER BY id DESC"
+        );
+        execute($sel, $self->get_id);
+        bind_columns($sel, \my ($version, $note));
+        while (fetch($sel)) {
+            $notes->{$version} = $note;
+        }
+
+        $self->_set(['_notes'] => [$notes] );
     }
-    return \%notes;
+
+    if (defined( my $note = $self->get_note)) {
+        $notes->{$self->get_version} = $note;
+    }
+    return $notes;
 }
 
 ################################################################################
@@ -1544,16 +1555,22 @@ does not.
 
 sub has_notes {
     my $self  = shift;
+    if (first { $_ } $self->_get(qw(note _got_notes _notes))) {
+        return $self;
+    }
+
     my $table = $self->VERSION_TABLE;
     my $col   = $self->TABLE . '__id';
-    return $self if row_array(prepare_c("
+    my ($got_notes) = row_array(prepare_c("
         SELECT 1
         FROM   $table
         WHERE  $col = ?
                AND note IS NOT NULL
         LIMIT  1
     "), $self->get_id);
-    return;
+
+    $self->_set(['_got_notes'] => [ $got_notes ]);
+    return $got_notes ? $self : undef;
 }
 
 =item $asset = $asset->activate()
@@ -1562,11 +1579,11 @@ This will activate a nonactive asset
 
 B<Throws:>
 
-NONE 
+NONE
 
 B<Side Effects:>
 
-NONE 
+NONE
 
 B<Notes:>
 
@@ -1586,15 +1603,15 @@ sub activate {
 
 =item $asset = $asset->deactivate()
 
-This will set the asset to a non active state 
+This will set the asset to a non active state
 
 B<Throws:>
 
-NONE 
+NONE
 
 B<Side Effects:>
 
-NONE 
+NONE
 
 B<Notes:>
 

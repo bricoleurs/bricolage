@@ -12,15 +12,10 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 
 my %types = (
-    'Bric::Biz::Asset::Template'        => ['tmpl_prof', 'template'],
-    'Bric::Biz::Asset::Business::Story' => ['story_prof', 'story'],
-    'Bric::Biz::Asset::Business::Media' => ['media_prof', 'media'],
+    template => 'tmpl_prof',
+    story    => 'story_prof',
+    media    => 'media_prof',
 );
-
-for my $sub (qw(Image Audio Video)) {
-    $types{"Bric::Biz::Asset::Business::Media::$sub"} =
-      $types{'Bric::Biz::Asset::Business::Media'};
-}
 
 my $key = CLASS_KEY . '|note';
 
@@ -34,14 +29,14 @@ sub add_note : Callback {
     set_state_data($self->class_key, 'obj');
 
     # Cache the object in the session if it's the current object.
-    my @state_vals = @{ $types{ ref $obj } };
-    if (my $c_obj = get_state_data(@state_vals)) {
+    my $type = $obj->key_name;
+    if (my $c_obj = get_state_data($types{$type} => $type)) {
         my $cid = $c_obj->get_id;
         my $id = $obj->get_id;
         if ((!defined $cid && !defined $id) ||
             (defined $cid && defined $id && $id == $cid)) {
             # It's the same object. Put it in the cache with the new note.
-            set_state_data(@state_vals, $obj);
+            set_state_data($types{$type}, $type, $obj);
         } else {
             # It's not the same as the cached object. So just save it.
             $obj->save;

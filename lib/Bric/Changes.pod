@@ -67,6 +67,12 @@ Added a close icon to the drag bar of the dialog box. This is useful when the
 dialog box is bigger than the browser window and the close button therefore is
 off-screen. [David]
 
+=item *
+
+Optimized the C<get_notes()> and C<has_notes()> methods of
+L<Bric::Biz::Asset|Bric::Biz::Asset> and therefore of the story, media, and
+template classes. [David]
+
 =back
 
 =head2 Bug Fixes
