@@ -89,8 +89,10 @@ sub save : Callback {
     # Change the password, if necessary.
     if (!$no_save && (my $pass = $param->{pass_1})) {
         # There is a new password. Let's see if we can do anything with it.
-        if ( defined $param->{user_id} && $param->{user_id} != get_user_id() ||
-               $user->chk_password($param->{old_pass}) ) {
+        my $uid = $user->get_id;
+        if (!defined $uid || $uid != get_user_id()
+            || $user->chk_password($param->{old_pass})
+        ) {
             # The old password checks out. Check the new passwords.
             if ($pass ne $param->{pass_2}) {
                 # The new passwords don't match.
