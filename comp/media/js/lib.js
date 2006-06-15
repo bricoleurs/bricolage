@@ -12,6 +12,7 @@ Object.extend(Form.Element, {
         return false;
     }
 });
+
 // set up global to track names of double list managers
 var doubleLists = new Array();
 var formObj = '';
@@ -32,9 +33,9 @@ returns number of words in form field, based on number of spaces found
 function wordCount(textbox, words, chars) {
 
     // Get a handle on things.
-    textbox = document.getElementById(textbox);
-    words   = document.getElementById(words);
-    chars   = document.getElementById(chars);
+    textbox = $(textbox);
+    words   = $(words);
+    chars   = $(chars);
     
     // Remove POD tags and newlines.
     var text = textbox.value.replace(/=.*|\n+/g, ' ');
@@ -279,18 +280,6 @@ function reorder(obj) {
 
 
 /*
-input: a value, and a hash
-output: returns true if the value of 'what' is found in the values of the hash, otherwise returns false
-*/
-function inHash(what, hash) {
-
-    for (field in hash) {
-        if (hash[field] == what) return true;
-    }
-    return false;
-}
-
-/*
 Input: name of the year, month and days form fields, plus a handle to the currently modified form object.
 Output: adjusts the number of days in the days dropdown to be valid for the currently selected month, year, etc.
 */
@@ -336,18 +325,6 @@ function setDays (year, month, days, obj) {
     }
 
     daysObj.selectedIndex = (curDay == -1) ? 0 : curDay;
-}
-
-/*
-Input: a string.
-Output: Returns false if there is non whitespace text in the string, true if it is blank.
-*/
-function isEmpty(what) {
-    for (var i=0; i < what.length; i++) {
-        var c = what.charAt(i);
-        if ((c != ' ') && (c != '\n') && (c != '\t')) return false;
-    }
-    return true
 }
 
 function confirmDeletions() {
