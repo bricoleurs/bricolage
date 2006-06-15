@@ -272,6 +272,11 @@ representation of the contributors' names in the interface to edit
 contributors. They are now properly sorted by order. Reported by Bret Dawson.
 [David]
 
+=item *
+
+Documents without cover dates will no longer have broken URIs. Reported by
+Christian Niles. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

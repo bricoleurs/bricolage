@@ -2508,7 +2508,7 @@ sub _construct_uri {
                                                     : ('', '')
                                                     ;
 
-    $fmt =~ s/\/%{categories}/$category_uri/g;
+    $fmt =~ s{/%{categories}/?}{$category_uri}g;
     $fmt =~ s/%{slug}/$slug/g;
     unless ($fmt =~ s/%{uuid}/$self->get_uuid/ge) {
         unless ($fmt =~ s/%{base64_uuid}/$self->get_uuid_base64/ge) {
@@ -2517,19 +2517,18 @@ sub _construct_uri {
     }
 
     Bric::Util::Pref->use_user_prefs(0);
-    my $path = $self->get_cover_date($fmt) or return;
+    my $path = $self->get_cover_date($fmt);
     Bric::Util::Pref->use_user_prefs(1);
-    my @path = split( '/', $path );
+
+    # If there is no cover date, then strip out the strftime formats.
+    ($path = $fmt) =~ s/%(?:[%a-zA-Z]|{\w+}|\d+N)//g unless $path;
 
     # Return the URI with the case adjusted as necessary.
+    my $uri = Bric::Util::Trans::FS->cat_uri( split '/', $path ) . $slash;
     my $uri_case = $oc_obj->get_uri_case;
-    if( $uri_case == LOWERCASE ) {
-        return lc Bric::Util::Trans::FS->cat_uri(@path) . $slash;
-    } elsif( $uri_case == UPPERCASE ) {
-        return uc Bric::Util::Trans::FS->cat_uri(@path) . $slash;
-    } else {
-        return Bric::Util::Trans::FS->cat_uri(@path) . $slash;
-    }
+    return $uri_case == LOWERCASE ? lc $uri
+         : $uri_case == UPPERCASE ? uc $uri
+                                  : $uri;
 }
 
 ###############################################################################
