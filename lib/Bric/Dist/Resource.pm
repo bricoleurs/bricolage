@@ -345,6 +345,12 @@ possible values.
 Resources not associated with a given job ID. Best used in combination with
 C<story_id> or C<media_id>. May use C<ANY> for a list of possible values.
 
+=item oc_ic
+
+Resources associated with an output channel ID. Only returns the correct
+results if the C<job> table has not been cleared, because it joins to
+C<job__resource>, C<job__server_type>, and C<server_type__output_channel>.
+
 =back
 
 B<Throws:>

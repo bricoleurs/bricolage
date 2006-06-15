@@ -15,12 +15,18 @@
 
 
 <%once>;
-my $dispmap = { story => get_disp_name('story'),
-                media => get_disp_name('media')
-              };
+my $dispmap = {
+    story => get_disp_name('story'),
+    media => get_disp_name('media'),
+};
 </%once>
 <%init>;
 my ($class_key, $wf_id) = (parse_uri($r->uri))[3,4];
-my $disp = $dispmap->{$class_key} or redirect("/");
+my $disp = $dispmap->{$class_key} or redirect('/');
 my $context = "Workflow | Profile | $disp | Select Alias";
+
+# Check permissions.
+my $wf = Bric::Biz::Workflow->lookup({ id => $wf_id });
+my $gid =  $wf->get_start_desk->get_asset_grp;
+chk_authz(get_package_name($class_key), CREATE, 0, $gid);
 </%init>

@@ -10,7 +10,7 @@
     value   => '',
 &>
 
-<& /widgets/story_prof/story_prof.mc, 
+<& /widgets/story_prof/story_prof.mc,
     section  => 'new',
     work_id  => $w_id,
 &>

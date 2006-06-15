@@ -41,7 +41,8 @@ Sozonoff. [David]
 
 =item *
 
-Added tests for C<Bric::SOAP::Auth>. [Scott]
+Added tests for L<Bric::SOAP::Auth|Bric::SOAP::Auth>, although they haven't
+been integrated into C<make devtest>, yet. [Scott]
 
 =item *
 
@@ -53,7 +54,7 @@ Alex Howarth. [Marshall]
 =item *
 
 Updated F<README.MacOSX> with instructions on how to use the built-in version
-of Apache instead of compiling everything yourself.  Also fixed a broken link
+of Apache instead of compiling everything yourself. Also fixed a broken link
 and an outdated warning about Apache::SizeLimit. [Marshall]
 
 =item *
@@ -86,7 +87,8 @@ story title. Suggested by Paul Orrock. [David]
 
 =item *
 
-Fixed the rarely-used DISABLE_NAV_LAYER bricolage.conf directive. [Scott]
+Fixed the rarely-used C<DISABLE_NAV_LAYER> F<bricolage.conf> directive.
+[Scott]
 
 =item *
 
@@ -97,8 +99,8 @@ are no longer fatal. Reported by Nate Perry Thistle. [David]
 =item *
 
 Fixed reverted media that led to the "Too many Bric::Biz::Element::Container
-objects found". It was supposed to have been fixed in 1.10.1, but that fix
-unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
+objects found" error. It was supposed to have been fixed in 1.10.1, but that
+fix unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
 
 =item *
 
@@ -112,8 +114,7 @@ Perry-Thistle for the spot. [David]
 
 =item *
 
-Fixed highlighting when sorting by Element on desks (bug 1185). Patch from
-Brad Harder.
+Fixed highlighting when sorting by Element on desks (bug 1185). [Brad Harder]
 
 =item *
 
@@ -259,6 +260,11 @@ A field deleted from the contributor profile no longer continues to appear in
 the profile when pressing the "Save and Stay" button. Reported by Marshall.
 [David]
 
+=item *
+
+Eliminated an endless loop in prompting for the PostgreSQL user during
+installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
@@ -285,11 +291,6 @@ automatically gets the focus. [David]
 
 Added upload and download feature to the template interface, so that templates
 can optionally be uploaded or downloaded. Suggested by Chris Sutton. [David]
-
-=item *
-
-Eliminated an endless loop in prompting for the PostgreSQL user during
-installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
 
 =back
 
@@ -1761,6 +1762,39 @@ by Christian Niles. [Scott]
 A required field deleted from an element definition will now be deletable in
 the stories and media in which it appears, instead of remaining required. [Rod
 Taylor]
+
+=item *
+
+Adding a new source to a group when you create it no longer causes an error.
+Thanks to Alex Howarth for the spot! [David]
+
+=item *
+
+Changing an asset note and then going back to the notes screen before saving
+the asset now properly shows the changed note instead of the old note.
+Reported by Phillip Smith. [David]
+
+=item *
+
+New categories created via the SOAP interface with underscores in their URIs
+no longer end up with backslashes in the URIs. Reported by Ashlee Caul.
+[David]
+
+=item *
+
+Users attempting to access the "New Alias" link without permission to create
+an alias will now be told so, instead of getting an error. Reported by
+Marshall. [David]
+
+=item *
+
+Status message now appear after saving or deleting a contributor type.
+Reported by Marshall. [David]
+
+=item *
+
+The C<get_attr_hash()> method of L<Bric::Util::Attribute|Bric::Util::Attribute>
+now excludes deleted attributes in its return value. [David]
 
 =back
 

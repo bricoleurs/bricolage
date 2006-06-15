@@ -565,7 +565,7 @@ So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
-  % svn list https://svn.bricolage.cc/bricolage/tags/rev_1_8 | grep trunk
+  % svn list https://svn.bricolage.cc/bricolage/tags/merges/rev_1_8 | grep trunk
   trunk-5694/
   trunk-5825/
   trunk-5902/
@@ -636,7 +636,7 @@ know to merge only from that revision on.
 
   % svn cp -m 'Tag for merge to trunk revision 6123.' \
     https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    https://svn.bricolage.cc/bricolage/tags/rev_1_8/trunk-6123
+    https://svn.bricolage.cc/bricolage/tags/merges/rev_1_8/trunk-6123
 
 =back
 
