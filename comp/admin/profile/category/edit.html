@@ -96,6 +96,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          no_edit => $no_edit,
          widget  => $type,
          no_cb   => 1,
+         num     => 4,
          extra_code => defined $cat->get_id
            ? $m->scomp('/widgets/profile/checkbox.mc',
                        name        => 'grp_cascade',

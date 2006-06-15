@@ -67,6 +67,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'mt_profile',
          widget   => $type,
          no_edit => $no_edit,
+         num => 3
 );
 
 
