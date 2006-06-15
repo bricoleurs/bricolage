@@ -140,8 +140,8 @@ textarea {
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
 
-.label       { font-weight: bold}
-.redLabel    { font-weight: bold; color: red}
+.label          { font-weight: bold }
+.label.required { font-weight: bold; color: red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
 .errorMsg    { color: red; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
@@ -340,8 +340,7 @@ form .row {
     margin-bottom: 4px;
     z-index: 300;
 }
-form .row .label,
-form .row .redLabel {
+form .row .label {
     float: left;
     width: 130px;
     padding-right: 5px;

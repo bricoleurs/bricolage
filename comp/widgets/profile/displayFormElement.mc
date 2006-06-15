@@ -153,7 +153,7 @@ if ($objref) {
       @{ $methods->{$key}{get_args} }) if $methods->{$key}{get_meth};
     $width  ||= 578;
     $indent ||= FIELD_INDENT;
-    my $label    =  ($methods->{$key}{req}) ? "redLabel" : "label";
+    my $label    =  "label" . ($methods->{$key}{req} ? " required" : "");
 
     # Get the name and localize it, if necessary.
     $name = $methods->{$key}{disp} unless defined $name;
@@ -169,15 +169,12 @@ if ($objref) {
     $formSubs{$formType}->($key, $methods->{$key}, $value, $js, $name, $width,
                            $indent, $useTable, $label, $readOnly, $id)
       if $formSubs{$formType};
-
-    $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
-            . qq{"$methods->{$key}{disp}"</script>\n}) if $methods->{$key}{req};
 } elsif ($vals) {
     my $value     = $vals->{value};
     my $formType  = $vals->{props}{type} || return;;
     $width        ||= $vals->{width}  ? $vals->{width}  : 578;
     $indent       ||= $vals->{indent} ? $vals->{indent} : FIELD_INDENT;
-    my $label     =  $vals->{req} ? "redLabel" : "label";
+    my $label     =  "label" . ($vals->{req} ? " required" : "");
 
     # Get the name and localize it, if necessary.
     $name = $vals->{disp} unless defined $name;
@@ -188,9 +185,6 @@ if ($objref) {
     $formSubs{$formType}->($key, $vals, $value, $js, $name, $width, $indent,
                            $useTable, $label, $readOnly, $id)
       if $formSubs{$formType};
-
-    $m->out(qq{\n<script type="text/javascript">requiredFields['$key'] = }
-            . qq{"$vals->{disp}";\n</script>\n}) if $vals->{req};
 } else {
     # Fuhgedaboudit!
 }
@@ -220,8 +214,11 @@ my $len_sub = sub {
 my $inpt_sub = sub {
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
         $useTable, $label, $readOnly, $id, $extra) = @_;
-    my $class = ($type eq "text" || $type eq "password")
-      ? qq{ class="textInput"} : "";
+
+    push my @classes, "textInput" if ($type eq "text" || $type eq "password");
+    push @classes, "required" if ($vals->{req});
+    my $class = ' class="' . join(" ", @classes) . '"' if scalar @classes;
+
     $extra ||= '';
     my $out;
     my $disp_value = defined $value && $type ne 'password'
@@ -235,20 +232,27 @@ my $inpt_sub = sub {
       : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
-
+    
+    (my $idout = $id || $key) =~ s/\|/_/g;
     if ($type ne "checkbox" && $type ne "hidden") {
         $out  = qq{<div class="row">\n} if $useTable;
         $out .= qq{        <div class="$label">} if $useTable;
-        $out .= $name ? qq{$name:} : ($useTable) ? '&nbsp;' : '';
+        if ($name) {
+            $out .= qq{<label for="$idout">} unless $readOnly;
+            $out .= qq{$name};
+            $out .= qq{</label>} unless $readOnly;
+            $out .= ":";
+        } else {
+            $out .= ($useTable) ? '&nbsp;' : '';
+        }
         $out .= qq{</div>\n} if $useTable;
 
         $out .= qq{        <div class="input">} if $useTable;
-    if (!$readOnly) {
-            my $idout = $id ? qq{ id="$id"} : '';
-        $out .= qq{<input type="$type"${idout}$class name="$key"$src$disp_value$extra$js />};
-    } else {
+        if (!$readOnly) {
+            $out .= qq{<input type="$type"$class name="$key" id="$idout"$src$disp_value$extra$js />};
+        } else {
             $out .= qq{<p>};
-        $out .= ($type ne "password") ? $value : "********";
+            $out .= ($type ne "password") ? $value : "********";
             $out .= qq{</p>};
         }
         $out .= qq{</div>\n} if $useTable;

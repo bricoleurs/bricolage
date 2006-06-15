@@ -1,3 +1,17 @@
+// Extend Prototype's Form.Element
+Object.extend(Form.Element, {
+    label: function(element) {
+        element = $(element);
+        if (element.id) {
+            return $A(document.getElementsByTagName("label")).collect(function(label) {
+                if (label.htmlFor == element.id) {
+                    return Element.collectTextNodes(label);
+                }
+            }).join('');
+        }
+        return false;
+    }
+});
 // set up global to track names of double list managers
 var doubleLists = new Array();
 var formObj = '';
@@ -442,9 +456,22 @@ new values on the right are marked selected.
 */
 var confirming = false
 var submitting = false
-var requiredFields         = new Object();
 var specialCharacterFields = new Object();
 var specialOCFields = new Object();
+
+function checkRequiredFields(form) {
+    ret = true;
+    Form.getElements(form).each(function(element) {
+        if (Element.hasClassName(element, "required") 
+                && Element.visible(element) && $F(element) == '') {
+            alert(empty_field_msg + Form.Element.label(element));
+            element.focus();
+            ret = false;
+        }
+    });
+    return ret;
+}
+
 function confirmChanges(obj) {
     if (confirming || submitting) return false;
     confirming = true
@@ -477,20 +504,7 @@ function confirmChanges(obj) {
         }
     }
 
-    // make sure all required fields are filled out.
-    if (typeof requiredFields != "undefined") {         
-        for (field in requiredFields) {
-            tmp = obj[field];
-            if (typeof tmp != "undefined") {
-                if ( tmp.value == '') {
-                    alert(empty_field_msg + requiredFields[field]);
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }
+    if (!checkRequiredFields(obj)) { confirming = false; return false; }
 
     // examine registered special character fields
     if (typeof specialCharacterFields != "undefined") {         
