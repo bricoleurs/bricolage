@@ -65,6 +65,19 @@ for my $thing (qw(story media)) {
                   AND publish_date IS NOT NULL
                   AND first_publish_date IS NOT NULL
         },
+
+        # Try to catch any stragglers.
+        qq{UPDATE $thing
+           SET    published_version = NULL,
+                  publish_status = 0,
+                  publish_date = NULL,
+                  first_publish_date = NULL
+           WHERE  publish_status = '0'
+                  AND (
+                      publish_date is NOT NULL
+                      OR first_publish_date is NOT NULL
+                  )
+        },
     ;
 }
 

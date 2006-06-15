@@ -177,6 +177,14 @@ Reported by Marshall. [David]
 The C<get_attr_hash()> method of L<Bric::Util::Attribute|Bric::Util::Attribute>
 now excludes deleted attributes in its return value. [David]
 
+=item *
+
+Added another SQL statement to the 1.8.9 upgrade script
+F<inst/upgrade/1.8.9/fix_publish_status.pl> in an attempt to catch any
+straggers. Based on this post from Brad Harder:
+L<http://marc.theaimsgroup.com/?l=bricolage-general&m=114554491804521>.
+[David]
+
 =back
 
 =head1 VERSION 1.8.10 (2006-03-16)

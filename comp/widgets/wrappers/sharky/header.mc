@@ -234,4 +234,5 @@ while (my $txt = next_msg) {
   </tr>
   </table>
 % }
+% clear_msg() unless $firstMsg; # Reset.
 <br />
