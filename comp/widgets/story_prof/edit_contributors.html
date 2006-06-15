@@ -25,19 +25,21 @@ my $role_sub = sub {
       $c->get_id . qq{">$role</a>)};
 };
 $m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Contributors');
-$m->comp('/widgets/listManager/listManager.mc',
-         object    => 'contrib',
-         userSort => 0,
-         def_sort_field => 'order',
-         objs      => \@contribs,
-         profile   => undef,
-         alter     => { type => $role_sub },
-         fields    => [qw(lname fname type order)],
-         field_titles => { order => 'Order' },
-         field_values => $order_sub,
-         select =>  ['Delete', "$widget|delete_id"],
-         addition  => ''
-        );
+$m->comp(
+    '/widgets/listManager/listManager.mc',
+    object         => 'contrib',
+    userSort       => 0,
+    state_key      => 'story_contrib',
+    def_sort_field => 'order',
+    objs           => \@contribs,
+    profile        => undef,
+    alter          => { type => $role_sub },
+    fields         => [qw(lname fname type order)],
+    field_titles   => { order => 'Order' },
+    field_values   => $order_sub,
+    select         => [ 'Delete', "$widget|delete_id" ],
+    addition       => ''
+);
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>
 <script language="javascript">

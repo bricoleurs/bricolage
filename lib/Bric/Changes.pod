@@ -265,6 +265,13 @@ the profile when pressing the "Save and Stay" button. Reported by Marshall.
 Eliminated an endless loop in prompting for the PostgreSQL user during
 installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
 
+=item *
+
+Contributors are no longer sorted by the "Name Format" preference's
+representation of the contributors' names in the interface to edit
+contributors. They are now properly sorted by order. Reported by Bret Dawson.
+[David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
