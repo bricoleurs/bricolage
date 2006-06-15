@@ -34,10 +34,34 @@ are used instead, making the left nav faster. [Scott, Marshall, David]
 
 =item *
 
+JavaScript is now being used more extensively throughout the UI to improve
+performance and usability:
+
+=over
+
+=item *
+
+The Story and Media Profiles have been changed to use AJAX to allow fields and
+subelements to be added, deleted and reordered on-the-fly, without reloading 
+the page.  Elements are displayed recursively, so a story's entire contents can
+be edited from one screen, as opposed to one screen per subelement as it was
+previously.  Elements are reordered via drag-and-drop, instead of the previous 
+column of numbered select lists.
+
+=item *
+
+The Source Profile can now create a new organization on-the-fly.
+
+=item *
+
 Error details (including oft-requested stack traces) are now viewable directly
 from the 500 error page, instead of having to check the error_log or view the
 error page's source.  To avoid scaring lay people, the details are only shown
-(via Javascript) when the new "View Error Details" link is clicked. [Marshall]
+(via Javascript) when the new "View Error Details" link is clicked.
+
+=back
+
+[Marshall, part of the Google Summer of Code 2006]
 
 =back
 
