@@ -219,6 +219,16 @@ Folks who have submitted patches include:
 
 =item * Alexey Dvoychenkov
 
+=item * Christian Niles
+
+=item * Brad Harder
+
+=item * Brad Fox
+
+=item * Alexey Dvoychenkov
+
+=item * Alex Howarth
+
 =back
 
 Friends who have spotted bugs include:

@@ -48,7 +48,7 @@
 % my $i = 0;
 % for my $row (0..$#{$data}) {
 % my $o_id = shift @{$data->[$row]};
-% my $class = qq{ class="} . ($row % 2 ? "odd" : "even") . qq{"};
+% my $class = qq{ class="} . ($row % 2 ? 'odd' : 'even') . q{"};
   <tr<% $class %><% $featured->{$o_id} ? " bgcolor=\"$featured_color\"" : "" %>>
 <%perl>;
   # Output for each field.

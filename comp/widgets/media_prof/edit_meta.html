@@ -54,8 +54,10 @@ $m->comp("/widgets/wrappers/table_top.mc",
 <dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
 %     }
 % }
+% if (@$sites > 1) {
 <dt><% $lang->maketext('Site') %>:</dt>
 <dd><% Bric::Biz::Site->lookup({id => $media->get_site_id})->get_name() %></dd>
+% }
 </dl>
 
 <div class="editmeta">
@@ -214,12 +216,10 @@ $m->comp("/widgets/profile/buttonBar.mc",
 
 </%perl>
 
-%#-- Args Section --#
 <%args>
 $widget
 </%args>
 
-%#-- Init Section --#
 <%init>
 
 my $media = get_state_data($widget, 'media');
@@ -234,6 +234,7 @@ my $desks = $wf->allowed_desks();
 my $cd = $media->get_current_desk();
 $cd = $wf->get_start_desk() unless $cd;
 my $id = $media->get_id;
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 
 # Set up a formatting variable
 my $infoIndent = FIELD_INDENT + 8;

@@ -150,6 +150,7 @@ sub revert : Callback(priority => 6) {
     $media->revert($version);
     $media->save;
     add_msg('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
+    $self->params->{checkout} = 1; # Reload checked-out media.
     $self->clear_my_state;
 }
 

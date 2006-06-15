@@ -52,9 +52,6 @@ use Bric::Config qw(:ftp);
 use Bric::Biz::ElementType;
 use Net::FTPServer::DirHandle;
 use Bric::Util::Burner::Mason;
-require Bric::Util::Burner::Template if eval { require HTML::Template };
-require Bric::Util::Burner::TemplateToolkit
-  if eval { require Template && $Template::VERSION >= 2.14 };
 use Bric::Util::FTP::FileHandle;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use File::Basename qw(fileparse);

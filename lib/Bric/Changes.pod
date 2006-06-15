@@ -76,7 +76,43 @@ Sozonoff. [David]
 
 =item *
 
-Added tests for C<Bric::SOAP::Auth>. [Scott]
+Added tests for L<Bric::SOAP::Auth|Bric::SOAP::Auth>, although they haven't
+been integrated into C<make devtest>, yet. [Scott]
+
+=item *
+
+The number of items on a desk can now be displayed next to the desk's name in
+the navigation menu, e.g. "Edit (10)". It is configurable on a per-user basis
+via the new "Show Desk Asset Counts" preference. Based heavily on a patch from
+Alex Howarth. [Marshall]
+
+=item *
+
+Updated F<README.MacOSX> with instructions on how to use the built-in version
+of Apache instead of compiling everything yourself. Also fixed a broken link
+and an outdated warning about Apache::SizeLimit. [Marshall]
+
+=item *
+
+Internationalized the JavaScript messages for the Find/Replace dialog box,
+although there are currently no translations. [David]
+
+=item *
+
+Added a close icon to the drag bar of the dialog box. This is useful when the
+dialog box is bigger than the browser window and the close button therefore is
+off-screen. [David]
+
+=item *
+
+Optimized the C<get_notes()> and C<has_notes()> methods of
+L<Bric::Biz::Asset|Bric::Biz::Asset> and therefore of the story, media, and
+template classes. [David]
+
+=item *
+
+Aliases are now indicated in Find Stories by an arrow icon just before the
+story title. Suggested by Paul Orrock. [David]
 
 =back
 
@@ -86,7 +122,8 @@ Added tests for C<Bric::SOAP::Auth>. [Scott]
 
 =item *
 
-Fixed the rarely-used DISABLE_NAV_LAYER bricolage.conf directive. [Scott]
+Fixed the rarely-used C<DISABLE_NAV_LAYER> F<bricolage.conf> directive.
+[Scott]
 
 =item *
 
@@ -97,8 +134,8 @@ are no longer fatal. Reported by Nate Perry Thistle. [David]
 =item *
 
 Fixed reverted media that led to the "Too many Bric::Biz::Element::Container
-objects found". It was supposed to have been fixed in 1.10.1, but that fix
-unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
+objects found" error. It was supposed to have been fixed in 1.10.1, but that
+fix unfortunately only fixed stories. Reported by Tom Kjeldsen. [David]
 
 =item *
 
@@ -112,8 +149,7 @@ Perry-Thistle for the spot. [David]
 
 =item *
 
-Fixed highlighting when sorting by Element on desks (bug 1185). Patch from
-Brad Harder.
+Fixed highlighting when sorting by Element on desks (bug 1185). [Brad Harder]
 
 =item *
 
@@ -162,7 +198,7 @@ their respective folders in comp/media/. [Marshall]
 
 =item *
 
-Slightly tweaked the background color on table rows to make them easier to 
+Slightly tweaked the background color on table rows to make them easier to
 read. [Marshall]
 
 =item *
@@ -172,13 +208,13 @@ glitches. [Marshall]
 
 =item *
 
-Aliases no longer show up in the search results of the "New Alias" screen, 
-since aliases can't be aliased.  The "New Alias" screen now also shows the site
+Aliases no longer show up in the search results of the "New Alias" screen,
+since aliases can't be aliased. The "New Alias" screen now also shows the site
 an asset belongs to if there are multiple sites. [Marshall]
 
 =item *
 
-Fixed appearance of template diffs.  Insertions and deletions now have color
+Fixed appearance of template diffs. Insertions and deletions now have color
 and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
 
 =item *
@@ -188,7 +224,7 @@ find/replace and cheat sheet buttons to the top right of the box. [Marshall]
 
 =item *
 
-Character counts in Bulk Edit are now properly updated after using 
+Character counts in Bulk Edit are now properly updated after using
 Find/Replace. [Marshall]
 
 =item *
@@ -203,13 +239,66 @@ on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
 
 =item *
 
-Fixed a warning from bric_republish when run without a password.  Thanks to
+Fixed a warning from F<bric_republish> when run without a password. Thanks to
 John Gillis for the spot. (bug 1188) [Marshall]
 
 =item *
 
 Fixed the "Site" dropdown in searches to only require READ permissions
 rather than EDIT. Spot and quasi-patch by Chris Sutton.
+
+=item *
+
+New fields now are properly configured with the their C<multiple> attribute
+copied from the field type. [Alexey Sheynuk]
+
+=item *
+
+New destinations can now be created via
+L<Bric::Soap::Destination|Bric::Soap::Destination>. [Christian Niles]
+
+=item *
+
+Fields in an element that are based on field types deleted from the element
+type can now still be edited in Bulk Edit. Thanks to Nate Perry-Thistle for
+the spot. [David]
+
+=item *
+
+New users can once again be created when using the LDAP authentication engine.
+Reported by Christian Niles. [David]
+
+=item *
+
+Using Internet Explorer to create a media document via a the upload field in a
+related media element no longer uses a full Windows file system path. Reported
+by Tom Kjeldsen. [David]
+
+=item *
+
+Fixed caching issue with reversion of assets to earlier versions. [David]
+
+=item *
+
+The category SOAP interface now allows the C<< <path> >> XML element to not
+have a trailing slash, as was the case in Bricolge 1.8 and earlier. [David]
+
+=item *
+
+Aliases are once again identifyable on desks by a different background color
+for the title, and now also with an arrow icon that appears just before the
+story title. [David]
+
+=item *
+
+A field deleted from the contributor profile no longer continues to appear in
+the profile when pressing the "Save and Stay" button. Reported by Marshall.
+[David]
+
+=item *
+
+Eliminated an endless loop in prompting for the PostgreSQL user during
+installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
 
 =back
 

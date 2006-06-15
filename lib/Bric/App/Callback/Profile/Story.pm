@@ -69,6 +69,7 @@ sub revert : Callback {
     add_msg('Story "[_1]" reverted to V.[_2].',
             '<span class="l10n">' . $story->get_title . '</span>',
             $version);
+    $self->params->{checkout} = 1; # Reload checked-out story.
     set_state_data($widget, 'story');
 }
 

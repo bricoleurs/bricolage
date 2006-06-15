@@ -248,7 +248,7 @@ sub test_list : Test(158) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(221) {
+sub test_pod : Test(231) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
@@ -528,6 +528,26 @@ sub test_pod : Test(221) {
         q{Check the page pull quote's paragraph};
     is $subpq->get_value('by'), 'Chad Dickerson', q{... And its by};
     is $subpq->get_value('date'), '2004-12-03 00:00:00', q{... And its date};
+
+    # Try deleting a field.
+    ok $self->{story_type}->del_field_types($self->{head}),
+        'Delete "header" field from element type';
+    ok $self->{story_type}->save, 'Save element type';
+    ok $story = Bric::Biz::Asset::Business::Story->lookup({ id => $story->get_id });
+    ok $elem = Bric::Biz::Element::Container->lookup({
+        id => $elem->get_id,
+        object    => $story,
+    }), 'Reload element';
+
+    # Update from POD.
+    ok $elem->update_from_pod($self->pod_output), 'Update from POD';
+
+    # Check the contents.
+    is $elem->get_value('para'),    'This is a paragraph', 'Check first para';
+    is $elem->get_value('para', 2), 'Second paragraph',    'Check second para';
+    is $elem->get_value('header'),  'And then...',         'Header should still be present';
+    is $elem->get_value('para', 3), 'Third paragraph',     'Check third para';
+    is $elem->get_related_story_id, $rel_story_id,         'Check relstory id';
 
     # Test a bad default field.
     eval { $elem->update_from_pod('foo', 'par') };

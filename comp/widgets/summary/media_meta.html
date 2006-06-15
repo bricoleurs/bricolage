@@ -17,10 +17,7 @@
 <dt><% $lang->maketext('Last Published') %>:</dt>
 <dd><% $media->get_publish_date || '&nbsp;' %></dd>
 <dt><% $lang->maketext('URI') %>:</dt>
-% if ($is_related_media) {
-<dd><% $prim_uri %></dd>
-% } else {
-%     if (@ocs == 1) {
+% if (@ocs == 1) {
 <dd><% $m->comp('/widgets/profile/preview_link.mc',
                 type  => 'media',
                 value => $prim_uri,
@@ -30,7 +27,6 @@
 <dd><% $prim_uri %></dd>
 <dt><% $lang->maketext('Preview in') %>:</dt>
 <dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
-%     }
 % }
 </dl>
 
