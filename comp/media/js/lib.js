@@ -264,7 +264,7 @@ function reorder(obj) {
 }
 
 /*
-input: An asset ID.
+input: An element ID.
 output: none.
 This function looks up a checkbox element by its ID, and if it exists, it
 unchecks it. If it does not exist, it does nothing.
