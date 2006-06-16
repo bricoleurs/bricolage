@@ -5,15 +5,25 @@
 
 <%once>
 my $widget = 'container_prof';
+
+my $find_subelement;
+$find_subelement = sub {
+    my ($element, $id) = @_;
+
+    return $element if $element->get_id == $id;
+
+    foreach my $container ($element->get_containers) {
+        my $subelement = $find_subelement->($container, $id);
+        return $subelement if $subelement;
+    }
+};
 </%once>
 
 <%init>
 my $element = get_state_data($widget, 'element');
 my $container_id = $ARGS{"container_id"};
 
-# XXX mroch: We need to make this recursive, or it'll only work one level deep
-$element = (grep { $_->get_id == $container_id } $element->get_containers)[0] 
-    if $container_id && $element->get_id != $container_id;
+$element = $find_subelement->($element, $container_id) if $container_id;
 </%init>
 
 <%flags>

@@ -140,15 +140,16 @@ sub add_element : Callback {
     my $container_id = $param->{"$widget|add_element_cb"};
     my $field = $param->{"$widget|add_element_to_$container_id"};
     
+    # Find the right subelement to add the new element to
+    $element = $self->_find_subelement($element, $container_id) if $container_id;
+    # Bail if we can't find the right subelement
+    return unless $element;
+    
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
     if (Bric::Biz::ElementType->lookup({id => $element->get_element_type_id})->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
-    
-    # Find the right subelement to add the new element to
-    $element = (grep { $_->get_id == $container_id } $element->get_containers)[0] 
-        if $container_id && $element->get_id != $container_id;
     
     my ($type, $id) = unpack('A5 A*', $field);
     
@@ -806,5 +807,18 @@ sub _drift_correction {
     $param->{'_drift_corrected_'} = 1;
 }
 
+
+# Finds the subelement of $element with id $id, no matter how deep in the tree
+# it is.
+sub _find_subelement {
+    my ($self, $element, $id) = @_;
+
+    return $element if $element->get_id == $id;
+    
+    foreach my $container ($element->get_containers) {
+        my $subelement = $self->_find_subelement($container, $id);
+        return $subelement if $subelement;
+    }
+}
 
 1;
