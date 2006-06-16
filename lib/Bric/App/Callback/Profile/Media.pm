@@ -81,6 +81,27 @@ sub update : Callback(priority => 1) {
     $media->set_primary_oc_id($param->{primary_oc_id})
       if exists $param->{primary_oc_id};
 
+    # Delete old keywords.
+    my $old;
+    my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
+    foreach ($media->get_keywords) {
+        push @$old, $_ unless $keywords->{$_->get_id};
+    }
+    $media->del_keywords(@$old) if $old;
+
+    # Add new keywords.
+    my $new;
+    foreach (@{ mk_aref($param->{new_keyword}) }) {
+        next unless $_;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+        unless ($kw) {
+            $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+            log_event('keyword_new', $kw);
+        }
+        push @$new, $kw;
+    }
+    $media->add_keywords(@$new) if $new;
+
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
       if exists $param->{cover_date};
@@ -712,53 +733,6 @@ sub checkout : Callback {
         # Go to the profile screen
         $self->set_redirect('/workflow/profile/media/'.$ids->[0].'?checkout=1');
     }
-}
-
-################################################################################
-
-sub keywords : Callback {
-    my $self = shift;
-    my $id = get_state_data($self->class_key, 'media')->get_id;
-    $self->set_redirect("/workflow/profile/media/keywords.html");
-}
-
-################################################################################
-
-sub add_kw : Callback {
-    my $self = shift;
-    my $param = $self->params;
-
-    # Grab the media.
-    my $media = get_state_data($self->class_key, 'media');
-    chk_authz($media, EDIT);
-
-    # Add new keywords.
-    my $new_kw;
-    foreach my $kw_name (@{ mk_aref($param->{keyword}) }) {
-        next unless $kw_name;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $kw_name });
-        unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $kw_name})->save;
-            log_event('keyword_new', $kw);
-        }
-        push @$new_kw, $kw;
-    }
-    $media->add_keywords($new_kw) if $new_kw;
-
-    # Delete old keywords.
-    $media->del_keywords(mk_aref($param->{del_keyword}))
-      if defined $param->{del_keyword};
-    $media->save;
-
-    # Save the changes
-    set_state_data($self->class_key, 'media', $media);
-
-    $self->set_redirect(last_page());
-
-    add_msg("Keywords saved.");
-
-    # Take this page off the stack.
-    pop_page();
 }
 
 ################################################################################

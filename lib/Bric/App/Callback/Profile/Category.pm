@@ -108,16 +108,15 @@ sub save : Callback {
 
         # Delete old keywords.
         my $old;
-        foreach (@{ mk_aref($param->{del_keyword}) }) {
-            next unless $_;
-            my $kw = Bric::Biz::Keyword->lookup({ id => $_ }) || next;
-            push @$old, $kw;
+        my $keywords = { map { $_ => 1 } @{ $param->{keyword_id} } };
+        foreach ($cat->get_keywords) {
+            push @$old, $_ unless $keywords->{$_->get_id};
         }
         $cat->del_keywords(@$old) if $old;
 
         # Add new keywords.
         my $new;
-        foreach (@{ mk_aref($param->{keyword}) }) {
+        foreach (@{ mk_aref($param->{new_keyword}) }) {
             next unless $_;
             my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
             unless ($kw) {

@@ -673,10 +673,10 @@ div.addelement { text-align: right;}
 button:hover { cursor: pointer; }
 button {
     font-weight: bold;
-    font-size: 12px;
+    font-size: .9em;
     color: black;
     background: #cc9;
-    padding: 3px 7px;
+    padding: 2px 7px;
     margin: 0;
     border-style: solid;
     border-width: 2px;
@@ -684,7 +684,7 @@ button {
     border-left-color: #e8e8cd;
     border-right-color: #663;
     border-bottom-color: #663;
-    vertical-align: bottom; /* Needed to prevent extra space from showing up! */
+    vertical-align: middle; /* Needed to prevent extra space from showing up! */
 }
 
 button:active {

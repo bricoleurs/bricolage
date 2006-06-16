@@ -576,17 +576,6 @@ sub update : Callback(priority => 1) {
     &$save_data($self, $self->params, $self->class_key);
 }
 
-sub keywords : Callback {
-    my $self = shift;
-
-    # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/profile/story/keywords.html");
-}
-
 sub contributors : Callback {
     my $self = shift;
     # Return if there were data errors
@@ -678,39 +667,6 @@ sub exit : Callback {
     # Set the redirect to the page we were at before here.
     $self->set_redirect(last_page() || "/workflow/search/story/");
     # Remove this page from history.
-    pop_page();
-}
-
-sub add_kw : Callback {
-    my $self = shift;
-    my $param = $self->params;
-
-    # Grab the story.
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-
-    # Add new keywords.
-    my $new;
-    foreach my $kw_name (@{ mk_aref($param->{keyword}) }) {
-        next unless $kw_name;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $kw_name });
-        unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $kw_name})->save;
-            log_event('keyword_new', $kw);
-        }
-        push @$new, $kw;
-    }
-    $story->add_keywords($new) if $new;
-
-    # Delete old keywords.
-    $story->del_keywords(mk_aref($param->{del_keyword}))
-      if defined $param->{del_keyword};
-
-    # Save the changes.
-    set_state_data($self->class_key, 'story', $story);
-    $self->set_redirect(last_page());
-    add_msg("Keywords saved.");
-    # Take this page off the stack.
     pop_page();
 }
 
@@ -1036,6 +992,27 @@ $save_data = sub {
 
     $story->set_primary_category($param->{"$widget|primary_cat"})
       if defined $param->{"$widget|primary_cat"};
+
+    # Delete old keywords.
+    my $old;
+    my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
+    foreach ($story->get_keywords) {
+        push @$old, $_ unless $keywords->{$_->get_id};
+    }
+    $story->del_keywords(@$old) if $old;
+
+    # Add new keywords.
+    my $new;
+    foreach (@{ mk_aref($param->{new_keyword}) }) {
+        next unless $_;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+        unless ($kw) {
+            $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+            log_event('keyword_new', $kw);
+        }
+        push @$new, $kw;
+    }
+    $story->add_keywords(@$new) if $new;
 
     # avoid repeated messages from repeated calls to &$save_data
     &$unique_msgs if $data_errors;

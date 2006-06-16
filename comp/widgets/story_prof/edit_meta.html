@@ -284,19 +284,14 @@ $m->comp("/widgets/wrappers/table_top.mc",
 </td>
 </tr>
 
-<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>" style="line-height: 2em">
 <th><% $lang->maketext('Keywords') %>:</th>
-<td>
-% my @keywords = map { $_->get_name } $story->get_keywords;
-% $m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
+<td colspan="2">
+<& '/widgets/profile/fast_add.mc',
+    type    => "keyword",
+    objects => [ $story->get_keywords ]
+&>
 </td>
-<td class="edit"><& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'keywords_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &></td>
 </tr>
 </table>
 <%perl>

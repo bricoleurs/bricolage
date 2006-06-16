@@ -1001,6 +1001,30 @@ document.getParentByTagName = function(element, tagName) {
     return element;
 }
 
+function addKeyword(parent, value) {
+    parent = $(parent);
+    
+    var span = Builder.node("span", { className: 'keyword' }, [
+        Builder.node("input", { type: 'hidden', name: 'new_keyword', value: value }),
+        Builder.node("span", { className: 'value' }, value),
+        " (",
+        Builder.node("a", { href: "#", onclick: "Element.remove(this.parentNode); return false" }, 'remove'),
+        "), "
+    ]);
+    
+    var placed = false;
+    $A(document.getElementsByClassName('value', parent)).each(function(sibling) {
+        if (placed) return;
+        if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
+            parent.insertBefore(span, sibling.parentNode);
+            placed = true;
+        }
+    });
+    
+    if (!placed) {
+        parent.insertBefore(span, parent.firstChild);
+    }
+}
 
 /*
  * Container profile

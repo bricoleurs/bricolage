@@ -140,11 +140,10 @@ $m->comp("/widgets/wrappers/table_top.mc",
          caption => "Associations",
          number => $num++);
 </%perl>
-% my $rowColor = "even";
+% my $rowColor = 1;
 <table class="associations">
 % if (ENABLE_CATEGORY_BROWSER) {
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
 <th><% $lang->maketext('Category') %>:</th>
 <td><% $media->get_category->get_uri %></td>
 <td class="edit"><& '/widgets/profile/button.mc',
@@ -157,38 +156,12 @@ $m->comp("/widgets/wrappers/table_top.mc",
 </tr>
 % }   # if ENABLE_CATEGORY_BROWSER
 
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
-<th><% $lang->maketext('Keywords') %>:</th>
-<td><%perl>
-my @keywords;
-foreach my $kw ($media->get_keywords) {
-    push @keywords, $kw->get_name;
-}
-
-$m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
-
-</%perl></td>
-<td class="edit"><& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'keywords_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &></td>
-</tr>
-
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
 <th><% $lang->maketext('Contributors') %>:</th>
-<td><%perl>
-my @contribs;
-foreach my $cntr ($media->get_contributors) {
-    push @contribs,  $cntr->get_name;
-}
-$m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
-
-</%perl></td>
+<td>
+% my @contribs = map { $_->get_name } $media->get_contributors;
+% $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
+</td>
 <td class="edit">
 % unless ($media->get_alias_id) {
 <& '/widgets/profile/button.mc',
@@ -199,6 +172,16 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
     useTable  => 0,
     globalImage => 1 &>
 % }
+</td>
+</tr>
+
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>" style="line-height: 2em">
+<th><% $lang->maketext('Keywords') %>:</th>
+<td colspan="2">
+<& '/widgets/profile/fast_add.mc',
+    type    => "keyword",
+    objects => [ $media->get_keywords ]
+&>
 </td>
 </tr>
 </table>

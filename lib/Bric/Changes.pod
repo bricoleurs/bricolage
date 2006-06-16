@@ -41,16 +41,23 @@ performance and usability:
 
 =item *
 
-The Story and Media Profiles have been changed to use AJAX to allow fields and
-subelements to be added, deleted and reordered on-the-fly, without reloading 
-the page.  Elements are displayed recursively, so a story's entire contents can
-be edited from one screen, as opposed to one screen per subelement as it was
-previously.  Elements are reordered via drag-and-drop, instead of the previous 
-column of numbered select lists.
+The following items can now be edited on-the-fly (i.e. without reloading):
+
+=over
+
+=item * Fields and subelements in the story, media and category profiles
+
+=item * Keywords in the story, media and category profiles
+
+=item * Organizations in the source profile
+
+=back
 
 =item *
 
-The Source Profile can now create a new organization on-the-fly.
+Fields and subelements in the story and media profiles are displayed 
+recursively, so a story's entire contents can be edited from one screen, as 
+opposed to one screen per subelement as it was previously.
 
 =item *
 
