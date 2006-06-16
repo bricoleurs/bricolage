@@ -277,6 +277,11 @@ contributors. They are now properly sorted by order. Reported by Bret Dawson.
 Documents without cover dates will no longer have broken URIs. Reported by
 Christian Niles. [David]
 
+=item *
+
+The Help popup button works again in Interenet Explorer. Reported by Chris
+Heiland. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

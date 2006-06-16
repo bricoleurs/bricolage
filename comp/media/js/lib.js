@@ -720,7 +720,7 @@ function openWindow(page) {
     if (!/\.html$/.test(page)) page += '.html';
     window.open(
         '/help/' + lang_key + page,
-        'Bricolage Help',
+        'BricolageHelp',
         'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,'
         + 'height=600,width=505'
     );
