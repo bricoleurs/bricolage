@@ -608,7 +608,7 @@ sub _update_subelements {
         
         # Grab the element we're looking for
         {
-            local $^W = undef;
+            no warnings 'uninitialized';
             $locate_element = $t if $id == $locate_id and $is_cont;
         }
         
@@ -626,7 +626,7 @@ sub _update_subelements {
         
         if ($is_cont) {
             # Recursively update this container's subelements
-            $self->_update_subelements($t, $param);
+            $locate_element ||= $self->_update_subelements($t, $param);
         }
         
         if (!$is_cont && 
