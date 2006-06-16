@@ -817,7 +817,7 @@ NONE
 
 ################################################################################
 
-=item $site_id = $workflow->get_site_id
+=item $site_id = $asset->get_site_id
 
 Returns the ID of the site this asset is a part of.
 
@@ -831,7 +831,7 @@ B<Notes:> NONE.
 
 ################################################################################
 
-=item $site = $workflow->get_site
+=item $site = $asset->get_site
 
 Returns the the site this asset is a part of.
 
