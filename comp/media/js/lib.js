@@ -263,6 +263,16 @@ function reorder(obj) {
     }
 }
 
+/*
+input: An asset ID.
+output: none.
+This function looks up a checkbox element by its ID, and if it exists, it
+unchecks it. If it does not exist, it does nothing.
+ */
+function uncheck (id) {
+    var checkbox = document.getElementById(id);
+    if (checkbox) checkbox.checked = false;
+}
 
 /*
 input: a value, and a hash
