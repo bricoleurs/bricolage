@@ -10,20 +10,17 @@
 $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
   if $show_summary;
 
-my $total = scalar @elements;
-
 # Check if we should display elements.
-if (@elements || @$elem_opts ) {
+if ($element->get_elements || 
+      $element->get_possible_fields || 
+      grep { chk_authz($_, READ, 1) } $element->get_possible_containers ) {
+          
     $m->comp("/widgets/wrappers/table_top.mc",
              caption => $title,
              id      => 'containerprof',
              number  => $num++
             );
 </%perl>
-
-% if (!$total)  {
-<div style="padding: 5px;"><% $lang->maketext('No elements have been added.') %></div>
-% } else {
 
 <input type="hidden" name="container_prof|add_element_cb" id="container_prof_add_element_cb" value="" />
 <input type="hidden" name="container_prof|delete_cb" id="container_prof_delete_cb" value="" />
@@ -32,8 +29,6 @@ if (@elements || @$elem_opts ) {
     widget  => $widget,
     element => $element
 &>
-
-% }
 
 <& "/widgets/wrappers/table_bottom.mc" &>
 
@@ -116,21 +111,6 @@ my $element = get_state_data($widget, 'element');
 
 $title ||= $element->get_name;
 my $start = get_state_data($widget, 'start');
-
-# the contained elements
-my @elements = $element->get_elements();
-
-# Get the list of fields and subelements that can be added.
-my $elem_opts = [
-    map  { $_->[1] }
-    sort { $a->[0] cmp $b->[0] }
-    map  {
-        my $key = $_->can('get_sites') ? 'cont_' : 'data_';
-        [ lc $_->get_name => [ $key . $_->get_id => $_->get_name ] ]
-    }
-        $element->get_possible_field_types,
-        grep { chk_authz($_, READ, 1) } $element->get_possible_containers
-];
 
 my $at_id = $element->get_element_type_id;
 my $at = Bric::Biz::ElementType->lookup({'id' => $at_id});
