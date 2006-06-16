@@ -43,6 +43,7 @@ Container.updateOrder('element_<% $id %>');
     &>
 % }
     <& '/widgets/profile/button.mc',
+        id         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id,
         widget     => 'container_prof',
         cb         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_cb',
         button     => 'bulk_edit_lgreen',

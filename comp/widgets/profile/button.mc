@@ -32,6 +32,7 @@ $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
 $globalImage => 0
+$id        => undef
 $name      => ''
 $value     => undef
 $js        => ''
@@ -53,7 +54,8 @@ my $vals = { disp      => '',
            };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-         key       => $key,
+         id        => $id,
+         key       => $key, 
          vals      => $vals,
          indent    => $indent,
          useTable  => $useTable,
