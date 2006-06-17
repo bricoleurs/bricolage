@@ -1,4 +1,3 @@
-%#-- Begin HTML --#
 <script type="text/javascript">
 function contribJump(obj) {
     window.location.href = "/admin/profile/contrib/edit/<% $id %>/"
@@ -104,26 +103,17 @@ if ($mode eq "new") {
 
     # Display a read-only list of existing roles, if more than one.
     if (@subsys > 1) {
-	$m->out("<table width=570><tr><td width=130 align=right>");
-        $m->out("<span class=label>".$lang->maketext('Existing roles').":</span></td><td width=440>\n");
-	foreach my $ss (@subsys) {
-	    $m->out ( "$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
-	}
-	$m->out("</ul>\n");
-	$m->out("</td></tr></table>");
+        $m->out(qq{<div class="row">});
+        $m->out(qq{<div class="label">} . $lang->maketext('Existing roles') . qq{:</div>});
+        $m->out(qq{<div class="input">} . join(", ", grep { $_ ne '_MEMBER_SUBSYS' } @subsys) . qq{</div>});
+    	$m->out(qq{</div>});
     }
 
     # Send the roles to javascript so we can check before submitting
-    $m->out('<script language="javascript">' . "\n");
-    $m->out("var checkUnique = true\n");
+    $m->out(qq{\n<script type="text/javascript">\n});
     $m->out("var roles = new Array(");
-
-    my $var = '';
-    foreach my $ss (@subsys) {
-	$var .= "'$ss', " if $ss ne '_MEMBER_SUBSYS';
-    }
-
-    $m->out(substr($var, 0, -2) . ");\n</script>\n");
+    $m->out(join(", ", map { qq{'$_'} } grep { $_ ne '_MEMBER_SUBSYS' } @subsys));
+    $m->out(");\n</script>\n");
 
     # text box for new role name
     $m->comp("/widgets/profile/text.mc",
@@ -138,8 +128,6 @@ if ($mode eq "new") {
 </%perl>
 </form>
 <& '/widgets/wrappers/footer.mc', param => \%ARGS &>
-
-%#-- End HTML --#
 
 <%init>;
 # Do any redirects first.

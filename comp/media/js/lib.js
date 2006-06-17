@@ -59,7 +59,7 @@ and do an alert and return false if found.
 function uniqueRole(obj) {
 
     if (typeof roles != "undefined") {
-        if (inArray(obj.value, roles)) {
+        if ($A(roles).include(obj.value)) {
             alert(role_msg);
             obj.focus();
             return false;
@@ -561,14 +561,6 @@ function confirmURIFormats(obj) {
         }
     }
     return true;
-}
-
-function inArray(what, arr) {
-
-    for (var i=0; i < arr.length; i++) {
-        if (arr[i].toString() == what.toString()) return true
-    }
-    return false
 }
 
 function isInList(what, list) {
