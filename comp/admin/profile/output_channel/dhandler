@@ -81,7 +81,6 @@ if ($id || $no_edit) {
 
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
-# Add pre/post fields to the specialCharacters array
 if (defined $id) {
     $button = undef;
     $m->out('<script type="text/javascript">

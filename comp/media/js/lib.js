@@ -184,15 +184,6 @@ function hasSpecialCharacters(what) {
 }
 
 /*
-returns true if characters that would be illegal for a URL prefix or suffix, false otherwise.
-*/
-function hasSpecialCharactersOC(what) {
-    var regExp = new RegExp("[^-a-zA-Z0-9_./]");
-    return regExp.test(what);
-
-}
-
-/*
 general textarea cleanup function
 
 XXX: Can this be done using only the text variable?
@@ -433,8 +424,6 @@ new values on the right are marked selected.
 */
 var confirming = false
 var submitting = false
-var specialCharacterFields = new Object();
-var specialOCFields = new Object();
 
 function checkRequiredFields(form) {
     ret = true;
@@ -482,36 +471,6 @@ function confirmChanges(obj) {
     }
 
     if (!checkRequiredFields(obj)) { confirming = false; return false; }
-
-    // examine registered special character fields
-    if (typeof specialCharacterFields != "undefined") {         
-        for (field in specialCharacterFields) {
-            tmp = eval("obj." + field);
-            if (typeof tmp != "undefined") {
-                if ( hasSpecialCharacters(tmp.value) ) {
-                    alert( specialCharacterFields[field] + illegal_chars_msg );
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }
-
-    // examine registered special output channel fields(with slash allowed).
-    if (typeof specialOCFields != "undefined") {         
-        for (field in specialOCFields) {
-            tmp = eval("obj." + field);
-            if (typeof tmp != "undefined") {
-                if ( hasSpecialCharactersOC(tmp.value) ) {
-                    alert( specialOCFields[field] + illegal_chars_msg );
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }  
 
     // if we get this far, we've got a live submission.
     // if there is a 2xLM,
@@ -562,15 +521,6 @@ function confirmURIFormats(obj) {
     }
     return true;
 }
-
-function isInList(what, list) {
-
-        for (var i=0; i < list.length; i++) {
-                if (list.options[i].value == what) return true
-        }
-        return false;
-}
-// end double list manager functions
 
 // begin double list manager functions
 
