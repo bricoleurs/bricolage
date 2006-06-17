@@ -234,8 +234,8 @@ BEGIN {
         default_val     => Bric::FIELD_RDWR,
         autopopulated   => Bric::FIELD_READ,
         active          => Bric::FIELD_READ,
-	max_occurrence	=> Bric::FIELD_RDWR,
-	min_occurrence	=> Bric::FIELD_RDWR
+        max_occurrence	=> Bric::FIELD_RDWR,
+        min_occurrence	=> Bric::FIELD_RDWR,
         _attr           => Bric::FIELD_NONE,
         _meta           => Bric::FIELD_NONE,
         _attr_obj       => Bric::FIELD_NONE,
