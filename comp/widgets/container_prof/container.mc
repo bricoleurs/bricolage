@@ -38,7 +38,7 @@ Container.updateOrder('element_<% $id %>');
         disp      => $lang->maketext("Delete"),
         name      => 'delete_' . $name,
         button    => 'delete_red',
-        js        => qq{onclick="if (Container.confirmDelete()) \{ $('container_prof_delete_cb').value = '$name'; Container.refresh($id); $('container_prof_delete_cb').value = ''; \} return false;"},
+        js        => qq|onclick="if (Container.confirmDelete()) { \$('container_prof_delete_cb').value = '$name'; Container.refresh(| . $element->get_parent_id . qq|); \$('container_prof_delete_cb').value = ''; } return false;"|,
         useTable  => 0 
     &>
 % }
