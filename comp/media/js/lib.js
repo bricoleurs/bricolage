@@ -360,7 +360,7 @@ formBuilder.submit = function(frm, mainform, action) {
 
 formBuilder.confirm = function (frm) {
 
-    // look for formbuilder mainects, and get their values
+    // look for formbuilder objects, and get their values
     // assign these values to the hidden fields in the main form
 
     for (var i = 0; i < frm.elements.length; i++) {
