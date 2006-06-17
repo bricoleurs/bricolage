@@ -80,8 +80,9 @@ for my $thing (qw(story media)) {
                   first_publish_date = NULL
            WHERE  publish_status = $false
                   AND (
-                      publish_date is NOT NULL
-                      OR first_publish_date is NOT NULL
+                      publish_date IS NOT NULL
+                      OR first_publish_date IS NOT NULL
+                      OR published_version IS NOT NULL
                   )
         },
     ;
