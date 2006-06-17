@@ -51,6 +51,7 @@ Container.updateOrder('element_<% $id %>');
         useTable   => 0
     &>
     
+%   if (scalar @$elem_opts) {
 %   # XXX mroch: Don't leave this hard-coded! Make a component.
     <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="$('container_prof_add_element_cb').value = '<% $id %>'; Container.refresh(<% $id %>); $('container_prof_add_element_cb').value = ''; return false" />
     
@@ -60,6 +61,7 @@ Container.updateOrder('element_<% $id %>');
                                    multiple => 0,
                                    size     => 1,
     &>
+%   }
 </div>
 </div>
 
