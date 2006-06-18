@@ -17,5 +17,9 @@ do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER NOT NULL},
        q{UPDATE field_type SET min_occurrence='1' WHERE required='1'},
 
        q{ALTER TABLE field_type DROP COLUMN quantifier},
-       q{ALTER TABLE field_type DROP COLUMN required};
+       q{ALTER TABLE field_type DROP COLUMN required},
+
+       q{ALTER TABLE field_type ALTER COLUMN max_occurrence SET NOT NULL},
+       q{ALTER TABLE field_type ALTER COLUMN min_occurrence SET NOT NULL},
+;
 
