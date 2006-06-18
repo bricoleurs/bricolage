@@ -21,5 +21,8 @@ do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER NOT NULL},
 
        q{ALTER TABLE field_type ALTER COLUMN max_occurrence SET NOT NULL},
        q{ALTER TABLE field_type ALTER COLUMN min_occurrence SET NOT NULL},
+
+       q{ALTER TABLE field_type ALTER COLUMN max_occurrence SET DEFAULT 0},
+       q{ALTER TABLE field_type ALTER COLUMN min_occurrence SET DEFAULT 0},
 ;
 
