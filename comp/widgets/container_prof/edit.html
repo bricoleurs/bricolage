@@ -12,7 +12,7 @@ $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
 
 # Check if we should display elements.
 if ($element->get_elements || 
-      $element->get_possible_fields || 
+      $element->get_possible_field_types || 
       grep { chk_authz($_, READ, 1) } $element->get_possible_containers ) {
           
     $m->comp("/widgets/wrappers/table_top.mc",
