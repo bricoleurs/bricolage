@@ -130,12 +130,12 @@ use constant DEBUG => 0;
 use constant TABLE => 'field_type';
 my @COLS = qw(
     element_type__id
-    key_name
     name
+    key_name
     description
     place
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     autopopulated
     max_length
     sql_type
@@ -147,19 +147,17 @@ my @COLS = qw(
     vals
     multiple
     default_val
-    active
-    max_occurrence
-    min_occurrence
+    active    
 );
 
 my @ATTRS = qw(
     element_type_id
-    key_name
     name
+    key_name
     description
     place
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     autopopulated
     max_length
     sql_type
@@ -172,8 +170,6 @@ my @ATTRS = qw(
     multiple
     default_val
     active
-    max_occurrence
-    min_occurrence
 );
 
 use constant ORD => qw(
@@ -181,8 +177,8 @@ use constant ORD => qw(
     name
     description
     max_length
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     widget_type
     precision
     default_val
@@ -192,8 +188,6 @@ use constant ORD => qw(
     vals
     multiple
     active
-    max_occurrence
-    min_occurrence
 );
 
 #==============================================================================#
@@ -221,8 +215,6 @@ BEGIN {
         description     => Bric::FIELD_RDWR,
         place           => Bric::FIELD_RDWR,
         max_length      => Bric::FIELD_RDWR,
-        required        => Bric::FIELD_RDWR,
-        quantifier      => Bric::FIELD_RDWR,
         sql_type        => Bric::FIELD_RDWR,
         widget_type     => Bric::FIELD_RDWR,
         precision       => Bric::FIELD_RDWR,
@@ -780,42 +772,6 @@ sub my_meths {
                       type      => 'text',
                       length    => 8,
                       maxlength => 8,
-                  },
-              },
-              required => {
-                  name     => 'required',
-                  get_meth => sub { shift->get_required() },
-                  get_args => [],
-                  set_meth => sub {
-                      my ($self, $req) = @_;
-                      $req = (defined $req && $req) ? 1 : 0;
-                      $self->set_required($req);
-                  },
-                  set_args => [],
-                  disp     => 'Required',
-                  search   => 1,
-                  len      => 1,
-                  type     => 'short',
-                  props    => {
-                      type      => 'checkbox',
-                  },
-              },
-              quantifier => {
-                  name     => 'quantifier',
-                  get_meth => sub { shift->get_quantifier() },
-                  get_args => [],
-                  set_meth => sub {
-                      # note: $rep is boolean
-                      my ($self, $rep) = @_;
-                      $rep = (defined $rep && $rep) ? 1 : 0;
-                      $self->set_quantifier($rep);
-                  },
-                  set_args => [],
-                  disp     => 'Repeatable',
-                  len      => 1,
-                  type     => 'short',
-                  props    => {
-                      type      => 'checkbox',
                   },
               },
               widget_type  => {
@@ -1447,8 +1403,6 @@ sub set_publishable  { shift }
 sub get_publishable  { 0 }
 
 # Boolean accessors.
-sub set_quantifier    { shift->_set(['quantifier']    => [shift() ? 1 : 0] ) }
-sub set_required      { shift->_set(['required']      => [shift() ? 1 : 0] ) }
 sub set_autopopulated { shift->_set(['autopopulated'] => [shift() ? 1 : 0] ) }
 sub set_multiple      { shift->_set(['multiple']      => [shift() ? 1 : 0] ) }
 
@@ -1758,8 +1712,6 @@ sub _do_list {
     );
 
     my %bools = (
-        required      => 'required',
-        quantifier    => 'quantifier',
         autopopulated => 'autopopulated',
         active        => 'active',
         multiple      => 'multiple',

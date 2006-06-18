@@ -8,11 +8,11 @@ use bric_upgrade qw(:all);
 
 exit if fetch_sql q{SELECT 1 FROM field_type WHERE key_name = 'max_occurrence'};
 
-do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER NOT NULL},
+do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER},
        q{UPDATE field_type SET max_occurrence='0' WHERE quantifier='1'},
        q{UPDATE field_type SET max_occurrence='1' WHERE quantifier='0'},
 
-       q{ALTER TABLE field_type ADD min_occurrence INTEGER NOT NULL},
+       q{ALTER TABLE field_type ADD min_occurrence INTEGER},
        q{UPDATE field_type SET min_occurrence='0' WHERE required='0'},
        q{UPDATE field_type SET min_occurrence='1' WHERE required='1'},
 
