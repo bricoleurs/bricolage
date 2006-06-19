@@ -332,6 +332,8 @@ Friends who have spotted bugs include:
 
 =item Doug Dawson
 
+=item Brad Harder
+
 =back
 
 Bricolage's translation team:

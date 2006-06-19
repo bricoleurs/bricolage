@@ -14,7 +14,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.8.11 ()
+=head1 VERSION 1.8.11 (2006-06-19)
 
 =head2 Improvements
 
@@ -30,7 +30,7 @@ all together so that you don't have to. [David]
 
 Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
 first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
-an object (it could also be an ID number). [Scott]
+an object (it could also be an ID). [Scott]
 
 =item *
 
@@ -38,13 +38,14 @@ Added F<README.Ubuntu>. [Christian Muise]
 
 =item *
 
-Silenced warnings from Net::SFTP when distributing via SFTP. [David]
+Silenced warnings from L<Net::SFTP|Net::SFTP> when distributing via SFTP.
+[David]
 
 =item *
 
 The metadata for related media now include preview links. The same goes for
-the medadata about a media document when editing a subelement of that media
-document. [David]
+the metadata about a media document when editing a subelement of that media
+document in the media profile. [David]
 
 =item *
 
@@ -71,14 +72,14 @@ story and media files for expiration. [David]
 
 =item *
 
-My Workspace now remembers the sort order of assets as well as desks do.
+My Workspace now remembers the sort order of assets just as well as desks do.
 [David]
 
 =item *
 
 Added more code to the C<inst/upgrade/1.8.9/fix_publish_status.pl> upgrade
 script to better cover the possible variations in publish status inaccuracies.
-[Brad Fox]
+[Brad Fox, Brad Harder, & David]
 
 =item *
 
@@ -95,13 +96,13 @@ configured to use "ident" authentication. [David]
 
 =item *
 
-The list of desks that appear for a given workflow in the nav iframe are now
-properly updated when a new desk is added to the workflow. [Alexey
+The list of desks that appear for a given workflow in the navigation iframe
+are now properly updated when a new desk is added to the workflow. [Alexey
 Dvoychenkov]
 
 =item *
 
-The side navigation no longer shows the "New Alias" links to users that don't
+The side navigation no longer shows the "New Alias" links to users who don't
 have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
 =item *
@@ -124,8 +125,8 @@ profile. Reported by Scott. [David]
 =item *
 
 Fixed media publishing so that when a media document is published to more than
-one output channel and there are differences in the URIs for that media
-document between the output channels that they won't trigger the expriration
+one output channel, I<and> there are differences in the URIs for that media
+document between the output channels, that they won't trigger the expiration
 of each other's files. Reported by Rod Taylor. [David]
 
 =item *
@@ -169,21 +170,14 @@ Marshall. [David]
 
 =item *
 
-Status message now appear after saving or deleting a contributor type.
-Reported by Marshall. [David]
+Status messages now properly appear after saving or deleting a contributor
+type. Reported by Marshall. [David]
 
 =item *
 
-The C<get_attr_hash()> method of L<Bric::Util::Attribute|Bric::Util::Attribute>
-now excludes deleted attributes in its return value. [David]
-
-=item *
-
-Added another SQL statement to the 1.8.9 upgrade script
-F<inst/upgrade/1.8.9/fix_publish_status.pl> in an attempt to catch any
-straggers. Based on this post from Brad Harder:
-L<http://marc.theaimsgroup.com/?l=bricolage-general&m=114554491804521>.
-[David]
+The C<get_attr_hash()> method of
+L<Bric::Util::Attribute|Bric::Util::Attribute> now excludes deleted attributes
+from its return value. [David]
 
 =back
 
