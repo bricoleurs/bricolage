@@ -373,7 +373,7 @@ table td.delete { white-space: nowrap; }
 
 .listManager,
 .containerProf { width: 100%; border-style: hidden; }
-#containerprof { width: 100%; }
+#bulkedit { width: 100%; }
 .listManager th,
 .containerProf th{ background: #999966; color: black; padding: 5px;
                    text-align: left; vertical-align: bottom;
