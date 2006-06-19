@@ -38,22 +38,30 @@ use DBI;
 
 print "\n\n==> Cloning Bricolage Database <==\n\n";
 
-our $PG;
-do "./postgres.db" or die "Failed to read postgres.db: $!";
+our $DB;
+do "./database.db" or die "Failed to read database.db: $!";
 
-# Switch to postgres system user
-if (my $sys_user = $PG->{system_user}) {
+# Switch to database system user
+if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
-    $> = $PG->{system_user_uid};
-    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
-        unless $> == $PG->{system_user_uid};
+    $> = $DB->{system_user_uid};
+    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
+        unless $> == $DB->{system_user_uid};
 }
+if ($DB->{db} eq "pg") {
+$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
+$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 
-$ENV{PGHOST} = $PG->{host_name} if $PG->{host_name};
-$ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
-
-# dump out database
-system(catfile($PG->{bin_dir}, 'pg_dump') .
-       " -U$PG->{root_user} -O -x $PG->{db_name} > inst/Pg.sql");
-
+# dump out postgres database
+system(catfile($DB->{bin_dir}, 'pg_dump') .
+       " -U$DB->{root_user} -O -x $DB->{db_name} > inst/Pg.sql");
+}
+else 
+{
+$ENV{MYSQLHOST} = $DB->{host_name} if $DB->{host_name};
+$ENV{MYSQLPORT} = $DB->{host_port} if $DB->{host_port};
+# dump out mysql database
+system(catfile($DB->{bin_dir}, 'mysqldump') .
+       " -h $ENV{MYSQLHOST} -P $ENV{MYSQLPORT} -u$DB->{root_user} $DB->{db_name} > inst/My.sql");
+}
 exit 0;

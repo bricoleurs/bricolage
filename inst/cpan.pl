@@ -139,8 +139,8 @@ our %flags = (
 	      'HTML::Mason'      => FORCE,
 	     );
 
-our $PG;
-do "./postgres.db" or die "Failed to read postgres.db : $!";
+our $DB;
+do "./database.db" or die "Failed to read database.db : $!";
 
 # loop through modules installing as we go
 for my $i (0 .. $#$MOD) {
@@ -189,8 +189,8 @@ END
 
 	# need PG env vars?
 	if ($flags{$key} and $flags{$key} & PG_ENV) {
-	    $ENV{POSTGRES_INCLUDE} = $PG->{include_dir};
-	    $ENV{POSTGRES_LIB}     = $PG->{lib_dir};
+	    $ENV{POSTGRES_INCLUDE} = $DB->{include_dir};
+	    $ENV{POSTGRES_LIB}     = $DB->{lib_dir};
 	}
 
 	# do the install.  If prereqs are found they'll get put on the

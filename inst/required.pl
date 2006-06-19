@@ -66,15 +66,18 @@ print "\n\n==> Probing Required Software <==\n\n";
 
 # run tests
 $RESULTS{PG}      = find_pg();
+$RESULTS{MY}      = find_mysql();
 $RESULTS{APACHE}  = find_apache();
 $RESULTS{EXPAT}   = find_expat();
 
 # print error message and fail if something not found
-unless ($RESULTS{PG} and $RESULTS{APACHE} and
+unless (($RESULTS{PG} or $RESULTS{MY}) and $RESULTS{APACHE} and
         $RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
             $RESULTS{PG}     ? "" :
             "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
+            $RESULTS{MY}     ? "" :
+            "\tMySQL >= 5.0.0 (http://mysql.com)\n",	    
             $RESULTS{APACHE} ? "" :
             "\tApache >= 1.3.12    (http://apache.org)\n",
             $RESULTS{EXPAT}  ? "" :
@@ -141,6 +144,56 @@ sub find_pg {
 
     return 1;
 }
+
+sub find_mysql {
+    print "Looking for MySQL with version >= 5.0....\n";
+
+    # find MySQL by looking for mysql_config.
+    my @paths = (split(", ", get_default("MYSQL_CONFIG_PATH")), path);
+    foreach my $path (@paths) {
+    if (-e catfile($path, "mysql_config")) {
+        $REQ{MYSQL_CONFIG} = catfile($path, "mysql_config");
+        last;
+    }
+    }
+
+    # confirm or deny
+    if ($REQ{MYSQL_CONFIG}) {
+        print "Found MySQL's mysql_config at '$REQ{MYSQL_CONFIG}'.\n";
+        unless (ask_yesno("Is this correct?", 1, $QUIET)) {
+            ask_confirm("Enter path to mysql_config", \$REQ{PG_CONFIG});
+        }
+    } else {
+        print "Failed to find mysql_config.\n";
+        if (ask_yesno("Do you want to provide a path to mysql_config?", 0, $QUIET)) {
+            $REQ{MYSQL_CONFIG} = 'NONE';
+            ask_confirm("Enter path to mysql_config", \$REQ{MYSQL_CONFIG});
+        } else {
+            return soft_fail("Failed to find mysql_config. Looked in:",
+                             map { "\n\t$_" } @paths);
+        }
+    }
+
+    # check version
+    my $version = `$REQ{MYSQL_CONFIG} --version`;
+    return soft_fail("Failed to find MysqlSQL version with ",
+                     "`$REQ{MYSQL_CONFIG} --version`.") unless $version;
+    chomp $version;
+    my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
+    return soft_fail("Failed to parse MysqlSQL version from string ",
+                     "\"$version\".") 
+        unless defined $x and defined $y;
+    $z ||= 0;
+    return soft_fail("Found old version of Mysql: $x.$y.$z - ",
+                     "5.0.0 or greater required.")
+        unless (($x > 4) or ($x == 4 and $y >= 0));
+    print "Found acceptable version of Mysql: $x.$y.$z.\n";
+
+    $REQ{MYSQL_VERSION} = [$x,$y,$z];
+
+    return 1;
+}
+
 
 # look for apache
 sub find_apache {

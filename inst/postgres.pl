@@ -17,7 +17,7 @@ $LastChangedDate$
 This script is called during "make" to probe the PostgreSQL
 configuration.  It accomplishes this by parsing the output from
 pg_config and asking the user questions.  Output collected in
-"postgres.db".
+"database.db".
 
 =head1 AUTHOR
 
@@ -42,24 +42,26 @@ $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 
 print "\n\n==> Probing PostgreSQL Configuration <==\n\n";
 
-our %PG;
+our %DB;
 
 my $passwordsize = 10;
 my @alphanumeric = ('a'..'z', 'A'..'Z', 0..9);
 my $randpassword = join '', map $alphanumeric[rand @alphanumeric], 0..$passwordsize;
 
 # setup some defaults
-$PG{root_user} = get_default("POSTGRES_SUPERUSER") || 'postgres';
-$PG{root_pass} = $ENV{POSTGRES_SUPERPASS} || '';
-$PG{sys_user}  = get_default("POSTGRES_BRICUSER") || 'bric';
-$PG{sys_pass}  = $QUIET ? $randpassword : 'NONE';
-$PG{db_name}   = get_default("POSTGRES_DB") || 'bric';
-$PG{host_name} = $ENV{POSTGRES_HOSTNAME} || '';
-$PG{host_port} = $ENV{POSTGRES_HOSTPASS} || '';
-$PG{version} = '';
+$DB{root_user} = get_default("POSTGRES_SUPERUSER") || 'postgres';
+$DB{root_pass} = $ENV{POSTGRES_SUPERPASS} || '';
+$DB{sys_user}  = get_default("POSTGRES_BRICUSER") || 'bric';
+$DB{sys_pass}  = $QUIET ? $randpassword : 'NONE';
+$DB{db_name}   = get_default("POSTGRES_DB") || 'bric';
+$DB{host_name} = $ENV{POSTGRES_HOSTNAME} || '';
+$DB{host_port} = $ENV{POSTGRES_HOSTPASS} || '';
+$DB{version} = '';
 
 our $REQ;
+
 do "./required.db" or die "Failed to read required.db : $!";
+do "./database.db" or die "Failed to read database.db : $!";
 
 get_include_dir();
 get_lib_dir();
@@ -69,9 +71,9 @@ get_version();
 get_host();
 get_users();
 
-# all done, dump out apache database, announce success and exit
-open(OUT, ">postgres.db") or die "Unable to open postgres.db : $!";
-print OUT Data::Dumper->Dump([\%PG],['PG']);
+# all done, dump out postgresql database, announce success and exit
+open(OUT, ">database.db") or die "Unable to open database.db : $!";
+print OUT Data::Dumper->Dump([\%DB],['DB']);
 close OUT;
 
 print "\n\n==> Finished Probing PostgreSQL Configuration <==\n\n";
@@ -85,7 +87,7 @@ sub get_include_dir {
     hard_fail("Unable to extract needed data from $REQ->{PG_CONFIG}.")
     unless $data;
     chomp($data);
-    $PG{include_dir} = $data;
+    $DB{include_dir} = $data;
 }
 
 sub get_lib_dir {
@@ -95,7 +97,7 @@ sub get_lib_dir {
     hard_fail("Unable to extract needed data from $REQ->{PG_CONFIG}.")
     unless $data;
     chomp($data);
-    $PG{lib_dir} = $data;
+    $DB{lib_dir} = $data;
 }
 
 sub get_bin_dir {
@@ -105,15 +107,15 @@ sub get_bin_dir {
     hard_fail("Unable to extract needed data from $REQ->{PG_CONFIG}.")
     unless $data;
     chomp($data);
-    $PG{bin_dir} = $data;
+    $DB{bin_dir} = $data;
 }
 
 sub get_psql {
     print "Finding psql.\n";
-    my $psql = catfile($PG{bin_dir}, 'psql');
+    my $psql = catfile($DB{bin_dir}, 'psql');
     hard_fail("Unable to locate psql executable.")
     unless -e $psql and -x $psql;
-    $PG{psql} = $psql;
+    $DB{exec} = $psql;
 }
 
 sub get_version {
@@ -123,38 +125,38 @@ sub get_version {
       unless $data;
     chomp $data;
     $data =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
-    $PG{version} = $data;
+    $DB{version} = $data;
 }
 
 # ask the user for user settings
 sub get_users {
     print "\n";
-    ask_confirm("Postgres Root Username", \$PG{root_user}, $QUIET);
+    ask_confirm("Postgres Root Username", \$DB{root_user}, $QUIET);
     ask_password("Postgres Root Password (leave empty for no password)",
-        \$PG{root_pass}, $QUIET);
+        \$DB{root_pass}, $QUIET);
 
-    unless ($PG{host_name}) {
-        $PG{system_user} = $PG{root_user};
+    unless ($DB{host_name}) {
+        $DB{system_user} = $DB{root_user};
         while(1) {
-            ask_confirm("Postgres System Username", \$PG{system_user}, $QUIET);
-            $PG{system_user_uid} = (getpwnam($PG{system_user}))[2];
-            last if defined $PG{system_user_uid};
-            print "User \"$PG{system_user}\" not found!  This user must exist ".
+            ask_confirm("Postgres System Username", \$DB{system_user}, $QUIET);
+            $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
+            last if defined $DB{system_user_uid};
+            print "User \"$DB{system_user}\" not found!  This user must exist ".
                 "on your system.\n";
         }
     }
 
     while(1) {
-        ask_confirm("Bricolage Postgres Username", \$PG{sys_user}, $QUIET);
-        if ($PG{sys_user} eq $PG{root_user}) {
+        ask_confirm("Bricolage Postgres Username", \$DB{sys_user}, $QUIET);
+        if ($DB{sys_user} eq $DB{root_user}) {
             print "Bricolage Postgres User cannot be the same as the Postgres Root User.\n";
         } else {
             last;
         }
     }
 
-    ask_password("Bricolage Postgres Password", \$PG{sys_pass}, $QUIET);
-    ask_confirm("Bricolage Database Name", \$PG{db_name}, $QUIET);
+    ask_password("Bricolage Postgres Password", \$DB{sys_pass}, $QUIET);
+    ask_confirm("Bricolage Database Name", \$DB{db_name}, $QUIET);
 }
 
 # ask for host specifics
@@ -162,12 +164,12 @@ sub get_host {
     print "\n";
     ask_confirm(
         "Postgres Database Server Hostname (default is unset, i.e., localhost)",
-        \$PG{host_name},
+        \$DB{host_name},
         $QUIET,
     );
     ask_confirm(
         "Postgres Database Server Port Number (default is unset, i.e., 5432)",
-        \$PG{host_port},
+        \$DB{host_port},
         $QUIET,
     );
 }

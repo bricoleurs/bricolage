@@ -32,7 +32,7 @@ BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib
 # build rules           #
 #########################
 
-all 		: required.db modules.db apache.db postgres.db config.db \
+all 		: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf build_done
 
 required.db	: inst/required.pl
@@ -49,16 +49,16 @@ apache.db	: inst/apache.pl required.db
 # databases, the user picks which one (each with a key name for the DBD
 # driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
 # work should just assume that database and do the work for that database.
-postgres.db 	: inst/postgres.pl required.db
-	$(PERL) inst/postgres.pl $(INSTALL_VERBOSITY)
+database.db 	: inst/database.pl inst/postgres.pl inst/mysql.pl required.db 
+	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
 
-config.db	: inst/config.pl required.db apache.db postgres.db
+config.db	: inst/config.pl required.db apache.db database.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
-build_done	: required.db modules.db apache.db postgres.db config.db \
+build_done	: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf
 	@echo
 	@echo ===========================================================
@@ -82,7 +82,7 @@ build_done	: required.db modules.db apache.db postgres.db config.db \
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/Pg.sql dist_dir \
+dist            : check_dist distclean inst/Pg.sql inst/My.sql dist_dir \
                   rm_svn rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
@@ -128,7 +128,12 @@ inst/Pg.sql : $(SQL_FILES)
 	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 
-.PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
+inst/My.sql : $(SQL_FILES)
+	grep -vh '^--' `find sql/My -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
+	grep -vh '^--' `find sql/My -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+	grep -vh '^--' `find sql/My -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+
+.PHONY 		: distclean inst/Pg.sql inst/My.sql dist_dir rm_svn dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -179,7 +184,7 @@ install_db		: db db_grant
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
 
-cpan 		: modules.db postgres.db inst/cpan.pl
+cpan 		: modules.db database.db inst/cpan.pl
 	$(PERL) inst/cpan.pl
 
 lib 		: 
@@ -193,10 +198,10 @@ bin 		:
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
-db    		: inst/db.pl postgres.db
+db    		: inst/db.pl database.db
 	$(PERL) inst/db.pl
 
-db_grant	: inst/db.pl postgres.db
+db_grant	: inst/db.pl database.db
 	$(PERL) inst/db_grant.pl
 
 done		: bconf/bricolage.conf db files bin lib cpan
@@ -210,7 +215,7 @@ done		: bconf/bricolage.conf db files bin lib cpan
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db postgres.db bconf/bricolage.conf \
+upgrade		: upgrade.db required.db database.db bconf/bricolage.conf \
 	          is_root cpan stop db_upgrade lib bin  \
 	          upgrade_files upgrade_conf upgrade_done
 
@@ -269,7 +274,7 @@ rm_files	:
 dev_symlink :
 	$(PERL) inst/dev.pl
 
-dev			: inst/Pg.sql install dev_symlink clean
+dev			: inst/Pg.sql inst/My.sql install dev_symlink clean
 	
 
 ##########################

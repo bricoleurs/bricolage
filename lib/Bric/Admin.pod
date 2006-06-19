@@ -145,6 +145,8 @@ START MODULE LIST
 
 =item DBD::Pg 1.22
 
+=item DBD::mysql 3.0005
+
 =item DB_File
 
 =item Apache::Session 1.54

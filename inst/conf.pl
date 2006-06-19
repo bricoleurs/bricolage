@@ -45,8 +45,8 @@ our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
 our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
-our $PG;
-do "./postgres.db" or die "Failed to read postgres.db : $!";
+our $DB;
+do "./database.db" or die "Failed to read database.db : $!";
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
@@ -88,11 +88,12 @@ sub create_bricolage_conf {
     set_bric_conf_var(\$conf, SSL_CERTIFICATE_KEY_FILE  => $AP->{ssl_key});
     set_bric_conf_var(\$conf, SYS_USER        => $AP->{user});
     set_bric_conf_var(\$conf, SYS_GROUP       => $AP->{group});
-    set_bric_conf_var(\$conf, DB_NAME         => $PG->{db_name});
-    set_bric_conf_var(\$conf, DBI_USER        => $PG->{sys_user});
-    set_bric_conf_var(\$conf, DBI_PASS        => $PG->{sys_pass});
-    set_bric_conf_var(\$conf, DB_HOST         => $PG->{host_name});
-    set_bric_conf_var(\$conf, DB_PORT         => $PG->{host_port});
+    set_bric_conf_var(\$conf, DB         => $DB->{db});    
+    set_bric_conf_var(\$conf, DB_NAME         => $DB->{db_name});
+    set_bric_conf_var(\$conf, DBI_USER        => $DB->{sys_user});
+    set_bric_conf_var(\$conf, DBI_PASS        => $DB->{sys_pass});
+    set_bric_conf_var(\$conf, DB_HOST         => $DB->{host_name});
+    set_bric_conf_var(\$conf, DB_PORT         => $DB->{host_port});
 
     # path settings
     my $root = $CONFIG->{BRICOLAGE_ROOT};
@@ -261,7 +262,7 @@ sub create_install_db {
     open DB, ">$file" or die "Cannot open $file: $!";
     print DB Data::Dumper->Dump([{ CONFIG  => $CONFIG,
                                    AP      => $AP,
-                                   PG      => $PG,
+                                   DB      => $DB,
                                    REQ     => $REQ,
                                    VERSION => $VERSION }],
                                 ['INSTALL']);
