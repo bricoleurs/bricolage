@@ -179,7 +179,8 @@ if ($at->is_related_media) {
     <td>
     <table>
     <tr>
-      <td>
+% # This 100% is necessary to get the autosizing textareas to work in IE.
+      <td width="100%">
     <& '/widgets/profile/displayFormElement.mc',
       key      => $key,
       vals     => $vals,

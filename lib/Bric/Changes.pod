@@ -282,6 +282,12 @@ Christian Niles. [David]
 The Help popup button works again in Interenet Explorer. Reported by Chris
 Heiland. [David]
 
+=item *
+
+Autosizing textarea fields now display full size in Internet Explorer when
+they have no content, instead of only 1 character wide. Reported by Paul
+Orrock. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
