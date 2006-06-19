@@ -1,0 +1,50 @@
+-- Project:      Bricolage Business API
+-- File:    Contact.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('1', 'Primary Email', 'Primary Electronic Mail Address', '1', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('2', 'Secondary Email', 'Secondary Electronic Mail Address', '1', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('3', 'Business Phone', 'Business Phone Number', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('4', 'Home Phone', 'Home Phone Number', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('5', 'Fax', 'Fax Number', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('6', 'Mobile Phone', 'Mobile Phone Number', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('7', 'Pager', 'Pager Number', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('8', 'Pager Email', 'Email Address for Pager', '1', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('9', 'AIM ID', 'AOL Instant Messenger ID', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('10', 'ICQ ID', 'ICQ Messenger ID', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('11', 'MSN ID', 'Microsoft Messenger ID', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('12', 'Yahoo! Pager ID', 'Yahoo! Pager Messenger ID', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('13', 'Jabber ID', 'Jabber Messenger ID', '0', '1');
+
+INSERT INTO contact (id, type, description, alertable, active)
+VALUES ('14', 'WWW', 'WWW URL', '0', '1');
+
+

@@ -1,0 +1,28 @@
+-- Project:      Bricolage Business API
+-- File:    Person.use
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+SELECT o.id, o.name, o.long_name, o.active, po.id, po.person__id, po.type,
+       po.department, po.title, po.active
+FROM   org o, person_org po
+WHERE  o.id = po.org__id
+       AND po.id = 212;
+
+INSERT INTO person_org (id, person__id, org__id, type, department, title,
+                        active)
+VALUES (seq_person_org.NextVal, 34, 56, 'Employer', 'Engineering',
+        'Software Engineer', 1);
+
+UPDATE person_org
+SET    id = 212,
+       person__id = 34,
+       org__id = 56,
+       type = 'Employer',
+       department = 'Engineering',
+       title = 'Software Engineer'
+       active = 1
+WHERE  id = 212;
+

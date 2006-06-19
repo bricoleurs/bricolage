@@ -1,0 +1,99 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-01-18 02:34:40 +0200 (Wed, 18 Jan 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- Add constraint to keep publish_status synched with publish_date.
+ALTER TABLE story
+ADD CONSTRAINT ck_story__publish_status CHECK (
+    (
+        publish_status = FALSE
+        AND publish_date IS NULL
+        AND first_publish_date IS NULL
+    )
+    OR (
+        publish_status = TRUE
+        AND publish_date IS NOT NULL
+        AND first_publish_date IS NOT NULL
+    )
+);
+
+ALTER TABLE story
+ADD CONSTRAINT fk_source__story FOREIGN KEY (source__id)
+	REFERENCES source(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_usr__story FOREIGN KEY (usr__id)
+	REFERENCES usr(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_element_type__story FOREIGN KEY (element_type__id)
+	REFERENCES element_type(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_workflow__story FOREIGN KEY (workflow__id)
+	REFERENCES workflow(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_site__story FOREIGN KEY (site__id)
+	REFERENCES site(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_story__story_id FOREIGN KEY (alias_id)
+	REFERENCES story(id) ON DELETE RESTRICT;
+
+ALTER TABLE story
+ADD CONSTRAINT fk_desk__story FOREIGN KEY (desk__id)
+	REFERENCES desk(id) ON DELETE RESTRICT;
+
+-- Story Instance Constraints
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_story__story_instance FOREIGN KEY (story__id)
+	REFERENCES story(id) ON DELETE CASCADE;
+
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_usr__story_instance FOREIGN KEY (usr__id)
+	REFERENCES usr(id) ON DELETE SET NULL;
+
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_primary_oc__story_instance FOREIGN KEY (primary_oc__id)
+	REFERENCES output_channel(id) ON DELETE SET NULL;
+
+-- Story URI constraint.
+ALTER TABLE story_uri
+ADD CONSTRAINT fk_story__story_uri FOREIGN KEY (story__id)
+    REFERENCES story(id) ON DELETE CASCADE;
+
+ALTER TABLE story_uri
+ADD CONSTRAINT fk_story__site__id FOREIGN KEY (site__id)
+REFERENCES site(id) ON DELETE CASCADE;
+
+-- Story to output channel mapping constraints
+ALTER TABLE story__output_channel 
+ADD CONSTRAINT fk_story__oc__story FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story__output_channel 
+ADD CONSTRAINT fk_story__oc__oc FOREIGN KEY (output_channel__id)
+	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- Story to Category mapping constraints
+ALTER TABLE story__category 
+ADD CONSTRAINT fk_story__story__category FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story__category 
+ADD CONSTRAINT fk_category__story__category FOREIGN KEY (category__id)
+	REFERENCES category(id) ON DELETE CASCADE;
+
+-- Story to Contributor mapping constraints
+ALTER TABLE story__contributor
+ADD CONSTRAINT fk_story__story__contributor FOREIGN KEY (story_instance__id)
+	REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story__contributor
+ADD CONSTRAINT fk_member__story__contributor FOREIGN KEY (member__id)
+	REFERENCES member(id) ON DELETE CASCADE;

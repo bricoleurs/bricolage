@@ -1,0 +1,35 @@
+-- Project:      Bricolage Business API
+-- File:    ServerType.use
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- INSERT statement.
+
+INSERT INTO server_type (id, class__id, name, description, copyable, active)
+VALUES (1, (SELECT id FROM class WHERE pkg_name = 'Bric::Dist::Action::Mover::FTP' AND distributor = 1),
+       'Preview Server', 'Servers of this type handle previews.', 0, 1);
+
+-- UPDATE statement.
+
+UPDATE server_type
+SET    id = 1,
+       class__id = (SELECT id
+		    FROM class
+		    WHERE pkg_name = 'Bric::Dist::Action::Mover::FTP'
+			  AND distributor = 1),
+       name = 'Preview Server',
+       description = 'Servers of this type handle previews.',
+       copyable = 0,
+       active = 1
+WHERE  id = 1;
+
+
+-- SELECT statement.
+SELECT s.id, c.pkg_name, s.name, s.description, s.copyable, s.active
+FROM   server_type s, class c
+WHERE  s.class__id = c.id
+       AND s.id = 1;
+
+

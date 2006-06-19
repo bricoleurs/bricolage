@@ -1,0 +1,41 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+--
+-- -----------------------------------------------------------------------------
+-- Attribute.con
+--
+-- VERSION: $LastChangedRevision$
+--
+
+/* Commented out because attr_person won't be used in production (in this version).
+   However, the examples still apply. --David, 23 Feb 2001
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_person
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_person_val
+
+
+ALTER TABLE attr_person_val ADD 
+    CONSTRAINT fk_attr_person__attr_person_val FOREIGN KEY (attr__id)
+    REFERENCES attr_person(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_person_val ADD
+    CONSTRAINT fk_person__attr_person_val FOREIGN KEY (object__id)
+    REFERENCES person(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_person_meta
+
+ALTER TABLE attr_person_meta ADD 
+    CONSTRAINT fk_attr_person__attr_person_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_person(id) ON DELETE CASCADE;
+
+*/
+
+

@@ -1,0 +1,55 @@
+-- Project: Bricolage Business API
+-- File:    ActionType.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author:  David Wheeler <david@justatheory.com>
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES ('1', 'Move', 'Puts resources on servers.', '1');
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('1', '0');
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES ('4', 'Email', 'Email resources.', '1');
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('4', '0');
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES ('5', 'DTD Validation', 'XML DTD validation.', '1');
+
+/* Associate with text/html */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('5', '77');
+
+/* Associate with text/xml */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('5', '86');
+
+/* Associate with application/xhtml+xml */
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('5', '92');
+
+/*
+
+These can be added back in once these modules have actually been implemented.
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES ('2', 'Akamaize', 'Akamaizes HTML resources.', '1');
+
+INSERT INTO action_type ( id, name, description, active)
+VALUES ('3', 'Clean HTML', 'Cleans and reformats HTML Resources.', '1');
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('2', '77');
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('3', '77');
+
+INSERT INTO action_type__media_type (action_type__id, media_type__id)
+VALUES ('3', '78');
+
+*/
+

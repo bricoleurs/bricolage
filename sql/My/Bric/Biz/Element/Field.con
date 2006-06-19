@@ -1,0 +1,34 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2005-09-24 02:42:51 +0300 (Sat, 24 Sep 2005) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- Alter Table Commands for the story field elements
+ALTER TABLE story_field
+ADD CONSTRAINT fk_story_instance__story_field FOREIGN KEY (object_instance_id)
+    REFERENCES story_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE story_field
+ADD CONSTRAINT fk_story_element__story_field FOREIGN KEY (parent_id)
+REFERENCES story_element(id) ON DELETE CASCADE;
+
+ALTER TABLE story_field
+ADD CONSTRAINT fk_field_type__story_field FOREIGN KEY (field_type__id)
+REFERENCES field_type(id) ON DELETE RESTRICT;
+
+
+-- Alter Table Commands for the media field elements
+ALTER TABLE media_field
+ADD CONSTRAINT fk_media_instance__media_field FOREIGN KEY (object_instance_id)
+    REFERENCES media_instance(id) ON DELETE CASCADE;
+
+ALTER TABLE media_field
+ADD CONSTRAINT fk_media_element__media_field FOREIGN KEY (parent_id)
+REFERENCES media_element(id) ON DELETE CASCADE;
+
+ALTER TABLE media_field
+ADD CONSTRAINT fk_field_type__media_field FOREIGN KEY (field_type__id)
+REFERENCES field_type(id) ON DELETE RESTRICT;

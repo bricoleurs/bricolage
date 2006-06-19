@@ -1,0 +1,48 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+-- 
+-- TABLE: resource 
+--
+
+ALTER TABLE resource ADD CONSTRAINT fk_media_type__resource 
+    FOREIGN KEY (media_type__id)
+    REFERENCES media_type(id) ON DELETE CASCADE;
+
+ALTER TABLE resource ADD CONSTRAINT fk_resource__resource
+    FOREIGN KEY (parent_id)
+    REFERENCES resource(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: media__resource 
+--
+
+ALTER TABLE media__resource ADD CONSTRAINT fk_resource__media__resource 
+    FOREIGN KEY (resource__id)
+    REFERENCES resource(id) ON DELETE CASCADE;
+
+ALTER TABLE media__resource ADD CONSTRAINT fk_media__media__resource 
+    FOREIGN KEY (media__id)
+    REFERENCES media(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: story__resource 
+--
+
+ALTER TABLE story__resource ADD CONSTRAINT fk_resource__story__resource 
+    FOREIGN KEY (resource__id)
+    REFERENCES resource(id) ON DELETE CASCADE;
+
+ALTER TABLE story__resource ADD CONSTRAINT fk_story__story__resource 
+    FOREIGN KEY (story__id)
+    REFERENCES story(id) ON DELETE CASCADE;
+
+
+

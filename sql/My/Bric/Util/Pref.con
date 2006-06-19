@@ -1,0 +1,41 @@
+--
+-- Project: Bricolage Business API
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+
+-- 
+-- TABLE: usr_pref
+--
+
+ALTER TABLE    usr_pref
+ADD CONSTRAINT fk_pref__usr_pref FOREIGN KEY (pref__id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+ALTER TABLE    usr_pref
+ADD CONSTRAINT fk_usr__usr_pref FOREIGN KEY (usr__id)
+REFERENCES     usr(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: pref_opt
+--
+
+ALTER TABLE    pref_opt
+ADD CONSTRAINT fk_pref__pref_opt FOREIGN KEY (pref__id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: pref_member
+--
+
+ALTER TABLE    pref_member
+ADD CONSTRAINT fk_pref__pref_member FOREIGN KEY (object_id)
+REFERENCES     pref(id) ON DELETE CASCADE;
+
+ALTER TABLE    pref_member
+ADD CONSTRAINT fk_member__pref_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+

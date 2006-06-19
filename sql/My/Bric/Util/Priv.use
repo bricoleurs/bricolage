@@ -1,0 +1,28 @@
+-- Project:      Bricolage Business API
+-- File:    Priv.use
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+SELECT p.id, p.grp__id, g.grp__id, p.value
+FROM   grp_priv p, grp_priv__grp_member g
+WHERE  p.id = g.grp_priv__id
+       AND p.id = 1;
+
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES (1, 3, 3);
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES (1, 1);
+
+UPDATE grp_priv__grp_member
+SET    grp_priv__id = 2
+WHERE  grp_priv__id = 1
+       and grp__id = 1;
+
+DELETE FROM grp_priv__grp_member
+WHERE  grp_priv__id = 1;
+
+DELETE FROM grp_priv
+WHERE  id = 1;

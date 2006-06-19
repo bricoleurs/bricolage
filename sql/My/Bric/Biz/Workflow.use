@@ -1,0 +1,97 @@
+-- -----------------------------------------------------------------------------
+-- Workflow.use
+--
+-- VERSION: $LastChangedRevision$
+--
+-- SQL usage for the workflow class
+
+-- -----------------------------------------------------------------------------
+-- Actions
+-- -----------------------------------------------------------------------------
+
+-- SELECT
+-- * Select a specific workflow.
+-- * Select all workflows of a particular type.
+--
+-- UPDATE
+-- * Change the description of a workflow
+-- * Change the name of a workflow type.
+--
+-- INSERT
+-- * Add a new workflow type
+-- * Add a new workflow
+
+
+-- -----------------------------------------------------------------------------
+-- Section: SELECT
+-- -----------------------------------------------------------------------------
+
+-- What: Select a specific workflow.
+-- Given: Workflow ID - $w_id
+
+SELECT
+	w.id, w.description, wt.name, w.active 
+FROM
+	workflow w, workflow_type wt
+WHERE
+	w.id = $w_id AND
+	w.workflow_type__id = wt.id
+
+-- What: Select all workflows of a particular type.
+-- Given: Worflow type - $name
+
+SELECT
+	w.id, w.description, wt.name
+FROM
+	workflow w, workflow_type wt
+WHERE
+	wt.name = $name AND
+	w.workflow_type__id = wt.id AND
+	w.active = 1
+
+-- -----------------------------------------------------------------------------
+-- Section: UPDATE
+-- -----------------------------------------------------------------------------
+
+-- What: Change the description of a workflow
+-- Given: Workflow ID - $w_id, Description - $desc
+
+UPDATE
+	workflow
+SET
+	(description = $desc)
+WHERE
+	id = $w_id
+
+-- What: Change the name of a workflow type.
+-- Given: Workflow type ID - $wt_id, Workflow type name - $name
+
+UPDATE
+	workflow_type
+SET
+	(name = $name)
+WHERE
+	id = $wt_id
+
+
+-- -----------------------------------------------------------------------------
+-- Section: INSERT
+-- -----------------------------------------------------------------------------
+
+-- What: Add a new workflow type
+-- Given:  Workflow type name - $name
+
+INSERT INTO
+	workflow_type
+	(id, name)
+VALUES
+	(seq_workflow_type.nextval, $name)
+
+-- What: Add a new workflow
+-- Given:  Worflow description - $desc, Worflow type ID - $wt_id
+
+INSERT INTO
+	workflow_type
+	(id, description, workflow_type__id)
+VALUES
+	(seq_workflow.nextval, $desc, $wt_id)

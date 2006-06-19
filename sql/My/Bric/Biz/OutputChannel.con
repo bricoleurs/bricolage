@@ -1,0 +1,33 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+-- 
+-- TABLE: output_channel_member
+--
+
+ALTER TABLE    output_channel
+ADD CONSTRAINT fk_site__output_channel FOREIGN KEY (site__id)
+REFERENCES     site(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_include
+ADD CONSTRAINT fk_output_channel__oc_include FOREIGN KEY (output_channel__id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_include
+ADD CONSTRAINT fk_oc__oc_include_inc FOREIGN KEY (include_oc_id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_member
+ADD CONSTRAINT fk_output_channel__oc_member FOREIGN KEY (object_id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_member
+ADD CONSTRAINT fk_member__oc_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+

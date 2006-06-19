@@ -1,0 +1,28 @@
+
+-- Project:      Bricolage Business API
+-- File:    User.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- Administrator. Password: 'change me now!'.
+
+INSERT INTO usr (id, login, password, active)
+VALUES ('0', 'admin', 'd901271082743310476e5e7245e42120', '1');
+
+-- Add 'em to the 'All Users' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('1', '2', '2', '1');
+
+INSERT INTO user_member (id, object_id, member__id)
+VALUES ('0', '0', '1'); 
+
+-- Add 'em to the 'Global Admins' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('2', '6', '2', '1');
+
+INSERT INTO user_member (id, object_id, member__id)
+VALUES ('1', '0', '2'); 
+
+

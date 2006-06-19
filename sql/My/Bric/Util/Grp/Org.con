@@ -1,0 +1,16 @@
+-- Project: Bricolage Business API
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+ALTER TABLE    org_member
+ADD CONSTRAINT fk_org__org_member FOREIGN KEY (object_id)
+REFERENCES     org(id) ON DELETE CASCADE;
+
+ALTER TABLE    org_member
+ADD CONSTRAINT fk_member__org_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+
+

@@ -1,0 +1,273 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES ('0', 'Shelved', 'Hidden workflow for shelved assets', '0', '41', '42', '0', '2', '0', '100');
+
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES ('101', 'Story', 'Story Workflow', '49', '41', '42', '101', '2', '1', '100');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('407', '25', '44', '1');
+
+INSERT INTO workflow_member(id, object_id, member__id)
+VALUES ('1', '101', '407');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('49', NULL, '43', 'Workflow Assets', 'Assets group for workflow permissions', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('180', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('180', '49', '180');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('41', NULL, '40', 'All Workflow Desks', 'All desks available to a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('501', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('50', '41', '501');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('42', NULL, '40', 'Required Workflow Desks', 'Desks required in a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('502', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('51', '42', '502');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('201', '41', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('101', '101', '201');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('202', '42', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('102', '101', '202');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('203', '41', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('103', '102', '203');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('204', '41', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('104', '103', '204');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('205', '42', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('105', '103', '205');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('206', '41', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('106', '104', '206');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('207', '42', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('107', '104', '207');
+
+
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES ('102', 'Media', 'Media Workflow', '51', '43', '44', '105', '3', '1', '100');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('408', '25', '44', '1');
+
+INSERT INTO workflow_member(id, object_id, member__id)
+VALUES ('2', '102', '408');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('51', NULL, '43', 'Workflow Assets', 'Assets group for workflow permissions', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('181', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('181', '51', '181');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('43', NULL, '40', 'All Workflow Desks', 'All desks available to a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('503', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('52', '43', '503');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('44', NULL, '40', 'Required Workflow Desks', 'Desks required in a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('504', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('53', '44', '504');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('208', '43', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('108', '105', '208');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('209', '44', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('109', '105', '209');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('210', '43', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('110', '103', '210');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('211', '44', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('111', '103', '211');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('212', '43', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('112', '104', '212');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('213', '44', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('113', '104', '213');
+
+
+INSERT INTO workflow (id, name, description, asset_grp_id, all_desk_grp_id,
+                      req_desk_grp_id, head_desk_id, type, active, site__id)
+VALUES ('103', 'Template', 'Template Workflow', '52', '45', '46', '106', '1', '1', '100');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('409', '25', '44', '1');
+
+INSERT INTO workflow_member(id, object_id, member__id)
+VALUES ('3', '103', '409');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('52', NULL, '43', 'Workflow Assets', 'Assets group for workflow permissions', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('182', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('182', '52', '182');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('45', NULL, '40', 'All Workflow Desks', 'All desks available to a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('505', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('54', '45', '505');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent, active)
+VALUES ('46', NULL, '40', 'Required Workflow Desks', 'Desks required in a workflow', '1', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('506', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('55', '46', '506');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('214', '45', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('114', '106', '214');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('215', '46', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('115', '106', '215');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('216', '45', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('116', '107', '216');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('217', '46', '45', '1');
+
+INSERT INTO desk_member(id, object_id, member__id)
+VALUES ('117', '107', '217');
+
+/* All Desks Group */
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('171', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('121', '101', '171');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('172', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('122', '102', '172');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('173', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('123', '103', '173');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('174', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('124', '104', '174');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('175', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('125', '105', '175');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('176', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('126', '106', '176');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('177', '34', '45', '1');
+
+INSERT INTO desk_member (id, object_id, member__id)
+VALUES ('127', '107', '177');
+
+
+

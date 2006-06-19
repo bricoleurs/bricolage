@@ -1,0 +1,39 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+
+-- 
+-- TABLE: alerted 
+--
+
+ALTER TABLE alerted ADD CONSTRAINT fk_alert__alerted 
+    FOREIGN KEY (alert__id)
+    REFERENCES alert(id) ON DELETE CASCADE
+;
+
+ALTER TABLE alerted ADD CONSTRAINT fk_usr__alerted 
+    FOREIGN KEY (usr__id)
+    REFERENCES USR(ID) ON DELETE CASCADE
+;
+
+
+-- 
+-- TABLE: alerted__contact_value 
+--
+
+ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_alerted__alerted__contact 
+    FOREIGN KEY (alerted__id)
+    REFERENCES alerted(id) ON DELETE CASCADE
+;
+
+ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_contact__alerted__cont 
+    FOREIGN KEY (contact__id)
+    REFERENCES contact(id) ON DELETE CASCADE
+;
+
+
+

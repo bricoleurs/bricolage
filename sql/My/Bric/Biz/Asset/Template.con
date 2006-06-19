@@ -1,0 +1,60 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2005-10-10 10:15:55 +0300 (Mon, 10 Oct 2005) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: template
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_usr__template FOREIGN KEY (usr__id)
+    REFERENCES usr(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_output_channel__template FOREIGN KEY (output_channel__id)
+    REFERENCES output_channel(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_element_type__template FOREIGN KEY (element_type__id)
+    REFERENCES element_type(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_category__template FOREIGN KEY (category__id)
+    REFERENCES category(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_workflow__template FOREIGN KEY (workflow__id)
+    REFERENCES workflow(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_site__template FOREIGN KEY (site__id)
+    REFERENCES site(id) ON DELETE RESTRICT;
+
+ALTER TABLE template
+    ADD CONSTRAINT fk_desk__template FOREIGN KEY (desk__id)
+    REFERENCES desk(id) ON DELETE RESTRICT;
+
+-- -----------------------------------------------------------------------------
+-- Table: template_instance
+
+ALTER TABLE template_instance
+    ADD CONSTRAINT fk_template__template_instance FOREIGN KEY (template__id)
+    REFERENCES template(id) ON DELETE CASCADE;
+
+ALTER TABLE template_instance
+    ADD CONSTRAINT fk_usr__template_instance FOREIGN KEY (usr__id)
+    REFERENCES usr(id) ON DELETE SET NULL;
+
+-- -----------------------------------------------------------------------------
+-- Table: template_member
+
+ALTER TABLE    template_member
+ADD CONSTRAINT fk_template__template_member FOREIGN KEY (object_id)
+REFERENCES     template(id) ON DELETE CASCADE;
+
+ALTER TABLE    template_member
+ADD CONSTRAINT fk_member__template_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;

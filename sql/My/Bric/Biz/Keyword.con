@@ -1,0 +1,37 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2005-10-31 20:31:35 +0200 (Mon, 31 Oct 2005) $
+-- Author: David Wheeler <david@kineticode.com>
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_keyword__keyword_member FOREIGN KEY (object_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;
+
+ALTER TABLE    keyword_member
+ADD CONSTRAINT fk_member__keyword_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+ALTER TABLE    story_keyword
+ADD CONSTRAINT fk_story__story_keyword FOREIGN KEY (story_id)
+REFERENCES     story(id) ON DELETE CASCADE;
+
+ALTER TABLE    story_keyword
+ADD CONSTRAINT fk_keyword__story_keyword FOREIGN KEY (keyword_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;
+
+ALTER TABLE    media_keyword
+ADD CONSTRAINT fk_media__media_keyword FOREIGN KEY (media_id)
+REFERENCES     media(id) ON DELETE CASCADE;
+
+ALTER TABLE    media_keyword
+ADD CONSTRAINT fk_keyword__media_keyword FOREIGN KEY (keyword_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;
+
+ALTER TABLE    category_keyword
+ADD CONSTRAINT fk_category__category_keyword FOREIGN KEY (category_id)
+REFERENCES     category(id) ON DELETE CASCADE;
+
+ALTER TABLE    category_keyword
+ADD CONSTRAINT fk_keyword__category_keyword FOREIGN KEY (keyword_id)
+REFERENCES     keyword(id) ON DELETE CASCADE;

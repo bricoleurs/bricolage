@@ -1,0 +1,16 @@
+-- Project:      Bricolage Business API
+-- File:    ActionType.use
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- SELECT statement.
+SELECT a.id, a.name, a.description, a.active, t.name, c.pkg_name
+FROM   action_type a, action_type__media_type m, media_type t
+WHERE  a.id = m.action_type__id
+       AND m.media_type__id = t.id
+       AND a.name = 'Ultraseek';
+
+
+

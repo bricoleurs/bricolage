@@ -1,0 +1,31 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_grp
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_grp_val
+
+
+ALTER TABLE attr_grp_val ADD 
+    CONSTRAINT fk_attr_grp__attr_grp_val FOREIGN KEY (attr__id)
+    REFERENCES attr_grp(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_grp_val ADD
+    CONSTRAINT fk_grp__attr_grp_val FOREIGN KEY (object__id)
+    REFERENCES grp(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_grp_meta
+
+ALTER TABLE attr_grp_meta ADD 
+    CONSTRAINT fk_attr_grp__attr_grp_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_grp(id) ON DELETE CASCADE;
+
+

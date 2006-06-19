@@ -1,0 +1,97 @@
+-- Project:      Bricolage Business API
+-- File:    Resource.use
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+--
+-- INSERT statements.
+--
+
+INSERT INTO resource (id, media_type__id, path, size, mod_time, is_dir)
+VALUES (1, 311, '/data/content/tech/feature', 0, '2001-02-14 10:45:34', 1);
+
+INSERT INTO resource (id, media_type__id, path, size, mod_time, is_dir)
+VALUES (2, 313, '/data/content/tech/feature/index.html', 324, '2001-02-14 10:45:34', 0);
+
+/*
+
+INSERT INTO story__resource (story__id, resource__id)
+VALUES (1, 1);
+
+INSERT INTO media__resource (media__id, resource__id)
+VALUES (2, 1);
+
+*/
+
+INSERT INTO resource__resource (dir_id, file_id)
+VALUES (1, 2);
+
+--
+-- UPDATE statements.
+--
+
+UPDATE resource
+SET    id = 2,
+       media_type__id = 313,
+       path = '/data/content/tech/feature/foo.html',
+       size = 4562,
+       mod_time = '2001-02-14 11:32:54',
+       is_dir = 0
+WHERE  id = 2;
+
+--
+-- SELECT statements.
+--
+
+-- Ideally, we'd use this outer join. We should be able to do so beginning with
+-- PostgreSQL version 7.1. See
+-- http://www.postgresql.org/docs/faq-english.html#4.24.
+SELECT r.id, t.name, r.path, r.size, r.mod_time, r.is_dir, s.story__id,
+       m.media__id
+FROM   resource r, media_type t, story__resource s, media__resource m
+FROM   resource r, media_type t,
+       LEFT OUTER JOIN story__resource s USING (r.id = s.resource__id),
+       LEFT OUTER JOIN media__resource m USING (r.id = m.resource__id)
+WHERE  r.id = 2
+       AND r.media_type__id = t.id;
+
+-- Meanwhile, we need to use separate joins.
+SELECT r.id, r.parent_id, t.name, r.path, r.size, r.mod_time, r.is_dir
+FROM   resource r, media_type t
+WHERE  r.id = 2
+       AND r.media_type__id = t.id;
+
+SELECT story__id
+FROM   story__resource
+WHERE  resource__id = 2;
+
+SELECT media__id
+FROM   media__resource
+WHERE  resource__id = 2;
+
+--
+-- DELETE statements.
+--
+
+DELETE FROM story__resource
+WHERE  story__id = 1
+       AND resource__id = 2;
+
+DELETE FROM media__resource
+WHERE  media__id = 2
+       AND resource__id = 1;
+
+DELETE FROM resource__resource
+WHERE  dir_id = 1
+       AND file_id = 2;
+
+DELETE FROM resource
+WHERE  id = 2;
+
+DELETE FROM resource
+WHERE  id = 1;
+
+
+
