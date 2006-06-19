@@ -288,6 +288,11 @@ Autosizing textarea fields now display full size in Internet Explorer when
 they have no content, instead of only 1 character wide. Reported by Paul
 Orrock. [David]
 
+=item *
+
+The Bulk Edit and template code textarea fields no longer jump around as you
+type in IE 6. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)
