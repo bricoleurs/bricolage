@@ -628,10 +628,10 @@ my $build_table_data = sub {
         # XXX Actions are 0-based for some reason. Dunno why.
         push @{$actions->[$row - 1]}, @prf if @prf;
 
-        ## Add the select items if any
+        # Add the select items if any
         if (@sel) {
             $sel_cols = 1;
-            push @{$actions->[$row - 1]}, join q{ }, @sel;
+            push @{$actions->[$row - 1]}, join '<br />', @sel;
         }
 
         $row++;
