@@ -353,7 +353,6 @@ sub deploy : Callback {
         $a_ids = ref $a_ids ? $a_ids : [$a_ids];
 
         if (my $count = @$a_ids) {
-            my $disp_name;
             for my $fa (Bric::Biz::Asset::Template->list({
                 version_id => ANY(@$a_ids)
             })) {
@@ -375,13 +374,11 @@ sub deploy : Callback {
                 $fa->set_workflow_id(undef);
                 $fa->save;
                 log_event("template_rem_workflow", $fa);
-                $disp_name ||= $fa->get_uri;
+                add_msg('Template "[_1]" deployed.', $fa->get_uri);
             }
-            # Let 'em know we've done it!
-            if ($count == 1) {
-                add_msg('Template "[_1]" deployed.', $disp_name);
-            } else {
-                add_msg("[quant,_1,$disp_name] deployed.", $count);
+            # Sum it up for them
+            if ($count > 1) {
+                add_msg("[quant,_1,template] deployed.", $count);
             }
         }
     }
