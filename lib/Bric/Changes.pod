@@ -86,6 +86,11 @@ related assets. If the auto publish of a related story or media asset will not
 be possible then the publish request will fail. It can be changed to warn, the 
 previous behaviour, if required. [Paul Orrock]
 
+=item *
+
+Added 'Remove Frameset' clickthrough on control bar next to Repreview option. 
+[Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
@@ -306,8 +311,6 @@ List of templates deployed is now reported properly after a successful deploy
 [Paul Orrock]
 
 =back
-
-
 
 =head1 VERSION 1.10.1 (2006-03-20)
 
