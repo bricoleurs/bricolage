@@ -279,6 +279,8 @@ sub checkin : Callback(priority => 6) {
             apache_req => $self->apache_req,
             params     => { media_pub => { $media->get_version_id => $media } },
           );
+        $self->clear_my_state;
+        $self->set_redirect("/");
         $pub->publish;
 
     } else {

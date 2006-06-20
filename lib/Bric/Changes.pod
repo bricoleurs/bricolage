@@ -79,6 +79,13 @@ template classes. [David]
 Aliases are now indicated in Find Stories by an arrow icon just before the
 story title. Suggested by Paul Orrock. [David]
 
+=item *
+
+Added PUBLISH_RELATED_FAIL_BEHAVIOUR directive to be used when auto publishing 
+related assets. If the auto publish of a related story or media asset will not 
+be possible then the publish request will fail. It can be changed to warn, the 
+previous behaviour, if required. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes

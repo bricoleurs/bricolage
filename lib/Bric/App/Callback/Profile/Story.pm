@@ -195,6 +195,8 @@ sub checkin : Callback(priority => 6) {
             apache_req   => $self->apache_req,
             params       => { story_pub => { $story->get_version_id => $story } },
           );
+        $self->clear_my_state;
+        $self->set_redirect("/");
         $pub->publish;
 
     } else {

@@ -98,6 +98,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ADMIN_GRP_ID
                     PASSWD_LENGTH
                     PUBLISH_RELATED_ASSETS
+                    PUBLISH_RELATED_FAIL_BEHAVIOUR
                     LOGIN_LENGTH
                     ERROR_URI
                     ENABLE_DIST
@@ -241,7 +242,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
-                    pub       => [qw(PUBLISH_RELATED_ASSETS)],
+                    pub       => [qw(PUBLISH_RELATED_ASSETS 
+                                     PUBLISH_RELATED_FAIL_BEHAVIOUR)],
                     dist      => [qw(ENABLE_DIST
                                      QUEUE_PUBLISH_JOBS
                                      FTP_UNLINK_BEFORE_MOVE
@@ -559,6 +561,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Publishing Settings.
     use constant PUBLISH_RELATED_ASSETS => $config->{PUBLISH_RELATED_ASSETS};
+    use constant PUBLISH_RELATED_FAIL_BEHAVIOUR => $config->{PUBLISH_RELATED_FAIL_BEHAVIOUR} || 'warn';
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
