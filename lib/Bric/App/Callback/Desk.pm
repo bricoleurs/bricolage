@@ -24,7 +24,6 @@ use Bric::Util::DBI qw(:junction);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Time qw(strfdate);
 use Bric::Util::Fault qw(throw_error);
-use Bric::App::Event qw(clear_events);
 
 my $pkgs = {
     story    => 'Bric::Biz::Asset::Business::Story',
@@ -182,9 +181,7 @@ sub publish : Callback {
 
     my (@sids, @mids, %desks);
 
-    my %seen;
-    my $publish_fail;
-    my @messages;
+    my (%seen, @messages);
 
     for ([story => \@stories, $story_pub],
          [media => \@media,   $media_pub]
@@ -201,19 +198,23 @@ sub publish : Callback {
 
             unless (chk_authz($doc, PUBLISH, 1)) {
                 my $doc_disp_name = lc get_disp_name($key);
-                push @messages,['You do not have permission to publish '
-                        . qq{$doc_disp_name "[_1]"}, $doc->get_name];
-                $publish_fail++;
+                push @messages, [
+                    'You do not have permission to publish '
+                    . qq{$doc_disp_name "[_1]"},
+                    $doc->get_name,
+                ];
                 next;
             }
 
             if ($doc->get_checked_out) {
                 # Cannot publish checked-out assets.
                 my $doc_disp_name = lc get_disp_name($key);
-                push @messages,["Cannot publish $doc_disp_name \"[_1]\" because it is"
-                        . " checked out.", $doc->get_name];
+                push @messages,[
+                    'Cannot publish $doc_disp_name "[_1]" because it is '
+                    . " checked out.",
+                    $doc->get_name,
+                ];
                 delete $pub_ids->{$vid};
-                $publish_fail++;
                 next;
             }
 
@@ -224,7 +225,7 @@ sub publish : Callback {
             # Examine all the related objects.
             if (PUBLISH_RELATED_ASSETS) {
                 foreach my $rel ($doc->get_related_objects) {
-                    # Skip assets whose current version has already been published.
+                    # Skip assets that don't need to be published.
                     next unless $rel->needs_publish;
                     # Skip deactivated documents.
                     next unless $rel->is_active;
@@ -239,10 +240,11 @@ sub publish : Callback {
                     if ($rel->get_checked_out) {
                         # Cannot publish checked-out assets.
                         my $rel_disp_name = lc get_disp_name($rel->key_name);
-                        push @messages,["Cannot auto-publish related $rel_disp_name "
-                                  . '"[_1]" because it is checked out.',
-                                $rel->get_name];
-                        $publish_fail++;
+                        push @messages,[
+                            "Cannot auto-publish related $rel_disp_name "
+                            . '"[_1]" because it is checked out.',
+                            $rel->get_name,
+                        ];
                         next;
                     }
 
@@ -255,10 +257,11 @@ sub publish : Callback {
                             });
                         unless ($desk->can_publish) {
                             my $rel_disp_name = lc get_disp_name($rel->key_name);
-                            push @messages,["Cannot auto-publish related $rel_disp_name "
-                                      . '"[_1]" because it is not on a publish desk.',
-                                    $rel->get_name];
-                            $publish_fail++;
+                            push @messages,[
+                                "Cannot auto-publish related $rel_disp_name "
+                                . '"[_1]" because it is not on a publish desk.',
+                                $rel->get_name,
+                            ];
                             next;
                         }
                     }
@@ -266,9 +269,11 @@ sub publish : Callback {
                     unless (chk_authz($rel, PUBLISH, 1)) {
                         # Permission denied!
                         my $rel_disp_name = lc get_disp_name($rel->key_name);
-                        push @messages,['You do not have permission to auto-publish '
-                                  . qq{$rel_disp_name "[_1]"}, $rel->get_name];
-                        $publish_fail++;
+                        push @messages,[
+                            'You do not have permission to auto-publish '
+                            . qq{$rel_disp_name "[_1]"},
+                            $rel->get_name,
+                        ];
                         next;
                     }
 
@@ -299,20 +304,20 @@ sub publish : Callback {
 
     # By this point we now know if we're going to fail this publish
     # if we set the fail behaviour to fail rather than warn
-    if ((PUBLISH_RELATED_ASSETS) && ($publish_fail)) {
-        if (PUBLISH_RELATED_FAIL_BEHAVIOUR eq "fail") {
-            clear_msg();
-            clear_events();
-            foreach my $arrayref (@messages) { add_msg(@$arrayref); }
-            add_msg('Publish ABORTED due to errors above. Please fix these and retry.');
-            throw_error( [get_msg()]);
+    if (PUBLISH_RELATED_ASSETS && @messages) {
+        if (PUBLISH_RELATED_FAIL_BEHAVIOR eq 'fail') {
+            add_msg(@$_) for @messages;
+            my $msg = 'Publish aborted due to errors above. Please fix the '
+                . ' above problems and try again.';
+            throw_error error    => $msg,
+                        maketext => $msg;
         } else {
             # we are set to warn, should we add a further warning to the msg ?
-            foreach my $arrayref (@messages) { add_msg(@$arrayref); }
-            add_msg('Some of the related assets cannot be published automatically.');
+            add_msg(@$_) for @messages;
+            add_msg('Some of the related assets were not published.');
         }
     } else {
-        foreach my $arrayref (@messages) { add_msg(@$arrayref); }
+        add_msg(@$_) for @messages;
     }
 
     # For publishing from a desk, I added two new 'publish'

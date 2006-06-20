@@ -17,7 +17,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:ui ISO_8601_FORMAT);
-use Bric::Util::DBI;
+use Bric::Util::DBI qw(:trans);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
@@ -189,14 +189,19 @@ sub checkin : Callback(priority => 6) {
         add_msg('Story "[_1]" saved and checked in to "[_2]".',
                 '<span class="l10n">' . $story->get_title . '</span>', $dname);
 
+        # Prevent loss of data due to publish failure.
+        commit(1);
+        begin(1);
         # Use the desk callback to save on code duplication.
-        my $pub = Bric::App::Callback::Desk->new
-          ( cb_request   => $self->cb_request,
+        my $pub = Bric::App::Callback::Desk->new(
+            cb_request   => $self->cb_request,
             apache_req   => $self->apache_req,
             params       => { story_pub => { $story->get_version_id => $story } },
-          );
+        );
+
+        # Clear the state out, set redirect, and publish.
         $self->clear_my_state;
-        $self->set_redirect("/");
+        $self->set_redirect('/');
         $pub->publish;
 
     } else {
@@ -226,11 +231,11 @@ sub checkin : Callback(priority => 6) {
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
         add_msg('Story "[_1]" saved and moved to "[_2]".',
                 '<span class="l10n">' . $story->get_title . '</span>', $dname);
-    }
 
-    # Clear the state out and set redirect.
-    $self->clear_my_state;
-    $self->set_redirect("/");
+        # Clear the state out and set redirect.
+        $self->clear_my_state;
+        $self->set_redirect('/');
+    }
 }
 
 sub save_and_stay : Callback(priority => 6) {
