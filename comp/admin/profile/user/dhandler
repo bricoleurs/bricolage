@@ -24,12 +24,18 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 # Display the Contact info.
 $m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Contacts", number  => 2);
+$m->out(qq{<div style="padding: 10px;">});
 my $contacts = $user->get_contacts;
-$m->comp('/widgets/add_more/add_more.mc', type => 'contact',
-     fields => [qw(type value)], name => 'contact', read_only => $no_edit,
-     reset_key => $id, objs => $contacts, incr => 2, useTable => 0,
-     formName => 'user_profile',
-     deleteLabelOnly => 1, param => \%ARGS);
+$m->comp('/widgets/add_more/add_more.mc', 
+    type      => 'contact',
+    fields    => [qw(type value)], 
+    name      => 'contact', 
+    read_only => $no_edit,
+    objs      => $contacts, 
+    no_labels => 1, 
+    param     => \%ARGS
+);
+$m->out(qq{</div>});
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
 

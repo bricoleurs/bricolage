@@ -207,19 +207,17 @@ my $showAttrs = sub {
 	     caption => "Contacts",
 	     number  => 2);
 
+    $m->out(qq{<div style="padding: 10px;">});
     $m->comp('/widgets/add_more/add_more.mc',
 	     type      => 'contact',
 	     fields    => [qw(type value)],
 	     name      => 'contact',
-	     formName  => 'contrib_profile',
-	     reset_key => $id,
 	     objs      => $contacts,
-	     incr      => 2,
-	     readOnly  => $ro,
-	     useTable  => 0,
+	     read_only => $ro,
 	     param     => $param,
-	     deleteLabelOnly =>1
+	     no_labels => 1
 	    );
+    $m->out(qq{</div>});
 
     $m->comp("/widgets/wrappers/table_bottom.mc");
     # end contact info

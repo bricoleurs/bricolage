@@ -63,7 +63,6 @@ use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 
-use Bric::App::Callback::AddMore;
 use Bric::App::Callback::Alert;
 use Bric::App::Callback::Alias;
 use Bric::App::Callback::AssetMeta;
