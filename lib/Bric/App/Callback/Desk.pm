@@ -374,7 +374,8 @@ sub deploy : Callback {
                 $fa->set_workflow_id(undef);
                 $fa->save;
                 log_event("template_rem_workflow", $fa);
-                add_msg('Template "[_1]" deployed.', $fa->get_uri);
+                add_msg('Template "[_1]" deployed.', $fa->get_uri)
+                    if $count == 1;
             }
             # Sum it up for them
             if ($count > 1) {
