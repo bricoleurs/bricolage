@@ -38,34 +38,6 @@ my %pkgs = (
     media => 'Bric::Biz::Asset::Business::Media',
 );
 
-sub edit : Callback {
-    my $self = shift;
-    $self->_drift_correction;
-    my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-
-    my $r = $self->apache_req;
-
-    my $element = get_state_data($self->class_key, 'element');
-
-    # Update the existing fields and get the child element matching ID
-    my $edit_element = $self->_update_parts($param);
-
-    # Push this child element on top of the stack
-    $self->_push_element_stack($edit_element);
-
-    # Don't redirect if we're already on the right page.
-    if ($element->get_object_type eq 'media') {
-        unless ($r->uri eq "$MEDIA_CONT/edit.html") {
-            $self->set_redirect("$MEDIA_CONT/edit.html");
-        }
-    } else {
-        unless ($r->uri eq "$CONT_URL/edit.html") {
-            $self->set_redirect("$CONT_URL/edit.html");
-        }
-    }
-}
-
 sub bulk_edit : Callback {
     my $self = shift;
     $self->_drift_correction;
@@ -75,7 +47,7 @@ sub bulk_edit : Callback {
     my $r = $self->apache_req;
 
     my $element = get_state_data($self->class_key, 'element');
-    my $edit_element = $self->_update_parts($param);
+    my $edit_element = $self->_locate_subelement($element, $param);
 
     # Push the current element onto the stack.
     $self->_push_element_stack($edit_element);
@@ -142,7 +114,7 @@ sub add_element : Callback {
     my $field = $param->{"$widget|add_element_to_$container_id"};
     
     # Find the right subelement to add the new element to
-    $element = $self->_find_subelement($element, $container_id) if $container_id;
+    $element = $self->_locate_subelement($element, $container_id) if $container_id;
     # Bail if we can't find the right subelement
     return unless $element;
     
@@ -565,6 +537,23 @@ sub _delete_element {
     return;
 }
 
+sub _locate_subelement {
+    my ($self, $element, $param) = @_;
+    
+    my $locate_id = $self->value;
+    foreach my $t ($element->get_elements) {
+        next unless $t->is_container;
+        
+        my $locate_element;
+        {
+            no warnings 'uninitialized';
+            $locate_element = $t if $t->get_id == $locate_id;
+        }
+        
+        $locate_element ||= $self->_locate_subelement($t, $param);
+        return $locate_element if $locate_element;
+    }
+}
 
 sub _update_parts {
     my ($self, $param) = @_;
@@ -572,10 +561,9 @@ sub _update_parts {
     my $widget = $self->class_key;    
     my $element = get_state_data($widget, 'element');
     
-    my $locate_element = $self->_update_subelements($element, $param);
+    $self->_update_subelements($element, $param);
     
     set_state_data($widget, 'element', $element);
-    return $locate_element;
 }
 
 sub _update_subelements {
@@ -586,7 +574,6 @@ sub _update_subelements {
     
     my (@curr_elements, @delete, $locate_element);
     my $widget = $self->class_key;
-    my $locate_id = $self->value;
     my $object_type = $element->get_object_type;
     
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
@@ -610,13 +597,7 @@ sub _update_subelements {
         my $is_cont = $t->is_container;
         my $name    = ($is_cont ? 'con' : 'dat') . $id;
         my $deleted = ($param->{$widget.'|delete_cb'} eq $name);
-        
-        # Grab the element we're looking for
-        {
-            no warnings 'uninitialized';
-            $locate_element = $t if $id == $locate_id and $is_cont;
-        }
-        
+            
         # If the element isn't found, it was removed from the DOM and 
         # should be deleted.
         if ($do_delete && $deleted) {
@@ -631,7 +612,7 @@ sub _update_subelements {
         
         if ($is_cont) {
             # Recursively update this container's subelements
-            $locate_element ||= $self->_update_subelements($t, $param);
+            $self->_update_subelements($t, $param);
         }
         
         if (!$is_cont && 
@@ -683,10 +664,8 @@ sub _update_subelements {
             add_msg("Warning! State inconsistent: Please use the buttons "
                     . "provided by the application rather than the 'Back'/"
                     . "'Forward' buttons.");
-            return $locate_element;
         }
     }
-    return $locate_element;
 }
 
 sub _handle_related_up {
@@ -810,20 +789,6 @@ sub _drift_correction {
 
     # Drift has now been corrected.
     $param->{'_drift_corrected_'} = 1;
-}
-
-
-# Finds the subelement of $element with id $id, no matter how deep in the tree
-# it is.
-sub _find_subelement {
-    my ($self, $element, $id) = @_;
-
-    return $element if $element->get_id == $id;
-    
-    foreach my $container ($element->get_containers) {
-        my $subelement = $self->_find_subelement($container, $id);
-        return $subelement if $subelement;
-    }
 }
 
 1;
