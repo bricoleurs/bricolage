@@ -23,7 +23,7 @@ eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
 my $STORY_URL  = '/workflow/profile/story';
-my $CONT_URL   = '/workflow/profile/story/container';
+my $STORY_CONT = '/workflow/profile/story/container';
 my $MEDIA_URL  = '/workflow/profile/media';
 my $MEDIA_CONT = '/workflow/profile/media/container';
 
@@ -53,7 +53,7 @@ sub bulk_edit : Callback {
     $self->_push_element_stack($edit_element);
     set_state_data($self->class_key, 'view_flip', 0);
 
-    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri  = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_bulk.html");
 }
 
@@ -76,7 +76,7 @@ sub view : Callback {
     if ($element->get_object_type eq 'media') {
         $self->set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
     } else {
-        $self->set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
+        $self->set_redirect("$STORY_CONT/") unless $r->uri eq "$STORY_CONT/";
     }
 }
 
@@ -162,8 +162,7 @@ sub pick_related_media : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
-    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_related_media.html");
 }
 
@@ -265,8 +264,7 @@ sub pick_related_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
-    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_related_story.html");
 }
 
@@ -410,7 +408,7 @@ sub bulk_edit_this : Callback {
     set_state_name($self->class_key, 'edit_bulk');
 
     my $element = get_state_data($self->class_key, 'element');
-    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri  = $self->_get_container_url($element);
 
     $self->set_redirect("$uri/edit_bulk.html");
 }
@@ -491,11 +489,9 @@ sub _pop_and_redirect {
     my $element = $flip ? get_state_data($widget, 'element')
                         : _pop_element_stack($widget);
 
-    my $object_type = $element->get_object_type;
-
     # If our element has parents, show the regular edit screen.
     if ($element->get_parent_id) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($element);
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -503,7 +499,7 @@ sub _pop_and_redirect {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($element);
         $self->set_redirect($uri);
     }
 }
@@ -517,11 +513,10 @@ sub _delete_element {
     my $parent = _pop_element_stack($widget);
     $parent->delete_elements( [ $element ]);
     $parent->save();
-    my $object_type = $parent->get_object_type;
 
     # if our element has parents, show the regular edit screen.
     if ($parent->get_parent_id) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($parent);
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -529,7 +524,7 @@ sub _delete_element {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($parent);
         $self->set_redirect($uri);
     }
 
@@ -673,11 +668,10 @@ sub _handle_related_up {
     my $r = $self->apache_req;
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
 
     # If our element has parents, show the regular edit screen.
     if ($element->get_parent_id()) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($element);
         my $page = get_state_name($self->class_key) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -685,7 +679,7 @@ sub _handle_related_up {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($element);
         $self->set_redirect($uri);
     }
     pop_page();
@@ -789,6 +783,16 @@ sub _drift_correction {
 
     # Drift has now been corrected.
     $param->{'_drift_corrected_'} = 1;
+}
+
+sub _get_root_url {
+    my ($self, $element) = @_;
+    return $element->get_object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+}
+
+sub _get_container_url {
+    my ($self, $element) = @_;
+    return $element->get_object_type eq 'media' ? $MEDIA_CONT : $STORY_CONT;
 }
 
 1;
