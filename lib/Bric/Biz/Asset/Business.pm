@@ -2679,10 +2679,10 @@ sub _update_uris {
         rethrow_exception($err)
           # Check for PostgreSQL 7.4 error message.
           unless $err->get_payload =~
-          /duplicate key violates unique constraint "udx_$key\_uri__site_id__uri"/
+          /violates unique[\s-]constraint\s[^\[]udx_$key\_uri__site_id__uri/i
           # Check for PostgreSQL 7.3, 7.2, or 7.1 error message.
           or $err->get_payload =~
-          /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/;
+          /Cannot insert a duplicate key into unique index udx_$key\_uri__site_id__uri/i;
         my $things = $key eq 'media'
           ? 'category, or file name'
           : 'slug, or categories';
