@@ -1,45 +1,21 @@
-<%perl>
-    my $sid = $asset->get_site_id;
-    my %curr_ocs = map { $_->get_id => undef } $asset->get_output_channels;
-    $at_ocs = [ grep { $_->get_site_id == $sid && !exists $curr_ocs{$_->get_id} } @$at_ocs ];
-    my $primid = $asset->get_primary_oc_id;
-    my $oc_sub = sub {
-        return unless $_[1] eq 'primary';
-        my $ocid = $_[0]->get_id;
-        # Output a hidden field for this included OC.
-        $m->scomp('/widgets/profile/radio.mc',
-                  name => 'primary_oc_id',
-                  value => $ocid,
-                  checked => $ocid == $primid,
-                  useTable => 0
-                 );
-    };
+<& '/widgets/wrappers/table_top.mc',
+    caption => 'Output Channels',
+    number  => $num
+&>
 
-    $m->comp(
-        '/widgets/wrappers/table_top.mc',
-        caption => 'Output Channels',
-        number => $num
-    );
+<& '/widgets/listManager/listManager.mc',
+    object         => 'output_channel',
+    userSort       => 0,
+    def_sort_field => 'name',
+    objs           => scalar $asset->get_output_channels,
+    addition       => undef,
+    fields         => [qw(name description primary)],
+    field_titles   => { primary => 'Primary' },
+    field_values   => $oc_sub,
+    profile        => undef,
+    select         => $select_sub,
+&>
 
-    $m->comp(
-        '/widgets/listManager/listManager.mc',
-        object         => 'output_channel',
-        userSort       => 0,
-        def_sort_field => 'name',
-        title          => 'Output Channels',
-        number         => $num,
-        objs           => scalar $asset->get_output_channels,
-        addition       => undef,
-        fields         => [qw(name description primary)],
-        field_titles   => { primary => 'Primary' },
-        field_values   => $oc_sub,
-        profile        => undef,
-        select         => sub {
-            return if $_[0]->get_id == $primid;
-            return ['Delete', 'rem_oc']
-        },
-    );
-</%perl>
 % if (@$at_ocs) {
 <div class="actions">
 <& '/widgets/select_object/select_object.mc',
@@ -55,6 +31,7 @@
 </div>
 % }
 <& '/widgets/wrappers/table_bottom.mc' &>
+
 <%args>
 $widget
 $asset
@@ -62,6 +39,29 @@ $ocs
 $num
 $at_ocs
 </%args>
+
+<%init>
+my $sid = $asset->get_site_id;
+my %curr_ocs = map { $_->get_id => undef } $asset->get_output_channels;
+$at_ocs = [ grep { $_->get_site_id == $sid && !exists $curr_ocs{$_->get_id} } @$at_ocs ];
+my $primid = $asset->get_primary_oc_id;
+my $oc_sub = sub {
+    return unless $_[1] eq 'primary';
+    my $ocid = $_[0]->get_id;
+    # Output a hidden field for this included OC.
+    $m->scomp('/widgets/profile/radio.mc',
+        name     => 'primary_oc_id',
+        value    => $ocid,
+        checked  => $ocid == $primid,
+        useTable => 0
+    );
+};
+my $select_sub = sub {
+    return if $_[0]->get_id == $primid;
+    return ['Delete', 'rem_oc']
+};
+</%init>
+
 <%doc>
 
 =head1 NAME
@@ -87,11 +87,10 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This component displays form widgets for adding output channels to business
-assets. If the number of possible output channels (passed via the C<$ocs>
-array reference argument) to be displayed is less than four, it will output
-check boxes with all of the output channels. If the number of possible output
-channels is four or more, it will display a double list with four rows of
-output channels visible in each scrollable list.
+assets. It lists all associated OCs along with a column of radio buttons to
+choose which OC is the primary, and a column of delete checkboxes to remove
+secondary OCs.  A list of possible additional OCs is provided to allow the 
+user to associate others.
 
 The arguments (all required) are:
 
@@ -111,14 +110,6 @@ The name of the widget for which the output channels are to be displayed
 An anonymous array of all of the available output channels to be displayed.
 
 =back
-
-If the fields are checkboxes, there will be a hidden field called
-"$widget|do_ocs" and the checkbox names will be "$widget|oc". These will be an
-array reference if more than one checkbox is checked. If the fields are in the
-form of a double list, the field names will be "add_oc" and "rem_oc". The
-former will be a single ID or array reference of IDs to be added to the
-story. The latter will be a single ID or array reference of IDs to be removed
-from the story.
 
 =pod
 
