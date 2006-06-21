@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.2 ()
+=head1 VERSION 1.10.2 "Summer" (2006-06-22)
 
 =head2 Improvements
 
@@ -47,15 +47,16 @@ been integrated into C<make devtest>, yet. [Scott]
 =item *
 
 The number of items on a desk can now be displayed next to the desk's name in
-the navigation menu, e.g. "Edit (10)". It is configurable on a per-user basis
-via the new "Show Desk Asset Counts" preference. Based heavily on a patch from
-Alex Howarth. [Marshall]
+the navigation menu, e.g. "Edit (10)". This feature is configurable on a
+per-user basis via the new "Show Desk Asset Counts" preference. Based heavily
+on a patch from Alex Howarth. [Marshall]
 
 =item *
 
 Updated F<README.MacOSX> with instructions on how to use the built-in version
 of Apache instead of compiling everything yourself. Also fixed a broken link
-and an outdated warning about Apache::SizeLimit. [Marshall]
+and an outdated warning about L<Apache::SizeLimit|Apache::SizeLimit>.
+[Marshall]
 
 =item *
 
@@ -89,8 +90,8 @@ Orrock]
 
 =item *
 
-Added 'Remove Frameset' clickthrough on control bar next to Repreview option. 
-[Paul Orrock]
+Added the "Remove Frameset" click-through on control bar next to "Repreview"
+link in the preview window. [Paul Orrock]
 
 =back
 
@@ -143,7 +144,7 @@ the solution. [David]
 =item *
 
 The "Story Type" and "Media Type" options for sorting stories and media,
-respectively, on desks and on My Workspace, works again. Reported by Brad
+respectively, on desks and on My Workspace, work again. Reported by Brad
 Harder. [David]
 
 =item *
@@ -159,7 +160,7 @@ Glaesemann. [David]
 
 =item *
 
-Fixed autopublishing related media and stories so that multiple level relates
+Fixed auto-publishing related media and stories so that relateds of relateds
 now correctly pull out all the items to be published. e.g. media related to
 story related to published story (bug 1190). [Paul Orrock]
 
@@ -171,8 +172,8 @@ George Harrison. [David]
 
 =item *
 
-Moved translation-specific Javascript and CSS files into "i18n/" folders under
-their respective folders in comp/media/. [Marshall]
+Moved translation-specific JavaScript and CSS files into F<i18n> folders under
+their respective folders in F<comp/media/>. [Marshall]
 
 =item *
 
@@ -193,7 +194,7 @@ an asset belongs to if there are multiple sites. [Marshall]
 =item *
 
 Fixed appearance of template diffs. Insertions and deletions now have color
-and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
+and no longer show underlines and strikethroughs (bug 1171). [Marshall]
 
 =item *
 
@@ -208,22 +209,22 @@ Find/Replace. [Marshall]
 =item *
 
 Pulldowns no longer improperly display as 32-items-tall in the story/media
-profiles. (bug 1178, reported by Alex Howarth) [Scott and Marshall]
+profiles (bug 1178, reported by Alex Howarth). [Scott and Marshall]
 
 =item *
 
 Fixed a bug where search results would get "stuck" when pagination is turned
-on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
+on. Thanks to Nate Perry-Thistle for the spot (bug 1166). [Marshall]
 
 =item *
 
 Fixed a warning from F<bric_republish> when run without a password. Thanks to
-John Gillis for the spot. (bug 1188) [Marshall]
+John Gillis for the spot (bug 1188). [Marshall]
 
 =item *
 
 Fixed the "Site" dropdown in searches to only require READ permissions
-rather than EDIT. Spot and quasi-patch by Chris Sutton.
+rather than EDIT. Spot and quasi-patch by Chris Sutton. [Marshall]
 
 =item *
 
@@ -259,11 +260,11 @@ Fixed caching issue with reversion of assets to earlier versions. [David]
 =item *
 
 The category SOAP interface now allows the C<< <path> >> XML element to not
-have a trailing slash, as was the case in Bricolge 1.8 and earlier. [David]
+have a trailing slash, as was the case in Bricolage 1.8 and earlier. [David]
 
 =item *
 
-Aliases are once again identifyable on desks by a different background color
+Aliases are once again identifiable on desks by a different background color
 for the title, and now also with an arrow icon that appears just before the
 story title. [David]
 
@@ -281,9 +282,9 @@ installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
 =item *
 
 Contributors are no longer sorted by the "Name Format" preference's
-representation of the contributors' names in the interface to edit
-contributors. They are now properly sorted by order. Reported by Bret Dawson.
-[David]
+representation of the contributors' names in the interface to edit contributor
+associations. They are now properly sorted by association order. Reported by
+Bret Dawson. [David]
 
 =item *
 
@@ -292,7 +293,7 @@ Christian Niles. [David]
 
 =item *
 
-The Help popup button works again in Interenet Explorer. Reported by Chris
+The Help popup button works again in Internet Explorer. Reported by Chris
 Heiland. [David]
 
 =item *
@@ -308,8 +309,8 @@ type in IE 6. [David]
 
 =item *
 
-List of templates deployed is now reported properly after a successful deploy
-[Paul Orrock]
+The list of templates deployed is now reported properly after a successful
+deploy. [Paul Orrock]
 
 =back
 
