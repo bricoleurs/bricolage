@@ -70,9 +70,11 @@ $m->comp("/widgets/wrappers/table_top.mc",
        style => 'blackUnderlinedLink',
 ) %></dd>
 % }
+% if (@$sites > 1) {
   <dt><% $lang->maketext('Site') %>:</dt>
   <dd><% Bric::Biz::Site->lookup({id => $story->get_site_id})->
   get_name() %></dd>
+% }
 </dl>
 
 <div class="editmeta">
@@ -320,6 +322,7 @@ my $desks = $wf->allowed_desks();
 my $cd = $story->get_current_desk();
 $cd = $wf->get_start_desk() unless $cd;
 my $num = 1;
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 
 # get output channel info
 my $asset_type = $story->get_element_type;

@@ -167,10 +167,6 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::AlertType;
     use Bric::Util::Burner;
     use Bric::Util::Burner::Mason;
-    require Bric::Util::Burner::Template if eval { require HTML::Template };
-    require Bric::Util::Burner::TemplateToolkit
-      if eval { require Template && $Template::VERSION >= 2.14 };
-    require Bric::Util::Burner::PHP if eval { require PHP::Interpreter };
     use Bric::Util::Class;
     use Bric::Util::DBI qw(:junction);
     use Bric::Util::Fault qw(:all);

@@ -15,7 +15,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'user_id')
 
 # Display the major fields.
 $m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $user,
- 	 readOnly => $no_edit,
+	 readOnly => $no_edit,
 	 fieldsUsed => { active => 1, password => 1,
 			 login  => 1,  name    => 1 });
 
@@ -23,7 +23,7 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Display the Contact info.
 $m->comp("/widgets/wrappers/table_top.mc",
-  	 caption => "Contacts", number  => 2);
+	 caption => "Contacts", number  => 2);
 $m->out(qq{<div style="padding: 10px;">});
 my $contacts = $user->get_contacts;
 $m->comp('/widgets/add_more/add_more.mc', 
@@ -83,7 +83,7 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 my @prefs = Bric::Util::Pref->list({ can_be_overridden => 1 });
 
 if (@prefs) {
-    $m->comp('/widgets/wrappers/table_top.mc', 
+    $m->comp('/widgets/wrappers/table_top.mc',
              caption => 'User Preferences',
              number => 5 );
     $m->comp('/widgets/listManager/listManager.mc',
@@ -150,7 +150,7 @@ $id = $ARGS{user_id} unless defined $id;
 my $user = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id = $user->get_id unless defined $id;
-my $isid = defined $id;
+my $isid = defined $id && $id ne '';
 
 # Check authorization - but allow a user to edit his/her own profile.
 my ($no_edit, $no_del, $is_user, $can_edit);

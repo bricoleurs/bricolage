@@ -126,7 +126,6 @@ my $asset = get_state_data($type.'_prof', $type);
 <%once>;
 my $related_summary = sub {
   my ($element, $type, $widget, $asset) = @_;
-
   my $rel = $type eq 'story' ? $element->get_related_story
                              : $element->get_related_media;
 
@@ -150,7 +149,12 @@ my $related_summary = sub {
       my $thumb = '';
       if (USE_THUMBNAILS && $type ne 'story') {
           if ($thumb =  $rel->thumbnail_uri) {
-              $thumb = qq{<img src="$thumb" alt="Thumbnail" />&nbsp;};
+              $thumb = $m->comp(
+                  '/widgets/profile/preview_link.mc',
+                  doc   => $rel,
+                  title => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                  type  => $type,
+              );
           }
       }
       # The summary info

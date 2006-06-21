@@ -747,14 +747,6 @@ our %Lexicon = (
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
-
-  "All jobs" => "All jobs",
-  "Today's jobs" => "Today's jobs",
-  "Future jobs" => "Future jobs",
-  "Expire jobs" => "Expire jobs",
-  "Failed jobs" => "Failed jobs",
-  "My jobs" => "My jobs",
-
   );
 
 =end comment

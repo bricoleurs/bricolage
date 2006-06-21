@@ -17,6 +17,7 @@ use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::Element::Container;
 use Bric::Biz::Element::Field;
 use Bric::Util::Fault qw(:all);
+use Bric::Util::Trans::FS;
 use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
@@ -222,8 +223,12 @@ sub create_related_media : Callback {
     set_state_data('media_prof', 'work_id', $wf_id);
 
     # Set up the parameters to create a new media document.
+    my $agent = $ENV{HTTP_USER_AGENT};
+    my $filename = $agent =~ /windows/i && $agent =~ /msie/i
+        ? Bric::Util::Trans::FS->base_name($param->{"$widget|file"}, 'win32')
+        : $param->{"$widget|file"};
     my $m_param = {
-        'title'                   => $param->{"$widget|file"},
+        'title'                   => $filename,
         'cover_date'              => $asset->get_cover_date(ISO_8601_FORMAT),
         'priority'                => $asset->get_priority,
         'media_prof|category__id' => $asset->get_primary_category->get_id,

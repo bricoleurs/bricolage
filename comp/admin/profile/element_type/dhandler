@@ -247,7 +247,7 @@ if (defined $id) {
 
     $m->comp(
         '/widgets/wrappers/table_top.mc',
-        caption => 'Existing Subelement types',
+        caption => 'Existing Subelement Types',
         number  => ++$num,
     );
 
