@@ -377,6 +377,8 @@ Friends who have spotted bugs include:
 
 =item * Chris Heiland
 
+=item * Michael Glaesemann
+
 =back
 
 Bricolage's translation team:

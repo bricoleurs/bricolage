@@ -155,10 +155,6 @@ req - Pass a true value to make this a required field.
 
 multiple - Allow multiple values to be selected.
 
-=item *
-
-size - The size of the select widget.
-
 =back
 
 This widget will maintain its own state with regard to saving what is currently
@@ -277,7 +273,7 @@ $m->comp($style.'.html',
          readOnly => $readOnly,
          # For non-multi less than 20 vals, use a dropdown (<select size="1">);
          # otherwise, it will be a multi-select list.
-         size     => $size ? $size : $multiple || @vals >= 20 ? 5 : 1,
+         size     => $size ? $size : $multiple || @vals > 50 ? 5 : 1,
          req      => $req,
          sel_id   => $selected,
          localize => $localize,
