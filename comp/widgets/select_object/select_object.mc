@@ -271,7 +271,7 @@ $m->comp($style.'.html',
          disp     => $disp,
          useTable => $useTable,
          readOnly => $readOnly,
-         # For non-multi less than 20 vals, use a dropdown (<select size="1">);
+         # For non-multi less than 51 vals, use a dropdown (<select size="1">);
          # otherwise, it will be a multi-select list.
          size     => $size ? $size : $multiple || @vals > 50 ? 5 : 1,
          req      => $req,
