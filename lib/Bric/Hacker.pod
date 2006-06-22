@@ -504,10 +504,10 @@ If you're a Bricolage developer with permission to commit to the Subversion
 repository, you may occasionally have to merge changes from one branch to
 another.
 
-By far, the most common merge will be from a release branch (e.g. rev_1_8) to
+By far, the most common merge will be from a release branch (e.g. rev_1_10) to
 trunk. For this reason, the documentation below will assume that you are
 merging from a branch to trunk; however, there is still occasion to merge
-between branches, e.g. rev_1_6 to rev_1_8. In these cases, use "rev_1_X"
+between branches, e.g. rev_1_6 to rev_1_10. In these cases, use "rev_1_X"
 instead of "trunk".
 
 =over 4
@@ -553,19 +553,19 @@ convention is that no one should ever commit changes to a tag after it has
 been created.
 
 Tags are stored in subdirectories of F<tags> based on the branch you are
-merging I<from>.  For example, if you are merging from rev_1_8 to Ftrunk,
-the tag belongs in F<tags/rev_1_8/>.
+merging I<from>.  For example, if you are merging from rev_1_10 to Ftrunk,
+the tag belongs in F<tags/rev_1_10/>.
 
 Tags are then named for the branch you are merging I<to> and the revision
 number of the merge itself. For example, if a merge was committed to the trunk
-from the rev_1_8 branch in revision 5694, the branch would be located at
-F<tags/rev_1_8/trunk-5694>.
+from the rev_1_10 branch in revision 5694, the branch would be located at
+F<tags/rev_1_10/trunk-5694>.
 
 So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
-  % svn list https://svn.bricolage.cc/bricolage/tags/merges/rev_1_8 | grep trunk
+  % svn list https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10 | grep trunk
   trunk-5694/
   trunk-5825/
   trunk-5902/
@@ -575,11 +575,11 @@ If the branch has never been merged into the trunk you can get the revision
 number at the time the branch was created using C<svn log> command:
 
   % svn log --verbose --stop-on-copy \
-    https://svn.bricolage.cc/bricolage/branches/rev_1_8
+    https://svn.bricolage.cc/bricolage/branches/rev_1_10
   ------------------------------------------------------------------------
   r5525 | theory | 2004-05-10 19:16:48 -0700 (Mon, 10 May 2004) | 1 line
   Changed paths:
-     A /bricolage/branches/rev_1_8 (from /bricolage/trunk:5524)
+     A /bricolage/branches/rev_1_10 (from /bricolage/trunk:5524)
 
 So now we know that we want to update the trunk with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
@@ -592,7 +592,7 @@ Now simply switch to the trunk checkout and perform the merge. Using the above
 examples, the merge would look like this:
 
   % cd bricolage-trunk
-  % svn merge -r 5995:HEAD https://svn.bricolage.cc/bricolage/branches/rev_1_8
+  % svn merge -r 5995:HEAD https://svn.bricolage.cc/bricolage/branches/rev_1_10
   U  lib/Bric/App/ApacheConfig.pm
   C  lib/Bric/Hacker.pod
 
@@ -602,7 +602,7 @@ what files would change without changing them. Or run C<svn diff> with the
 same arguments to see what the differences are:
 
   % svn merge -r 5995:HEAD --dry-run \
-    https://svn.bricolage.cc/bricolage/branches/rev_1_8 > test.diff
+    https://svn.bricolage.cc/bricolage/branches/rev_1_10 > test.diff
 
 =item 4
 
@@ -627,7 +627,7 @@ in, and the name of the new tag you'll create for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
-  % svn commit -m 'Merged rev_1_8 changes 5995-6123. Will tag rev_1_8/trunk-6123.'
+  % svn commit -m 'Merged rev_1_10 changes 5995-6123. Will tag rev_1_10/trunk-6123.'
 
 =item 7
 
@@ -635,8 +635,8 @@ Tag the branch with the last revision, so that future merges can find it and
 know to merge only from that revision on.
 
   % svn cp -m 'Tag for merge to trunk revision 6123.' \
-    https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    https://svn.bricolage.cc/bricolage/tags/merges/rev_1_8/trunk-6123
+    https://svn.bricolage.cc/bricolage/branches/rev_1_10 \
+    https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10/trunk-6123
 
 =back
 
@@ -666,16 +666,16 @@ commit changes to a tag after it has been created.
 So to create a branch, make the copy from the F<trunk>:
 
   % svn cp https://svn.bricolage.cc/bricolage/trunk \
-    https://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    -m 'New branch for maintenance of Bricolage 1.8.x.'
+    https://svn.bricolage.cc/bricolage/branches/rev_1_10 \
+    -m 'New branch for maintenance of Bricolage 1.10.x.'
 
 Now export the branch and create the distribution tarball.
 
-  % svn export https://svn.bricolage.cc/bricolage/branches/rev_1_8
-  % cd rev_1_8
+  % svn export http://svn.bricolage.cc/bricolage/branches/rev_1_10
+  % cd rev_1_10
   % make dist
 
-This will create a distribution tarball in the F<rev_1_8> directory. Copy this
+This will create a distribution tarball in the F<rev_1_10> directory. Copy this
 tarball somewhere, and do a full test with it, to make sure that Bricolage
 does indeed build and properly install itself.
 
@@ -705,9 +705,9 @@ release!
 Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:
 
-  % svn cp -m 'Tag for the 1.8.0 release of Bricolage.' \
-    http://svn.bricolage.cc/bricolage/branches/rev_1_8 \
-    http://svn.bricolage.cc/bricolage/tags/releases/1.8.0
+  % svn cp -m 'Tag for the 1.10.0 release of Bricolage.' \
+    http://svn.bricolage.cc/bricolage/branches/rev_1_10 \
+    http://svn.bricolage.cc/bricolage/tags/releases/1.10.0
 
 The tag is mainly kept for the purposes of record-keeping. And since copies
 are cheap in Subversion, it's worthwhile.
@@ -717,9 +717,9 @@ are cheap in Subversion, it's worthwhile.
 Once the new version of Bricolage has been released, you'll need to regenerate
 the documentation on the Web site. There is documentation for each major
 version of Bricolage. The documentation for each version is generated from the
-latest minor release. So if you've just released, say, version 1.8.4, then the
-documentation should be generated for the "1.8" Documentation section. If
-you've just released 1.10.0, then you'll need to create a new "1.10" section
+latest minor release. So if you've just released, say, version 1.10.4, then
+the documentation should be generated for the "1.10" Documentation section. If
+you've just released 1.12.0, then you'll need to create a new "1.12" section
 and add a link to it on the documentation page of the Web site.
 
 The documentation is generated with the F<pod_browser> script, which is in the
