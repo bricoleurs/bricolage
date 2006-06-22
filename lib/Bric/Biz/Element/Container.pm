@@ -833,7 +833,11 @@ sub get_possible_field_types {
     for my $data (@$current) {
         my $atd = delete $at_info{$data->get_field_type_id};
         # Add if this element is repeatable.
-        push @parts, $atd if $atd && $atd->get_quantifier;
+        #push @parts, $atd if $atd && $atd->get_quantifier;
+        my $occurrence = $self->get_occurrnce($atd);
+        if ($atd->get_max_occurrence) {
+            push @parts, $atd if $atd && ($occurrence <= $atd->get_max_occurrence);
+        } else push @parts, $atd if $atd;
     }
 
     # Add the container elements (the only things remaining in this hash)
