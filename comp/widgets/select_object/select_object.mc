@@ -252,14 +252,9 @@ if ($pkg) {
     my $val_get = $getter || $meth->{$field}->{'get_meth'};
     my $val_arg = $meth->{$field}->{'get_args'};
 
-    foreach my $o (@$objs) {
-        my $id = $o->get_id;
-
-        # Do not add excluded IDs.
-        next if $exclude && $exclude->($o);
-
-        my $val = $val_get->($o, $val_arg);
-        push @vals, [$id, $val];
+    foreach (@$objs) {
+        next if $exclude && $exclude->($_);
+        push @vals, [$_->get_id, $val_get->($_, $val_arg)];
     }
 } else {
     # Handle the case where the package name is not in the database.
