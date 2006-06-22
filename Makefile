@@ -44,11 +44,10 @@ modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 apache.db	: inst/apache.pl required.db
 	$(PERL) inst/apache.pl $(INSTALL_VERBOSITY)
 
-# This should be updated to something more database-independent. In fact,
-# what should happen is that a script should present a list of supported
-# databases, the user picks which one (each with a key name for the DBD
-# driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
-# work should just assume that database and do the work for that database.
+# This scans for dbprobe_*.pl files and passes them to database.pl to let
+# the user choose the database he wants (database names should conform to
+# DBD:: package name (ex: dbprobe_Pg for PostgresSQL)
+
 DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
 
 database.db 	: inst/database.pl  required.db $(DATABASE_PROBES)
@@ -84,7 +83,7 @@ build_done	: required.db modules.db apache.db database.db config.db \
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/Pg.sql inst/mysql.sql dist_dir \
+dist            : check_dist distclean inst/dist_sql dist_dir \
                   rm_svn rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
@@ -123,19 +122,15 @@ dist_tar	:
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
 SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+SQL_DIRS  := $(shell find sql -maxdepth 1 -regex 'sql/.*' -a \! -regex 'sql/\.svn')
 
-# Update this later to be database-independent.
-inst/Pg.sql : $(SQL_FILES)
-	grep -vh '^--' `find sql/Pg -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
-	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
-	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+# This creates the apropriate sql initialization scripts for the databases with
+# directories in sql (directory names should conform to DBD:: package name 
+# (ex: Pg for PostgresSQL).
+inst/dist_sql : $(SQL_FILES) inst/dist_sql.pl
+	$(PERL) inst/dist_sql.pl $(SQL_DIRS)
 
-inst/mysql.sql : $(SQL_FILES)
-	grep -vh '^--' `find sql/mysql -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
-	grep -vh '^--' `find sql/mysql -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
-	grep -vh '^--' `find sql/mysql -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
-
-.PHONY 		: distclean inst/Pg.sql inst/mysql.sql dist_dir rm_svn dist_tar check_dist
+.PHONY 		: distclean inst/dist_sql dist_dir rm_svn dist_tar check_dist
 
 ##########################
 # clone rules            #
