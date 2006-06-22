@@ -100,7 +100,7 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 % } # if
 --></script>
 </head>
-<body>
+<body id="bricolage_<% SERVER_WINDOW_NAME %>">
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>

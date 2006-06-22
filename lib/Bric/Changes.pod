@@ -128,6 +128,14 @@ Object select lists (such as for story element types when creating a new
 story) will now display as scrolling lists if there are more than 50 items in
 the list, rather than 20 or more items. [David]
 
+=item *
+
+Added a CSS ID to the C<< <body> >> tag in the UI, of the form
+"bricolage_C<VHOST_SERVER_NAME>", where C<VHOST_SERVER_NAME> is the value
+defined in F<bricolage.conf>.  Use this ID when writing user stylesheets 
+to override the look of the Bricolage UI (see SkinningBricolage in the Wiki)
+[Marshall]
+
 =back
 
 =head2 Bug Fixes
