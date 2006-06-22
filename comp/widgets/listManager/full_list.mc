@@ -55,7 +55,10 @@
   my $remainingCols = $cols;
   for my $class_idx (0..$#{$data->[$row]}) {
       my $val   = $data->[$row]->[$class_idx];
-      my $class = qq{ class="selected"} if $class_idx == $sort_col;
+      my @classes;
+      push @classes, "selected" if $class_idx == $sort_col;
+      push @classes, $fields->[$class_idx];
+      my $class = qq{ class="} . join(" ", @classes) . qq{"} if @classes; 
       $m->out(qq{    <td$class>$val</td>\n});
       $remainingCols--;
   }
@@ -130,7 +133,6 @@ $cols
 </%args>
 <%init>;
 my $url = $r->uri;
-my $align = QA_MODE ? "left" : "center";
 my $style = qq{style="border-style:solid; border-color:#cccc99;"};
 $m->out(qq{<div class="paginate">\n});
 unless ($pagination->{pagination}) {

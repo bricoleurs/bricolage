@@ -364,25 +364,12 @@ form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
 table tr.odd { background: #f5f5e6; }
-table td.name { 
-    width: 8em; 
-    padding-right: 5px;
-    text-align: right; 
-    font-weight: bold; 
-    vertical-align: top; 
-    padding-top: 12px; 
-}
-table td.value { padding-top: 7px; }
-table td.position,
-table td.edit { width: 50px; text-align: center; }
-table td.delete { white-space: nowrap; }
+table td.action { width: 30px; text-align: center; white-space: nowrap; }
 
-.listManager,
-.containerProf { width: 100%; border-style: hidden; }
-.listManager th,
-.containerProf th{ background: #999966; color: black; padding: 5px;
-                   text-align: left; vertical-align: bottom;
-                   border: solid #cccc99 1px; }
+.listManager { width: 100%; border-style: hidden; }
+.listManager th { background: #999966; color: black; padding: 5px;
+                  text-align: left; vertical-align: bottom;
+                  border: solid #cccc99 1px; }
 .listManager th.sortup { 
     background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
     padding: 0;
@@ -402,8 +389,7 @@ table td.delete { white-space: nowrap; }
 .listManager th a { display: block; font-size: .85em; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { padding: 5px 17px 5px 5px; color: white; }
-.listManager td,
-.containerProf td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
+.listManager td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
 th.checkbox, th.radio,
