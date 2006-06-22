@@ -79,7 +79,7 @@ User name to which permissions should be granted on the new database.
 
 =item -t
 
-If true, insert database test values.
+Deprecated.
 
 =item -h
 
@@ -136,7 +136,7 @@ our ($opt_u, $opt_p, $opt_d, $opt_w, $opt_H, $opt_t, $opt_h, $opt_r, $opt_o,
 
 getopts('u:p:d:w:H:o:m:htrcqg:P:');
 
-use vars qw( @SQL @CON @VAL @TST $STOP );
+use vars qw( @SQL @CON @VAL $STOP );
 
 our $PSQL = $opt_P || 'psql';
 
@@ -158,11 +158,6 @@ insert_file_set(\@SQL);
 
 print "\nPrepopulating tables with default values...\n" unless $opt_q;
 insert_file_set(\@VAL);
-
-if ($opt_t) {
-    print "\nPrepopulating tables with test values...\n" unless $opt_q;
-    insert_file_set(\@TST);
-}
 
 print "\nAdding constraints...\n" unless $opt_q;
 insert_file_set(\@CON);
@@ -236,7 +231,6 @@ sub initialize {
     @SQL = reverse `find $opt_w -name '*.sql'`;
     @CON = reverse `find $opt_w -name '*.con'`;
     @VAL = reverse `find $opt_w -name '*.val'`;
-    @TST = reverse `find $opt_w -name '*.tst'` if $opt_t;
 }
 
 #------------------------------------------------------------------------------#
@@ -266,7 +260,6 @@ Supported Options:
      Permissions will be granted to this user to access the new database
      (assumes -g for this user).
   -g User name to which permissions should be granted on the new database.
-  -t If true, insert database test values.
   -h Print this help message.
   -q Quiet mode.
 };

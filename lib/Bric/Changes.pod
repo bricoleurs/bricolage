@@ -93,6 +93,15 @@ Orrock]
 Added the "Remove Frameset" click-through on control bar next to "Repreview"
 link in the preview window. [Paul Orrock]
 
+=item *
+
+Deleted all of the outdated and unused F<.use> files from F<sql/Pg>. [David]
+
+=item *
+
+Removed documentation of the C<-t> option of F<bric_pgimport>, which hasn't
+actually done anything for a long time, anyway. [David]
+
 =back
 
 =head2 Bug Fixes
