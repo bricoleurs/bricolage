@@ -134,7 +134,7 @@ foreach my $wf (@$workflows) {
     my $wfid = $wf->{id};
     my $wfclass = $get_cookie->($cookie, $wfid) || 'closed';
     $m->print(
-        qq{<li class="$wfclass"><a href="#" onclick="toggleMenu(this, '$wfid')">},
+        qq{<li class="$wfclass"><a href="#" onclick="return toggleMenu(this, '$wfid')">},
         qq{$wf->{name}</a><ul class="sections"><li>},
         $lang->maketext('Actions')
     );
@@ -207,7 +207,7 @@ $m->print('</ul></li>');
 my $adminclass = $get_cookie->($cookie, 'admin') || 'closed';
 $m->print(
     qq{<li id="admin" class="$adminclass">},
-    qq{<a href="#" onclick="toggleMenu(this, 'admin')">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'admin')">},
     $lang->maketext('Admin'), qq{</a><ul class="submenu">},
 );
 
@@ -215,7 +215,7 @@ $m->print(
 my $sysclass = $get_cookie->($cookie, 'adminSys') || 'closed';
 $m->print(
     qq{<li id="adminSys" class="$sysclass">},
-    qq{<a href="#" onclick="toggleMenu(this, 'adminSys')">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminSys')">},
     $lang->maketext('System'), qq{</a><ul class="items">},
 );
 $admin_links->($uri, qw(alert_type grp pref site user));
@@ -226,7 +226,7 @@ $m->print('</ul></li>');
 my $pubclass = $get_cookie->($cookie, 'adminPub') || 'closed';
 $m->print(
     qq{<li id="adminPub" class="$pubclass">},
-    qq{<a href="#" onclick="toggleMenu(this, 'adminPub')">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminPub')">},
     $lang->maketext('Publishing'), qq{</a><ul class="items">},
 );
 $admin_links->($uri, qw(category contrib_type contrib element_type keyword
@@ -243,7 +243,7 @@ $m->print(
 my $distclass = $get_cookie->($cookie, 'adminDist') || 'closed';
 $m->print(
     qq{<li id="adminDist" class="$distclass">},
-    qq{<a href="#" onclick="toggleMenu(this, 'adminDist')">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminDist')">},
     $lang->maketext('Distribution'), qq{</a><ul class="items">},
 );
 $admin_links->($uri, qw(dest job));

@@ -870,7 +870,7 @@ function closeFindDialog (dialog, event) {
 function getSearchString () {
     var find = $('searchfind');
     if (!find.value) {
-        alert('No search string specified');
+        alert(no_search_string);
         return false;
     }
     return find.value;
@@ -882,7 +882,7 @@ function searchField (field) {
     var regex = $('searchregex');
     var found = field.value.match(new RegExp(find, 'g'));
     if (!found || !found.length) {
-        alert('None found');
+        alert(none_found);
         return false;
     }
     field.found = found;
@@ -907,7 +907,7 @@ function selectText (field, start, end, noAlert) {
 
     else if (!noAlert) {
         // Everything else.
-        alert('Found from character ' + start + ' to character ' + end);
+        alert(found_from + start + found_to + end);
     }
 
     field.focus();
@@ -923,7 +923,7 @@ function findNext (field) {
     var start = field.value.indexOf(string, field.lastFoundIndex);
     
     if (start == -1) {
-        alert('No more instances found');
+        alert(no_more_instances);
         delete field.lastFoundIndex;
         delete field.found;
         return false;
@@ -946,14 +946,14 @@ function replaceAll (field) {
     var chunks = field.value.split(find);
     if (chunks.length == 1) {
         closeDialog($('finddialog'));
-        alert('Replaced 0 occurrences');
+        alert(replaced_none);
     }
 
     else {
         field.value = chunks.join(replace);
         field.focus(); field.blur();
         closeDialog($('finddialog'));
-        alert('Replaced ' + (chunks.length - 1) + ' occurrence' + (chunks.length > 2 ? 's' : ''));
+        alert(replaced + (chunks.length - 1) + chunks.length > 2 ? occurrence : occurrences);
     }
     return false;
 }

@@ -2,7 +2,8 @@
 
 =head1 NAME
 
-clone_db.pl - installation script to clone an existing database
+clone_sql.pl - installation script to clone an existing database by launching apropriate
+database clone script
 
 =head1 VERSION
 
@@ -41,27 +42,6 @@ print "\n\n==> Cloning Bricolage Database <==\n\n";
 our $DB;
 do "./database.db" or die "Failed to read database.db: $!";
 
-# Switch to database system user
-if (my $sys_user = $DB->{system_user}) {
-    print "Becoming $sys_user...\n";
-    $> = $DB->{system_user_uid};
-    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
-        unless $> == $DB->{system_user_uid};
-}
-if ($DB->{db} eq "pg") {
-$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
-$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
+do "./clone_sql_$DB->{db}.pl" or die "Failed to launch $DB->{db} clone script (./clone_sql_$DB->{db}.pl): $!";
 
-# dump out postgres database
-system(catfile($DB->{bin_dir}, 'pg_dump') .
-       " -U$DB->{root_user} -O -x $DB->{db_name} > inst/Pg.sql");
-}
-else 
-{
-$ENV{MYSQLHOST} = $DB->{host_name} if $DB->{host_name};
-$ENV{MYSQLPORT} = $DB->{host_port} if $DB->{host_port};
-# dump out mysql database
-system(catfile($DB->{bin_dir}, 'mysqldump') .
-       " -h $ENV{MYSQLHOST} -P $ENV{MYSQLPORT} -u$DB->{root_user} $DB->{db_name} > inst/My.sql");
-}
 exit 0;

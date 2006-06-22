@@ -42,14 +42,8 @@ $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
 my $instdb;
-if ($DB->{db} eq 'mysql') {
-    $instdb = "./inst/db_mysql.pl";
-    do $instdb or die "Failed to launch Mysql database loading script";    
-    }
-else {
-    $instdb = "./inst/db_postgres.pl";
-    do $instdb or die "Failed to launch Postgres database loading script";
-    }
+$instdb = "./inst/dbload_$DB->{db}.pl";
+do $instdb or die "Failed to launch $DB->{db} database loading script ($instdb)";    
 
 exit 0;
 

@@ -121,14 +121,14 @@ B<Notes:> NONE.
 sub handler {
     my $r = shift;
     eval {
-	# Commit events (and send alerts).
-	begin(1);
-	commit_events();
-	commit(1);
+        # Commit events (and send alerts).
+        begin(1);
+        commit_events();
+        commit(1);
     };
     # Log any errors.
     if (my $err = $@) {
-	rollback(1);
+        rollback(1);
         $r->log->error($err->full_message);
 
         # Exception::Class::Base provides trace->as_string, but trace_as_text is
@@ -142,8 +142,8 @@ sub handler {
     }
 
     eval {
-	# Sync the user's session data.
-	Bric::App::Session::sync_user_session($r);
+        # Sync the user's session data.
+        Bric::App::Session::sync_user_session($r);
     };
     # If there's a problem with this (unlikely!), then we're hosed. Apache will
     # hang and need to be rebooted.

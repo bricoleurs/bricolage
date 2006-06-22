@@ -40,44 +40,79 @@ use Data::Dumper;
 # check whether questions should be asked
 our $QUIET;
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
-
+shift if $QUIET or $ARGV[0] eq 'STANDARD';
 
 print "\n\n==> Selecting Database <==\n\n";
 
 our %DB;
+our %DBPROBES;
 
 # setup some defaults
-$DB{db}   = get_default("DATABASE") || 'pg';
+$DB{db}   = get_default("DATABASE") || 'Pg';
 
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
+our @MOD;
+our $MOD;
+
+
+get_probes();
 get_database();
 
-# all done, dump out apache database, announce success and exit
+
+# all done, dump out apache database, require apropriate DBD:: package
+# announce success, launch apropriate probe script,and exit
 open(OUT, ">database.db") or die "Unable to open database.db : $!";
 print OUT Data::Dumper->Dump([\%DB],['DB']);
 close OUT;
 
+set_required_mod();
+
 print "\n\n==> Finished Selecting Database <==\n\n";
-my $instdb;
-if ($DB{db} eq 'mysql') {
-    $instdb = "./inst/mysql.pl";
-    $instdb .=" ".$QUIET if $QUIET;
-    do $instdb or die "Failed to launch Mysql probing script";    
-    }
-else {
-    $instdb = "./inst/postgres.pl";
-    $instdb .=" ".$QUIET if $QUIET;    
-    do $instdb or die "Failed to launch Postgres probing script";
-    }
+
+run_dbscript();
 
 exit 0;
 
 
 # ask the user to choose a database 
 sub get_database {
+    my $dbstring;
+    $dbstring=join(', ',keys(%DBPROBES));    
     print "\n";
-    ask_confirm("Database (mysql, pg): ", \$DB{db}, $QUIET);
+    ask_confirm("Database ($dbstring): ", \$DB{db}, $QUIET);
 }
 
+sub get_probes {
+    my $temp1;
+    my $temp2;
+
+    while (@ARGV) {
+        $temp1=$temp2=shift @ARGV;
+        $temp1=~s/inst\/dbprobe_//;
+        $temp1=~s/.pl//;
+        $DBPROBES{$temp1}=$temp2;
+    }    
+}
+
+sub run_dbscript {
+    my $dbscript=$DBPROBES{$DB{db}};
+    $dbscript = $dbscript." ".$QUIET if $QUIET;
+    do $dbscript;
+    do $dbscript or die "Failed to launch $DB{db} probing script $dbscript";        
+}
+
+sub set_required_mod {
+
+    do "./modules.db" or die "Failed to read modules.db : $!";
+    for my $i (0 .. $#$MOD) {
+	print "\ntest=$MOD->[$i]{name}";
+	push @MOD , $MOD->[$i] if !($MOD->[$i]{name}=~/DBD::/);
+	push @MOD , $MOD->[$i] if $MOD->[$i]{name}=~/DBD::$DB{db}/ 
+    }
+    
+    open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
+    print OUT Data::Dumper->Dump([\@MOD],['MOD']);
+    close OUT;
+}

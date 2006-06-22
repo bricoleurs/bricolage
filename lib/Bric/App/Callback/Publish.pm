@@ -189,9 +189,13 @@ sub publish : Callback {
                 && $exp_date lt $job->get_sched_time(ISO_8601_FORMAT);
             if ($count <= 3) {
                 my $saved = $expired
-                    ? $job->get_comp_time ? 'expired'   : 'scheduled for expiration'
-                    : $job->get_comp_time ? 'published' : 'scheduled for publication';
-                add_msg(qq{$disp "[_1]" $saved.},  $doc->get_title);
+                    ? $job->get_comp_time ? 'expired from '   : 'scheduled for expiration from'
+                    : $job->get_comp_time ? 'published to' : 'scheduled for publication to';
+                add_msg(
+                    qq{ "[_1]" ${saved} [_2].},
+                    $doc->get_title,
+                    $doc->get_site->get_name,
+                );
             } else {
                 $exp_count++ if $expired;
             }
@@ -226,6 +230,5 @@ sub publish : Callback {
         redirect_onload(last_page(), $self);
     }
 }
-
 
 1;

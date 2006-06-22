@@ -1,0 +1,1695 @@
+-- Project: Bricolage Business API
+-- File:    Pref.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-05-25 22:27:02 +0300 (Thu, 25 May 2006) $
+-- Author:  David Wheeler <david@justatheory.com>
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('1', 'Time Zone', 'Time Zone', 'America/Los_Angeles', 'America/Los_Angeles', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('401', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('1', '1', '401'); 
+
+-- Some useful defaults not found in /usr/share/zoneinfo/zone.tab, though there
+-- might be some overlap.
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'UTC', 'Coordinated Universal Time (UTC)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Cuba', 'Cuba');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Egypt', 'Egypt');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Eire', 'Eire');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Hongkong', 'Hong Kong');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Iceland', 'Iceland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Iran', 'Iran');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Israel', 'Israel');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Jamaica', 'Jamaica');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Japan', 'Japan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Kwajalein', 'Kwajalein');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Libya', 'Libya');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Navajo', 'Navajo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Singapore', 'Singapore');
+
+
+/* The following TZ values were created with this Perl script, running on Red
+Hat 6.2 (although many descriptions have been since hand-edited):
+
+#!/usr/bin/perl -w
+
+use strict;
+
+open TZ, "</usr/share/zoneinfo/zone.tab" or die "Can't open file: $!\n";
+while (<TZ>) {
+    next if /^#/;
+    chomp;
+    my ($zone, $desc) = (split /\t/)[2..3];
+    $zone =~ s/^\s+//;
+    $zone =~ s/\s+$//;
+    $zone =~ s/'/''/g;
+    if ($desc) {
+	$desc =~ s/^\s+//;
+	$desc =~ s/\s+$//;
+	$desc =~ s/'/''/g;
+	$desc = ucfirst $desc;
+    } else {
+	($desc = $zone) =~ s/_/ /g;
+    }
+#    print "$zone: $desc\n";
+    print qq{
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', '$zone', '$desc');
+};
+}
+close TZ;
+
+*/
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Andorra', 'Europe/Andorra');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Dubai', 'Asia - Dubai');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kabul', 'Asia - Kabul');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Antigua', 'America - Antigua');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Anguilla', 'America - Anguilla');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Tirane', 'Europe - Tirane');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Yerevan', 'Asia - Yerevan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Curacao', 'America - Curacao');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Luanda', 'Africa - Luanda');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/McMurdo', 'McMurdo Station, Ross Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/South_Pole', 'Amundsen-Scott Station, South Pole');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/Palmer', 'Palmer Station, Anvers Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/Mawson', 'Mawson Station, Holme Bay');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/Davis', 'Davis Station, Vestfold Hills');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/Casey', 'Casey Station, Bailey Peninsula');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/DumontDUrville', 'Dumont-d''Urville Base');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Antarctica/Syowa', 'Syowa Station, E Ongul I');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Buenos_Aires', 'E Argentina - Buenos Aires');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Rosario', 'NE Argentina - Rosario');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cordoba', 'West Argentina - Cordoba');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Jujuy', 'Jujuy (JY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Catamarca', 'Catamarca (CT)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Mendoza', 'Mendoza (MZ)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Pago_Pago', 'Pacific - Pago Pago');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Vienna', 'Europe - Vienna');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Lord_Howe', 'Lord Howe Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Hobart', 'Tasmania');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Melbourne', 'Victoria');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Sydney', 'New South Wales - Sydney');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Broken_Hill', 'New South Wales - Broken Hill');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Brisbane', 'Queensland - Brisbane');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Lindeman', 'Queensland - Holiday Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Adelaide', 'South Australia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Darwin', 'Northern Territory');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Australia/Perth', 'Western Australia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Aruba', 'America - Aruba');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Baku', 'Asia - Baku');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Sarajevo', 'Europe - Sarajevo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Barbados', 'America - Barbados');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Dacca', 'Asia - Dacca');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Brussels', 'Europe - Brussels');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Ouagadougou', 'Africa - Ouagadougou');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Sofia', 'Europe - Sofia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Bahrain', 'Asia - Bahrain');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Bujumbura', 'Africa - Bujumbura');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Porto-Novo', 'Africa - Porto-Novo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Bermuda', 'Atlantic - Bermuda');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Brunei', 'Asia - Brunei');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/La_Paz', 'America - La Paz');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Noronha', 'Fernando de Noronha');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Belem', 'Amapa, E Para');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Fortaleza', 'NE Brazil - Fortaleza');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Araguaina', 'Tocantins');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Maceio', 'Alagoas, Sergipe');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Sao_Paulo', 'S & SE Brazil - Sao Paulo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cuiaba', 'Mato Grosso, Mato Grosso do Sul');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Porto_Velho', 'W Para, Rondonia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Boa_Vista', 'Roraima');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Manaus', 'Amazonas');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Porto_Acre', 'Acre');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Nassau', 'America - Nassau');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Thimbu', 'Asia - Thimbu');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Gaborone', 'Africa - Gaborone');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Minsk', 'Europe - Minsk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Belize', 'America - Belize');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/St_Johns', 'Newfoundland Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Halifax', 'Atlantic Time - Halifax');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Glace_Bay', 'Atlantic Time - Glace Bay');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Goose_Bay', 'Atlantic Time - East Labrador');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Montreal', 'Eastern Time - Montreal');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Nipigon', 'Eastern Time - Nipigon');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Thunder_Bay', 'Eastern Time - Thunder Bay');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Winnipeg', 'Central Time - Winnipeg');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Rainy_River', 'Central Time - Rainy River');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Pangnirtung', 'Central Time - Pangnirtung');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Iqaluit', 'Central Time - East Nunavut');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Rankin_Inlet', 'Central Time - Central Nunavut');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cambridge_Bay', 'Central Time - West Nunavut');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Regina', 'Central Standard Time - Regina');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Swift_Current', 'Central Standard Time - Swift Current');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Edmonton', 'Mountain Time - Edmonton');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Yellowknife', 'Mountain Time - Yellowknife');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Inuvik', 'Mountain Time - Inuvik');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Dawson_Creek', 'Mountain Standard Time - Dawson Creek');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Vancouver', 'Pacific Time - Vancouver');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Whitehorse', 'Pacific Time - Whitehorse');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Dawson', 'Pacific Time - Dawson');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Cocos', 'Indian - Cocos');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Kinshasa', 'West Dem. Rep. of Congo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Lubumbashi', 'East Dem. Rep. of Congo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Bangui', 'Africa - Bangui');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Brazzaville', 'Africa - Brazzaville');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Zurich', 'Europe - Zurich');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Abidjan', 'Africa - Abidjan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Rarotonga', 'Pacific - Rarotonga');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Santiago', 'America - Santiago');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Easter', 'Easter Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Douala', 'Africa - Douala');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Harbin', 'North Manchuria');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Shanghai', 'China coast');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Chungking', 'China mountains');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Urumqi', 'Tibet & Xinjiang');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kashgar', 'Eastern Turkestan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Bogota', 'America - Bogota');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Costa_Rica', 'America - Costa Rica');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Havana', 'America - Havana');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Cape_Verde', 'Atlantic - Cape Verde');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Christmas', 'Indian - Christmas');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Nicosia', 'Asia - Nicosia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Prague', 'Europe - Prague');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Berlin', 'Europe - Berlin');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Djibouti', 'Africa - Djibouti');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Copenhagen', 'Europe - Copenhagen');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Dominica', 'America - Dominica');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Santo_Domingo', 'America - Santo Domingo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Algiers', 'Africa - Algiers');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Guayaquil', 'America -Guayaquil');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Galapagos', 'Galapagos Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Tallinn', 'Europe - Tallinn');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Cairo', 'Africa - Cairo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/El_Aaiun', 'Africa - El Aaiun');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Asmera', 'Africa - Asmera');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Madrid', 'Europe - Madrid');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Ceuta', 'Ceuta & Melilla');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Canary', 'Canary Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Addis_Ababa', 'Africa - Addis Ababa');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Helsinki', 'Europe - Helsinki');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Fiji', 'Pacific - Fiji');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Stanley', 'Atlantic - Stanley');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Yap', 'Yap');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Truk', 'Truk (Chuuk)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Ponape', 'Ponape (Pohnpei)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Kosrae', 'Kosrae');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Faeroe', 'Atlantic - Faeroe');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Paris', 'Europe - Paris');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Libreville', 'Africa - Libreville');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/London', 'Great Britain');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Belfast', 'Northern Ireland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Grenada', 'America - Grenada');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Tbilisi', 'Asia - Tbilisi');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cayenne', 'America - Cayenne');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Accra', 'Africa - Accra');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Gibraltar', 'Europe - Gibraltar');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Scoresbysund', 'East Greenland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Godthab', 'Southwest Greenland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Thule', 'Northwest Greenland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Banjul', 'Africa - Banjul');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Conakry', 'Africa - Conakry');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Guadeloupe', 'America - Guadeloupe');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Malabo', 'Africa - Malabo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Athens', 'Europe - Athens');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/South_Georgia', 'Atlantic - South Georgia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Guatemala', 'America - Guatemala');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Guam', 'Pacific - Guam');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Bissau', 'Africa - Bissau');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Guyana', 'America - Guyana');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Hong_Kong', 'Asia - Hong Kong');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Tegucigalpa', 'America - Tegucigalpa');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Zagreb', 'Europe - Zagreb');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Port-au-Prince', 'America - Port-au-Prince');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Budapest', 'Europe - Budapest');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Jakarta', 'Java & Sumatra');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Ujung_Pandang', 'Borneo & Celebes');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Jayapura', 'Irian Jaya & the Moluccas');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Dublin', 'Europe - Dublin');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Jerusalem', 'Asia - Jerusalem');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Calcutta', 'Asia - Calcutta');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Chagos', 'Indian - Chagos');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Baghdad', 'Asia - Baghdad');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Tehran', 'Asia - Tehran');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Reykjavik', 'Atlantic - Reykjavik');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Rome', 'Europe - Rome');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Jamaica', 'America - Jamaica');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Amman', 'Asia - Amman');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Tokyo', 'Asia - Tokyo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Nairobi', 'Africa - Nairobi');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Bishkek', 'Asia - Bishkek');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Phnom_Penh', 'Asia - Phnom Penh');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Tarawa', 'Gilbert Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Enderbury', 'Phoenix Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Kiritimati', 'Line Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Comoro', 'Indian - Comoro');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/St_Kitts', 'America - St Kitts');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Pyongyang', 'Asia - Pyongyang');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Seoul', 'Asia - Seoul');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kuwait', 'Asia - Kuwait');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cayman', 'America - Cayman');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Almaty', 'East Kazakhstan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Aqtobe', 'Central Kazakhstan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Aqtau', 'West Kazakhstan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Vientiane', 'Asia - Vientiane');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Beirut', 'Asia - Beirut');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/St_Lucia', 'America - St Lucia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Vaduz', 'Europe - Vaduz');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Colombo', 'Asia - Colombo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Monrovia', 'Africa - Monrovia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Maseru', 'Africa - Maseru');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Vilnius', 'Europe - Vilnius');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Luxembourg', 'Europe - Luxembourg');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Riga', 'Europe - Riga');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Tripoli', 'Africa - Tripoli');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Casablanca', 'Africa - Casablanca');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Monaco', 'Europe - Monaco');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Chisinau', 'Europe - Chisinau');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Tiraspol', 'Transdniestria');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Antananarivo', 'Indian - Antananarivo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Majuro', 'Pacific - Majuro');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Kwajalein', 'Kwajalein');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Skopje', 'Europe - Skopje');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Bamako', 'Southwest Mali');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Timbuktu', 'Northeast Mali');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Rangoon', 'Asia - Rangoon');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Ulaanbaatar', 'Asia - Ulaanbaatar');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Hovd', 'Bayan-Olgiy, Hovd, Uvs');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Macao', 'Asia - Macao');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Saipan', 'Pacific - Saipan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Martinique', 'America - Martinique');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Nouakchott', 'Africa - Nouakchott');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Montserrat', 'America - Montserrat');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Malta', 'Europe - Malta');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Mauritius', 'Indian - Mauritius');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Maldives', 'Indian - Maldives');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Blantyre', 'Africa - Blantyre');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Mexico_City', 'Central Time - Mexico City');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Cancun', 'Central Time - Quintana Roo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Mazatlan', 'Mountain Time - Mazatlna');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Chihuahua', 'Mountain Time - Chihuahua');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Hermosillo', 'Mountain Standard Time - Sonora');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Tijuana', 'Pacific Time - Tijuana');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kuala_Lumpur', 'Peninsular Malaysia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kuching', 'Sabah & Sarawak');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Maputo', 'Africa - Maputo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Windhoek', 'Africa - Windhoek');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Noumea', 'Pacific - Noumea');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Niamey', 'Africa - Niamey');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Norfolk', 'Pacific - Norfolk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Lagos', 'Africa - Lagos');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Managua', 'America - Managua');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Amsterdam', 'Europe - Amsterdam');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Oslo', 'Europe - Oslo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Katmandu', 'Asia - Katmandu');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Nauru', 'Pacific - Nauru');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Niue', 'Pacific - Niue');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Auckland', 'Pacific - Auckland');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Chatham', 'Chatham Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Muscat', 'Asia - Muscat');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Panama', 'America - Panama');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Lima', 'America - Lima');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Tahiti', 'Society Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Marquesas', 'Marquesas Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Gambier', 'Gambier Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Port_Moresby', 'Pacific - Port Moresby');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Manila', 'Asia - Manila');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Karachi', 'Asia - Karachi');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Warsaw', 'Europe - Warsaw');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Miquelon', 'America - Miquelon');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Pitcairn', 'Pacific - Pitcairn');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Puerto_Rico', 'America - Puerto Rico');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Gaza', 'Asia - Gaza');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Lisbon', 'Europe - Lisbon');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Madeira', 'Madeira Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Azores', 'Azores');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Palau', 'Pacific - Palau');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Asuncion', 'America - Asuncion');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Qatar', 'Asia - Qatar');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Reunion', 'Indian - Reunion');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Bucharest', 'Europe - Bucharest');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Kaliningrad', 'Moscow-01 - Kaliningrad');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Moscow', 'Moscow+00 - west Russia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Samara', 'Moscow+01 - Caspian Sea');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Yekaterinburg', 'Moscow+02 - Urals');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Omsk', 'Moscow+03 - west Siberia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Novosibirsk', 'Moscow+03 - Novosibirsk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Krasnoyarsk', 'Moscow+04 - Yenisei River');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Irkutsk', 'Moscow+05 - Lake Baikal');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Yakutsk', 'Moscow+06 - Lena River');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Vladivostok', 'Moscow+07 - Amur River');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Magadan', 'Moscow+08 - Magadan & Sakhalin');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Kamchatka', 'Moscow+09 - Kamchatka');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Anadyr', 'Moscow+10 - Bering Sea');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Kigali', 'Africa - Kigali');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Riyadh', 'Asia - Riyadh');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Guadalcanal', 'Pacific - Guadalcanal');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Mahe', 'Indian - Mahe');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Khartoum', 'Africa - Khartoum');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Stockholm', 'Europe - Stockholm');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Singapore', 'Asia - Singapore');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/St_Helena', 'Atlantic - St Helena');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Ljubljana', 'Europe - Ljubljana');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Arctic/Longyearbyen', 'Svalbard');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Atlantic/Jan_Mayen', 'Jan Mayen');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Bratislava', 'Europe - Bratislava');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Freetown', 'Africa - Freetown');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/San_Marino', 'Europe - San Marino');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Dakar', 'Africa - Dakar');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Mogadishu', 'Africa - Mogadishu');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Paramaribo', 'America - Paramaribo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Sao_Tome', 'Africa - Sao Tome');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/El_Salvador', 'America - El Salvador');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Damascus', 'Asia - Damascus');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Mbabane', 'Africa - Mbabane');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Grand_Turk', 'America - Grand Turk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Ndjamena', 'Africa - Ndjamena');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Kerguelen', 'Indian - Kerguelen');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Lome', 'Africa - Lome');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Bangkok', 'Asia - Bangkok');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Dushanbe', 'Asia - Dushanbe');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Fakaofo', 'Pacific - Fakaofo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Ashkhabad', 'Asia - Ashkhabad');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Tunis', 'Africa - Tunis');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Tongatapu', 'Pacific - Tongatapu');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Dili', 'Asia - Dili');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Istanbul', 'Europe - Istanbul');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Port_of_Spain', 'America - Port of Spain');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Funafuti', 'Pacific - Funafuti');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Taipei', 'Asia - Taipei');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Dar_es_Salaam', 'Africa - Dar es Salaam');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Kiev', 'Europe - Kiev');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Uzhgorod', 'Ruthenia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Zaporozhye', 'Zaporozh''ye, E Lugansk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Simferopol', 'Central Crimea');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Kampala', 'Africa - Kampala');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Johnston', 'Johnston Atoll');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Midway', 'Midway Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Wake', 'Wake Island');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/New_York', 'Eastern Time');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Detroit', 'Eastern Time - Detroit');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Louisville', 'Eastern Time - Louisville, KY');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Indianapolis', 'Eastern Standard Time - Indianapolis');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Indiana/Marengo', 'Eastern Standard Time - Marengo, IN');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Indiana/Knox', 'Eastern Standard Time - Knox, IN');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Indiana/Vevay', 'Eastern Standard Time - Vevay, IN');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Chicago', 'Central Time - Chicago');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Menominee', 'Central Time - Menominee');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Denver', 'Mountain Time - Denver');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Boise', 'Mountain Time - Boise');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Shiprock', 'Mountain Time - Navajo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Phoenix', 'Mountain Standard Time - Arizona');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Los_Angeles', 'Pacific Time - Los Angeles');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Anchorage', 'Alaska Time');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Juneau', 'Alaska Time - Juneau');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Yakutat', 'Alaska Time - Yakutat');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Nome', 'Alaska Time - Nome');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Adak', 'Aleutian Islands');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Honolulu', 'Hawaii');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Montevideo', 'America - Montevideo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Samarkand', 'West Uzbekistan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Tashkent', 'East Uzbekistan');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Vatican', 'Europe - Vatican');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/St_Vincent', 'America - St Vincent');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Caracas', 'America - Caracas');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/Tortola', 'America - Tortola');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'America/St_Thomas', 'America - St Thomas');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Saigon', 'Asia - Saigon');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Efate', 'Pacific - Efate');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Wallis', 'Pacific - Wallis');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Pacific/Apia', 'Pacific - Apia');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Asia/Aden', 'Asia - Aden');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Indian/Mayotte', 'Indian - Mayotte');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Europe/Belgrade', 'Europe - Belgrade');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Johannesburg', 'Africa - Johannesburg');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Lusaka', 'Africa - Lusaka');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('1', 'Africa/Harare', 'Africa - Harare');
+
+--
+-- NAME FORMATTING
+--
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('2', 'List Name Format', 'How people''s names appear in lists.', '%l%, f', '%l%, f', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('402', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('2', '2', '402'); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%l%, f% m', '"Clinton, William Jefferson"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%l%, f% M', '"Clinton, William J."');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%l%, f', '"Clinton, William"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%l%, F%M', '"Clinton, W.J."');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%l%, F% m', '"Clinton, W. Jefferson"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%f% m% l', '"William Jefferson Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%f% l', '"William Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%f% M% l', '"William J. Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%F%M% l', '"W.J. Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('2', '%F% m% l', '"W. Jefferson Clinton"');
+
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('3', 'Name Format', 'The default format for people''s names.', '%f% l', '%f% l', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('403', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('3', '3', '403'); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%l%, f% m', '"Clinton, William Jefferson"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%l%, f% M', '"Clinton, William J."');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%l%, f', '"Clinton, William"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%l%, F%M', '"Clinton, W.J."');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%l%, F% m', '"Clinton, W. Jefferson"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%f% m% l', '"William Jefferson Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%f% l', '"William Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%f% M% l', '"William J. Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%F%M% l', '"W.J. Clinton"');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('3', '%F% m% l', '"W. Jefferson Clinton"');
+
+-- Date and time formatting.
+
+INSERT INTO pref (id, name, description, value, def, opt_type)
+VALUES ('5', 'Date/Time Format', 'How dates and times are displayed.', '%Y-%m-%d %T', '%Y-%m-%d %T', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('405', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('5', '5', '405'); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%d %T', 'ISO-8601 Compliant (CCYY-MM-DD hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%d %T.%3N', 'ISO-8601 Compliant with miliseconds (CCYY-MM-DD hh:mm:ss.000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%d %T.%6N', 'ISO-8601 Compliant with microseconds (CCYY-MM-DD hh:mm:ss.000000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%dT%T', 'ISO-8601 Strict (CCYY-MM-DDThh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%dT%T.%3N', 'ISO-8601 Strict with miliseconds (CCYY-MM-DDThh:mm:ss.000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%Y-%m-%dT%T.%6N', 'ISO-8601 Strict with microseconds (CCYY-MM-DDThh:mm:ss.000000)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%m/%d/%Y %T', 'U.S. (MM/DD/CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%m/%d/%Y', 'U.S. Date Only (MM/DD/CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%m/%d/%y %T', 'U.S. Short (MM/DD/YY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%m/%d/%y', 'U.S. Short Date Only (MM/DD/YY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%B %d, %Y %T', 'U.S. Long (Month DD, CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%b %d, %Y %T', 'U.S. Long Abbrev. (Mon DD, CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%B %d, %Y', 'U.S. Long Date Only (Month DD, CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%b %d, %Y', 'U.S. Long Abbrev. Date Only (Mon DD, CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d/%m/%Y %T', 'European (DD/MM/CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d/%m/%Y', 'European Date Only (DD/MM/CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d/%m/%y %T', 'European Short (DD/MM/YY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d/%m/%y', 'European Short Date Only (DD/MM/YY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d %B %Y %T', 'European Long (DD Month CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d %b %Y %T', 'European Long Abbrev. (DD Mon CCYY hh:mm:ss)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d %B, %Y', 'European Long Date Only (DD Month CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', '%d %b, %Y', 'European Long Abbrev. Date Only (DD Mon CCYY)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('5', 'epoch', 'Epoch Time (Seconds since 1970-01-01 00:00:00)');
+
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('6', 'Permissions Widget', 'Permissions Widget', 'radio', 'radio', '0', 'radio');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('156', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('6', '6', '156'); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('6', 'radio', 'Radio Buttons');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('6', 'select', 'Select List');
+
+
+-- Search Paging
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('10', 'Search Results / Page',
+        'Controls the number of records displayed per page from searches',
+        '0', '0', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active) VALUES ('167', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id) VALUES ('10', '10', '167');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '10', '10');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '20', '20');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '30', '30');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '40', '40');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('10', '50', '50');
+
+
+-- Bricolage Instance Name
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('11', 'Bricolage Instance Name',
+        'Label used in window titles and the Welcome to Bricolage message on the login page.',
+        'Bricolage', 'Bricolage', '1', 'text');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('168', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('11', '11', '168'); 
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('11', 'Bricolage', 'Bricolage');
+
+
+-- Default Advanced Search
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('12', 'Default Search',
+        'Whether Find Media and Find Stories use Simple or Advanced Search by default.',
+        '0', '0', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('169', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('12', '12', '169');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('12', '0', 'Simple');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('12', '1', 'Advanced');
+
+
+-- Default Asset Sort
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('13', 'Default Asset Sort',
+        'The default Story/Media field to sort on.',
+        'cover_date', 'cover_date', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('170', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('13', '13', '170');
+
+-- Note: change these if $sort_by in comp/widgets/desk/desk_top.html changes
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'cover_date', 'Cover Date/Deploy Date');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'priority', 'Priority');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'name', 'Title');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'site_id', 'Site');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'element', 'Document Type/Output Channel');
+
+-- Character Set
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('14', 'Character Set',
+        'The default character set to use for display.',
+        'UTF-8', 'UTF-8', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('900', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('14', '14', '900');
+
+-- These values were hand-picked from Encode::Supported
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'UTF-8', 'UTF-8');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-1', 'ISO-8859-1');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-2', 'ISO-8859-2');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-3', 'ISO-8859-3');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-4', 'ISO-8859-4');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-5', 'ISO-8859-5');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-6', 'ISO-8859-6');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-7', 'ISO-8859-7');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-8', 'ISO-8859-8');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-9', 'ISO-8859-9');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-10', 'ISO-8859-10');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-11', 'ISO-8859-11');
+
+-- There is no ISO-8859-12
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-13', 'ISO-8859-13');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-14', 'ISO-8859-14');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-15', 'ISO-8859-15');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-8859-16', 'ISO-8859-16');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'viscii', 'Viscii (Vietnamese)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'gb-2312', 'GB-2312');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'Big5', 'Big5');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'euc-jp', 'EUC-JP');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'shiftjis', 'ShiftJIS');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-2022-jp', 'ISO-2022-JP');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'euc-kr', 'EUC-KR');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'iso-2022-kr', 'ISO-2022-KR');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'koi8-r', 'KOI8-R');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'koi8-u', 'KOI8-U');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1250', 'Windows Central European (CP1250)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1251', 'Windows Cyrillic (CP1251)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1252', 'Windows Western (CP1252)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1253', 'Windows Greek (CP1253)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1254', 'Windows Turkish (CP1254)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1255', 'Windows Hebrew (CP1255)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1256', 'Windows Arabic (CP1256)');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('14', 'cp1258', 'Windows Vietnamese (CP1258)');
+
+-- Language
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('15', 'Language',
+        'The default language to use for display.',
+        'en_us', 'en_us', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('901', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('15', '15', '901');
+
+-- These values are based on the current localizations offered
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'en_us', 'en_us');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'de_de', 'de_de');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'it_it', 'it_it');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'pt_pt', 'pt_pt');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'zh_tw', 'zh_tw');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'zh_cn', 'zh_cn');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'zh_hk', 'zh_hk');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'bo', 'bo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'km', 'km');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'ko_ko', 'ko_ko');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'lo', 'lo');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'my', 'my');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'ug', 'ug');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('15', 'vi_vn', 'vi_vn');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'ru_ru', 'ru_ru');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES (15, 'ja', 'ja');
+
+-- Filter search results by site
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('16', 'Filter by Site Context',
+        'Filter search results by the site context.',
+        '0', '0', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('902', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('16', '16', '902');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('16', '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('16', '1', 'On');
+
+-- Show/hide alpha search links
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('17', 'Show Alpha Search',
+        'Show links to filter search results by the first letter.',
+        '0', '0', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('903', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('17', '17', '903');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('17', '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('17', '1', 'On');
+
+
+-- Show/hide asset counts on desks in the side navigation
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('18', 'Show Desk Asset Counts',
+        'Show the number of assets on each desk in the navigation.',
+        '0', '0', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('904', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('18', '18', '904');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('18', '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('18', '1', 'On');

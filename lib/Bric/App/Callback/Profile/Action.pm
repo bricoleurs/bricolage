@@ -50,7 +50,6 @@ sub save : Callback {
         }
     }
 
-    # Set the redirection.
     my $name = $act->get_name;
 
     if ($param->{delete}) {
@@ -64,6 +63,7 @@ sub save : Callback {
     }
 
     # Roll in the changes. Assume it's active.
+    $param->{obj} = $act;
     foreach my $meth ($act->my_meths(1)) {
         next if $meth->{name} eq 'type' || ! defined $param->{$meth->{name}};
         $meth->{set_meth}->($act, @{$meth->{set_args}}, $param->{$meth->{name}})
@@ -74,7 +74,6 @@ sub save : Callback {
     add_msg("$disp_name profile $name saved.");
     $self->set_redirect("/admin/profile/dest?id=$param->{dest_id}");
 
-    $param->{'obj'} = $act;
     return;
 }
 

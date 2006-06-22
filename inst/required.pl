@@ -146,7 +146,7 @@ sub find_pg {
 }
 
 sub find_mysql {
-    print "Looking for MySQL with version >= 5.0....\n";
+    print "Looking for MySQL client with version >= 4.1....\n";
 
     # find MySQL by looking for mysql_config.
     my @paths = (split(", ", get_default("MYSQL_CONFIG_PATH")), path);
@@ -180,16 +180,16 @@ sub find_mysql {
                      "`$REQ{MYSQL_CONFIG} --version`.") unless $version;
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
-    return soft_fail("Failed to parse MysqlSQL version from string ",
+    return soft_fail("Failed to parse Mysql client version from string ",
                      "\"$version\".") 
         unless defined $x and defined $y;
     $z ||= 0;
-    return soft_fail("Found old version of Mysql: $x.$y.$z - ",
-                     "5.0.0 or greater required.")
-        unless (($x > 4) or ($x == 4 and $y >= 0));
+    return soft_fail("Found old version of Mysql client: $x.$y.$z - ",
+                     "4.1.0 or greater required.")
+        unless (($x > 4) or ($x == 4 and $y >= 1));
     print "Found acceptable version of Mysql: $x.$y.$z.\n";
 
-    $REQ{MYSQL_VERSION} = [$x,$y,$z];
+    $REQ{MYSQL_CLIENT_VERSION} = [$x,$y,$z];
 
     return 1;
 }

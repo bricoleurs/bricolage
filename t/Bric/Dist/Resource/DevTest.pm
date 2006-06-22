@@ -111,15 +111,17 @@ sub test_setup : Test(setup => 50) {
     }
 
     # Save the jobs.
+    my @jids;
     for my $i (0, 1) {
         ok( $jobs[$i]->save, "Save job $i" );
-        ok( $jobs[$i] = $jobs[$i]->get_id, "Get job $i ID" );
+        ok( $jids[$i] = $jobs[$i]->get_id, "Get job $i ID" );
     }
-    $self->add_del_ids(\@jobs, 'job');
-    $self->{jids} = \@jobs;
+    $self->add_del_ids(\@jids, 'job');
+    $self->{jids}  = \@jids;
+    $self->{jobs}  = \@jobs;
     $self->{paths} = \@paths;
-    $self->{rids} = \@rids;
-    $self->{res} = \@res;
+    $self->{rids}  = \@rids;
+    $self->{res}   = \@res;
 }
 
 ##############################################################################
@@ -145,7 +147,7 @@ sub test_lookup : Test(9) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(42) {
+sub test_list : Test(48) {
     my $self = shift;
     # Try uri.
     ok( my @ress = Bric::Dist::Resource->list
@@ -250,6 +252,25 @@ sub test_list : Test(42) {
     ok( @ress = Bric::Dist::Resource->list({ not_job_id => $self->{jids}[1] }),
         "Look up not_job_id '$self->{jids}[1]'" );
     is( scalar @ress, 3, "Check for 2 resources" );
+
+    # Try oc_id.
+    ok( my $oc = Bric::Biz::OutputChannel->lookup({ id => 1 }),
+        'Lookup Web OC' );
+    ok( my $dest = Bric::Dist::ServerType->new({
+        name        => 'tester',
+        site_id     => 100,
+        move_method => 'File System'
+    }), 'Create destination');
+    ok $dest->add_output_channels($oc), 'Add the Web OC to it';
+    ok $dest->save, 'Save the destination';
+    $self->add_del_ids($dest->get_id, 'server_type');
+
+    # Associate one of the jobs with the server type.
+    $self->{jobs}[0]->add_server_types($dest)->save;
+
+    ok( @ress = Bric::Dist::Resource->list({ oc_id => 1 }),
+        "Look up oc_id '5'" );
+    is( scalar @ress, 5, "Check for 5 resources" );
 }
 
 ##############################################################################

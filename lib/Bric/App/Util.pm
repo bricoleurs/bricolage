@@ -202,6 +202,7 @@ sub add_msg {
     my $msg = $session->{_msg} ||= [];
     my $lang = Bric::Util::Language->instance;
     push @$msg, $lang->maketext(@_);
+    $session->{timestamp} = time; # Force serialization.
 }
 
 #------------------------------------------------------------------------------#

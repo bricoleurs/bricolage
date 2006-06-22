@@ -276,7 +276,7 @@ sub new {
         $init->{sql_type}       = $atd->get_sql_type;
         $init->{widget_type}    = $atd->get_widget_type;
         $init->{_autopopulated} = $atd->get_autopopulated;
-        $init->{is_multiple}    = $atd->get_multiple;
+        $init->{_multiple}      = $atd->get_multiple;
         $init->{max_length}     = $atd->get_max_length;
         $init->{_field_type}    = $atd;
     }

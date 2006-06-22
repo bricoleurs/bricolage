@@ -49,8 +49,10 @@ apache.db	: inst/apache.pl required.db
 # databases, the user picks which one (each with a key name for the DBD
 # driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
 # work should just assume that database and do the work for that database.
-database.db 	: inst/database.pl inst/postgres.pl inst/mysql.pl required.db 
-	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
+DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
+
+database.db 	: inst/database.pl  required.db $(DATABASE_PROBES)
+	$(PERL) inst/database.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES)
 
 config.db	: inst/config.pl required.db apache.db database.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
@@ -82,7 +84,7 @@ build_done	: required.db modules.db apache.db database.db config.db \
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/Pg.sql inst/My.sql dist_dir \
+dist            : check_dist distclean inst/Pg.sql inst/mysql.sql dist_dir \
                   rm_svn rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
@@ -128,12 +130,12 @@ inst/Pg.sql : $(SQL_FILES)
 	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 
-inst/My.sql : $(SQL_FILES)
-	grep -vh '^--' `find sql/My -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
-	grep -vh '^--' `find sql/My -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
-	grep -vh '^--' `find sql/My -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+inst/mysql.sql : $(SQL_FILES)
+	grep -vh '^--' `find sql/mysql -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
+	grep -vh '^--' `find sql/mysql -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+	grep -vh '^--' `find sql/mysql -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 
-.PHONY 		: distclean inst/Pg.sql inst/My.sql dist_dir rm_svn dist_tar check_dist
+.PHONY 		: distclean inst/Pg.sql inst/mysql.sql dist_dir rm_svn dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -163,7 +165,9 @@ clone_files     :
 clone_lightweight     :
 	$(PERL) inst/clone_lightweight.pl
 
-clone_sql       : 
+CLONE_SQL_FILES := $(shell find inst -name 'clone_sql_*.pl')
+
+clone_sql       : $(CLONE_SQL_FILES)
 	$(PERL) inst/clone_sql.pl
 
 clone_tar	:
@@ -179,7 +183,7 @@ install 	: install_files install_db done
 
 install_files	: all is_root cpan lib bin files
 
-install_db		: db db_grant
+install_db	: db db_grant
 
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
@@ -198,7 +202,9 @@ bin 		:
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
-db    		: inst/db.pl database.db
+DBLOAD_FILES := $(shell find inst -name 'dbload_*.sql')
+
+db    		: inst/db.pl database.db $(DBLOAD_FILES)
 	$(PERL) inst/db.pl
 
 db_grant	: inst/db.pl database.db
