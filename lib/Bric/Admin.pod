@@ -225,6 +225,8 @@ START MODULE LIST
 
 =item Net::SFTP 0.08 (optional)
 
+=item Math::BigInt::GMP (optional)
+
 =item HTTP::DAV (optional)
 
 =item Crypt::SSLeay (optional)
