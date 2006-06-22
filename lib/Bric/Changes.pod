@@ -335,6 +335,15 @@ type in IE 6. [David]
 The list of templates deployed is now reported properly after a successful
 deploy. [Paul Orrock]
 
+=item *
+
+Searching by URI for related media works again. [David]
+
+=item *
+
+The results when searching for media or stories to relate are no longer tied
+to the search for stories and media in general. [David]
+
 =back
 
 =head1 VERSION 1.10.1 (2006-03-20)

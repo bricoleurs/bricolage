@@ -19,8 +19,6 @@ $LastChangedDate$
 
 =cut
 </%doc>
-
-%#-- Once Section --#
 <%once>;
 my $type = 'element';
 my $disp = get_disp_name($type);
@@ -28,35 +26,22 @@ my $sdisp = get_disp_name('story');
 my $mdisp = get_disp_name('media');
 my $context = "Workflow | Profile | $sdisp | $disp |";
 </%once>
-
-%#-- Args Section --#
 <%args>
 </%args>
-
-%#-- Init Section --#
 <%init>;
 my $crumb = get_state_data('container_prof', 'crumb') || '';
 $crumb .= ' |' if $crumb;
 </%init>
-
-%#-- Begin HTML --#
-
-<& /widgets/wrappers/sharky/header.mc, 
+<& /widgets/wrappers/sharky/header.mc,
     title => "Select Related $mdisp",
     context => "$context $crumb Related $mdisp"
 &>
-
 <form action="<% $r->uri %>" method="post">
-
-<& /widgets/container_prof/container_prof.mc, 
+<& /widgets/container_prof/container_prof.mc,
     element_type => 'story',
-    action    => 'edit_related_media'
+    action    => 'edit_related_media',
+    args      => \%ARGS,
 &>
 
 </form>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-
-%#-- End HTML --#
-
-
