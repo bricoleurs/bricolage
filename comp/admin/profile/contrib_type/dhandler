@@ -59,9 +59,7 @@ if ($num_fields) {
 	     useDelete   => 1
 	    );
 } else {
-    # Output a message if no attributes defined, yet.
-    $m->out(qq{<span class="label">} . $lang->maketext("No custom fields defined."). "</span>\n")
-      unless $num_fields;
+    $m->out(qq{<div class="noneFound">} . $lang->maketext("No custom fields defined."). "</div>\n")
 }
 
 # Close the table.
