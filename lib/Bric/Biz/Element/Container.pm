@@ -608,6 +608,26 @@ B<Notes:> NONE.
 
 ################################################################################
 
+=item $container->get_occurrence($field_type->get_key_name)
+    
+Returns the number of fields currently in this container of this type.
+    
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_occurrence{
+    my @fields = get_fields(@_);
+    my $num_fields = @fields;
+    return $num_fields;
+}
+
+################################################################################
+
 =item $container->set_related_story($story)
 
 Creates a relationship between the container element and a story document.
@@ -812,8 +832,8 @@ sub get_element_key_name { $_[0]->get_key_name }
 Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
 objects that define the types of data elements that can be subelements of this
 container element. This list would exclude any data elements that can only be
-added as subelements to this container element once, and have already been
-added.
+added as subelements to this container element a set number of times, and have 
+already been added that many times. This is the max_occurrence of that FieldType.
 
 B<Throws:> NONE.
 
@@ -829,15 +849,12 @@ sub get_possible_field_types {
     my $at      = $self->get_element_type;
     my %at_info = map { $_->get_id => $_ } $at->get_field_types;
     my @parts;
-
+    
     for my $data (@$current) {
-        my $atd = delete $at_info{$data->get_field_type_id};
-        # Add if this element is repeatable.
-        #push @parts, $atd if $atd && $atd->get_quantifier;
-        my $occurrence = $self->get_occurrnce($atd);
-        if ($atd->get_max_occurrence) {
-            push @parts, $atd if $atd && ($occurrence <= $atd->get_max_occurrence);
-        } else push @parts, $atd if $atd;
+        if (my $atd = delete $at_info{$data->get_field_type_id}) {
+            my $max = $atd->get_max_occurrence;
+            push @parts, $atd if !$max || $max > $self->get_occurrence($atd->get_key_name);
+        }
     }
 
     # Add the container elements (the only things remaining in this hash)
