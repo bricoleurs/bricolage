@@ -259,7 +259,7 @@ copied from the field type. [Alexey Sheynuk]
 =item *
 
 New destinations can now be created via
-L<Bric::Soap::Destination|Bric::Soap::Destination>. [Christian Niles]
+L<Bric::SOAP::Destination|Bric::SOAP::Destination>. [Christian Niles]
 
 =item *
 
