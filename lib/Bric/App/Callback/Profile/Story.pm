@@ -489,7 +489,7 @@ sub delete_cat : Callback {
 
     my (@to_delete, @to_log);
     my $primary = $self->params->{"$widget|primary_cat"}
-      ||  $story->get_primary_category;
+      ||  $story->get_primary_oc_id;
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
         if ($cid == $primary) {
