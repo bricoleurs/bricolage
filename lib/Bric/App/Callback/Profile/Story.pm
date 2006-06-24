@@ -27,15 +27,17 @@ my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL   = '/workflow/profile/desk/';
 
-my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
+my ($save_contrib, $save_category, $unique_msgs);
 
 sub view : Callback {
     my $self = shift;
-    my $widget = $self->class_key;
     my $params = $self->params;
+
+    # Abort this save if there were any errors in the update callback.
+    return if delete $params->{__data_errors__};
+
+    my $widget = $self->class_key;
     my $story  = get_state_data($widget => 'story');
-    # Abort this save if there were any errors.
-    return unless $save_data->($self, $params, $widget, $story);
     my $version = $params->{"$widget|version"};
     my $id = $story->get_id;
     $self->set_redirect("/workflow/profile/story/$id/?version=$version");
@@ -85,7 +87,7 @@ sub save : Callback(priority => 6) {
     my $workflow_id = $story->get_workflow_id;
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
     } else {
         # Save the story.
         $story->save;
@@ -120,7 +122,7 @@ sub checkin : Callback(priority => 6) {
     my $story = get_state_data($widget, 'story');
     my $param = $self->params;
     # Abort this save if there were any errors.
-    return unless &$save_data($self, $param, $widget, $story);
+    return unless $self->_save_data($param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -242,7 +244,7 @@ sub save_and_stay : Callback(priority => 6) {
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
         # Get out of here, since we've blow it away!
         $self->set_redirect("/");
         $self->clear_my_state;
@@ -263,7 +265,7 @@ sub cancel : Callback(priority => 6) {
     if ($story->get_version == 0) {
         # If the version number is 0, the story was never checked in. So just
         # delete it.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
     } else {
         # Cancel the checkout.
         $story->cancel_checkout;
@@ -405,9 +407,9 @@ sub create : Callback {
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
     # Set the primary category
-    $story->add_categories([$cid]);
-    $story->set_primary_category($cid);
     my $cat = Bric::Biz::Category->lookup({ id => $cid });
+    $story->add_categories([$cat]);
+    $story->set_primary_category($cat);
 
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
@@ -428,11 +430,11 @@ sub create : Callback {
     $story->save;
 
     # Save everything else unless there were data errors
-    unless ($save_data->($self, $param, $widget, $story)) {
+    unless ($self->_save_data($param, $widget, $story)) {
         # Oops, there were data errors. Delete it and return.
         # XXX. Ideally, we wouldn't have to do this, but this is the only
         # way to remove it from workflow, at the moment.
-        $handle_delete->($story);
+        $self->_handle_delete($story);
         return;
     }
 
@@ -464,74 +466,13 @@ sub notes : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $param = $self->params;
-    # Return if there were data errors.
-    return unless &$save_data($self, $param, $widget);
-
     my $story = get_state_data($widget, 'story');
+    # Return if there were data errors.
+    return unless $self->_save_data($param, $widget, $story);
+
     my $id    = $story->get_id();
     my $action = $param->{$widget.'|notes_cb'};
     $self->set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
-}
-
-sub delete_cat : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
-    my $story = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-
-    my (@to_delete, @to_log);
-    my $primary = $self->params->{"$widget|primary_cat"}
-      ||  $story->set_primary_category;
-    foreach my $cid (@$cat_ids) {
-        my $cat = Bric::Biz::Category->lookup({ id => $cid });
-        if ($cid == $primary) {
-            add_msg('Category "[_1]" cannot be dissociated because it is the'
-                    . 'primary category', $cat->get_name);
-            next;
-        }
-        push @to_delete, $cid;
-        push @to_log, ['story_del_category', $story, { Category => $cat->get_name }];
-        add_msg('Category "[_1]" disassociated.',
-                '<span class="l10n">' . $cat->get_name . '</span>');
-    }
-
-    $story->delete_categories(\@to_delete);
-    $story->save;
-    log_event(@$_) for @to_log;
-    set_state_data($widget, 'story', $story);
-}
-
-sub update_primary : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $story   = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-    my $primary = $self->params->{"$widget|primary_cat"};
-    $story->set_primary_category($primary);
-    $story->save;
-    set_state_data($widget, 'story', $story);
-}
-
-sub add_category : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $story = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-    my $cat_id = $self->params->{"$widget|new_category_id"};
-    if (defined $cat_id) {
-        $story->add_categories([ $cat_id ]);
-        eval { $story->save; };
-        if (my $err = $@) {
-            $story->delete_categories([ $cat_id ]);
-            die $err;
-        }
-        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-        log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" added.',
-                '<span class="l10n">' . $cat->get_name . '</span>');
-    }
-    set_state_data($widget, 'story', $story);
 }
 
 sub add_oc : Callback {
@@ -557,7 +498,7 @@ sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
+    return unless $self->_save_data();
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
@@ -573,14 +514,13 @@ sub view_trail : Callback {
 }
 
 sub update : Callback(priority => 1) {
-    my $self = shift;
-    &$save_data($self, $self->params, $self->class_key);
+    shift->_save_data();
 }
 
 sub contributors : Callback {
     my $self = shift;
     # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
+    return unless $self->_save_data();
     $self->set_redirect("/workflow/profile/story/contributors.html");
 }
 
@@ -765,7 +705,7 @@ sub recall : Callback {
 sub categories : Callback {
     my $self = shift;
     # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
+    return unless $self->_save_data();
     $self->set_redirect("/workflow/profile/story/categories.html");
 }
 
@@ -916,11 +856,13 @@ $unique_msgs = sub {
     add_msg($_) for @msgs;
 };
 
-$save_data = sub {
+sub _save_data {
     my ($self, $param, $widget, $story) = @_;
     my $data_errors = 0;
 
-    $story ||= get_state_data($widget, 'story');
+    $param  ||= $self->params;
+    $widget ||= $self->class_key;
+    $story  ||= get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
     # Make sure the story is active.
@@ -956,6 +898,97 @@ $save_data = sub {
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
+    $self->_handle_output_channels($story, $param);
+
+    if ($param->{'cover_date-partial'}) {
+        add_msg('Cover Date incomplete.');
+        $data_errors = 1;
+    } elsif (exists $param->{cover_date}) {
+        $story->set_cover_date($param->{cover_date});
+    }
+
+    if ($param->{'expire_date-partial'}) {
+        add_msg('Expire Date incomplete.');
+        $data_errors = 1;
+    } elsif (exists $param->{expire_date}) {
+        $story->set_expire_date($param->{expire_date});
+    }
+
+    $self->_handle_categories($story, $param, $widget);
+
+    $self->_handle_keywords($story, $param);
+
+    # avoid repeated messages from repeated calls to _save_data
+    &$unique_msgs if $data_errors;
+
+    set_state_data($widget, 'story', $story);
+
+    $param->{__data_errors__} = $data_errors;
+    return not $data_errors;
+};
+
+sub _handle_categories {
+    my ($self, $story, $param, $widget) = @_;
+
+    my ($cat_ids, @to_add, @to_delete, %checked_cats);
+    my %existing_cats = map { $_->get_id => $_ } $story->get_categories;
+    
+    $cat_ids = mk_aref($param->{"category_id"});
+    
+    # Bail unless there are categories submitted via the UI. Otherwise we end
+    # up deleting categories added during create().  This should also prevent
+    # us from ever somehow deleting all categories on a story, which really
+    # screws things up (the error is not (currently) fixable through the UI!)
+    return unless @$cat_ids;
+    
+    foreach my $cat_id (@$cat_ids) {
+        # Mark this category as seen so we don't delete it later
+        $checked_cats{$cat_id} = 1;
+
+        # If the category already exists, don't add it again
+        if (defined $existing_cats{$cat_id}) {
+            next;
+        }
+    
+        # Since the category doesn't exist, we need to add it
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        push @to_add, $cat;
+        log_event('story_add_category', $story, { Category => $cat->get_name });
+        add_msg('Category "[_1]" added.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
+    }
+    
+    $story->add_categories(\@to_add);
+    
+    $story->set_primary_category($param->{"primary_category_id"})
+        if defined $param->{"primary_category_id"};
+
+    my $primary = $param->{"primary_category_id"} || $story->get_primary_category->get_id;
+    for my $cat_id (keys %existing_cats) {
+        my $cat = $existing_cats{$cat_id};
+        # If the category isn't still in the list of categories, delete it
+        if (!(defined $checked_cats{$cat_id})) {
+            if ($cat_id == $primary) {
+                add_msg('Category "[_1]" cannot be dissociated because it is the '
+                        . 'primary category', $cat->get_name);
+                next;
+            }
+
+            push @to_delete, $cat;
+            log_event('story_del_category', $story, { Category => $cat->get_name });
+            add_msg('Category "[_1]" disassociated.',
+                    '<span class="l10n">' . $cat->get_name . '</span>');
+        }
+    }
+
+    $story->delete_categories(\@to_delete);
+        
+    set_state_data($widget, 'story', $story);  
+};
+
+sub _handle_output_channels {
+    my ($self, $story, $param) = @_;
+    
     # Delete output channels.
     if ($param->{rem_oc}) {
         my $del_oc_ids = mk_aref($param->{rem_oc});
@@ -975,25 +1008,11 @@ $save_data = sub {
     # Set primary output channel.
     $story->set_primary_oc_id($param->{primary_oc_id})
       if exists $param->{primary_oc_id};
+}
 
-
-    if ($param->{'cover_date-partial'}) {
-        add_msg('Cover Date incomplete.');
-        $data_errors = 1;
-    } elsif (exists $param->{cover_date}) {
-        $story->set_cover_date($param->{cover_date});
-    }
-
-    if ($param->{'expire_date-partial'}) {
-        add_msg('Expire Date incomplete.');
-        $data_errors = 1;
-    } elsif (exists $param->{expire_date}) {
-        $story->set_expire_date($param->{expire_date});
-    }
-
-    $story->set_primary_category($param->{"$widget|primary_cat"})
-      if defined $param->{"$widget|primary_cat"};
-
+sub _handle_keywords {
+    my ($self, $story, $param) = @_;
+    
     # Delete old keywords.
     my $old;
     my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
@@ -1014,18 +1033,10 @@ $save_data = sub {
         push @$new, $kw;
     }
     $story->add_keywords(@$new) if $new;
-
-    # avoid repeated messages from repeated calls to &$save_data
-    &$unique_msgs if $data_errors;
-
-    set_state_data($widget, 'story', $story);
-
-    $param->{__data_errors__} = $data_errors;
-    return not $data_errors;
 };
 
-$handle_delete = sub {
-    my ($story, $self, $param) = @_;
+sub _handle_delete {
+    my ($self, $story) = @_;
     my $desk = $story->get_current_desk();
     $desk->checkin($story) if $story->get_checked_out;
     $desk->remove_asset($story);

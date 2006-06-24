@@ -1,0 +1,97 @@
+% if (!@$categories) {
+    <div class="noneFound"><% $lang->maketext('This story has not been assigned to a category.') %></div>
+% } else {
+
+<table class="listManager">
+<tr>
+  <th><% $lang->maketext('URI') %></th>
+  <th><% $lang->maketext('Name') %></th>
+  <th class="radio"><% $lang->maketext('Primary') %></th>
+  <th class="checkbox"><% $lang->maketext('Delete') %></th>
+</tr>
+% foreach my $cat (sort { $a->get_uri cmp $b->get_uri } @$categories) {
+%     my $cat_id = $cat->get_id;
+%     $curr_cats->{$cat_id} = 1;
+<tr>
+    <td>
+        <% $cat->get_uri %>
+        <& '/widgets/profile/hidden.mc',
+            name    => "category_id",
+            value   => $cat_id
+        &>
+    </td>
+    <td><% $cat->get_name %></td>
+    <td class="action">
+        <& "/widgets/profile/radio.mc",
+            disp        => '',
+            value       => $cat_id,
+            name        => "primary_category_id",
+            js          => '',
+            req         => 0,
+            checked     => ($cat_id == $primary_category_id),
+        &>
+    </td>
+    <td class="action">
+        <& '/widgets/profile/button.mc',
+            disp      => $lang->maketext("Delete Category"),
+            name      => 'delete_category',
+            value     => $cat_id,
+            button    => 'delete_red',
+            useTable  => 0,
+            js        => ($cat_id == $primary_category_id ? qq{style="display: none" } : '') .
+                         qq{onclick="catListMan.remove(this.parentNode.parentNode); return false"} 
+        &>
+    </td>
+  </tr>
+% }
+</table>
+
+% }
+
+% my $all_cats = [
+%    grep { ! $curr_cats->{$_->get_id} && chk_authz($_, READ, 1) }
+%    $cat_pkg->list({ site_id => $story->get_site_id })
+% ];
+% if (scalar @$all_cats) {
+<div class="actions">
+<& '/widgets/profile/button.mc',
+    disp     => $lang->maketext("Add Category"),
+    name     => 'add_category_button',
+    button   => 'add_category_lgreen',
+    useTable => 0,
+    js       => qq{onclick="catListMan.add('new_category_id'); return false"}
+&>
+<& '/widgets/select_object/select_object.mc',
+        object => 'category',
+        id     => 'new_category_id',
+        name   => 'add_category_list',
+        objs   => $all_cats,
+        field  => 'uri',
+        sort_field => 'uri',
+        no_persist => 1,
+        useTable => 0
+&>
+</div>
+% }
+
+<script type="text/javascript">
+var catListMan = new CategoryListManager('categories', '/widgets/story_prof/list_categories.html');
+</script>
+
+<%args>
+$story           => undef
+$categories      => undef
+$category_id     => undef
+$new_category_id => undef
+$primary_category_id => undef
+</%args>
+<%init>
+my $cat_pkg = get_package_name('category');
+$story    ||= get_state_data('story_prof', 'story');
+
+$category_id = mk_aref($category_id);
+push @$category_id, $new_category_id if defined $new_category_id;
+push @$categories, $cat_pkg->list({ id => ANY(@$category_id) }) if @$category_id;
+
+my $curr_cats = {};
+</%init>

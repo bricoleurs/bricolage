@@ -49,6 +49,8 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item * Keywords in the story, media and category profiles
 
+=item * Categories in the story profile
+
 =item * Organizations in the source profile
 
 =item * Add More sections in the User, Contributor, Media and Alert profiles

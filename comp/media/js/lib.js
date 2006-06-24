@@ -10,6 +10,23 @@ Object.extend(Form.Element, {
             }).join('');
         }
         return false;
+    },
+    
+    radioValue: function(form, name) {
+        var val = $A(Form.getInputs(form, "radio", name)).find(function(radio) {
+            return radio.checked;
+        });
+        return val.value;
+    }
+});
+
+// Override Prototype's Form.EventObserver constructor to force it to work when
+// $(element) is not a form tag.
+Form.EventObserver.prototype._initialize = Form.EventObserver.prototype.initialize;
+Object.extend(Form.EventObserver.prototype, {
+    initialize: function(element, callback) {
+      this._initialize(element, callback);
+      this.registerFormCallbacks();
     }
 });
 
@@ -967,6 +984,71 @@ function addKeyword(parent, value) {
         parent.insertBefore(span, parent.firstChild);
     }
 }
+
+Abstract.ListManager = function() {};
+Abstract.ListManager.prototype = {
+    setOptions: function(options) {
+        this.options = {
+            extraParameters: []
+        };
+        Object.extend(this.options, options || {});
+    },
+    
+    updatePartial: function(uri, callback) {
+        var extraParams = this.options.extraParameters.join("&");
+        extraParams = extraParams ? "&" + extraParams : '';
+        
+        new Ajax.Updater(this.element, uri, {
+          parameters: Form.serialize(this.element) + extraParams,
+          asynchronous: true,
+          evalScripts: true,
+          onComplete: callback
+        });
+    }
+};
+
+var CategoryListManager = Class.create();
+CategoryListManager.prototype = Object.extend(new Abstract.ListManager(), {
+    initialize: function(element, uri) {
+        this.element = $(element);
+        this.setOptions({ uri: uri });
+        this.initializePrimaryRadios();
+    },
+    
+    initializePrimaryRadios: function() {
+        var self = this;
+        new Form.EventObserver(this.element, function() { self.updateDeletes(); } );
+    },
+    
+    updateList: function() {
+        this.updatePartial(this.options.uri, function() { 
+            this.updateDeletes();
+        });
+    },
+  
+    add: function(element) {
+        this.options.extraParameters.push("new_category_id=" + $(element).value);
+        this.updateList();
+        this.options.extraParameters.pop();
+    },
+    
+    remove: function(element) {
+        Element.remove(element); 
+        this.updateList();
+    },
+    
+    updateDeletes: function() {
+        var deleteButtons = Form.getInputs(this.element, "image", "delete_category");
+        var primaryCat = Form.Element.radioValue(this.element, "primary_category_id");
+        $A(deleteButtons).each(function(button) {
+            if (button.value == primaryCat) {
+                Element.hide(button);
+            } else {
+                Element.show(button);
+            }
+        });
+    }
+})
 
 /*
  * Container profile
