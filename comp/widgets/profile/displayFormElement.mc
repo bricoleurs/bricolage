@@ -264,7 +264,9 @@ my $inpt_sub = sub {
 
         if (!$readOnly) {
             $out .= qq{        <div class="input">} if $useTable;
-            $out .= qq{<input type="$type" name="$key"$src$disp_value$extra$js />};
+            $out .= qq{<input type="$type" };
+            $out .= qq{id="$id" } if $id;
+            $out .= qq{name="$key"$src$disp_value$extra$js />};
             $out .= qq{</div>\n} if $useTable;
         } else {
             if ($type eq "radio" || $type eq "checkbox") {
@@ -431,6 +433,7 @@ my %formSubs = (
                 $m->comp(
                     'hidden.mc',
                     name  => $key,
+                    id    => $id,
                     value => $val,
                 );
             }

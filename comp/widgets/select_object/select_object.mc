@@ -174,6 +174,7 @@ my $widget = 'select_object';
 $style      => 'dropdown'
 $object
 $name       => ''
+$id         => undef
 $field
 $getter     => undef
 $constrain  => {}
@@ -268,6 +269,7 @@ $m->comp($style.'.html',
          width    => $width,
          indent   => $indent,
          disp     => $disp,
+         id       => $id,
          useTable => $useTable,
          readOnly => $readOnly,
          # For non-multi less than 20 vals, use a dropdown (<select size="1">);
