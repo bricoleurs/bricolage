@@ -288,7 +288,10 @@ sub new {
 
     # Prepopulate from the element type object
     foreach my $ft ($init->{_element_type_obj}->get_field_types) {
-        $self->add_field($ft) if $ft->get_required;
+        # Add a new field for each that is required
+        for (my $i=0; $i<$ft->get_min_occurrence; $i++) {
+            $self->add_field($ft);
+        }
     }
 
     $self->_set__dirty(1);
@@ -621,9 +624,7 @@ B<Notes:> NONE.
 =cut
 
 sub get_occurrence{
-    my @fields = get_fields(@_);
-    my $num_fields = @fields;
-    return $num_fields;
+    return scalar @{ shift->get_fields(@_) };
 }
 
 ################################################################################
