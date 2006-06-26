@@ -1007,11 +1007,11 @@ Abstract.ListManager.prototype = {
     }
 };
 
-var CategoryListManager = Class.create();
-CategoryListManager.prototype = Object.extend(new Abstract.ListManager(), {
-    initialize: function(element, uri) {
+var AssociationListManager = Class.create();
+AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
+    initialize: function(element, options) {
         this.element = $(element);
-        this.setOptions({ uri: uri });
+        this.setOptions(options);
         this.initializePrimaryRadios();
     },
     
@@ -1027,7 +1027,7 @@ CategoryListManager.prototype = Object.extend(new Abstract.ListManager(), {
     },
   
     add: function(element) {
-        this.options.extraParameters.push("new_category_id=" + $(element).value);
+        this.options.extraParameters.push("new_" + this.options.type + "_id=" + $(element).value);
         this.updateList();
         this.options.extraParameters.pop();
     },
@@ -1038,10 +1038,10 @@ CategoryListManager.prototype = Object.extend(new Abstract.ListManager(), {
     },
     
     updateDeletes: function() {
-        var deleteButtons = Form.getInputs(this.element, "image", "delete_category");
-        var primaryCat = Form.Element.radioValue(this.element, "primary_category_id");
+        var deleteButtons = Form.getInputs(this.element, "image", "delete_" + this.options.type);
+        var primary = Form.Element.radioValue(this.element, "primary_" + this.options.type + "_id");
         $A(deleteButtons).each(function(button) {
-            if (button.value == primaryCat) {
+            if (button.value == primary) {
                 Element.hide(button);
             } else {
                 Element.show(button);

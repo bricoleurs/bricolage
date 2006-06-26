@@ -75,7 +75,10 @@
 % }
 
 <script type="text/javascript">
-var catListMan = new CategoryListManager('categories', '/widgets/story_prof/list_categories.html');
+var catListMan = new AssociationListManager('categories', { 
+    type: 'category', 
+    uri: '/widgets/story_prof/list_categories.html' 
+});
 </script>
 
 <%args>

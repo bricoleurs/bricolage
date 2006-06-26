@@ -152,21 +152,26 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 
 % }   # unless ENABLE_CATEGORY_BROWSER
 
-<%perl>
-if (ENABLE_OC_ASSET_ASSOCIATION) {
-    $m->comp('/widgets/profile/asset_ocs.mc',
-             asset  => $story,
-             widget => $widget,
-             ocs    => \@ocs,
-             num    => $num++,
-             at_ocs => \@aocs
-         );
-}
+% if (ENABLE_OC_ASSET_ASSOCIATION) {
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Output Channels",
+    number  => $num++
+&>
+<div id="output_channels">
+    <& 'list_output_channels.html',
+        story => $story,
+        output_channels => [ $story->get_output_channels ],
+        primary_oc_id   => $story->get_primary_oc_id
+    &>
+</div>
+<& "/widgets/wrappers/table_bottom.mc" &>
+% }
 
-$m->comp("/widgets/wrappers/table_top.mc",
-       caption => "Associations",
-       number  => $num++);
-</%perl>
+
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Associations",
+    number  => $num++
+&>
 
 % my $rowColor = 1;
 <table class="associations">

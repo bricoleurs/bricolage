@@ -1,0 +1,100 @@
+% if (!@$output_channels) {
+    <div class="noneFound"><% $lang->maketext('This media has not been assigned to an output channel.') %></div>
+% } else {
+
+<table class="listManager">
+<tr>
+  <th><% $lang->maketext('Name') %></th>
+  <th><% $lang->maketext('Description') %></th>
+  <th class="radio"><% $lang->maketext('Primary') %></th>
+  <th class="checkbox"><% $lang->maketext('Delete') %></th>
+</tr>
+% foreach my $oc (sort { $a->get_name cmp $b->get_name } @$output_channels) {
+%     my $oc_id = $oc->get_id;
+%     $curr_ocs->{$oc_id} = 1;
+<tr>
+    <td>
+        <% $oc->get_name %>
+        <& '/widgets/profile/hidden.mc',
+            name    => "oc_id",
+            value   => $oc_id
+        &>
+    </td>
+    <td><% $oc->get_description %></td>
+    <td class="action">
+        <& "/widgets/profile/radio.mc",
+            disp        => '',
+            value       => $oc_id,
+            name        => "primary_oc_id",
+            js          => '',
+            req         => 0,
+            checked     => ($oc_id == $primary_oc_id),
+        &>
+    </td>
+    <td class="action">
+        <& '/widgets/profile/button.mc',
+            disp      => $lang->maketext("Delete Output Channel"),
+            name      => 'delete_oc',
+            value     => $oc_id,
+            button    => 'delete_red',
+            useTable  => 0,
+            js        => ($oc_id == $primary_oc_id ? qq{style="display: none" } : '') .
+                         qq{onclick="ocListMan.remove(this.parentNode.parentNode); return false"} 
+        &>
+    </td>
+  </tr>
+% }
+</table>
+
+% }
+
+% my $all_ocs = [
+%    grep { ! $curr_ocs->{$_->get_id} && chk_authz($_, READ, 1) }
+%    $media->get_element_type->get_output_channels
+% ];
+% if (scalar @$all_ocs) {
+<div class="actions">
+<& '/widgets/profile/button.mc',
+    disp     => $lang->maketext("Add Output Channel"),
+    name     => 'add_output_channel_button',
+    button   => 'add_lgreen',
+    useTable => 0,
+    js       => qq{onclick="ocListMan.add('new_oc_id'); return false"}
+&>
+<& '/widgets/select_object/select_object.mc',
+        object => 'output_channel',
+        id     => 'new_oc_id',
+        name   => 'add_oc_list',
+        objs   => $all_ocs,
+        field  => 'name',
+        sort_field => 'name',
+        no_persist => 1,
+        useTable => 0
+&>
+</div>
+% }
+
+<script type="text/javascript">
+var ocListMan = new AssociationListManager('output_channels', {
+    type: 'oc',
+    uri: '/widgets/media_prof/list_output_channels.html'
+});
+</script>
+
+<%args>
+$media           => undef
+$output_channels => undef
+$oc_id           => undef
+$new_oc_id       => undef
+$primary_oc_id   => undef
+</%args>
+<%init>
+my $oc_pkg = get_package_name('output_channel');
+$media    ||= get_state_data('media_prof', 'media');
+
+$oc_id = mk_aref($oc_id);
+push @$oc_id, $new_oc_id if defined $new_oc_id;
+push @$output_channels, $oc_pkg->list({ id => ANY(@$oc_id) }) if @$oc_id;
+
+my $curr_ocs = {};
+</%init>

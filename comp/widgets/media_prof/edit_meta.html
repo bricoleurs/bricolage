@@ -127,21 +127,27 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         title       => 'Content',
         start_count => 6
 );
-
-if (ENABLE_OC_ASSET_ASSOCIATION) {
-    $m->comp('/widgets/profile/asset_ocs.mc',
-             asset  => $media,
-             widget => $widget,
-             ocs    => \@ocs,
-             num    => $num++,
-             at_ocs => \@aocs
-         );
-}
-
-$m->comp("/widgets/wrappers/table_top.mc",
-         caption => "Associations",
-         number => $num++);
 </%perl>
+
+% if (ENABLE_OC_ASSET_ASSOCIATION) {
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Output Channels",
+    number  => $num++
+&>
+<div id="output_channels">
+    <& 'list_output_channels.html',
+        media           => $media,
+        output_channels => [ $media->get_output_channels ],
+        primary_oc_id   => $media->get_primary_oc_id
+    &>
+</div>
+<& "/widgets/wrappers/table_bottom.mc" &>
+% }
+
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Associations",
+    number => $num++
+&>
 % my $rowColor = 1;
 <table class="associations">
 % if (ENABLE_CATEGORY_BROWSER) {
