@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'media_prof';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
+use Bric::App::Callback::Util::OutputChannel qw(update_output_channels);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history :aref);
@@ -61,7 +62,7 @@ sub update : Callback(priority => 1) {
     $media->set_priority($param->{priority})
       if exists $param->{priority};
 
-    $self->_handle_output_channels($media, $param, $widget);
+    update_output_channels($media, $param);
 
     # Delete old keywords.
     my $old;
@@ -912,61 +913,5 @@ $save_category = sub {
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
 };
-
-sub _handle_output_channels {
-    my ($self, $media, $param, $widget) = @_;
-    
-    my ($oc_ids, @to_add, @to_delete, %checked_ocs);
-    my %existing_ocs = map { $_->get_id => $_ } $media->get_output_channels;
-    
-    $oc_ids = mk_aref($param->{"oc_id"});
-        
-    # Bail unless there are categories submitted via the UI. Otherwise we end
-    # up deleting categories added during create().  This should also prevent
-    # us from ever somehow deleting all categories on a story, which really
-    # screws things up (the error is not (currently) fixable through the UI!)
-    return unless @$oc_ids;
-    
-    foreach my $oc_id (@$oc_ids) {
-        # Mark this output channel as seen so we don't delete it later
-        $checked_ocs{$oc_id} = 1;
-
-        # If the output channel already exists, don't add it again
-        next if (defined $existing_ocs{$oc_id});
-            
-        # Since the output channel doesn't exist, we need to add it
-        my $oc = Bric::Biz::OutputChannel->lookup({ id => $oc_id });
-        push @to_add, $oc;
-        log_event('media_add_oc', $media, { 'Output Channel' => $oc->get_name });
-    }
-    
-    $media->add_output_channels(@to_add);
-    
-    # Set primary output channel.
-    $media->set_primary_oc_id($param->{primary_oc_id})
-        if exists $param->{primary_oc_id};
-    
-    my $primary = $param->{"primary_oc_id"} || $media->get_primary_oc_id;
-    for my $oc_id (keys %existing_ocs) {
-        my $oc = $existing_ocs{$oc_id};
-        # If the output channel isn't still in the list of categories, delete it
-        if (!(defined $checked_ocs{$oc_id})) {
-            if ($oc_id == $primary) {
-                add_msg('Output Channel "[_1]" cannot be dissociated because it is the '
-                        . 'primary output channel', $oc->get_name);
-                $param->{__data_errors__} = 1;
-                next;
-            }
-
-            push @to_delete, $oc;
-            log_event('media_del_oc', $media, { 'Output Channel' => $oc->get_name });
-        }
-    }
-
-    $media->del_output_channels(@to_delete);
-
-    set_state_data($widget, 'media', $media);
-}
-
 
 1;
