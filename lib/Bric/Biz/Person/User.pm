@@ -77,6 +77,7 @@ stories. See Bric::Util::Group::Person for more information.)
 ################################################################################
 # Standard Dependencies
 use strict;
+use List::Util qw(first);
 
 ################################################################################
 # Programmatic Dependences
@@ -91,6 +92,7 @@ use Bric::Util::Time qw(db_date);
 use Bric::Util::UserPref;
 
 # Load Authentication engines.
+use Bric::Util::AuthInternal;
 BEGIN { eval "require $_" or die $@ for AUTH_ENGINES }
 
 ################################################################################
@@ -840,9 +842,9 @@ B<Notes:> NONE.
 
 =item $self = $u->set_password($password)
 
-Sets the user's password. Uses a double MD-5 hash algorithm to encrypt it. Be
-sure to call $u->save to save the change to the database. Returns $self on
-success and undef on failure.
+Sets the user's password. The internal authentication engine uses a double
+MD-5 hash algorithm to encrypt it. Be sure to call $u->save to save the change
+to the database. Returns $self on success and C<undef> on failure.
 
 B<Throws:>
 
@@ -860,18 +862,15 @@ Bric::set() - Problems setting fields.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Uses the double MD-5 has rather than Perl's builtin crupt() function
-because, on my box at least, crypt() uses on the first 8 letters (bytes) of the
-password. Anything else is added junk. This isn't too cool, IMHO, so I went with
-MD-5, which supports passwords of any length. We may want to switch back to
-crypt(), however, in order to use the Apache::AuthDBI modules. But we should get
-a crypt on the system that uses all the bytes passed to it.
+B<Notes:> NONE.
 
 =cut
 
 sub set_password {
     my ($self, $pwd) = @_;
     $_->set_password($self, $pwd) for AUTH_ENGINES;
+    Bric::Util::AuthInternal->set_password($self, $pwd)
+        unless first { $_ eq 'Bric::Util::AuthInternal' } AUTH_ENGINES;
     return $self;
 }
 
@@ -1006,7 +1005,7 @@ sub what_can {
             # group.
             $chk_admin ||= $gid == ADMIN_GRP_ID;
             # Grab the greatest permission.
-            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+            $priv = $acl->{$gid} if exists $acl->{$gid} && $acl->{$gid} > $priv;
         }
         # If they're in the global admins group, allow no greater access than
         # READ access.
@@ -1015,7 +1014,7 @@ sub what_can {
     } else {
         # Grab the greatest permission.
         for my $gid (@gids) {
-            $priv = $priv | $acl->{$gid} if exists $acl->{$gid};
+            $priv = $acl->{$gid} if exists $acl->{$gid} && $acl->{$gid} > $priv;
         }
     }
     return $priv;

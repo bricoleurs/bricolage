@@ -309,8 +309,8 @@ sub subclass_burn_test {
     ok my $head = $story_type->new_field_type({
         key_name    => 'header',
         name        => 'Header',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -320,8 +320,8 @@ sub subclass_burn_test {
     ok my $para = $story_type->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -346,8 +346,8 @@ sub subclass_burn_test {
     ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 1,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -357,8 +357,8 @@ sub subclass_burn_test {
     ok my $by = $pull_quote->new_field_type({
         key_name    => 'by',
         name        => 'By',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 1,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -368,8 +368,8 @@ sub subclass_burn_test {
     ok my $date = $pull_quote->new_field_type({
         key_name    => 'date',
         name        => 'Date',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 1,
         sql_type    => 'date',
         place       => 3,
         max_length  => 0, # Unlimited
@@ -393,8 +393,8 @@ sub subclass_burn_test {
     ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 0,
+        min_occurrence => 0,
+        max_occurrence => 1,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited

@@ -154,7 +154,10 @@ textarea {
 .darkHeader     {background:#666633;  font-size:10px; color:white; font-weight:bold;}
 .medHeader      {background:#999966;}
 .lightHeader    {background-color: #cccc99;}
-.aliasHeader    {background:#99Cc99; font-style:italic;}
+.alias          { font-style:italic; }
+
+.desk .alias          {background: #99cc99 url("/media/images/link.png") 112px -5px no-repeat !important; margin-left: 18px;}
+.listManager .alias {background: url("/media/images/link.png") 0px -10px no-repeat; margin-left: 18px; margin: 0; padding-left: 15px; }
 
 div.debug dt {
     float: left;
@@ -196,7 +199,7 @@ div.debug dt:after {
 
 .desk .item dd.sorted,
 .desk .item div.sorted {
-    background: #99CC99 !important;
+    background: #99cc99 !important;
 }
 
 .desk .item .head { 
@@ -653,6 +656,18 @@ button:active {
     border-right-color: #e8e8cd;
     border-bottom-color: #e8e8cd;
 }
+
+button.dclose {
+    font-weight: 900;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: #993300;
+    margin: 0;
+    font-size: 160%;
+}
+
+button.dclose:active { color: black; }
 
 /******************************************************
  * HACKS                                              *

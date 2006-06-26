@@ -72,8 +72,10 @@ my $opts = [
 <% $cheat_sheet %>
 </div>
 </&>
+
 <script>wordCount('<% $textarea_id %>', 'words', 'chars')</script>
 <& '/widgets/wrappers/table_bottom.mc' &>
+
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
     widget  => $widget,

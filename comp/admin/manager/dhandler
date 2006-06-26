@@ -79,6 +79,67 @@ if ($type eq 'grp') {
     $searchType = "triple";
 } elsif ($type eq 'category') {
     $searchType = 'singular';
+} elsif ($type eq 'job') {
+    my $jtype = $ARGS{jtype};
+    unless (defined $jtype) {
+        my $prev_state = get_state_data('search', 'job');
+        $jtype = $prev_state->{prev_type}
+          if defined $prev_state and exists $prev_state->{prev_type};
+    }
+
+    # Set the constraint.
+    $constrain = { %{ $def->{$type}{constrain} } };
+    if (exists $ARGS{'search|substr_cb'}) {
+#        $jtype = 'all';
+    } elsif ($jtype) {
+        # Constraint from dropdown
+        my $end_of_day_format = '%G-%m-%dT23:59:59';
+
+        if ($jtype eq 'expire') {
+            $constrain->{type} = 1;
+        } elsif ($jtype eq 'failed') {
+            $constrain->{failed} = 1;
+        } elsif ($jtype eq 'today') {
+            my $ltime = local_date(undef, $end_of_day_format, 1);
+            $constrain->{sched_time} = [undef, $ltime];
+        } elsif ($jtype eq 'future') {
+            my $ltime = local_date(undef, $end_of_day_format, 1);
+            $constrain->{sched_time} = [$ltime, undef];
+        } elsif ($jtype eq 'mine') {
+            $constrain->{user_id} = get_user_id();
+        }
+
+        my $prev_state = get_state_data('search', 'job');
+        $prev_state->{prev_type} = $jtype;
+        set_state_data('search', job => $prev_state);
+
+        $behavior = 'narrow';
+    } else {
+        # It's the first time accessing.
+        $jtype = 'all';
+    }
+
+    my %job_sel = (
+        'all'    => $lang->maketext("All jobs"),
+        'today'  => $lang->maketext("Today's jobs"),
+        'future' => $lang->maketext("Future jobs"),
+        'expire' => $lang->maketext("Expire jobs"),
+        'failed' => $lang->maketext("Failed jobs"),
+        'mine'   => $lang->maketext("My jobs"),
+    );
+    $groupList = $m->scomp('/widgets/profile/select.mc',
+                            disp => $lang->maketext('Or Pick a Type'),
+                            options => \%job_sel,
+                            indent  => 140,
+                            width   => 500,
+                            value => $jtype,
+                            js => qq{onChange="location.href='} . $r->uri .
+                                 "?jtype=' + " .
+                                 qq{escape(this.options[this.selectedIndex].value)"}
+                           );
+
+    # Set the type to the new value, if it has been submitted.
+    $searchType = 'triple';
 }
 
 $m->comp('/widgets/search/search.mc',

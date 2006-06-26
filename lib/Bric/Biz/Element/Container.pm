@@ -289,9 +289,10 @@ sub new {
     # Prepopulate from the element type object
     foreach my $ft ($init->{_element_type_obj}->get_field_types) {
         # Add a new field for each that is required
-        for (my $i=0; $i<$ft->get_min_occurrence; $i++) {
-            $self->add_field($ft);
-        }
+        #for (0..$ft->get_min_occurrence) {
+        #    $self->add_field($ft);
+        #}
+        $self->add_field($ft) for 0..$ft->get_min_occurrence;
     }
 
     $self->_set__dirty(1);
@@ -930,7 +931,7 @@ sub add_data { shift->add_field(@_) }
 
 ################################################################################
 
-=item $new_container = $container->add_container($element)
+=item $new_container = $container->add_container($element_type)
 
 Adds a new container subelement to this container element. Pass in the
 required element type (Bric::Biz::ElementType) object specifying the structure
@@ -2249,11 +2250,18 @@ sub _deserialize_pod {
                 unless ($field_type) {
                     _bad_field(\%field_types, $kn, $line_num)
                         unless $fields_for{$kn} && @{$fields_for{$kn}};
-                    $field_type = shift @{$fields_for{$kn}};
+                    $field_type = shift( @{$fields_for{$kn}} )->get_field_type;
                 }
 
                 # Make sure that it's okay if it's repeatable.
-                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                ###############
+                #
+                #
+                # FIXME: This needs a hold on the occurrence to compare against
+                #
+                #
+                ###############
+                if ($field_ord{$kn} && $field_type->get_max_occurrence) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears more }
                                   . qq{than once beginning at line $line_num. }
@@ -2304,7 +2312,14 @@ sub _deserialize_pod {
                 $kn = $def_field;
                 $field_type = $field_types{$kn}
                     || _bad_field(\%field_types, $kn, $line_num);
-                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                ###############
+                #
+                #
+                # FIXME: This needs a hold on the occurrence to compare against
+                #
+                #
+                ###############
+                if ($field_ord{$kn} && $field_type->get_max_occurrence) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears more }
                                   . qq{than once beginning at line $line_num. }
@@ -2329,7 +2344,7 @@ sub _deserialize_pod {
             }
 
             # Fix up the content.
-            if ($field_types{$kn}->get_sql_type eq 'date') {
+            if ($field_type->get_sql_type eq 'date') {
                 # Eliminate white space to set date.
                 $content =~ s/^\s+//;
                 $content =~ s/\s+$//;

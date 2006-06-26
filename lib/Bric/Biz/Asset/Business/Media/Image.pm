@@ -406,7 +406,7 @@ sub create_thumbnail {
     # Just warn and return if Imager doesn't support the format.
     unless ($Imager::formats{$format}) {
         warn qq{It looks like the image library to handle the "$format" }
-          . 'fomat is not installed. No thumbnail will be created for file '
+          . ' format is not installed. No thumbnail will be created for file '
           . "'$path'.\n";
         return;
     }

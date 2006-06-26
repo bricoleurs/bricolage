@@ -156,7 +156,7 @@ updating the memberships for any and all types of objects with profiles.
 # Group membership is handled the same way through all callbacks,
 # so this method gets inherited to all profiles.
 
-sub manage_grps :Callback {
+sub manage_grps : Callback( priority => 7 ) {
     my $self   = shift;
     my $obj    = shift || $self->obj;
     my $param  = $self->params;

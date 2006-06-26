@@ -1,18 +1,49 @@
 Bricolage Mac OS X/Darwin README
 --------------------------------
 
-Bricolage works well on Mac OS X, especially on version 10.2 or later, but
-installation requires a fair bit of additional preparation. The major issue is
-that, because it cannot run on a DSO mod_perl, Bricolage will not run on the
-verion of Apache that comes with Mac OS X. A further issue is that Bricolage
-requires the libapreq library of Perl modules to run, and compiling this
-library takes a few extra steps on Mac OS X.
+Bricolage works well on Mac OS X, especially on version 10.2 or later, using
+the version of Apache that comes preinstalled with OS X, or a custom-compiled
+version.
 
-The solution is to compile your own Apache with mod_perl. Complete details for
-building everything you need to run Bricolage on Mac OS X 10.2 will always be
-found at http://www.justatheory.com/computers/os/macosx/my_adventures.html and
-on OS X 10.3 at
-http://www.spastically.com/projects/bricolage/installing_bricolage_on_mac_os_x/.html.
+PREREQUISITES
+-------------
+
+1.  Xcode Tools (formerly Apple Developer Tools):  You will be compiling 
+    things, so you will need "make" and "gcc", which come in the Xcode
+    Tools.  These tools come on the OS X DVD, or are available for 
+    download from http://developer.apple.com after a free registration.
+    
+2.  PostgreSQL:  Installing PostgreSQL is outside the scope of this file, 
+    though pretty much any method of installation will work.  If you wish to 
+    compile from source, see http://www.postgresql.org.  If you want to use a 
+    binary, see http://www.entropy.ch/software/macosx/postgresql/.
+
+
+USING THE BUNDLED APACHE
+------------------------
+
+1.  Run the following two commands so that the installer can find mod_perl:
+    
+      sudo sed -Ei -e "s/#(AddModule mod_perl)/\1/" /etc/httpd/httpd.conf
+      sudo sed -Ei -e "s/#(LoadModule perl_module)/\1/" /etc/httpd/httpd.conf
+    
+2.  Follow the standard instructions in INSTALL.  Apache will be automatically
+    detected at /usr/sbin/httpd.
+    
+3.  If you don't need mod_perl for other things on your machine, run the above
+    two commands in reverse to keep Apple's Apache installation from loading
+    mod_perl:
+    
+      sudo sed -Ei -e "s/^(AddModule mod_perl)/#\1/" /etc/httpd/httpd.conf
+      sudo sed -Ei -e "s/^(LoadModule perl_module)/#\1/" /etc/httpd/httpd.conf
+    
+
+COMPILING APACHE YOURSELF
+-------------------------
+
+Complete details for building everything you need to run Bricolage on Mac OS X 
+10.2 will always be found at http://www.justatheory.com/computers/os/macosx/my_adventures.html 
+and on OS X 10.3 at http://www.spastically.com/computers/macosx/installingbricolageonmacosx.html
 
   "Build Your Own Apache Server with mod_perl"
   http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html
@@ -21,9 +52,7 @@ http://www.spastically.com/projects/bricolage/installing_bricolage_on_mac_os_x/.
   http://www.macdevcenter.com/pub/a/mac/2002/12/18/apache_modssl.html
 
 Below is a summary of the instructions, for those who just need the barest of
-hints for compiling and installing software. Just be sure that you've
-installed the latest Mac OS X Developer tools, available for a free
-registration at http://developer.apple.com/.
+hints for compiling and installing software.
 
 PREPARATION
 -----------
@@ -199,8 +228,5 @@ things to watch for, however:
 
 * When you're prompted to confirm the location of Apache, do not accept
   "/usr/sbin/httpd" if that's what is offered. That is the Apple Apache
-  installation, and it won't work. You'll need to enter in the path to the
-  special Apache you've compiled, e.g., "/usr/local/apache/bin/httpd".
-
-* The optional Apache::SizeLimit module is not currently supported on Mac OS
-  X/Darwin. So when you're prompted for the option to install it, type "no".
+  installation. You'll need to enter in the path to the special Apache 
+  you've compiled, e.g., "/usr/local/apache/bin/httpd".

@@ -23,10 +23,12 @@ my (%perms, %start_desks);
 $num ||= 1;
 
 if ($is_user) {
-    $m->comp('/widgets/wrappers/sharky/table_top.mc',
+
+    $m->comp('/widgets/wrappers/table_top.mc',
        caption => $lang->maketext('Filter by Permission Type'),
        search  => 1
     );
+
     $m->comp('/widgets/profile/select.mc',
              'disp' => 'Permission Type',
              'options' => $perm_sel,
@@ -39,8 +41,8 @@ if ($is_user) {
          'name' => 'perm_type',
          'value' => $perm_type,
     );
-    
-    $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+
+    $m->comp('/widgets/wrappers/table_bottom.mc');
 
     # $is_user means $perm_type is one of
     # object, workflow, desk, (category)
@@ -61,6 +63,7 @@ if ($is_user) {
 if ($perm_type eq 'object' || $perm_type eq 'all') {
     # We need grant to the members of this current user group permissions to
     # other groups.
+
     $m->comp("/widgets/wrappers/table_top.mc", number => $num++,
              caption => "Object Group Permissions");
 
@@ -91,7 +94,8 @@ if ($perm_type eq 'object' || $perm_type eq 'all') {
                  odd_row => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 if ($perm_type eq 'workflow' || $perm_type eq 'all') {
@@ -123,7 +127,8 @@ if ($perm_type eq 'workflow' || $perm_type eq 'all') {
        );
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 if ($perm_type eq 'desk' || $perm_type eq 'all') {
@@ -153,7 +158,8 @@ if ($perm_type eq 'desk' || $perm_type eq 'all') {
                  odd_row => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 
 if ($perm_type eq 'all_categories' || $perm_type eq 'all') {
@@ -204,7 +210,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     foreach my $ugrp ($usr_grp_pkg->list) {
         my $gid = $ugrp->get_id;
         next if $gid == ADMIN_GRP_ID;
-        
+
         $odd_row = !$odd_row;
         $m->comp($row_comp,
                  grp          => $ugrp,
@@ -217,7 +223,8 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
                  odd_row      => $odd_row);
     }
     $m->out(qq{</table>\n});
-    $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+
+    $m->comp("/widgets/wrappers/table_bottom.mc");
 }
 </%perl>
 
@@ -473,7 +480,7 @@ $perms
                  );
         }
         $m->out(qq{</table>\n});
-        $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
+        $m->comp("/widgets/wrappers/table_bottom.mc");
 </%perl>
 </%def>
 %#--- Log History ---#

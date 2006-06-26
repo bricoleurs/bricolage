@@ -39,7 +39,7 @@ This script was developed using the GNOME MIME type icons downloaded from
 L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>. (linked to
 from L<http://developer.ximian.com/themes/icons/>), but appears as though it
 would work with the files in a F<mimetypes> subdirectory of most PNG icon
-distributions downloadable from L<http://art.gnome.org/themes/icon/index.php>
+distributions downloadable from L<http://art.gnome.org/themes/icon/>
 (the "NoiaWarm" theme's 48 x 48 MIME type icons look pretty nice with the
 Bricolage UI color scheme). Updates happily accepted.
 

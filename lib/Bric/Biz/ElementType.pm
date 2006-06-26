@@ -348,13 +348,13 @@ sub new {
                 key_name      => $key_name,
                 name          => $name,
                 description   => "Autopopulated $name field.",
-                required      => 1,
+                min_occurrence => 1,
                 sql_type      => 'short',
                 autopopulated => 1,
                 widget_type   => 'text',
                 length        => 32,
                 place         => ++$i,
-                quantifier    => 0,
+                max_occurrence => 1,
             });
         }
     }
@@ -2366,7 +2366,7 @@ sub _sync_parts {
 
         # This needs to happen for deleted parts.
         $p_obj->deactivate;
-        $p_obj->set_required(0);
+        $p_obj->set_min_occurrence(0);
         $p_obj->save;
     }
     return $self;
