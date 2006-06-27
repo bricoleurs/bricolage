@@ -179,7 +179,8 @@ if ($at->is_related_media) {
     <td>
     <table>
     <tr>
-      <td>
+% # This 100% is necessary to get the autosizing textareas to work in IE.
+      <td width="100%">
     <& '/widgets/profile/displayFormElement.mc',
       key      => $key,
       vals     => $vals,
@@ -194,7 +195,7 @@ if ($at->is_related_media) {
             name    => "$widget|lock_val_cb",
             value   => $dt->get_id,
         &>
-        &nbsp;Lock Val: 
+        &nbsp;Lock Val:
         <& '/widgets/profile/checkbox.mc',
             name    => "$widget|lock_val_" . $dt->get_id,
             checked => ($dt->is_locked ? 1 : 0),
@@ -226,7 +227,7 @@ if ($at->is_related_media) {
    },
    useTable => 0
 &>
-                                                    
+
   </td>
 
 % # DELETE TABLE CELL
@@ -476,7 +477,7 @@ my $related_summary = sub {
               $thumb = $m->comp(
                   '/widgets/profile/preview_link.mc',
                   doc   => $rel,
-                  title => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                  value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
                   type  => $type,
               );
           }
@@ -490,7 +491,7 @@ my $related_summary = sub {
                 button => $thumb . $button );
   } else {
       $m->out('<div class="noneFound">',
-              $lang->maketext('No related [_1]'. ucfirst($type)), 
+              $lang->maketext('No related [_1]'. ucfirst($type)),
               qq{<div class="button">$button</div>},
               '</div>');
       if (RELATED_MEDIA_UPLOAD && $type eq 'media') {

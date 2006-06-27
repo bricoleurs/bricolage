@@ -75,8 +75,8 @@ my $last = -1;
 my %attrs;
 my %ints = map { $_ => 1 } qw(cols rows length precision);
 while (fetch($sel)) {
-    $val = $val ? 1 : 0 if $attr_name eq 'multiple';
-    $val ||= 0 if $ints{$attr_name};
+    $val = $val ? '1' : '0' if $attr_name eq 'multiple';
+    $val ||= '0' if $ints{$attr_name};
     if ($aid == $last) {
         $attrs{$attr_name} = $val;
         next;

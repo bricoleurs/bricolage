@@ -804,7 +804,7 @@ $get_em = sub {
         } elsif ($k eq 'active') {
             # Simple lookup by "active" boolean.
             $wheres .= ' AND a.active = ?';
-            push @params, $v ? 1 : 0;
+            push @params, $v ? '1' : '0';
         } elsif ($k eq 'grp_id') {
             # Look up by group membership.
             $tables .= ", member m2, site_member c2";

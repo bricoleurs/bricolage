@@ -61,7 +61,6 @@ $section
 </%args>
 %#--- Initialization ---#
 <%init>
-print STDERR "$version\n";
 # Clear out the state data if this is our first time here.
 if ($section eq 'new' or $section eq 'find_alias' or $section eq 'clone') {
     # A hacky fix for the 'sidenav query string breakin shit' problem.
