@@ -381,6 +381,8 @@ Friends who have spotted bugs include:
 
 =item * Joe Pletcher
 
+=item * Andrei Arsu
+
 =back
 
 Bricolage's translation team:

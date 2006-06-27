@@ -21,6 +21,12 @@ This document lists the Changes to Bricolage introduced with each release.
 Fixed bug that resulted in an SQL error when trying to create a new
 contributor group. Reported by Joe Pletcher. [David]
 
+=item *
+
+Fixed some foreign key constraints in the C<story_instance> and
+C<template_instance> tables that improperly has C<ON DELETE SET NULL> clauses
+on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
