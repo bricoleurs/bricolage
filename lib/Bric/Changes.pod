@@ -89,7 +89,7 @@ F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
 
 =back
 
-=head1 VERSION 1.10.2 ()
+=head1 VERSION 1.10.2 "Summer" (2006-06-22)
 
 =head2 Improvements
 
@@ -107,9 +107,9 @@ Added placeholder for Japanese localization. Expect a translation soon!
 
 =item *
 
-Codeselect field Perl code can now return an array of array references or a
-hash reference, in addition to the previous support for an even-sized array
-reference. [David]
+The "codeselect" field's Perl code can now return an array of array references
+or a hash reference, in addition to the previous support for an even-sized
+array reference. [David]
 
 =item *
 
@@ -121,20 +121,21 @@ Sozonoff. [David]
 =item *
 
 Added tests for L<Bric::SOAP::Auth|Bric::SOAP::Auth>, although they haven't
-been integrated into C<make devtest>, yet. [Scott]
+yet been integrated into C<make devtest>. [Scott]
 
 =item *
 
 The number of items on a desk can now be displayed next to the desk's name in
-the navigation menu, e.g. "Edit (10)". It is configurable on a per-user basis
-via the new "Show Desk Asset Counts" preference. Based heavily on a patch from
-Alex Howarth. [Marshall]
+the navigation menu, e.g. "Edit (10)". This feature is configurable on a
+per-user basis via the new "Show Desk Asset Counts" preference. Based heavily
+on a patch from Alex Howarth. [Marshall]
 
 =item *
 
 Updated F<README.MacOSX> with instructions on how to use the built-in version
 of Apache instead of compiling everything yourself. Also fixed a broken link
-and an outdated warning about Apache::SizeLimit. [Marshall]
+and an outdated warning about L<Apache::SizeLimit|Apache::SizeLimit>.
+[Marshall]
 
 =item *
 
@@ -158,6 +159,62 @@ template classes. [David]
 Aliases are now indicated in Find Stories by an arrow icon just before the
 story title. Suggested by Paul Orrock. [David]
 
+=item *
+
+Added C<PUBLISH_RELATED_FAIL_BEHAVIOR> F<bricolage.conf> directive to be used
+when C<PUBLISH_RELATED_ASSETS> is enabled. If the automatic publication of a
+related story or media document will not be possible then the publish request
+will fail. It can be changed to "warn", the previous behaviour, if required.
+[Paul Orrock]
+
+=item *
+
+Added the "Remove Frameset" link to the control bar next to the "Repreview"
+link in the preview window. [Paul Orrock]
+
+=item *
+
+Deleted all of the outdated and unused F<.use> files from F<sql/Pg>. [David]
+
+=item *
+
+Removed documentation of the C<-t> option of F<bric_pgimport>, which hasn't
+actually done anything for a long time, anyway. [David]
+
+=item *
+
+Moved translation-specific JavaScript and CSS files into F<i18n> folders under
+their respective folders in F<comp/media/>. [Marshall]
+
+=item *
+
+Slightly tweaked the background color on table rows to make them easier to
+read. [Marshall]
+
+=item *
+
+Converted the group permissions editor to XHTML and CSS to fix some rendering
+glitches. [Marshall]
+
+=item *
+
+Made word and character counts properly appear read-only, and repositioned the
+find/replace and cheat sheet buttons to the top right of the box. [Marshall]
+
+=item *
+
+Object select lists (such as for story element types when creating a new
+story) will now display as scrolling lists if there are more than 50 items in
+the list, rather than 20 or more items. [David]
+
+=item *
+
+Added a CSS ID to the C<< <body> >> tag in the UI, of the form
+"bricolage_C<VHOST_SERVER_NAME>", where C<VHOST_SERVER_NAME> is the value
+defined in F<bricolage.conf>.  Use this ID when writing user stylesheets 
+to override the look of the Bricolage UI (see SkinningBricolage in the Wiki)
+[Marshall]
+
 =back
 
 =head2 Bug Fixes
@@ -173,7 +230,7 @@ Fixed the rarely-used C<DISABLE_NAV_LAYER> F<bricolage.conf> directive.
 
 Fixed warnings in deprecated methods of
 L<Bric::Biz::Element::Container|Bric::Biz::Element::Container> so that they
-are no longer fatal. Reported by Nate Perry Thistle. [David]
+are no longer fatal. Reported by Nate Perry-Thistle. [David]
 
 =item *
 
@@ -209,7 +266,7 @@ the solution. [David]
 =item *
 
 The "Story Type" and "Media Type" options for sorting stories and media,
-respectively, on desks and on My Workspace, works again. Reported by Brad
+respectively, on desks and on My Workspace, work again. Reported by Brad
 Harder. [David]
 
 =item *
@@ -225,8 +282,8 @@ Glaesemann. [David]
 
 =item *
 
-Fixed autopublishing related media and stories so that multiple level relates
-now correctly pull out all the items to be published. e.g. media related to
+Fixed auto-publishing related media and stories so that relateds of relateds
+now correctly pull out all the items to be published, e.g., media related to
 story related to published story (bug 1190). [Paul Orrock]
 
 =item *
@@ -237,34 +294,14 @@ George Harrison. [David]
 
 =item *
 
-Moved translation-specific Javascript and CSS files into "i18n/" folders under
-their respective folders in comp/media/. [Marshall]
-
-=item *
-
-Slightly tweaked the background color on table rows to make them easier to
-read. [Marshall]
-
-=item *
-
-Converted the group permissions editor to XHTML and CSS to fix some rendering
-glitches. [Marshall]
-
-=item *
-
 Aliases no longer show up in the search results of the "New Alias" screen,
 since aliases can't be aliased. The "New Alias" screen now also shows the site
-an asset belongs to if there are multiple sites. [Marshall]
+a document belongs to if there are multiple sites. [Marshall]
 
 =item *
 
-Fixed appearance of template diffs. Insertions and deletions now have color
-and no longer show underlines and strikethroughs. (bug 1171) [Marshall]
-
-=item *
-
-Made word and character counts properly appear read-only, and repositioned the
-find/replace and cheat sheet buttons to the top right of the box. [Marshall]
+Fixed the appearance of template diffs. Insertions and deletions now have
+color and no longer show underlines and strikethroughs (bug 1171). [Marshall]
 
 =item *
 
@@ -273,23 +310,23 @@ Find/Replace. [Marshall]
 
 =item *
 
-Pulldowns no longer improperly display as 32-items-tall in the story/media
-profiles. (bug 1178, reported by Alex Howarth) [Scott and Marshall]
+Pulldowns no longer improperly display as 32-items tall in the story/media
+profiles (bug 1178, reported by Alex Howarth). [Scott and Marshall]
 
 =item *
 
 Fixed a bug where search results would get "stuck" when pagination is turned
-on. Thanks to Nate Perry-Thistle for the spot. (bug 1166) [Marshall]
+on. Thanks to Nate Perry-Thistle for the spot (bug 1166). [Marshall]
 
 =item *
 
 Fixed a warning from F<bric_republish> when run without a password. Thanks to
-John Gillis for the spot. (bug 1188) [Marshall]
+John Gillis for the spot (bug 1188). [Marshall]
 
 =item *
 
 Fixed the "Site" dropdown in searches to only require READ permissions
-rather than EDIT. Spot and quasi-patch by Chris Sutton.
+rather than EDIT. Spot and quasi-patch by Chris Sutton. [Marshall]
 
 =item *
 
@@ -299,7 +336,7 @@ copied from the field type. [Alexey Sheynuk]
 =item *
 
 New destinations can now be created via
-L<Bric::Soap::Destination|Bric::Soap::Destination>. [Christian Niles]
+L<Bric::SOAP::Destination|Bric::SOAP::Destination>. [Christian Niles]
 
 =item *
 
@@ -325,11 +362,11 @@ Fixed caching issue with reversion of assets to earlier versions. [David]
 =item *
 
 The category SOAP interface now allows the C<< <path> >> XML element to not
-have a trailing slash, as was the case in Bricolge 1.8 and earlier. [David]
+have a trailing slash, as was the case in Bricolage 1.8 and earlier. [David]
 
 =item *
 
-Aliases are once again identifyable on desks by a different background color
+Aliases are once again identifiable on desks by a different background color
 for the title, and now also with an arrow icon that appears just before the
 story title. [David]
 
@@ -343,6 +380,48 @@ the profile when pressing the "Save and Stay" button. Reported by Marshall.
 
 Eliminated an endless loop in prompting for the PostgreSQL user during
 installation when the C<INSTALL_VERBOSITY> is set to "QUIET". [Rod Taylor]
+
+=item *
+
+Contributors are no longer sorted by the "Name Format" preference's
+representation of the contributors' names in the interface to edit contributor
+associations. They are now properly sorted by association order. Reported by
+Bret Dawson. [David]
+
+=item *
+
+Documents without cover dates (mainly created via the SOAP interface) will no
+longer have broken URIs. Reported by Christian Niles. [David]
+
+=item *
+
+The Help and logo popup buttons works again in Internet Explorer. Reported by
+Chris Heiland. [David]
+
+=item *
+
+Autosizing textarea fields now display full size in Internet Explorer when
+they have no content, instead of only 1 character wide. Reported by Paul
+Orrock. [David]
+
+=item *
+
+The Bulk Edit and template code textarea fields no longer jump around as you
+type in IE 6. [David]
+
+=item *
+
+The list of templates deployed is now reported properly after a successful
+deploy. [Paul Orrock]
+
+=item *
+
+Searching by URI for related media works again. [David]
+
+=item *
+
+The results when searching for media or stories to relate are no longer tied
+to the search for stories and media in general. [David]
 
 =back
 
@@ -1712,7 +1791,7 @@ Updated search documentation and wrote tests for:
 
 ##############################################################################
 
-=head1 VERSION 1.8.11 ()
+=head1 VERSION 1.8.11 (2006-06-19)
 
 =head2 Improvements
 
@@ -1728,7 +1807,39 @@ all together so that you don't have to. [David]
 
 Added check to require C<< Bric::Biz::Asset::Business->add_contributor >>'s
 first argument to be a C<Bric::Util::Grp::Parts::Member::Contrib> if it's
-an object (it could also be an ID number). [Scott]
+an object (it could also be an ID). [Scott]
+
+=item *
+
+Added F<README.Ubuntu>. [Christian Muise]
+
+=item *
+
+Silenced warnings from L<Net::SFTP|Net::SFTP> when distributing via SFTP.
+[David]
+
+=item *
+
+The metadata for related media now include preview links. The same goes for
+the metadata about a media document when editing a subelement of that media
+document in the media profile. [David]
+
+=item *
+
+The status message when a document is published now reports the site with
+which the document is associated, to help distinguish documents from their
+aliases in the status message. Reported by Marshall. [David]
+
+=item *
+
+Added C<get_site()> to L<Bric::Biz::Asset|Bric::Biz::Asset>, and therefore to
+the story, media, and template classes. Suggested by Marshall. [David]
+
+=item *
+
+Added support for the the C<oc_id> parameter to
+L<Bric::Dist::Resource|Bric::Dist::Resource> to simplify looking up stale
+story and media files for expiration. [David]
 
 =back
 
@@ -1738,14 +1849,14 @@ an object (it could also be an ID number). [Scott]
 
 =item *
 
-My Workspace now remembers the sort order of assets as well as desks do.
+My Workspace now remembers the sort order of assets just as well as desks do.
 [David]
 
 =item *
 
 Added more code to the C<inst/upgrade/1.8.9/fix_publish_status.pl> upgrade
 script to better cover the possible variations in publish status inaccuracies.
-[Brad Fox]
+[Brad Fox, Brad Harder, & David]
 
 =item *
 
@@ -1762,19 +1873,88 @@ configured to use "ident" authentication. [David]
 
 =item *
 
-The list of desks that appear for a given workflow in the nav iframe are now
-properly updated when a new desk is added to the workflow. [Alexey
+The list of desks that appear for a given workflow in the navigation iframe
+are now properly updated when a new desk is added to the workflow. [Alexey
 Dvoychenkov]
 
 =item *
 
-The side navigation no longer shows the "New Alias" links to users that don't
+The side navigation no longer shows the "New Alias" links to users who don't
 have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
 =item *
 
 The code of a template no longer disappears when you click "Trail" in the 
 Template Profile. (bug 1204) [Marshall]
+
+=item *
+
+F<bric_soap> is now more intelligent about parsing IDs from XML elements with
+either single or double quotes, and from multiple tags. [Christian Niles and
+David]
+
+=item *
+
+Failing to fill in either the "To" or "Bcc" fields of an Email distribution
+action no longer throws you back a screen, but stays in the Email action
+profile. Reported by Scott. [David]
+
+=item *
+
+Fixed media publishing so that when a media document is published to more than
+one output channel, I<and> there are differences in the URIs for that media
+document between the output channels, that they won't trigger the expiration
+of each other's files. Reported by Rod Taylor. [David]
+
+=item *
+
+Fixed bug where users granted CREATE permission were unexpectedly allowed to
+PUBLISH items on the Publish Desk. [Christian Niles]
+
+=item *
+
+F<bric_queued> now works with all burners, not just the Mason burner. Reported
+by Christian Niles. [Scott]
+
+=item *
+
+A required field deleted from an element definition will now be deletable in
+the stories and media in which it appears, instead of remaining required. [Rod
+Taylor]
+
+=item *
+
+Adding a new source to a group when you create it no longer causes an error.
+Thanks to Alex Howarth for the spot! [David]
+
+=item *
+
+Changing an asset note and then going back to the notes screen before saving
+the asset now properly shows the changed note instead of the old note.
+Reported by Phillip Smith. [David]
+
+=item *
+
+New categories created via the SOAP interface with underscores in their URIs
+no longer end up with backslashes in the URIs. Reported by Ashlee Caul.
+[David]
+
+=item *
+
+Users attempting to access the "New Alias" link without permission to create
+an alias will now be told so, instead of getting an error. Reported by
+Marshall. [David]
+
+=item *
+
+Status messages now properly appear after saving or deleting a contributor
+type. Reported by Marshall. [David]
+
+=item *
+
+The C<get_attr_hash()> method of
+L<Bric::Util::Attribute|Bric::Util::Attribute> now excludes deleted attributes
+from its return value. [David]
 
 =back
 

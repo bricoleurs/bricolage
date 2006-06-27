@@ -120,7 +120,7 @@ sub add_element : Callback {
     
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
-    if (Bric::Biz::ElementType->lookup({id => $element->get_element_type_id})->get_top_level()) {
+    if ($element->get_element_type()->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
     

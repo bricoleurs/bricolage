@@ -225,6 +225,8 @@ START MODULE LIST
 
 =item Net::SFTP 0.08 (optional)
 
+=item Math::BigInt::GMP (optional)
+
 =item HTTP::DAV (optional)
 
 =item Crypt::SSLeay (optional)
@@ -1703,7 +1705,7 @@ L<http://www.webdav.org/> for information on the WebDAV protocol.
 
 =item *
 
-B<QUEUE_PUBLISH_JOBS>. This directive indicates that all publishing should be
+B<QUEUE_PUBLISH_JOBS:> This directive indicates that all publishing should be
 run from a queue. If this is set to "On" or "Yes" or "1" then a request for
 publication either from a publish desk or from the story profile page will
 result in the creation of a Bric::Util::Job::Pub object, which will be tracked
@@ -1727,12 +1729,27 @@ memory and processor cycles.
 
 =item *
 
-B<FTP_UNLINK_BEFORE_MOVE>. This directive must be set to Yes for some FTP
+B<FTP_UNLINK_BEFORE_MOVE:> This directive must be set to Yes for some FTP
 servers (e.g. pure-ftpd has been reported to need this) to correctly handle
 uploads of already existing files: when publishing via FTP, Bricolage first
-creates a temporary file, than moves this temp file over the existing,
-older file, overwriting it. Some servers do not support renaming to existing
-files, so the original one must be deleted first.
+creates a temporary file, than moves this temp file over the existing, older
+file, overwriting it. Some servers do not support renaming to existing files,
+so the original one must be deleted first.
+
+=item *
+
+B<PUBLISH_RELATED_ASSETS:> Set C<PUBLISH_RELATED_ASSETS> to no/off/0 so that,
+when publishing from a publish desk, related assets will not be published.
+Defaults to "yes".
+
+=item *
+
+B<PUBLISH_RELATED_FAIL_BEHAVIOR:> When C<PUBLISH_RELATED_ASSETS> is enabled,
+the publish process will fail if any of the related assets cannot be published
+automatically, due to being checked out or not on a publish desk. If you want
+the process to just supply warnings but otherwise allow the publish to
+succeed, then set C<PUBLISH_RELATED_FAIL_BEHAVIOR> to "warn". Defaults to
+"fail".
 
 =back
 

@@ -21,6 +21,7 @@ textarea {
     width: 99%;
 }
 .editmeta .textarea textarea { width: 50%; }
+.codearea { width: 100%; }
 .codearea textarea { font-family: monospace; font-size: 1.2em; }
 
 #navFrame         { background: #666633; }
@@ -365,6 +366,8 @@ form .alpha .row .input { line-height: 1.3em; }
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
 table tr.odd { background: #f5f5e6; }
 table td.action { width: 30px; text-align: center; white-space: nowrap; }
+
+#bulkedit { width: 100%; }
 
 .listManager { width: 100%; border-style: hidden; }
 .listManager th { background: #999966; color: black; padding: 5px;

@@ -14,7 +14,7 @@ my $cast = test_column('at_type', 'top_level', undef, undef, 'boolean')
     : '::boolean';
 
 do_sql
-    q{ UPDATE element_type
+    qq{ UPDATE element_type
        SET    top_level     = at.top_level$cast,
               paginated     = at.paginated$cast,
               fixed_uri     = at.fixed_url$cast,

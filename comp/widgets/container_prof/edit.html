@@ -152,7 +152,7 @@ my $related_summary = sub {
               $thumb = $m->comp(
                   '/widgets/profile/preview_link.mc',
                   doc   => $rel,
-                  title => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                  value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
                   type  => $type,
               );
           }
@@ -166,7 +166,7 @@ my $related_summary = sub {
                 button => $thumb . $button );
   } else {
       $m->out('<div class="noneFound">',
-              $lang->maketext('No related [_1]'. ucfirst($type)), 
+              $lang->maketext('No related [_1]'. ucfirst($type)),
               qq{<div class="button">$button</div>},
               '</div>');
       if (RELATED_MEDIA_UPLOAD && $type eq 'media') {

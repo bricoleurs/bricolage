@@ -15,7 +15,7 @@ use HTTP::Cookies;
 
 __PACKAGE__->SKIP_CLASS("BRICOLAGE_SERVER environment variable isn't set")
     unless exists $ENV{BRICOLAGE_SERVER} || __PACKAGE__->SKIP_CLASS;
-my $server = $ENV{BRICOLAGE_SERVER};
+my $server = $ENV{BRICOLAGE_SERVER} || '';
 $server = "http://$server" unless $server =~ m!^https?://!;
 $server =~ s|/$||;
 
