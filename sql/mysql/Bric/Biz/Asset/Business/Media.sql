@@ -155,7 +155,7 @@ CREATE TABLE media_member (
 --
 
 -- media
-CREATE INDEX idx_media__uuid ON media (uuid (254));
+CREATE INDEX idx_media__uuid ON media ("uuid" (254));
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media_instance__cover_date ON media_instance(cover_date);

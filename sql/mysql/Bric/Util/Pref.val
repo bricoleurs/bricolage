@@ -2,7 +2,7 @@
 -- File:    Pref.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate: 2006-05-25 22:27:02 +0300 (Thu, 25 May 2006) $
+-- $LastChangedDate: 2006-06-22 05:00:21 +0300 (Thu, 22 Jun 2006) $
 -- Author:  David Wheeler <david@justatheory.com>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)

@@ -56,9 +56,9 @@ CREATE TABLE story_instance (
     description    VARCHAR(1024),
     story__id      INTEGER      NOT NULL,
     version        INTEGER,
-    usr__id        INTEGER      NOT NULL,
+    usr__id        INTEGER     ,
     slug           VARCHAR(64),
-    primary_oc__id INTEGER      NOT NULL,
+    primary_oc__id INTEGER     ,
     cover_date     TIMESTAMP,
     note           TEXT,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -138,7 +138,7 @@ CREATE TABLE story__contributor (
 --
 
 -- story
-CREATE INDEX idx_story__uuid ON story(uuid (254));
+CREATE INDEX idx_story__uuid ON story("uuid" (254));
 CREATE INDEX idx_story__primary_uri ON story(primary_uri(128));
 CREATE INDEX fkx_usr__story ON story(usr__id);
 CREATE INDEX fkx_source__story ON story(source__id);

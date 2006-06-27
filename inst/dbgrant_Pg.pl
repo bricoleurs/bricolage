@@ -6,23 +6,23 @@ use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 
-our ($PG, $PGCONF, $PGDEFDB, $ERR_FILE);
-$PGCONF = './postgres.db';
-do $PGCONF or die "Failed to read $PGCONF : $!";
+our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
+$DBCONF = './postgres.db';
+do $DBCONF or die "Failed to read $DBCONF : $!";
 
 # Switch to postgres system user
-if (my $sys_user = $PG->{system_user}) {
+if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
-    $> = $PG->{system_user_uid};
-    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
-        unless $> == $PG->{system_user_uid};
+    $> = $DB->{system_user_uid};
+    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
+        unless $> == $DB->{system_user_uid};
 }
 
 # Set environment variables for psql.
-$ENV{PGUSER} = $PG->{root_user};
-$ENV{PGPASSWORD} = $PG->{root_pass};
-$ENV{PGHOST} = $PG->{host_name} if $PG->{host_name};
-$ENV{PGPORT} = $PG->{host_port} if $PG->{host_port};
+$ENV{PGUSER} = $DB->{root_user};
+$ENV{PGPASSWORD} = $DB->{root_pass};
+$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
+$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE }
 
@@ -33,7 +33,7 @@ sub grant_permissions {
     print "Granting privileges...\n";
 
     # get a list of all tables and sequences that don't start with pg
-    my $sql = $PG->{version} ge '7.3'
+    my $sql = $DB->{version} ge '7.3'
       ? qq{
         SELECT n.nspname || '.' || c.relname
         FROM   pg_catalog.pg_class c
@@ -60,7 +60,7 @@ sub grant_permissions {
     $sql = qq{
         GRANT SELECT, UPDATE, INSERT, DELETE
         ON    $objects
-        TO    "$PG->{sys_user}";
+        TO    "$DB->{sys_user}";
     };
     $err = exec_sql($sql);
     hard_fail("Failed to Grant privileges. The database error was\n\n$err")
@@ -71,18 +71,18 @@ sub grant_permissions {
 
 sub exec_sql {
     my ($sql, $file, $db, $res) = @_;
-    $db ||= $PG->{db_name};
+    $db ||= $DB->{db_name};
     # System returns 0 on success, so just return if it succeeds.
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$PG->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$DB->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
-        system($PG->{psql}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
+        system($DB->{psql}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
           or return;
     }
 

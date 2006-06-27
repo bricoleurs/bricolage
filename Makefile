@@ -46,7 +46,7 @@ apache.db	: inst/apache.pl required.db
 
 # This scans for dbprobe_*.pl files and passes them to database.pl to let
 # the user choose the database he wants (database names should conform to
-# DBD:: package name (ex: dbprobe_Pg for PostgresSQL)
+# DBD:: package name, ex: dbprobe_Pg for PostgresSQL)
 
 DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
 
@@ -125,8 +125,8 @@ SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
 SQL_DIRS  := $(shell find sql -maxdepth 1 -regex 'sql/.*' -a \! -regex 'sql/\.svn')
 
 # This creates the apropriate sql initialization scripts for the databases with
-# directories in sql (directory names should conform to DBD:: package name 
-# (ex: Pg for PostgresSQL).
+# directories in sql (directory names should conform to DBD:: package name, 
+# ex: Pg for PostgresSQL).
 inst/dist_sql : $(SQL_FILES) inst/dist_sql.pl
 	$(PERL) inst/dist_sql.pl $(SQL_DIRS)
 
@@ -202,8 +202,9 @@ DBLOAD_FILES := $(shell find inst -name 'dbload_*.sql')
 db    		: inst/db.pl database.db $(DBLOAD_FILES)
 	$(PERL) inst/db.pl
 
-db_grant	: inst/db.pl database.db
-	$(PERL) inst/db_grant.pl
+DBGRANT_FILES := $(shell find inst -name 'dbgrant_*.sql')
+db_grant	: inst/db.pl database.db $(DBGRANT_FILES)
+	$(PERL) inst/dbgrant.pl 
 
 done		: bconf/bricolage.conf db files bin lib cpan
 	$(PERL) inst/done.pl

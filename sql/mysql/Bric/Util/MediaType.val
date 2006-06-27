@@ -11,187 +11,187 @@
 DELETE FROM media_type;
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('1', 'none', 'Use when no MIME Type applies, or when they all do.', '1');
+VALUES ('0', 'none', 'Use when no MIME Type applies, or when they all do.', '1');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('2', 'application/andrew-inset', NULL, '1');
+VALUES ('1', 'application/andrew-inset', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('1', '2', 'ez');
+VALUES ('1', '1', 'ez');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('3', 'application/mac-binhex40', NULL, '1');
+VALUES ('2', 'application/mac-binhex40', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('2', '3', 'hqx');
+VALUES ('2', '2', 'hqx');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('4', 'application/mac-compactpro', NULL, '1');
+VALUES ('3', 'application/mac-compactpro', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('3', '4', 'cpt');
+VALUES ('3', '3', 'cpt');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('5', 'application/msword', NULL, '1');
+VALUES ('4', 'application/msword', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('4', '5', 'doc');
+VALUES ('4', '4', 'doc');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('6', 'application/octet-stream', NULL, '1');
+VALUES ('5', 'application/octet-stream', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('5', '6', 'bin');
+VALUES ('5', '5', 'bin');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('6', '6', 'class');
+VALUES ('6', '5', 'class');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('7', '6', 'dms');
+VALUES ('7', '5', 'dms');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('8', '6', 'exe');
+VALUES ('8', '5', 'exe');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('9', '6', 'lha');
+VALUES ('9', '5', 'lha');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('10', '6', 'lzh');
+VALUES ('10', '5', 'lzh');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('7', 'application/oda', NULL, '1');
+VALUES ('6', 'application/oda', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('11', '7', 'oda');
+VALUES ('11', '6', 'oda');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('8', 'application/pdf', NULL, '1');
+VALUES ('7', 'application/pdf', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('12', '8', 'pdf');
+VALUES ('12', '7', 'pdf');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('9', 'application/postscript', NULL, '1');
+VALUES ('8', 'application/postscript', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('13', '9', 'ai');
+VALUES ('13', '8', 'ai');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('14', '9', 'eps');
+VALUES ('14', '8', 'eps');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('15', '9', 'ps');
+VALUES ('15', '8', 'ps');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('10', 'application/smil', NULL, '1');
+VALUES ('9', 'application/smil', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('16', '10', 'smi');
+VALUES ('16', '9', 'smi');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('17', '10', 'smil');
+VALUES ('17', '9', 'smil');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('11', 'application/vnd.mif', NULL, '1');
+VALUES ('10', 'application/vnd.mif', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('18', '11', 'mif');
+VALUES ('18', '10', 'mif');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('12', 'application/vnd.ms-excel', NULL, '1');
+VALUES ('11', 'application/vnd.ms-excel', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('19', '12', 'xls');
+VALUES ('19', '11', 'xls');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('13', 'application/vnd.ms-powerpoint', NULL, '1');
+VALUES ('12', 'application/vnd.ms-powerpoint', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('20', '13', 'ppt');
+VALUES ('20', '12', 'ppt');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('14', 'application/vnd.wap.wbxml', NULL, '1');
+VALUES ('13', 'application/vnd.wap.wbxml', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('21', '14', 'wbxml');
+VALUES ('21', '13', 'wbxml');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('15', 'application/vnd.wap.wmlc', NULL, '1');
+VALUES ('14', 'application/vnd.wap.wmlc', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('22', '15', 'wmlc');
+VALUES ('22', '14', 'wmlc');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('16', 'application/vnd.wap.wmlscriptc', NULL, '1');
+VALUES ('15', 'application/vnd.wap.wmlscriptc', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('23', '16', 'wmlsc');
+VALUES ('23', '15', 'wmlsc');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('17', 'application/x-bcpio', NULL, '1');
+VALUES ('16', 'application/x-bcpio', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('24', '17', 'bcpio');
+VALUES ('24', '16', 'bcpio');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('18', 'application/x-cdlink', NULL, '1');
+VALUES ('17', 'application/x-cdlink', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('25', '18', 'vcd');
+VALUES ('25', '17', 'vcd');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('19', 'application/x-chess-pgn', NULL, '1');
+VALUES ('18', 'application/x-chess-pgn', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('26', '19', 'pgn');
+VALUES ('26', '18', 'pgn');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('20', 'application/x-cpio', NULL, '1');
+VALUES ('19', 'application/x-cpio', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('27', '20', 'cpio');
+VALUES ('27', '19', 'cpio');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('21', 'application/x-csh', NULL, '1');
+VALUES ('20', 'application/x-csh', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('28', '21', 'csh');
+VALUES ('28', '20', 'csh');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('22', 'application/x-director', NULL, '1');
+VALUES ('21', 'application/x-director', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('29', '22', 'dcr');
+VALUES ('29', '21', 'dcr');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('30', '22', 'dir');
+VALUES ('30', '21', 'dir');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('31', '22', 'dxr');
+VALUES ('31', '21', 'dxr');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('23', 'application/x-dvi', NULL, '1');
+VALUES ('22', 'application/x-dvi', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('32', '23', 'dvi');
+VALUES ('32', '22', 'dvi');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('24', 'application/x-futuresplash', NULL, '1');
+VALUES ('23', 'application/x-futuresplash', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('33', '24', 'spl');
+VALUES ('33', '23', 'spl');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('25', 'application/x-gtar', NULL, '1');
+VALUES ('24', 'application/x-gtar', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('34', '25', 'gtar');
+VALUES ('34', '24', 'gtar');
 
 INSERT INTO media_type (id, name, description, active)
-VALUES ('132', 'application/x-hdf', NULL, '1');
+VALUES ('25', 'application/x-hdf', NULL, '1');
 
 INSERT INTO media_type_ext (id, media_type__id, extension)
-VALUES ('35', '132', 'hdf');
+VALUES ('35', '25', 'hdf');
 
 INSERT INTO media_type (id, name, description, active)
 VALUES ('26', 'application/x-javascript', NULL, '1');

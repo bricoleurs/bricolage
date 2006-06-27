@@ -17,7 +17,7 @@ ALTER TABLE alert ADD CONSTRAINT fk_alert_type__alert
 
 ALTER TABLE alert ADD CONSTRAINT fk_event__alert 
     FOREIGN KEY (event__id)
-    REFERENCES EVENT(ID) ON DELETE CASCADE
+    REFERENCES event(id) ON DELETE CASCADE
 ;
 
 

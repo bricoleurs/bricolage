@@ -10,89 +10,89 @@
 -- Table: class
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('1', 'bric', 'Bric', 'Bricolage', 'Bricolagen', 'Bricolage Root Class', '0');
+VALUES ('0', 'bric', 'Bric', 'Bricolage', 'Bricolagen', 'Bricolage Root Class', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('2', 'person', 'Bric::Biz::Person', 'Person', 'People', 'Person objects', '0');
+VALUES ('1', 'person', 'Bric::Biz::Person', 'Person', 'People', 'Person objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('3', 'user', 'Bric::Biz::Person::User', 'User', 'Users', 'User objects', '0');
+VALUES ('2', 'user', 'Bric::Biz::Person::User', 'User', 'Users', 'User objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('4', 'org', 'Bric::Biz::Org', 'Organization', 'Organizations', 'Organization objects', '0');
+VALUES ('3', 'org', 'Bric::Biz::Org', 'Organization', 'Organizations', 'Organization objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('5', 'event_type', 'Bric::Util::EventType', 'Event Type', 'Event Types', 'Event Type objects', '0');
+VALUES ('4', 'event_type', 'Bric::Util::EventType', 'Event Type', 'Event Types', 'Event Type objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('6', 'event', 'Bric::Util::Event', 'Event', 'Events', 'Event objects', '0');
+VALUES ('5', 'event', 'Bric::Util::Event', 'Event', 'Events', 'Event objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('7', 'grp', 'Bric::Util::Grp', 'Group', 'Groups', 'Group objects', '0');
+VALUES ('6', 'grp', 'Bric::Util::Grp', 'Group', 'Groups', 'Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('8', 'event_grp', 'Bric::Util::Grp::Event', 'Event Group', 'Event Groups', 'Event Group objects', '0');
+VALUES ('7', 'event_grp', 'Bric::Util::Grp::Event', 'Event Group', 'Event Groups', 'Event Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('9', 'user_grp', 'Bric::Util::Grp::User', 'User Group', 'User Groups', 'User Group objects', '0');
+VALUES ('8', 'user_grp', 'Bric::Util::Grp::User', 'User Group', 'User Groups', 'User Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('10', 'contrib_type', 'Bric::Util::Grp::Person', 'Contributor Type', 'Contributor Types', 'Contributor Type objects', '0');
+VALUES ('9', 'contrib_type', 'Bric::Util::Grp::Person', 'Contributor Type', 'Contributor Types', 'Contributor Type objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('11', 'story', 'Bric::Biz::Asset::Business::Story', 'Story', 'Stories', 'Story Asset objects', '0');
+VALUES ('10', 'story', 'Bric::Biz::Asset::Business::Story', 'Story', 'Stories', 'Story Asset objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('12', 'ftp', 'Bric::Util::Trans::FTP', 'FTP', 'FTP Transport', 'Class with methods to move files via FTP.', '1');
+VALUES ('11', 'ftp', 'Bric::Util::Trans::FTP', 'FTP', 'FTP Transport', 'Class with methods to move files via FTP.', '1');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('13', 'fs', 'Bric::Util::Trans::FS', 'File System', 'File System Transport', 'Class with methods to move files within the file system.', '1');
+VALUES ('12', 'fs', 'Bric::Util::Trans::FS', 'File System', 'File System Transport', 'Class with methods to move files within the file system.', '1');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('14', 'mail', 'Bric::Util::Trans::Mail', 'Email', 'Email Transport', 'Class with methods to send email.', '0');
+VALUES ('13', 'mail', 'Bric::Util::Trans::Mail', 'Email', 'Email Transport', 'Class with methods to send email.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('15', 'action', 'Bric::Dist::Action', 'Action', 'Actions', 'Factory class for distribution actions.', '0');
+VALUES ('14', 'action', 'Bric::Dist::Action', 'Action', 'Actions', 'Factory class for distribution actions.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('16', 'akamaize', 'Bric::Dist::Action::Akamaize', 'Akamaize', 'Akamaize', 'Action subclass that akamaizes resources.', '0');
+VALUES ('15', 'akamaize', 'Bric::Dist::Action::Akamaize', 'Akamaize', 'Akamaize', 'Action subclass that akamaizes resources.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('17', 'html_clean', 'Bric::Dist::Action::HTMLClean', 'Clean HTML', 'Clean HTML', 'Action subclass that cleans up and reformats HTML to make it nice and neat.', '0');
+VALUES ('16', 'html_clean', 'Bric::Dist::Action::HTMLClean', 'Clean HTML', 'Clean HTML', 'Action subclass that cleans up and reformats HTML to make it nice and neat.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('18', 'org_grp', 'Bric::Util::Grp::Org', 'Organization Group', 'Organization Groups', 'Organization Group objects', '0');
+VALUES ('17', 'org_grp', 'Bric::Util::Grp::Org', 'Organization Group', 'Organization Groups', 'Organization Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('19', 'alert_type_grp', 'Bric::Util::Grp::AlertType', 'Alert Type Group', 'Alert Type Groups', 'Alert Type Group objects', '0');
+VALUES ('18', 'alert_type_grp', 'Bric::Util::Grp::AlertType', 'Alert Type Group', 'Alert Type Groups', 'Alert Type Group objects', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('20', 'template', 'Bric::Biz::Asset::Template', 'Template', 'Templates', 'Templates', '0');
+VALUES ('19', 'template', 'Bric::Biz::Asset::Template', 'Template', 'Templates', 'Templates', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor) 
-VALUES ('21', 'category', 'Bric::Biz::Category', 'Category', 'Categories', 'Categories', '0');
+VALUES ('20', 'category', 'Bric::Biz::Category', 'Category', 'Categories', 'Categories', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('22', 'output_channel', 'Bric::Biz::OutputChannel', 'Output Channel', 'Output Channels', 'Output Channel', '0');
+VALUES ('21', 'output_channel', 'Bric::Biz::OutputChannel', 'Output Channel', 'Output Channels', 'Output Channel', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('23', 'element_type', 'Bric::Biz::ElementType', 'Element Type', 'Element Types', 'Element type objects', '0');
+VALUES ('22', 'element_type', 'Bric::Biz::ElementType', 'Element Type', 'Element Types', 'Element type objects', '0');
 
 /*
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('24', 'category_grp', 'Bric::Util::Grp::Category', 'Hierarchical Category Group', 'Hierarchical Category Groups', 'Used to group together categories that have a hierarchical relationship to one another.', '0');
+VALUES ('23', 'category_grp', 'Bric::Util::Grp::Category', 'Hierarchical Category Group', 'Hierarchical Category Groups', 'Used to group together categories that have a hierarchical relationship to one another.', '0');
 
 */
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('25', 'subelement_type_grp', 'Bric::Util::Grp::SubelementType', 'Subelement Type Group', 'Subelement Type Groups', 'Subelement Type Group', '0');
+VALUES ('24', 'subelement_type_grp', 'Bric::Util::Grp::SubelementType', 'Subelement Type Group', 'Subelement Type Groups', 'Subelement Type Group', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('26', 'asset_version_grp', 'Bric::Util::Grp::AssetVersion', 'Asset Version Group', 
+VALUES ('25', 'asset_version_grp', 'Bric::Util::Grp::AssetVersion', 'Asset Version Group', 
 'Asset Version Groups', 'Asset Version Group', '0');
 
 --INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
---VALUES ('27', 'asset_language_grp', 'Bric::Util::Grp::AssetLanguage', 'Asset Language Group',
+--VALUES ('26', 'asset_language_grp', 'Bric::Util::Grp::AssetLanguage', 'Asset Language Group',
 --'Asset Language Groups', 'Asset Language Group', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)

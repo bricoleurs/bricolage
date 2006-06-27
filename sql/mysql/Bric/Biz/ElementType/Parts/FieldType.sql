@@ -32,7 +32,7 @@ CREATE TABLE field_type (
     max_length       INTEGER         NOT NULL DEFAULT 0,
     sql_type         VARCHAR(30)     NOT NULL DEFAULT 'short',
     widget_type      VARCHAR(30)     NOT NULL DEFAULT 'text',
-    precision_        SMALLINT,
+    "precision"        SMALLINT,
     cols             INTEGER         NOT NULL,
     rows             INTEGER         NOT NULL,
     length           INTEGER         NOT NULL,
@@ -41,7 +41,9 @@ CREATE TABLE field_type (
     default_val      TEXT,
     active           BOOLEAN         NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_field_type__id PRIMARY KEY (id)
-);
+)
+    ENGINE           InnoDB
+    AUTO_INCREMENT   1024;
 
 -- -----------------------------------------------------------------------------
 -- Table: attr_field_type

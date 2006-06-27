@@ -64,6 +64,7 @@ use constant TRANSACTIONAL => 1;
 
 # This is the DSN that Bric::Util::DBI will use to connect to the database.
 use constant DSN_STRING => 'database=' . DB_NAME
+  . ';mysql_client_found_rows=1'
   . (DB_HOST ? eval "';host=' . DB_HOST" : '')
   . (DB_PORT ? eval "';port=' . DB_PORT" : '');
 

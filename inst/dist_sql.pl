@@ -48,7 +48,7 @@ sub get_db_sql {
 }
 
 sub create_sqls {
-    my $temp;
+    my ($temp,$temp1);
     while (@SQL) {
         $temp=shift @SQL;
 	system ("grep -vh '^--' `find sql/".$temp ." -name '*.sql' | env "
@@ -57,6 +57,14 @@ sub create_sqls {
 	         . "LANG= LANGUAGE= LC_ALL=POSIX sort` >> inst/".$temp.".sql");
 	system ("grep -vh '^--' `find sql/".$temp ." -name '*.con' | env "
 	         . "LANG= LANGUAGE= LC_ALL=POSIX sort` >> inst/".$temp.".sql");
+		 
+# add trigger statements if they exist
+	if (`find sql/$temp  -name '*.trg'`) {
+	    print "test";
+	    system ("grep -vh '^--' `find sql/".$temp ." -name '*.trg' | env "
+                 . "LANG= LANGUAGE= LC_ALL=POSIX sort` > inst/".$temp."_trig.sql");
+	}
+
     }    
 }
 

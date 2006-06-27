@@ -74,3 +74,5 @@ LANGUAGE 'sql' IMMUTABLE;
 CREATE CAST (integer AS boolean)
   WITH FUNCTION int_to_boolean(integer) AS IMPLICIT;
 */
+
+SET GLOBAL sql_mode='ansi,strict_trans_tables,no_auto_value_on_zero';

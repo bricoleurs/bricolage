@@ -52,7 +52,7 @@ CREATE TABLE template_instance (
     id              INTEGER        NOT NULL AUTO_INCREMENT,
     template__id    INTEGER        NOT NULL,
     version         INTEGER,
-    usr__id         INTEGER        NOT NULL,
+    usr__id         INTEGER,
     file_name       TEXT,
     data            TEXT,
     note            TEXT,

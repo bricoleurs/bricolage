@@ -69,10 +69,9 @@ sub exec_sql {
     if ($res) {
         my $exec="$DB->{exec} ";
         $exec .="-e \"$sql\" " if $sql;
-	$exec .="-D $db" if $db;	
-        $exec .="-P format=unaligned -P pager= -P footer=";
+	$exec .="-D $db " if $db;	
+        $exec .="-P format=unaligned -P pager= -P footer= ";
         $exec .=" < $file " if !$sql;	
-        print $exec."\n";
 	@$res = `$exec`;
         # Shift off the column headers.
         shift @$res;
@@ -82,7 +81,6 @@ sub exec_sql {
         $exec .="-e \"$sql\" " if $sql;
         $exec .="-D $db " if $db;
         $exec .=" < $file " if !$sql;	
-        print $exec."\n";	    
         system($exec)
           or return;
     }
@@ -177,11 +175,24 @@ sub load_db {
     }
 
     print "Loading Bricolage MySql Database (this may take a few minutes).\n";
-    my $err = exec_sql(0, $db_file);
+    my $err = exec_sql(0, $db_file, $DB->{db_name});
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;
     print "\nDone.\n";
+    
+    $db_file = $DB->{DBSQL} || catfile('inst', "$DB->{db}_trig.sql");
+    unless (-e $db_file and -s _) {
+        my $errmsg = "Missing or empty $db_file!\n\n"
+          . "If you're using Subversion, you need to `make dist` first.\n"
+          . "See `perldoc Bric::FAQ` for more information.";
+        hard_fail($errmsg);
+    }
 
-    # all done!
-    exit 0;
+    print "Loading Bricolage MySql triggers (this may take a few minutes).\n";
+    my $err = exec_sql(0, $db_file, $DB->{db_name});
+    hard_fail("Error loading triggers. The database error was\n\n$err\n")
+      if $err;
+    print "\nDone.\n";
+    
+
 }
