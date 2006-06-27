@@ -110,7 +110,6 @@ TZ: {
     # XXX Yes, ugly hack, but it's the best way to prevent the
     # user's preferences from affecting the time zone.
     local $HTML::Mason::Commands::session{_bric_user}->{object} = undef;
-    print STDERR Bric::App::Session::get_user_object(), $/;
     $m->comp(
         '/widgets/profile/displayFormElement.mc',
         objref => $story,

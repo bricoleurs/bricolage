@@ -21,6 +21,7 @@ textarea {
     width: 99%;
 }
 .editmeta .textarea textarea { width: 50%; }
+.codearea { width: 100%; }
 .codearea textarea { font-family: monospace; font-size: 1.2em; }
 
 #navFrame         { background: #666633; }
@@ -372,6 +373,7 @@ table td.delete { white-space: nowrap; }
 
 .listManager,
 .containerProf { width: 100%; border-style: hidden; }
+#bulkedit { width: 100%; }
 .listManager th,
 .containerProf th{ background: #999966; color: black; padding: 5px;
                    text-align: left; vertical-align: bottom;

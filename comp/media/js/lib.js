@@ -263,6 +263,16 @@ function reorder(obj) {
     }
 }
 
+/*
+input: An element ID.
+output: none.
+This function looks up a checkbox element by its ID, and if it exists, it
+unchecks it. If it does not exist, it does nothing.
+ */
+function uncheck (id) {
+    var checkbox = document.getElementById(id);
+    if (checkbox) checkbox.checked = false;
+}
 
 /*
 input: a value, and a hash
@@ -692,7 +702,7 @@ function openWindow(page) {
     if (!/\.html$/.test(page)) page += '.html';
     window.open(
         '/help/' + lang_key + page,
-        'Bricolage Help',
+        'BricolageHelp',
         'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,'
         + 'height=600,width=505'
     );

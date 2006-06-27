@@ -138,7 +138,7 @@ sub add_element : Callback {
     my $key = $element->get_object_type();
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
-    if (Bric::Biz::ElementType->lookup({id => $element->get_element_type_id})->get_top_level()) {
+    if ($element->get_element_type()->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
     my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});

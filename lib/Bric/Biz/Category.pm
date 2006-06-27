@@ -844,7 +844,7 @@ sub ancestry_dir {
 }
 
 
-=item C<my $dir = $cat->set_directory($dir);>
+=item my $dir = $cat->set_directory($dir);
 
 Sets this category's directory.
 
@@ -872,7 +872,7 @@ sub set_directory {
 }
 
 
-=item C<my $dir = $cat->set_parent_id($parent_id);>
+=item my $dir = $cat->set_parent_id($parent_id);
 
 Sets this category's parent ID, making it a child of that category.
 
@@ -1229,7 +1229,7 @@ sub keywords {
 
 #------------------------------------------------------------------------------#
 
-=item C<my @cats = $cat->get_children;>
+=item @cats = $cat->get_children;
 
 Returns the children of this category.
 
@@ -1258,7 +1258,7 @@ sub get_children {
 
 #------------------------------------------------------------------------------#
 
-=item C<my $parent = $cat->get_parent;>
+=item my $parent = $cat->get_parent;
 
 Returns the parent of this category or undef if it is a top level category.
 

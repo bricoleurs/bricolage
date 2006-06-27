@@ -20,11 +20,17 @@
                     parent.preview_uri; 
                 return false;
             }
+            var btnRemoveFrame = document.getElementById("removeframe");        
+            btnRemoveFrame.onclick = function() {
+                parent.location.href =                  
+                    parent.preview_uri; 
+                return false;
+            }
         }
     </script>
   </head>
   <body>
-    <p id="actions"><a href="#" id="repreview">Repreview</a></p>
+    <p id="actions"><a href="#" id="repreview">Repreview</a> - <a href="#" id="removeframe">Remove Frameset</a></p>
   </body>
 </html>
 % my $unwanted_uri = pop_page();
