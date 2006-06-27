@@ -12,6 +12,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.10.3 (2006-09?)
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed bug that resulted in an SQL error when trying to create a new
+contributor group. Reported by Joe Pletcher. [David]
+
+=back
+
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
 
 =head2 Improvements
