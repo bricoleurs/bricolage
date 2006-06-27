@@ -534,18 +534,17 @@ sub _delete_element {
 
 sub _locate_subelement {
     my ($self, $element, $param) = @_;
-    
     my $locate_id = $self->value;
+    
+    {
+        no warnings 'uninitialized';
+        return $element if $element->get_id == $locate_id;
+    }
+    
     foreach my $t ($element->get_elements) {
         next unless $t->is_container;
-        
-        my $locate_element;
-        {
-            no warnings 'uninitialized';
-            $locate_element = $t if $t->get_id == $locate_id;
-        }
-        
-        $locate_element ||= $self->_locate_subelement($t, $param);
+            
+        my $locate_element = $self->_locate_subelement($t, $param);
         return $locate_element if $locate_element;
     }
 }
