@@ -75,7 +75,7 @@ use constant DBH_ATTR => ( );
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
-our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
+our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts convert DSN_STRING
 		    DBH_ATTR TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
@@ -109,6 +109,20 @@ sub db_date_parts {
     $t[1] -= 1;
     return reverse @t;
 } # date_parts()
+
+##############################################################################
+sub convert {
+    # This function converts agregates and functions in the sql statement,
+    # not implemented in MySQL.
+    # For the moment it replaces "id_list" with "group_concat".
+    my @ret=@_;
+    my $i=0;
+    while (@ret[$i]){
+	$ret[$i] =~ s/id_list/group_concat/g;
+	$i++;
+    }
+    return @ret;
+} # convert()
 
 1;
 __END__

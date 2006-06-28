@@ -58,7 +58,7 @@ CREATE TABLE story_instance (
     version        INTEGER,
     usr__id        INTEGER     ,
     slug           VARCHAR(64),
-    primary_oc__id INTEGER     ,
+    primary_oc__id INTEGER      NOT NULL,
     cover_date     TIMESTAMP,
     note           TEXT,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,

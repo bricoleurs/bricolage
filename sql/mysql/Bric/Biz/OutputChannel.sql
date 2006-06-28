@@ -19,7 +19,7 @@
 --
 
 CREATE TABLE output_channel (
-    id	         INTEGER            AUTO_INCREMENT,
+    id	         INTEGER            NOT NULL AUTO_INCREMENT,
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),
     site__id         INTEGER        NOT NULL,
