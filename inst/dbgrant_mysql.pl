@@ -35,7 +35,7 @@ sub grant_permissions {
     my $err;
     # assign all permissions to SYS_USER
     my $sql = qq{
-        GRANT ALL
+        GRANT SELECT, UPDATE, INSERT, DELETE 
         ON    "$DB->{db_name}".*
         TO    "$DB->{sys_user}";
     };

@@ -189,7 +189,7 @@ sub load_db {
     }
 
     print "Loading Bricolage MySql triggers (this may take a few minutes).\n";
-    my $err = exec_sql(0, $db_file, $DB->{db_name});
+    $err = exec_sql(0, $db_file, $DB->{db_name});
     hard_fail("Error loading triggers. The database error was\n\n$err\n")
       if $err;
     print "\nDone.\n";
