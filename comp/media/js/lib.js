@@ -1037,7 +1037,7 @@ AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
     },
   
     add: function(element) {
-        this.options.extraParameters.push("new_" + this.options.type + "_id=" + $(element).value);
+        this.options.extraParameters.push($(element).id + "=" + $F(element));
         this.updateList();
         this.options.extraParameters.pop();
     },

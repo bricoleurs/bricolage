@@ -59,18 +59,21 @@
     name     => 'add_category_button',
     button   => 'add_category_lgreen',
     useTable => 0,
-    js       => qq{onclick="catListMan.add('new_category_id'); return false"}
+    js       => qq{onclick="catListMan.add('new_category_uri'); return false"}
 &>
-<& '/widgets/select_object/select_object.mc',
-        object => 'category',
-        id     => 'new_category_id',
-        name   => 'add_category_list',
-        objs   => $all_cats,
-        field  => 'uri',
-        sort_field => 'uri',
-        no_persist => 1,
-        useTable => 0
-&>
+<input type="text" id="new_category_uri" name="new_category_autocomplete" /><div id="category_autocomplete_choices" class="autocomplete"></div><span id="category_indicator" style="display: none"><img src="/media/images/busy_indicator.gif" alt="Loading" /> Updating categories...</span>
+<script type="text/javascript">
+new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { indicator: 'category_indicator'});
+$('new_category_uri').onkeypress = function(e) { 
+    // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
+    if(navigator.appVersion.indexOf('AppleWebKit')>0 && e.keyCode == 13) {
+        var element = Event.element(e);
+        element.setSelectionRange(element.value.length, element.value.length);
+        return false;
+    }
+    return true;
+};
+</script>
 </div>
 % }
 
@@ -82,15 +85,19 @@ var catListMan = new AssociationListManager('categories', {
 </script>
 
 <%args>
-$story           => undef
-$categories      => undef
-$category_id     => undef
-$new_category_id => undef
+$story            => undef
+$categories       => undef
+$category_id      => undef
+$new_category_id  => undef
+$new_category_uri => undef
 $primary_category_id => undef
 </%args>
 <%init>
 my $cat_pkg = get_package_name('category');
 $story    ||= get_state_data('story_prof', 'story');
+
+my $new_category = $cat_pkg->lookup({ uri => $new_category_uri }) if $new_category_uri;
+$new_category_id = $new_category->get_id if $new_category;
 
 $category_id = mk_aref($category_id);
 push @$category_id, $new_category_id if defined $new_category_id;

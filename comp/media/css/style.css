@@ -9,8 +9,9 @@ pre        { font-size: 1.3em; padding: 1em; margin: 0; }
 code       { font-size: 1.3em; }
 h3         { font-size: 1.1em; }
 
+img        { vertical-align: middle; }
 a          { color: #006666; }
-a img      { border: none; vertical-align: middle; }
+a img      { border: none; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
@@ -603,6 +604,30 @@ div.addelement { text-align: right;}
 #containerprof ul li.element .content {
   float: left;
   padding: 0;
+}
+
+
+div.autocomplete {
+  position: absolute;
+  width: 250px;
+  background-color: white;
+  border: 1px solid #888;
+  margin: 0px;
+  padding: 0px;
+  z-index: 1000;
+}
+div.autocomplete ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.autocomplete ul li.selected { background-color: #ffb;}
+div.autocomplete ul li {
+  list-style-type: none;
+  display: block;
+  margin: 0;
+  padding: 2px 4px;
+  cursor: pointer;
 }
 
 /******************************************************
