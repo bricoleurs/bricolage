@@ -321,7 +321,8 @@ sub new {
     my ($init) = @_;
 
     $init->{active} = exists $init->{active} ? $init->{active} : 1;
-    $init->{$_} = $init->{$_} ? 1 : 0 for qw(min_occurrence autopopulated multiple);
+    $init->{$_} = $init->{$_} ? 1 : 0 for qw(autopopulated multiple);
+    $init->{$_} ||= 0 for qw(min_occurrence max_occurrence);
     $init->{element_type_id} ||=
           exists $init->{element_id}  ? delete $init->{element_id}
         : exists $init->{element__id} ? delete $init->{element__id}

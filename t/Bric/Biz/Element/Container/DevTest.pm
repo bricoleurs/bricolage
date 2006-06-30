@@ -50,7 +50,7 @@ sub test_new : Test(11) {
     ok (my $cont = $self->construct,          'Construct Container');
     ok (my $at  = $cont->get_element_type,    'Get Element Type Object');
     ok (my $atd = ($at->get_field_types)[0],  'Get Field Type Object');
-    ok ($cont->add_field($atd, 'Chomp'),      'Add Field Type');
+    ok ($cont->add_field($atd, 'Chomp'),      'Add Field Type - ' . $atd->get_name);
     ok ($cont->save,                          'Save Container');
     ok (my $c_id = $cont->get_id,             'Get Container ID');
 
@@ -62,7 +62,8 @@ sub test_new : Test(11) {
     }), 'Lookup Container');
     isa_ok $lkup, $self->class;
 
-    is ($lkup->get_value('deck', 2), 'Chomp',   'Compare Value');
+    # NOTE: The deck is is the position 1. Not 2
+    is ($lkup->get_value('deck', 1), 'Chomp',   'Compare Value');
 
     ok (my $list = $self->class->list({object_type => 'story'}),
         'List Story Containers');
@@ -111,13 +112,15 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test list.
-sub test_list : Test(158) {
+sub test_list : Test(188) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
+    my $by         = $self->{by};
+    my $date       = $self->{date};
     my @story_ids;
 
     for my $i (1..5) {
@@ -131,6 +134,28 @@ sub test_list : Test(158) {
             slug            => "test_list$i"
         }), "Create test story $i";
 
+
+##############################
+
+
+#
+#ok my @foo_array = $story->get_elements, "### DEBUG ###";
+#for my $foo_elem (@foo_array) {
+#	is scalar 2, 2, 'Element: ' . $foo_elem->get_element_name;
+#	is scalar 2, 2, 'Max/Min: ' . ($foo_elem->get_field_type)->get_max_occurrence . '/' . ($foo_elem->get_field_type)->get_min_occurrence;
+#}
+
+#######
+#
+# README
+#
+#   The fields for the quotes are not created by default, so they must
+#    be created before using them in testing.
+
+
+##############################
+
+
         ok $story->add_categories([1]), "Add it to the root category";
         ok $story->set_primary_category(1),
             "Make the root category the primary category";
@@ -142,6 +167,7 @@ sub test_list : Test(158) {
 
         # Add some content to it.
         ok my $elem = $story->get_element, "Get the story element";
+
         ok $elem->add_field($para, 'This is a paragraph'), "Add a paragraph";
         ok $elem->add_field($para, 'Second paragraph'), "Add another paragraph";
         ok $elem->add_field($head, "And then..."), "Add a header";
@@ -149,6 +175,9 @@ sub test_list : Test(158) {
 
         # Add a pull quote.
         ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
+        ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+        ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
+        ok $pq->add_field($date), "Add the quote date";
         ok $pq->get_field('para')->set_value(
             "Ask not what your country can do for you.\n="
                 . 'Ask what you can do for your country.'
@@ -160,6 +189,9 @@ sub test_list : Test(158) {
 
         # Add another pull quote.
         ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
+        ok $pq2->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+        ok $pq2->add_field($by, 'By for the quote'), "Add the quote by";
+        ok $pq2->add_field($date), "Add the quote date";
         ok $pq2->get_field('para')->set_value(
             "So, first of all, let me assert my firm belief that the only\n\n"
             . '=thing we have to fear is fear itself -- nameless, unreasoning, '
@@ -194,6 +226,21 @@ sub test_list : Test(158) {
     # Try the elements() method.
     ok @elems = $top->get_elements, 'Get subelements';
     is scalar @elems, 6, 'Should be six subelements';
+
+
+
+##############################
+
+
+#for my $blather (@elems) {
+#	is scalar 2, 2, 'Element: ' . $blather->get_element_name;
+#}
+
+
+##############################
+
+
+
     for my $e ($top->get_containers) {
         ok @elems = $e->get_elements, 'Get subelement subelements';
         is scalar @elems, 3, 'Should have three subelements';
@@ -248,13 +295,15 @@ sub test_list : Test(158) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(231) {
+sub test_pod : Test(237) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
     my $media_type = $self->{media_type};
+    my $by         = $self->{by};
+    my $date       = $self->{date};
 
     # Now it's time to create a story!
     ok my $story = Bric::Biz::Asset::Business::Story->new({
@@ -283,6 +332,9 @@ sub test_pod : Test(231) {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
+    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
+    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_value(
         "Ask not what your country can do for you.\n="
           . 'Ask what you can do for your country.'
@@ -308,6 +360,9 @@ sub test_pod : Test(231) {
 
     # Add another pull quote.
     ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
+    ok $pq2->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+    ok $pq2->add_field($by, 'By for the quote'), "Add the quote by";
+    ok $pq2->add_field($date), "Add the quote date";
     ok $pq2->get_field('para')->set_value(
         "So, first of all, let me assert my firm belief that the only\n\n"
         . '=thing we have to fear is fear itself -- nameless, unreasoning, '
@@ -588,6 +643,12 @@ sub test_pod : Test(231) {
         '_page_',
     ], 'Should get the correct maketext array';
 
+    ###################
+    #
+    #  Testing for Occurrence Spec
+    #
+    ###################
+
     # Try repeating a fields not allowed to be repeated.
     eval { $elem->update_from_pod("=begin _pull_quote_\n\n=by\n\nFoo\n\n=by\n\n") };
     ok $err = $@, 'Catch non-repeatable field exception';
@@ -624,6 +685,25 @@ sub test_pod : Test(231) {
     # Allow repeatable paragraphs again.
     ok $para->set_max_occurrence(0), 'Allow repeating for paragarphs again';
     ok $para->save, 'Save paragraph field type';
+
+#################
+#
+# NOTE: I need help with this part. This obviously isn't working to add
+#        a new paragraph. Any suggestions of how to actually hook this up?
+#
+#################
+
+
+    # Try a cap on the fields
+#    ok my @fields_arr = $elem->get_element_type->get_field_types('para');
+#    is scalar 2, 2, "DEBUG: Number of elements: " . @fields_arr;
+#    ok $elem->add_field($para, 'Another paragraph'), "Add another paragraph";
+#    ok $elem->save, 'Save the element';
+#    ok my @fields_arr = $elem->get_element_type->get_field_types('para');
+#    is scalar 2, 2, "DEBUG: Number of elements: " . $fields_arr[0]->get_key_name;
+
+
+    ################################################
 
     # Try a bad tag.
     eval { $elem->update_from_pod("=para\n\nfoo\n\n=foo bar\n\n") };

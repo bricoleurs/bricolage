@@ -96,15 +96,29 @@ sub test_new : Test(9) {
         'Field Element is Listed');
 }
 
+##############
+#
+# NOTE: Not quite sure where the old field counts were coming from,
+#         but each value has been reasoned before changing.
+#
+##############
+
+#for my $foo_field (@fields) {
+#	is scalar 2, 2, 'Element: ' . $foo_field->get_element_name;
+#}
+
+
 ##############################################################################
 # Test list().
-sub test_list : Test(89) {
+sub test_list : Test(91) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
+    my $by         = $self->{by};
+    my $date       = $self->{date};
     my @story_ids;
 
     # Create a story.
@@ -136,6 +150,9 @@ sub test_list : Test(89) {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), 'Add a pull quote';
+    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
+    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_value(
         'Ask not what your country can do for you.\n='
         . 'Ask what you can do for your country.'
@@ -152,7 +169,8 @@ sub test_list : Test(89) {
     ok my @fields = $class->list({
         object_type => 'story',
     }), 'List fields by object type';
-    is scalar @fields, 10, 'There should be ten story fields';
+
+    is scalar @fields, 9, 'There should be nine story fields';
     isa_ok $_, $class for @fields;
 
     # Test list by key_name.
@@ -235,12 +253,12 @@ sub test_list : Test(89) {
         object_type   => 'story',
         field_type_id => $para->get_id,
     }), 'List fields by field_type_id';
-    is scalar @fields, 4, 'There should be four fields';
+    is scalar @fields, 5, 'There should be five fields';
     ok @fields = $class->list({
         object_type   => 'story',
         field_type_id => ANY( $para->get_id, $head->get_id ),
     }), 'List fields by ANY(field_type_id)';
-    is scalar @fields, 6, 'There should be six fields';
+    is scalar @fields, 7, 'There should be seven fields';
 
     # Try by active.
     $fields[0]->deactivate->save;
@@ -249,7 +267,7 @@ sub test_list : Test(89) {
         object_type => 'story',
         active      => 1,
     }), 'List active fields';
-    is scalar @fields, 8, 'There should be eight active fields';
+    is scalar @fields, 7, 'There should be seven active fields';
 
     # List by inactive.
     ok @fields = $class->list({
@@ -261,13 +279,15 @@ sub test_list : Test(89) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(90) {
+sub test_list_ids : Test(92) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
+    my $by         = $self->{by};
+    my $date       = $self->{date};
     my @story_ids;
 
     # Create a story.
@@ -299,6 +319,9 @@ sub test_list_ids : Test(90) {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), 'Add a pull quote';
+    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
+    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
+    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_value(
         'Ask not what your country can do for you.\n='
         . 'Ask what you can do for your country.'
@@ -315,7 +338,7 @@ sub test_list_ids : Test(90) {
     ok my @field_ids = $class->list_ids({
         object_type => 'story',
     }), 'List IDs field ids by object type';
-    is scalar @field_ids, 10, 'There should be ten story field ids';
+    is scalar @field_ids, 9, 'There should be nine story field ids';
     like $_, qr/^\d+$/, "$_ should be an ID" for @field_ids;
 
     # Test list_ids by key_name.
@@ -398,12 +421,12 @@ sub test_list_ids : Test(90) {
         object_type   => 'story',
         field_type_id => $para->get_id,
     }), 'List IDs fields by field_type_id';
-    is scalar @field_ids, 4, 'There should be four field ids';
+    is scalar @field_ids, 5, 'There should be five field ids';
     ok @field_ids = $class->list_ids({
         object_type   => 'story',
         field_type_id => ANY( $para->get_id, $head->get_id ),
     }), 'List IDs fields by ANY(field_type_id)';
-    is scalar @field_ids, 6, 'There should be six field ids';
+    is scalar @field_ids, 7, 'There should be seven field ids';
 
     # Try by active.
     ok my @fields = $class->list({
@@ -416,7 +439,7 @@ sub test_list_ids : Test(90) {
         object_type => 'story',
         active      => 1,
     }), 'List IDs active field ids';
-    is scalar @field_ids, 8, 'There should be eight active field ids';
+    is scalar @field_ids, 7, 'There should be seven active field ids';
 
     # List IDs by inactive.
     ok @field_ids = $class->list_ids({

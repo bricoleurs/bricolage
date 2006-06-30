@@ -60,8 +60,10 @@ $stayCallback           => "formBuilder|save_n_stay_cb"
 $saveCallbackCaption    => "Save"
 $num                    => 2
 $caption                => "Create new data field"
-$useRequired            => 0
-$useQuantifier          => 0
+# $useRequired            => 0
+# $useQuantifier          => 0
+$useMinOccur            => 1
+$useMaxOccur            => 1
 $stay                   => undef
 </%args>
 <%init>;
@@ -219,13 +221,14 @@ var cancelValidation = false
           <% $numFieldsOpts %>
           </select>
       </dd>
-%if ($useRequired){
-      <dt><label for="fb_req"><% $lang->maketext('Required') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_req" id="fb_req" /></dd>
+    
+%if ($useMinOccur){
+      <dt><label for="fb_minOccur"><% $lang->maketext('Minimum Odccurrence') %>:</label></dt>
+      <dd><input type="text" name="fb_minOccur" id="fb_minOccur" value="0" size="4" /></dd>
 %}
-%if ($useQuantifier){
-      <dt><label for="fb_quant"><% $lang->maketext('Repeatable') %>:</label></dt>
-      <dd><input type="checkbox" name="fb_quant" id="fb_quant" /></dd>
+%if ($useMaxOccur){
+      <dt><label for="fb_maxOccur"><% $lang->maketext('Maximum Occurrence') %>:</label></dt>
+      <dd><input type="text" name="fb_maxOccur" id="fb_maxOccur" valud="0" size="4" /></dd>
 %}
     </dl>
     

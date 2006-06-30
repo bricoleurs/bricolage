@@ -292,7 +292,11 @@ sub new {
         #for (0..$ft->get_min_occurrence) {
         #    $self->add_field($ft);
         #}
-        $self->add_field($ft) for 0..$ft->get_min_occurrence;
+        # Yes, I'm having trouble making this idiomatic (I am trying though)
+        # ($self->add_field($ft) for 1..$ft->get_min_occurrence) unless !$ft->get_min_occurrence;
+        if (!$ft->get_min_occurrence) {
+            $self->add_field($ft) for 1..$ft->get_min_occurrence;
+        }
     }
 
     $self->_set__dirty(1);
@@ -2003,10 +2007,12 @@ sub _podify {
                  .  "$indent=end $kn\n\n";
         } else {
             my $kn = $sub->get_key_name;
-            (my $data = $sub->get_value) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
-            $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
-            $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
-            $pod .= "$indent$data\n\n";
+            if (my $data = $sub->get_value) {
+                $data =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
+                $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
+                $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
+                $pod .= "$indent$data\n\n";
+            }
         }
     }
     return $pod;
@@ -2312,18 +2318,13 @@ sub _deserialize_pod {
                 $kn = $def_field;
                 $field_type = $field_types{$kn}
                     || _bad_field(\%field_types, $kn, $line_num);
-                ###############
-                #
-                #
-                # FIXME: This needs a hold on the occurrence to compare against
-                #
-                #
-                ###############
-                if ($field_ord{$kn} && $field_type->get_max_occurrence) {
+                my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
+                my $max_occur = $field_type->get_max_occurrence;
+                if ($field_ord{$kn} && (($field_occurrence > $max_occur) && $max_occur)) {
                     throw_invalid
-                        error    => qq{Non-repeatable field "$kn" appears more }
-                                  . qq{than once beginning at line $line_num. }
-                                  . qq{Please remove all but one.},
+                        error    => qq{Non-repeatable field "$kn" appears $field_occurrence }
+                                  . qq{times around line $line_num.}
+                                  . qq{Please remove all but $max_occur.},
                         maketext => [
                             'Non-repeatable field "[_1]" appears more than once '
                           . 'beginning at line [_2]. Please remove all but one.',
