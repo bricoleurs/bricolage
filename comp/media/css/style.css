@@ -630,6 +630,8 @@ div.autocomplete ul li {
   cursor: pointer;
 }
 
+#new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }
+
 /******************************************************
  * DIFFS                                              *
  ******************************************************/

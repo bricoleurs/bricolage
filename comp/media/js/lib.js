@@ -30,6 +30,21 @@ Object.extend(Form.EventObserver.prototype, {
     }
 });
 
+// Extend Ajax.Autocompleter to add a callback when the returned list is empty
+// See http://dev.rubyonrails.org/ticket/5120
+Ajax.Autocompleter.prototype._onComplete = 
+  Ajax.Autocompleter.prototype.onComplete;
+Object.extend(Ajax.Autocompleter.prototype, {
+  onComplete: function(request) {
+    this._onComplete(request);
+    if (this.entryCount == 0 && this.options.onEmpty) {
+      this.options.onEmpty(this.element);
+    } else if (this.options.onNotEmpty) {
+      this.options.onNotEmpty(this.element);
+    }
+  }
+});
+
 // set up global to track names of double list managers
 var doubleLists = new Array();
 var formObj = '';

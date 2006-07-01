@@ -9,10 +9,11 @@
   <th class="radio"><% $lang->maketext('Primary') %></th>
   <th class="checkbox"><% $lang->maketext('Delete') %></th>
 </tr>
+% my $i = 0;
 % foreach my $cat (sort { $a->get_uri cmp $b->get_uri } @$categories) {
 %     my $cat_id = $cat->get_id;
 %     $curr_cats->{$cat_id} = 1;
-<tr>
+<tr id="category-<% $cat_id %>" class="<% $i++ % 2 == 0 ? "even" : "odd" %>">
     <td>
         <% $cat->get_uri %>
         <& '/widgets/profile/hidden.mc',
@@ -45,7 +46,11 @@
   </tr>
 % }
 </table>
-
+% if ($new_category_id) {
+<script type="text/javascript">
+new Effect.Highlight('category-<% $new_category_id %>');
+</script>
+% }
 % }
 
 % my $all_cats = [
@@ -61,9 +66,9 @@
     useTable => 0,
     js       => qq{onclick="catListMan.add('new_category_uri'); return false"}
 &>
-<input type="text" id="new_category_uri" name="new_category_autocomplete" /><div id="category_autocomplete_choices" class="autocomplete"></div><span id="category_indicator" style="display: none"><img src="/media/images/busy_indicator.gif" alt="Loading" /> Updating categories...</span>
+<input type="text" id="new_category_uri" name="new_category_autocomplete" /><div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
 <script type="text/javascript">
-new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { indicator: 'category_indicator'});
+new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { onEmpty: function() { Element.show('new_cat_warning'); }, onNotEmpty: function() { Element.hide('new_cat_warning') } });
 $('new_category_uri').onkeypress = function(e) { 
     // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
     if(navigator.appVersion.indexOf('AppleWebKit')>0 && e.keyCode == 13) {
@@ -96,7 +101,12 @@ $primary_category_id => undef
 my $cat_pkg = get_package_name('category');
 $story    ||= get_state_data('story_prof', 'story');
 
-my $new_category = $cat_pkg->lookup({ uri => $new_category_uri }) if $new_category_uri;
+my $new_category;
+
+if ($new_category_uri) {
+    $new_category_uri .= "/" unless substr($new_category_uri, -1) eq "/";
+    $new_category = $cat_pkg->lookup({ uri => $new_category_uri });
+}
 $new_category_id = $new_category->get_id if $new_category;
 
 $category_id = mk_aref($category_id);
