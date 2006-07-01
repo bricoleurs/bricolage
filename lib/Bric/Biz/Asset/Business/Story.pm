@@ -1552,17 +1552,15 @@ sub add_categories {
     my @grp_ids = $self->get_grp_ids();
     my $check = 0;
     foreach my $c (@$categories) {
-        # get the id
         my $cat_id = ref $c ? $c->get_id() : $c;
-        my $asset_grp_id = ref $c ? $c->get_asset_grp_id()
-          : Bric::Biz::Category->lookup({ id => $c })->get_asset_grp_id;
         # if it already is associated make sure it is not going to be deleted
         if (exists $cats->{$cat_id}) {
             $cats->{$cat_id}->{'action'} = undef;
         } else {
+            $c = Bric::Biz::Category->lookup({ id => $c }) unless ref $c;
             $cats->{$cat_id}->{'action'} = 'insert';
-            $cats->{$cat_id}->{'object'} = ref $c ? $c : undef;
-            push @grp_ids, $asset_grp_id;
+            $cats->{$cat_id}->{'object'} = $c;
+            push @grp_ids, $c->get_asset_grp_id();
             $check = 1;
         }
     }

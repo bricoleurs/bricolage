@@ -527,13 +527,13 @@ sub add_category : Callback {
     chk_authz($story, EDIT);
     my $cat_id = $self->params->{"$widget|new_category_id"};
     if (defined $cat_id) {
-        $story->add_categories([ $cat_id ]);
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        $story->add_categories([ $cat ]);
         eval { $story->save; };
         if (my $err = $@) {
-            $story->delete_categories([ $cat_id ]);
+            $story->delete_categories([ $cat ]);
             die $err;
         }
-        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
         add_msg('Category "[_1]" added.',
                 '<span class="l10n">' . $cat->get_name . '</span>');
