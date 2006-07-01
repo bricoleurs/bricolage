@@ -9,10 +9,11 @@
   <th class="radio"><% $lang->maketext('Primary') %></th>
   <th class="checkbox"><% $lang->maketext('Delete') %></th>
 </tr>
+% my $i = 0;
 % foreach my $oc (sort { $a->get_name cmp $b->get_name } @$output_channels) {
 %     my $oc_id = $oc->get_id;
 %     $curr_ocs->{$oc_id} = 1;
-<tr>
+<tr id="oc-<% $oc_id %>" class="<% $i++ % 2 == 0 ? "even" : "odd" %>">
     <td>
         <% $oc->get_name %>
         <& '/widgets/profile/hidden.mc',
@@ -45,7 +46,11 @@
   </tr>
 % }
 </table>
-
+% if ($new_oc_id) {
+<script type="text/javascript">
+new Effect.Highlight('oc-<% $new_oc_id %>');
+</script>
+% }
 % }
 
 % my $all_ocs = [
