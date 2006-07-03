@@ -22,21 +22,26 @@ print "\n\n==> Granting access rights to Bricolage Mysql user <==\n\n";
 
 grant_permissions();
 
-print "\n\n==> Finnished granting access rights to Bricolage Mysql user <==\n\n";
+print "\n\n==> Finished granting access rights to Bricolage Mysql user <==\n\n";
 
 exit 0;
 
 sub grant_permissions {
-    my $err;
+    my $host = $DB->{host_name} ? '' : '@localhost';
     # assign all permissions to SYS_USER
     my $sql = qq{
         GRANT SELECT, UPDATE, INSERT, DELETE
         ON    "$DB->{db_name}".*
-        TO    "$DB->{sys_user}";
+        TO    "$DB->{sys_user}"$host
     };
+    $sql .= "    IDENTIFIED BY '$DB->{sys_pass}'\n" if $DB->{sys_pass};
 
-    $err = exec_sql($sql);
+    my $err = exec_sql($sql);
     hard_fail("Failed to Grant privileges. The database error was\n\n$err")
+      if $err;
+
+    $err = exec_sql('FLUSH PRIVILEGES');
+    hard_fail("Failed to flush privileges. The database error was\n\n$err")
       if $err;
 
     print "Done.\n";
