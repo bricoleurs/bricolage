@@ -72,13 +72,12 @@ use Bric::Test::TieOut;
 # default in bricolage.conf, since there may be data owned by another
 # user in that directory.
 BEGIN {
-    $ENV{BRIC_TEMP_DIR} = File::Spec->catdir
-      (File::Spec->tmpdir, 'bricolage-test');
+    my $tmp = $ENV{BRIC_TEMP_DIR} = File::Spec->catdir(
+        File::Spec->tmpdir, 'bricolage-test'
+    );
     File::Path::mkpath($ENV{BRIC_TEMP_DIR}, 0, 0777);
-    $ENV{BRIC_BURN_ROOT} = File::Spec->catdir
-      ($ENV{BRIC_TEMP_DIR}, 'burn');
-    $ENV{MEDIA_FILE_ROOT} = File::Spec->catdir
-      ($ENV{BRIC_TEMP_DIR}, 'media');
+    $ENV{BRIC_BURN_ROOT} = File::Spec->catdir($tmp, 'burn');
+    $ENV{MEDIA_FILE_ROOT} = File::Spec->catdir($tmp, 'media');
 }
 
 # Remove the temp directory. END blocks run in LIFO, so this block will run
