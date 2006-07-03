@@ -42,5 +42,29 @@ ALTER TABLE    workflow_member
 ADD CONSTRAINT fk_member__workflow_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+--------------------------------------------------------------------------------
+-- Trigger creation to replace check constraints until MySQL supports them
 
+DELIMITER |
 
+CREATE TRIGGER ck_type_insert_workflow BEFORE INSERT ON workflow
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.type <> 1) AND (NEW.type <> 2) AND (NEW.type <> 3))
+	        THEN SET NEW.type=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_type_update_workflow BEFORE UPDATE ON workflow
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.type <> 1) AND (NEW.type <> 2) AND (NEW.type <> 3))
+	        THEN SET NEW.type=NULL;
+		END IF;        
+    
+        END;
+|
+
+DELIMITER ;

@@ -179,20 +179,4 @@ sub load_db {
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;
     print "\nDone.\n";
-    
-    $db_file = $DB->{DBSQL} || catfile('inst', "$DB->{db}_trig.sql");
-    unless (-e $db_file and -s _) {
-        my $errmsg = "Missing or empty $db_file!\n\n"
-          . "If you're using Subversion, you need to `make dist` first.\n"
-          . "See `perldoc Bric::FAQ` for more information.";
-        hard_fail($errmsg);
-    }
-
-    print "Loading Bricolage MySql triggers (this may take a few minutes).\n";
-    $err = exec_sql(0, $db_file, $DB->{db_name});
-    hard_fail("Error loading triggers. The database error was\n\n$err\n")
-      if $err;
-    print "\nDone.\n";
-    
-
 }

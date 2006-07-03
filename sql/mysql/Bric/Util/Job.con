@@ -71,5 +71,33 @@ ALTER TABLE    job_member
 ADD CONSTRAINT fk_member__job_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+--------------------------------------------------------------------------------
+-- Trigger creation to replace the check constraints until MySQL supports them
 
+DELIMITER |
 
+CREATE TRIGGER ck_priority_tries_insert_job BEFORE INSERT ON job
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
+	        THEN SET NEW.priority=NULL;
+		END IF;        
+    	    IF ((NEW.tries < 0) OR (NEW.tries > 10))
+	        THEN SET NEW.tries=NULL;
+		END IF;        
+        END;
+|
+
+CREATE TRIGGER ck_priority_tries_update_job BEFORE UPDATE ON job
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
+	        THEN SET NEW.priority=NULL;
+		END IF;        
+    	    IF ((NEW.tries < 0) OR (NEW.tries > 10))
+	        THEN SET NEW.tries=NULL;
+		END IF;        
+        END;
+|
+
+DELIMITER ;

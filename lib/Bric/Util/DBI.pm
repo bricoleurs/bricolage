@@ -418,13 +418,12 @@ B<Notes:> NONE.
 =cut
 
 sub prepare {
-    my @conv = convert(@_);
     my $dbh = _connect();
-    my $sth = eval { $dbh->prepare(@conv) };
+    my $sth = eval { $dbh->prepare(@_) };
     throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
              payload => $@
       if $@;
-    _debug_prepare(\$conv[0]) if DEBUG;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare()
 
@@ -461,14 +460,12 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_c {
-    my @conv = convert(@_);
     my $dbh = _connect();
-
-    my $sth = eval { $dbh->prepare_cached(@conv) };
+    my $sth = eval { $dbh->prepare_cached(@_) };
     throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
              payload => $@
       if $@;
-    _debug_prepare(\$conv[0]) if DEBUG;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare_c()
 
@@ -506,13 +503,12 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_ca {
-    my @conv = convert(@_);
     my $dbh = _connect();
-    my $sth = eval { $dbh->prepare_cached(@conv[0, 1], 1) };
+    my $sth = eval { $dbh->prepare_cached(@_[0, 1], 1) };
     throw_da error   => "Unable to prepare SQL statement\n\n$_[0]",
              payload => $@
       if $@;
-    _debug_prepare(\$conv[0]) if DEBUG;
+    _debug_prepare(\$_[0]) if DEBUG;
     return $sth;
 } # prepare_ca()
 

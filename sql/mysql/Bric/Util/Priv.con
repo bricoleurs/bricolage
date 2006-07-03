@@ -24,3 +24,30 @@ REFERENCES     grp_priv(id) ON DELETE CASCADE;
 ALTER TABLE    grp_priv__grp_member
 ADD CONSTRAINT fk_grp__grp_priv__grp_member FOREIGN KEY (grp__id)
 REFERENCES     grp(id) ON DELETE CASCADE;
+
+--------------------------------------------------------------------------------
+-- Trigger creation to replace check constraints until MySQL supports them
+
+DELIMITER |
+
+CREATE TRIGGER ck_value_insert_grp_priv BEFORE INSERT ON grp_priv
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.value < 1) OR (NEW.value > 255))
+	        THEN SET NEW.value=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_value_update_grp_priv BEFORE UPDATE ON grp_priv
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.value < 1) OR (NEW.value > 255))
+	        THEN SET NEW.value=NULL;
+		END IF;        
+    
+        END;
+|
+
+DELIMITER ;

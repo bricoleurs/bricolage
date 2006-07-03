@@ -60,8 +60,8 @@ sub test_fetch_objects: Test(4) {
 
     # check that _fetch_objects produces the right objs
     my $sql = q{ SELECT one, two, three, four, five, six, seven, eight,
-                 id_list(DISTINCT nine), id_list(DISTINCT ten),
-                 id_list(DISTINCT eleven), id_list(DISTINCT twelve)
+                 group_concat(DISTINCT nine), group_concat(DISTINCT ten),
+                 group_concat(DISTINCT eleven), group_concat(DISTINCT twelve)
                  FROM test_fetch_objects
                  GROUP BY one, two, three, four, five, six, seven, eight
                  ORDER BY one, eight ASC };
