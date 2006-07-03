@@ -88,7 +88,7 @@ sub get_include_dir {
     hard_fail("Unable to extract needed data from $REQ->{MYSQL_CONFIG}.")
     unless $data;
     chomp($data);
-    $data =~ s/(\d\.\d(\.\d)?).*/$1/;    
+    $data =~ s/(\d\.\d(\.\d)?).*/$1/;
     $DB{include_dir} = $data;
 }
 
@@ -99,7 +99,7 @@ sub get_lib_dir {
     hard_fail("Unable to extract needed data from $REQ->{MYSQL_CONFIG}.")
     unless $data;
     chomp($data);
-    $data =~ s/(\d\.\d(\.\d)?).*/$1/;        
+    $data =~ s/(\d\.\d(\.\d)?).*/$1/;
     $DB{lib_dir} = $data;
 }
 
@@ -108,7 +108,7 @@ sub get_bin_dir {
 
     my $data = $REQ->{MYSQL_CONFIG};
     chomp($data);
-    $data =~ s/mysql_config//;    
+    $data =~ s/mysql_config//;
     $DB{bin_dir} = $data;
 }
 
@@ -117,7 +117,7 @@ sub get_mysql {
     my $mysql = catfile($DB{bin_dir}, 'mysql');
     hard_fail("Unable to locate mysql executable.")
     unless -e $mysql and -x $mysql;
-    
+
     $DB{exec} = $mysql;
 }
 
@@ -128,7 +128,7 @@ sub get_version {
       unless $data;
     chomp $data;
     $DB{client_version} = $data;
-    print $data;    
+    print $data;
 }
 
 # ask the user for user settings
@@ -180,11 +180,14 @@ sub get_host {
 # ask for host specifics
 sub get_server_version {
     print "\n";
-    my $data;
-    $data=`$DB{exec} -h $DB{host_name} -u $DB{root_user} -p$DB{root_pass} -e status| grep 'Server version:'`;
+    my $cmd = "$DB{exec} -u $DB{root_user}";
+    $cmd .= "-p$DB{root_pass}" if $DB{root_pass};
+    $cmd .= "-h $DB{host_name}" if $DB{host_name};
+    $cmd .= "-P $DB{host_port}" if $DB{host_port};
+    my $data = `$cmd -e status | grep 'Server version:'`;
     hard_fail("Could not connect to database server")
-      unless $data;    
-    $data=~s/Server version:\s*//;  
+      unless $data;
+    $data=~s/Server version:\s*//;
     my ($x, $y, $z) = $data=~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     return soft_fail("Failed to parse Mysql server version from string ",
                       "\"$data\".")
@@ -196,5 +199,3 @@ sub get_server_version {
     print " Found acceptable version of Mysql server: $x.$y.$z.\n";
     $DB{server_version}="$x.$y.$z";
 }
-
-
