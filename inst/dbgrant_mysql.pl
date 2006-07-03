@@ -11,9 +11,9 @@ $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
 # Set variables for mysql
-
-$DB->{exec} .= " -h $DB->{host_name} ";
-$DB->{exec} .= "-P $DB->{host_port} " if ( $DB->{host_port} ne "" );
+$DB->{exec} .= "-h $DB->{host_name} "
+    if $DB->{host_name} && $DB->{host_name} ne 'localhost';
+$DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 #END { unlink $ERR_FILE }
 
@@ -24,22 +24,17 @@ grant_permissions();
 
 print "\n\n==> Finnished granting access rights to Bricolage Mysql user <==\n\n";
 
-
-
 exit 0;
-
-
-
 
 sub grant_permissions {
     my $err;
     # assign all permissions to SYS_USER
     my $sql = qq{
-        GRANT SELECT, UPDATE, INSERT, DELETE 
+        GRANT SELECT, UPDATE, INSERT, DELETE
         ON    "$DB->{db_name}".*
         TO    "$DB->{sys_user}";
     };
-    print $sql;
+
     $err = exec_sql($sql);
     hard_fail("Failed to Grant privileges. The database error was\n\n$err")
       if $err;
@@ -49,42 +44,34 @@ sub grant_permissions {
 
 sub exec_sql {
     my ($sql, $file, $db, $res, $user, $pass) = @_;
-    my $exec;
     $db ||= $DB->{db_name} if $db;
-    $exec ="$DB->{exec}";
-    if ($user) {
-	$exec .= " -u $user ";
+    my $exec = "$DB->{exec}";
+    if (my $u = $user || $DB->{root_user}) {
+        $exec .= " -u $u";
     }
-    else {
-	$exec .= " -u $DB->{root_user} ";
+    if (my $pwd = $pass || $DB->{root_pass}) {
+        $exec .= " -p$pwd";
     }
-    if ($pass) {
-	$exec .= " -p$pass ";
-    }
-    else {
-	$exec .= " -p$DB->{root_pass} ";
-    }    
-    
+
     # System returns 0 on success, so just return if it succeeds.
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
 
     if ($res) {
-        $exec .="-e \"$sql\" " if $sql;
-	$exec .="-D $db" if $db;	
-        $exec .="-P format=unaligned -P pager= -P footer=";
-        $exec .=" < $file " if !$sql;	
-        print $exec."\n";
-	@$res = `$exec`;
+        $exec .= qq{ -e "$sql" } if $sql;
+        $exec .= " -D $db" if $db;
+        $exec .= " -P format=unaligned -P pager= -P footer=";
+        $exec .= " < $file " if !$sql;
+#        print $exec."\n";
+        @$res = `$exec`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
-        $exec .="-e \"$sql\" " if $sql;
-        $exec .="-D $db " if $db;
-        $exec .=" < $file " if !$sql;	
-        print $exec."\n";	    
-        system($exec)
-          or return;
+        $exec .= qq{ -e "$sql" } if $sql;
+        $exec .= " -D $db " if $db;
+        $exec .= " < $file " if !$sql;
+#        print $exec."\n";
+        system($exec) or return;
     }
 
     # We encountered a problem.
@@ -92,4 +79,3 @@ sub exec_sql {
     local $/;
     return <ERR>;
 }
-
