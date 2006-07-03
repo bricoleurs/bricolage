@@ -1,4 +1,3 @@
-%#-- Begin HTML --#
 <& '/widgets/wrappers/header.mc', title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
@@ -13,17 +12,23 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'contrib_type_id')
 
 # Output the primary fields.
 $m->comp("/widgets/wrappers/table_top.mc",
-  	 caption => "Properties", number  => 1);
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $grp,
-	 readOnly => $no_edit, fieldsUsed => { active => 1, parent_id => 1 });
+    caption => "Properties", 
+    number  => 1
+);
+$m->comp('/widgets/profile/dumpRemainingFields.mc', 
+    objref => $grp,
+    readOnly => $no_edit, 
+    fieldsUsed => { active => 1, parent_id => 1 }
+);
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
 
 my $all = $grp->all_for_member_subsys;
 # sort the attrs and build an array
 my $attr = [];
-my @sortedAttrs = sort { $all->{$a}{meta}{pos}{value}
-			 <=> $all->{$b}{meta}{pos}{value} } keys %$all;
+my @sortedAttrs = sort { 
+    $all->{$a}{meta}{pos}{value} <=> $all->{$b}{meta}{pos}{value} 
+} keys %$all;
 
 foreach my $key (@sortedAttrs ) {
     $all->{$key}{name} = $key;
@@ -48,16 +53,17 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
 
 # display attrs
 $m->comp("/widgets/wrappers/table_top.mc",
-	 caption => "Custom Fields",
-	 number  => 3);
+     caption => "Custom Fields",
+     number  => 3
+);
 
 if ($num_fields) {
     $m->comp("/widgets/profile/displayAttrs.mc",
-	     attr        => $attr,
-	     readOnly    => $no_edit,
-	     usePosition => 1,
-	     useDelete   => 1
-	    );
+         attr        => $attr,
+         readOnly    => $no_edit,
+         usePosition => 1,
+         useDelete   => 1
+    );
 } else {
     $m->out(qq{<div class="noneFound">} . $lang->maketext("No custom fields defined."). "</div>\n")
 }
@@ -68,56 +74,52 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 if (!$no_edit) {
 # Output the formBuilder.
 $m->comp('/widgets/formBuilder/formBuilder.mc',
-	 numFields => 0,
-	 widget => 1,
-	 formName => 'ct_profile',
-	 numFields => $num_fields,
-	 num => 4,
-	 stay => 1,
-	 caption => 'Add New Field'
-	);
+     numFields => 0,
+     widget => 1,
+     formName => 'ct_profile',
+     numFields => $num_fields,
+     num => 4,
+     stay => 1,
+     caption => 'Add New Field'
+);
 
 } else {
 
-
     # Add the buttons.
     $m->comp('/widgets/profile/formButtons.mc',
-	     type => $type,
-	     section => $section,
+         type => $type,
+         section => $section,
          widget => $type,    # XXX: there isn't a Profile/ContribType...
-	     no_del => 1,
-	     no_save => 1
-	    );
+         no_del => 1,
+         no_save => 1
+    );
+
 }
 
 
 </%perl>
 <& '/widgets/wrappers/footer.mc', param => \%ARGS &>
 
-%#-- End HTML --#
 
-
-%#-- Once Section --#
 <%once>;
 my $class = 'Bric::Util::Grp::Person';
 my $type = 'contrib_type';
 my $section = 'admin';
 my $disp = get_disp_name($type);
-my %meta_props = ( type => 'type',
-		   length => 'length',
-		   maxlength => 'maxlength',
-		   rows => 'rows',
-		   cols => 'cols',
-		   multiple => 'multiple'
-		 );
+my %meta_props = ( 
+    type      => 'type',
+    length    => 'length',
+    maxlength => 'maxlength',
+    rows      => 'rows',
+    cols      => 'cols',
+    multiple  => 'multiple'
+);
 </%once>
 
-%#-- Args Section --#
 <%args>
 $id => undef
 </%args>
 
-%#-- Init Section --#
 <%init>;
 $id ||= $ARGS{contrib_type_id};
 

@@ -289,6 +289,10 @@ Xinha WYSIWYG editor (optional)
 
 =item *
 
+FCKeditor WYSIWYG editor (optional)
+
+=item *
+
 GNU Aspell 0.50 or later (optional)
 
 =back
@@ -1027,7 +1031,7 @@ them to the F<comp/media/wysiwyg/htmlarea> directory in your Bricolage root.
 
 As of 2005-03-25, there is a bug in htmlArea regarding form handling that
 requires a patch.  After installing, apply the patch while in your Bricolage
-root: C<patch -p0 < inst/patches/xinha.diff>
+root: C<< patch -p0 < inst/patches/xinha.diff >>
 
 You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
@@ -1045,6 +1049,59 @@ root: C<patch -p0 < inst/patches/xinha.diff>
 
 You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
+
+=head2 FCKeditor (Optional)
+
+To install FCKeditor, an optional application that offers WYSIWYG editing in
+the Bricolage UI, simply download it from L<http://www.fckeditor.net/>,
+decompress the files, and move them to the F<comp/media/wysiwyg/fckeditor>
+directory in your Bricolage root.
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
+
+If you intend to use FCKeditor's SpellerPages support for spellchecking,
+you'll need to change two files in the FCKeditor source to get it to work with
+Bricolage. First in
+F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/spellChecker.js>,
+change this line:
+
+  	this.spellCheckScript = 'server-scripts/spellchecker.php';
+
+To this:
+
+  	this.spellCheckScript = 'server-scripts/spellchecker.pl';
+
+And second, in
+F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl>, you will likely need to change this line:
+
+  my $aspell_cmd = '"C:\Program Files\Aspell\bin\aspell.exe"';
+
+To point to the correct loation of aspell:
+
+  my $aspell_cmd = '/usr/bin/aspell';
+
+Execute C<which aspell> on your system if you're not sure where C<aspell> is.
+You will also need to modify a couple of lines from this file (although a
+patch has been submitted to the SpellerPages project, so it may be fixed by
+the time you read this). Change these lines:
+
+  print <<EOF;
+  Content-type: text/html; charset=utf-8
+
+  <html>
+  <head>
+
+To these:
+
+  print header, <<EOF;
+  <html>
+  <head>
+
+And finally, you might also need to make the F<spellchecker.pl> file
+executable:
+
+  chmod +x comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl
 
 =head2 GNU Aspell (Optional)
 
@@ -1856,9 +1913,9 @@ the current document. Enabled by default.
 =item *
 
 B<ENABLE_WYSIWYG and WYSIWYG_EDITOR:> These directives control the WYSIWYG
-editor in Bricolage.  Currently supported are htmlArea and Xinha (a fork of
-htmlArea).  After installing htmlArea or Xinha (see dependency info above),
-set C<WYSIWYG_EDITOR> appropriately.
+editor in Bricolage. Currently supported are htmlArea, Xinha (a fork of
+htmlArea), and FCKeditor. After installing the editor of your choice (see
+dependency info above), set C<WYSIWYG_EDITOR> appropriately.
 
 =item *
 
@@ -1962,6 +2019,15 @@ Starts a new line in the toolbar. Subsequent controls will be inserted on the
 new line.
 
 =back
+
+=item *
+
+B<FCKEDITOR_CONFIG:> You can fully control FCKeditor configuration using this
+directive. Simply enter all of the JavaScript code to configur FCKeditor on a
+single line, and Bricolage will tell FCKeditor to use it. Consult the
+FCKeditor documenation at L<http://wiki.fckeditor.net/> for details. By
+default, Bricolage sets up a very simple toolbar for FCKeditor (overriding its
+"Default" toolbar set).
 
 =back
 

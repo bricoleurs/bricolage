@@ -170,13 +170,19 @@ do {
           "    SetHandler None\n" .
           "    AddHandler perl-script .cgi\n" .
           "    PerlHandler Apache::Registry\n" .
-          "  </Location>";
+          "  </Location>" if lc WYSIWYG_EDITOR eq 'htmlarea';
         push @locs,
           "  <Location /media/wysiwyg/xinha/plugins/SpellChecker>\n" .
           "    SetHandler None\n" .
           "    AddHandler perl-script .cgi\n" .
           "    PerlHandler Apache::Registry\n" .
-          "  </Location>";
+          "  </Location>" if lc WYSIWYG_EDITOR eq 'xinha';
+        push @locs,
+          "  <Location /media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts>\n" .
+          "    SetHandler None\n" .
+          "    AddHandler perl-script .pl\n" .
+          "    PerlHandler Apache::Registry\n" .
+          "  </Location>" if lc WYSIWYG_EDITOR eq 'fckeditor';
     }
 
     # This will serve media assets and previews.

@@ -12,8 +12,9 @@ function contribJump(obj) {
 
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc',
-	 value => $id,
-	 name => 'contrib_id') if defined $id;
+     value => $id,
+     name => 'contrib_id'
+) if defined $id;
 
 # display person object fields
 &$defaultFields($contrib, $no_edit);
@@ -21,8 +22,9 @@ $m->comp('/widgets/profile/hidden.mc',
 # have the user select a group and role
 if ($mode eq "new") {
     $m->comp('/widgets/profile/hidden.mc',
-	     value => $mode,
-	     name => 'mode');
+         value => $mode,
+         name => 'mode'
+    );
 
     # choose group
     &$showGroups($no_edit);
@@ -30,83 +32,89 @@ if ($mode eq "new") {
 
 } elsif ( $mode eq "edit" ) {
     if ($curSubsys || scalar(@subsys) <= 1) {
-	# show full edit screen if role is well defined.
-	$m->comp('/widgets/profile/hidden.mc',
-		 value => $mode,
-		 name => 'mode');
+        # show full edit screen if role is well defined.
+        $m->comp('/widgets/profile/hidden.mc',
+            value => $mode,
+            name => 'mode'
+        );
 
-	&$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit, \%ARGS);
+        &$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit, \%ARGS);
 
-	# show drop down of other subsys, if any
-	if (scalar(@subsys)) {
-	    $m->comp("/widgets/wrappers/table_top.mc",
-		     caption => "Switch Roles",
-		     number  => 4);
+        # show drop down of other subsys, if any
+        if (scalar(@subsys)) {
+            $m->comp("/widgets/wrappers/table_top.mc",
+                caption => "Switch Roles",
+                number  => 4);
 
-	    my $opts;
-	    foreach my $s (@subsys) {
-		$opts->{$s} = ($s eq "_MEMBER_SUBSYS") ? "Default" : $s;
-	    }
+            my $opts;
+            foreach my $s (@subsys) {
+                $opts->{$s} = ($s eq "_MEMBER_SUBSYS") ? "Default" : $s;
+            }
 
-	    $m->comp("/widgets/profile/select.mc",
-		     options => $opts,
-		     disp   => "Contributor Roles",
-		     name   => "cont_roles",
-		     value  => $curSubsys,
- 		     js     => " onChange='contribJump(this)'");
+            $m->comp("/widgets/profile/select.mc",
+                options => $opts,
+                disp   => "Contributor Roles",
+                name   => "cont_roles",
+                value  => $curSubsys,
+                js     => " onChange='contribJump(this)'"
+            );
 
-	    $m->comp("/widgets/wrappers/table_bottom.mc");
+            $m->comp("/widgets/wrappers/table_bottom.mc");
 
-	}
+        }
 
-	# Display the form buttons.
-	$m->comp('/widgets/profile/formButtons.mc',
-		 type    => $type,
-                 widget  => $type,
-		 section => $section,
-		 no_del  => $no_del,
-		 no_save => $no_edit,
-		 return  => '/admin/manager/contrib'
-		);
+        # Display the form buttons.
+        $m->comp('/widgets/profile/formButtons.mc',
+            type    => $type,
+            widget  => $type,
+            section => $section,
+            no_del  => $no_del,
+            no_save => $no_edit,
+            return  => '/admin/manager/contrib'
+        );
 
     } else {
-	# show all roles for this member so the user can choose one
-	$m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
+        # show all roles for this member so the user can choose one
+        $m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
 
-	$m->comp("/widgets/wrappers/table_top.mc",
-		 caption => "Roles",
-		 number  => 2);
+        $m->comp("/widgets/wrappers/table_top.mc",
+            caption => "Roles",
+            number  => 2
+        );
 
-	my $roleOpts;
-	foreach my $sys (@subsys) {
-	    $roleOpts->{$sys} =($sys ne '_MEMBER_SUBSYS') ?  $sys : "Default";
-	}
+        my $roleOpts;
+        foreach my $sys (@subsys) {
+            $roleOpts->{$sys} =($sys ne '_MEMBER_SUBSYS') ?  $sys : "Default";
+        }
 
-	$m->comp("/widgets/profile/select.mc",
-		 disp    => 'Select Role',
-		 options => $roleOpts,
-		 name    => 'subsys');
+        $m->comp("/widgets/profile/select.mc",
+            disp    => 'Select Role',
+            options => $roleOpts,
+            name    => 'subsys'
+        );
 
-	$m->comp("/widgets/wrappers/table_bottom.mc");
-	&$stepOneOfTwo($type, $section);
+        $m->comp("/widgets/wrappers/table_bottom.mc");
+        &$stepOneOfTwo($type, $section);
     }
 
 } elsif ( $mode eq "extend" ) {
 
     $m->comp('/widgets/profile/hidden.mc',
-	     value => $mode,
-	     name => 'mode');
+        value => $mode,
+        name => 'mode'
+    );
 
     $m->comp("/widgets/wrappers/table_top.mc",
-	     caption => "Roles",
-	     number  => 2);
+        caption => "Roles",
+        number  => 2
+    );
 
     # Display a read-only list of existing roles, if more than one.
     if (@subsys > 1) {
         $m->out(qq{<div class="row">});
         $m->out(qq{<div class="label">} . $lang->maketext('Existing roles') . qq{:</div>});
         $m->out(qq{<div class="input">} . join(", ", grep { $_ ne '_MEMBER_SUBSYS' } @subsys) . qq{</div>});
-    	$m->out(qq{</div>});
+        $m->out(qq{</div>});
     }
 
     # Send the roles to javascript so we can check before submitting
@@ -117,9 +125,10 @@ if ($mode eq "new") {
 
     # text box for new role name
     $m->comp("/widgets/profile/text.mc",
-	     disp    => 'New Role Name',
-	     name    => 'subsys',
-	     useTable => 1);
+        disp    => 'New Role Name',
+        name    => 'subsys',
+        useTable => 1
+    );
 
     $m->comp("/widgets/wrappers/table_bottom.mc");
 
@@ -174,8 +183,8 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 # Roll in any changes to the contributor if we're just adding contacts.
 if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
     foreach my $meth ($contrib->my_meths(1)) {
-	$meth->{set_meth}->($contrib, @{$meth->{set_args}}, $ARGS{$meth->{name}})
-	  if defined $meth->{set_meth};
+        $meth->{set_meth}->($contrib, @{$meth->{set_args}}, $ARGS{$meth->{name}})
+          if defined $meth->{set_meth};
     }
 }
 
@@ -183,8 +192,9 @@ my $context   = "Admin | Profile | $disp | $crumb";
 
 # print standard header
 $m->comp('/widgets/wrappers/header.mc',
-	 title   => "$disp Profile",
-	 context => $context);
+    title   => "$disp Profile",
+    context => $context
+);
 
 ################################################################################
 ################################################################################
@@ -199,24 +209,25 @@ my $disp = get_disp_name($type);
 my $showAttrs = sub {
     my ($contrib, $id, $subsys, $extending, $ro, $param) = @_;
     my $preCaption = '&quot;' . ($subsys eq '_MEMBER_SUBSYS' ? 'Default'
-				 : $subsys) . '&quot; Role';
+                 : $subsys) . '&quot; Role';
     my $contacts = $contrib->get_obj->get_contacts;
 
     # Display the Contact info.
     $m->comp("/widgets/wrappers/table_top.mc",
-	     caption => "Contacts",
-	     number  => 2);
+         caption => "Contacts",
+         number  => 2
+    );
 
     $m->out(qq{<div style="padding: 10px;">});
     $m->comp('/widgets/add_more/add_more.mc',
-	     type      => 'contact',
-	     fields    => [qw(type value)],
-	     name      => 'contact',
-	     objs      => $contacts,
-	     read_only => $ro,
-	     param     => $param,
-	     no_labels => 1
-	    );
+         type      => 'contact',
+         fields    => [qw(type value)],
+         name      => 'contact',
+         objs      => $contacts,
+         read_only => $ro,
+         param     => $param,
+         no_labels => 1
+    );
     $m->out(qq{</div>});
 
     $m->comp("/widgets/wrappers/table_bottom.mc");
@@ -233,29 +244,31 @@ my $showAttrs = sub {
     # sort the attrs and build an array
     my $attr = [];
     my @sortedAttrs = sort { $default->{$a}{meta}{pos}{value} <=>
-			     $default->{$b}{meta}{pos}{value} } keys %$default;
+                 $default->{$b}{meta}{pos}{value} } keys %$default;
 
     foreach my $key (@sortedAttrs ) {
-	$default->{$key}{name} = $key;
-	$default->{$key}{value} = $all->{$key}{value};
-	push @$attr, $default->{$key};
+        $default->{$key}{name} = $key;
+        $default->{$key}{value} = $all->{$key}{value};
+        push @$attr, $default->{$key};
     }
 
     my $num_fields = @$attr;
     if ($num_fields) {
-	# display attrs
-	$m->comp("/widgets/wrappers/table_top.mc",
-		 caption => $preCaption . " Custom Fields",
-		 number  => 3);
-	$m->comp("/widgets/profile/displayAttrs.mc",
-		 attr        => $attr,
-		 form_name   => 'contrib_profile',
-		 readOnly    => $ro,
-		 usePosition => 0,
-		 useDelete   => 0);
+        # display attrs
+        $m->comp("/widgets/wrappers/table_top.mc",
+             caption => $preCaption . " Custom Fields",
+             number  => 3
+        );
+        $m->comp("/widgets/profile/displayAttrs.mc",
+             attr        => $attr,
+             form_name   => 'contrib_profile',
+             readOnly    => $ro,
+             usePosition => 0,
+             useDelete   => 0
+        );
 
-	# Close the table.
-	$m->comp("/widgets/wrappers/table_bottom.mc");
+        # Close the table.
+        $m->comp("/widgets/wrappers/table_bottom.mc");
     }
 };
 
@@ -264,15 +277,17 @@ my $defaultFields = sub {
     my ($contrib, $ro) = @_;
     # Display the referential fields.
     $m->comp("/widgets/wrappers/table_top.mc",
-	     caption => "Properties",
-	     number  => 1);
+         caption => "Properties",
+         number  => 1
+    );
 
     $m->comp('/widgets/profile/dumpRemainingFields.mc',
-	     objref => $contrib, readOnly => $ro,
-	     fieldsUsed => {
-			    name   => 1,
-			    active => 1
-			   });
+        objref => $contrib, readOnly => $ro,
+        fieldsUsed => {
+            name   => 1,
+            active => 1
+        }
+    );
 
     $m->comp("/widgets/wrappers/table_bottom.mc");
 
@@ -284,21 +299,22 @@ my $showGroups = sub {
     my $options;
     my $instanceGrpId = Bric::Biz::Person->INSTANCE_GROUP_ID;
     foreach my $group (@$groups) {
-	$options->{$group->get_id} = $group->get_name
-	  if ($group->get_id != $instanceGrpId);
+        $options->{$group->get_id} = $group->get_name
+          if ($group->get_id != $instanceGrpId);
     }
 
     $m->comp("/widgets/wrappers/table_top.mc",
-	     caption => "Contributor Type",
-	     number  => 2);
+         caption => "Contributor Type",
+         number  => 2
+    );
 
     $m->comp("/widgets/profile/select.mc",
-	     value     => 'group',
-	     disp      => 'Contributor Type',
-	     options   => $options,
-	     name      => 'group',
-	     readOnly => $ro
-	    );
+         value     => 'group',
+         disp      => 'Contributor Type',
+         options   => $options,
+         name      => 'group',
+         readOnly => $ro
+    );
 
 
     $m->comp("/widgets/wrappers/table_bottom.mc");
@@ -307,13 +323,14 @@ my $showGroups = sub {
 my $stepOneOfTwo = sub {
     my ($type, $section) = @_;
     $m->comp('/widgets/profile/formButtons.mc',
-             type    => $type,
-             section => $section,
-             # be careful that formButtons.mc doesn't depend on $widget eq 'profile'
-             widget  => $type,
-	     no_del  => 1,
-	     val     => "next_dkgreen",
-	     return  => '/admin/manager/contrib');
+        type    => $type,
+        section => $section,
+        # be careful that formButtons.mc doesn't depend on $widget eq 'profile'
+        widget  => $type,
+        no_del  => 1,
+        val     => "next_dkgreen",
+        return  => '/admin/manager/contrib'
+    );
 };
 </%once>
 
