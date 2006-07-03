@@ -15,8 +15,8 @@ $LastChangedDate: 2006-06-14 13:30:10 +0200 (Wed, 14 Jun 2006) $
 
 =head1 DESCRIPTION
 
-This script is called during "make" to ask the user to choose between 
-different databases then start the apropriate probing script.  It 
+This script is called during "make" to ask the user to choose between
+different databases then start the apropriate probing script.  It
 accomplishes this by asking the user .  Output collected in
 "database.db" by the actual probing scripts.
 
@@ -76,10 +76,10 @@ run_dbscript();
 exit 0;
 
 
-# ask the user to choose a database 
+# ask the user to choose a database
 sub get_database {
     my $dbstring;
-    $dbstring=join(', ',keys(%DBPROBES));    
+    $dbstring=join(', ',keys(%DBPROBES));
     print "\n";
     ask_confirm("Database ($dbstring): ", \$DB{db}, $QUIET);
 }
@@ -93,25 +93,24 @@ sub get_probes {
         $temp1=~s/inst\/dbprobe_//;
         $temp1=~s/.pl//;
         $DBPROBES{$temp1}=$temp2;
-    }    
+    }
 }
 
 sub run_dbscript {
     my $dbscript=$DBPROBES{$DB{db}};
     $dbscript = $dbscript." ".$QUIET if $QUIET;
     do $dbscript;
-    do $dbscript or die "Failed to launch $DB{db} probing script $dbscript";        
+    do $dbscript or die "Failed to launch $DB{db} probing script $dbscript";
 }
 
 sub set_required_mod {
-
     do "./modules.db" or die "Failed to read modules.db : $!";
     for my $i (0 .. $#$MOD) {
-	print "\ntest=$MOD->[$i]{name}";
+#	print "\ntest=$MOD->[$i]{name}";
 	push @MOD , $MOD->[$i] if !($MOD->[$i]{name}=~/DBD::/);
-	push @MOD , $MOD->[$i] if $MOD->[$i]{name}=~/DBD::$DB{db}/ 
+	push @MOD , $MOD->[$i] if $MOD->[$i]{name}=~/DBD::$DB{db}/
     }
-    
+
     open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
     print OUT Data::Dumper->Dump([\@MOD],['MOD']);
     close OUT;
