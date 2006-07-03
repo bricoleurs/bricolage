@@ -43,10 +43,10 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 
 # Set variables for mysql
 $DB->{exec} .= " -u $DB->{root_user} ";
-$DB->{exec} .= "-p$DB->{root_pass} ";
-$DB->{exec} .= "-h $DB->{host_name} " if ( $DB->{host_name} ne "localhost" );
-$DB->{exec} .= "-P $DB->{host_port} " if ( $DB->{host_port} ne "" );
-
+$DB->{exec} .= "-p$DB->{root_pass} " if $DB->{root_pass};
+$DB->{exec} .= "-h $DB->{host_name} "
+    if $DB->{host_name} && $DB->{host_name} ne 'localhost';
+$DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
 
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
@@ -69,10 +69,10 @@ sub exec_sql {
     if ($res) {
         my $exec="$DB->{exec} ";
         $exec .="-e \"$sql\" " if $sql;
-	$exec .="-D $db " if $db;	
+        $exec .="-D $db " if $db;
         $exec .="-P format=unaligned -P pager= -P footer= ";
-        $exec .=" < $file " if !$sql;	
-	@$res = `$exec`;
+        $exec .=" < $file " if !$sql;
+        @$res = `$exec`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
@@ -80,7 +80,7 @@ sub exec_sql {
         my $exec="$DB->{exec} ";
         $exec .="-e \"$sql\" " if $sql;
         $exec .="-D $db " if $db;
-        $exec .=" < $file " if !$sql;	
+        $exec .=" < $file " if !$sql;
         system($exec)
           or return;
     }
@@ -94,8 +94,8 @@ sub exec_sql {
 # create the database, optionally dropping an existing database
 sub create_db {
     print "Creating database named $DB->{db_name}...\n";
-    my $err = exec_sql(qq{CREATE DATABASE "$DB->{db_name}" DEFAULT CHARACTER 
-			  SET utf8 DEFAULT COLLATE utf8_unicode_ci},0,0);
+    my $err = exec_sql(qq{CREATE DATABASE "$DB->{db_name}" DEFAULT CHARACTER
+              SET utf8 DEFAULT COLLATE utf8_unicode_ci},0,0);
 
     if ($err) {
         # There was an error. Offer to drop the database if it already exists.
