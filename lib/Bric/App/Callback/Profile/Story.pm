@@ -483,27 +483,11 @@ sub notes : Callback {
     $self->set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
 }
 
-sub view_notes : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/profile/story/comments.html?id=$id");
-}
-
 sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
     return unless $self->_save_data();
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/trail/story/$id");
-}
-
-sub view_trail : Callback {
-    my $self = shift;
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
