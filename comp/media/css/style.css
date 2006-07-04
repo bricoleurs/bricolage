@@ -632,6 +632,31 @@ div.autocomplete ul li {
 
 #new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }
 
+.adminBox .tabs {
+  background: #F5F5E6 url("/media/images/horizline.gif") bottom left repeat-x;
+}
+.adminBox .tab { float: left; }
+.adminBox .tab a {
+  display: block;
+  float: left;
+  text-decoration: none;
+  padding: 6px 10px;
+}
+.adminBox .tab.selected {
+  background: white url("/media/images/box_tab_left.gif") bottom left no-repeat;
+  font-weight: bold;
+}
+.adminBox .tab.selected.first {
+  background-image: none;
+}
+.adminBox .tab.selected.first a {
+  padding-left: 10px;
+}
+.adminBox .tab.selected a {
+  background: url("/media/images/box_tab_right.gif") bottom right no-repeat;
+  padding: 6px 14px;
+}
+
 /******************************************************
  * DIFFS                                              *
  ******************************************************/

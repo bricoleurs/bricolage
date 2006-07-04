@@ -1010,6 +1010,36 @@ function addKeyword(parent, value) {
     }
 }
 
+var Tabs = Class.create();
+Tabs.prototype = {
+    initialize: function(tabGroup, pageGroup) {
+        this.tabs = document.getElementsByClassName('tab', $(tabGroup));
+        this.pages = document.getElementsByClassName('page', $(pageGroup));
+        
+        var selected = this.tabs.first();
+        this.tabs.each(function(tab) {
+          Element.removeClassName(tab, "first");
+          if (Element.hasClassName(tab, "selected")) selected = tab;
+        })
+        Element.addClassName(this.tabs.first(), "first");
+        
+        // Select the first tab by default
+        this.switchTab(selected);
+    },
+    
+    switchTab: function(newTab) {
+        this.tabs.each(function(tab) {
+            if (tab.id == newTab.id) {
+                Element.addClassName(tab, "selected");
+                Element.show(tab.id + "_page");
+            } else {
+                Element.removeClassName(tab, "selected");
+                Element.hide(tab.id + "_page");
+            }
+        });
+    }
+};
+
 Abstract.ListManager = function() {};
 Abstract.ListManager.prototype = {
     setOptions: function(options) {

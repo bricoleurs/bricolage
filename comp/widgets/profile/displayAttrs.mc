@@ -1,8 +1,3 @@
-% if ($usePosition) {
-<script>
-var selectOrderNames = new Array("attr_pos")
-</script>
-% }
 <%args>
 $attr
 $usePosition => 1
@@ -44,14 +39,15 @@ foreach my $attr (@$attr) {
         }
         $props->{vals} = $val_prop;
     }
-
+    
     # Assemble the vals argument.
     my $vals = {
         value => $attr->{value},
         props => $props,
     };
 
-    $m->out(qq{<li id="attr_$attr->{name}" class="element clearboth"><h3 class="name">\n});
+    (my $attr_name = $attr->{name}) =~ s/\s|\|/_/g; # Replace spaces and pipes with underscores
+    $m->out(qq{<li id="attr_$attr_name" class="element clearboth"><h3 class="name">\n});
 
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
@@ -90,7 +86,7 @@ foreach my $attr (@$attr) {
         $m->comp(
             '/widgets/profile/button.mc',
             disp      => $lang->maketext("Delete"),
-            name      => 'delete_' . $attr->{name},
+            name      => 'delete_' . $attr_name,
             button    => 'delete_red',
             js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs'); } return false"],
             useTable  => 0
