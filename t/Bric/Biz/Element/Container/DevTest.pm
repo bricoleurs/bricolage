@@ -62,8 +62,7 @@ sub test_new : Test(11) {
     }), 'Lookup Container');
     isa_ok $lkup, $self->class;
 
-    # NOTE: The deck is is the position 1. Not 2
-    is ($lkup->get_value('deck', 1), 'Chomp',   'Compare Value');
+    is ($lkup->get_value('deck', 2), 'Chomp',   'Compare Value');
 
     ok (my $list = $self->class->list({object_type => 'story'}),
         'List Story Containers');
@@ -119,8 +118,6 @@ sub test_list : Test(188) {
     my $para       = $self->{para};
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
-    my $by         = $self->{by};
-    my $date       = $self->{date};
     my @story_ids;
 
     for my $i (1..5) {
@@ -175,9 +172,6 @@ sub test_list : Test(188) {
 
         # Add a pull quote.
         ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-        ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-        ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
-        ok $pq->add_field($date), "Add the quote date";
         ok $pq->get_field('para')->set_value(
             "Ask not what your country can do for you.\n="
                 . 'Ask what you can do for your country.'
@@ -189,9 +183,6 @@ sub test_list : Test(188) {
 
         # Add another pull quote.
         ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
-        ok $pq2->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-        ok $pq2->add_field($by, 'By for the quote'), "Add the quote by";
-        ok $pq2->add_field($date), "Add the quote date";
         ok $pq2->get_field('para')->set_value(
             "So, first of all, let me assert my firm belief that the only\n\n"
             . '=thing we have to fear is fear itself -- nameless, unreasoning, '
@@ -302,8 +293,6 @@ sub test_pod : Test(237) {
     my $pull_quote = $self->{pull_quote};
     my $head       = $self->{head};
     my $media_type = $self->{media_type};
-    my $by         = $self->{by};
-    my $date       = $self->{date};
 
     # Now it's time to create a story!
     ok my $story = Bric::Biz::Asset::Business::Story->new({
@@ -332,9 +321,6 @@ sub test_pod : Test(237) {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
-    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_value(
         "Ask not what your country can do for you.\n="
           . 'Ask what you can do for your country.'
@@ -360,9 +346,6 @@ sub test_pod : Test(237) {
 
     # Add another pull quote.
     ok my $pq2 = $elem->add_container($pull_quote), "Add another pull quote";
-    ok $pq2->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-    ok $pq2->add_field($by, 'By for the quote'), "Add the quote by";
-    ok $pq2->add_field($date), "Add the quote date";
     ok $pq2->get_field('para')->set_value(
         "So, first of all, let me assert my firm belief that the only\n\n"
         . '=thing we have to fear is fear itself -- nameless, unreasoning, '

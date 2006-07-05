@@ -569,9 +569,6 @@ sub subclass_burn_test {
 
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
-    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
-    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_data(
         'Ask not what your country can do for you. '
           . 'Ask what you can do for your country.'
@@ -597,9 +594,6 @@ sub subclass_burn_test {
 
     # Add another pull quote.
     ok $pq = $elem->add_container($pull_quote), "Add another pull quote";
-    ok $pq->add_field($para, 'Paragraph for the quote'), "Add the quote paragraph";
-    ok $pq->add_field($by, 'By for the quote'), "Add the quote by";
-    ok $pq->add_field($date), "Add the quote date";
     ok $pq->get_field('para')->set_data(
         'So, first of all, let me assert my firm belief that the only '
         . 'thing we have to fear is fear itself -- nameless, unreasoning, '

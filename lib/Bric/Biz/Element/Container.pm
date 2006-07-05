@@ -294,8 +294,8 @@ sub new {
         #}
         # Yes, I'm having trouble making this idiomatic (I am trying though)
         # ($self->add_field($ft) for 1..$ft->get_min_occurrence) unless !$ft->get_min_occurrence;
-        if (!$ft->get_min_occurrence) {
-            $self->add_field($ft) for 1..$ft->get_min_occurrence;
+        if (my $min = $ft->get_min_occurrence) {
+            $self->add_field($ft) for 1..$min;
         }
     }
 
