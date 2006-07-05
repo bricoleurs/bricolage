@@ -11,9 +11,9 @@ $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
 # Set variables for mysql
-$DB->{exec} .= "-h $DB->{host_name} "
+$DB->{exec} .= " -h $DB->{host_name} "
     if $DB->{host_name} && $DB->{host_name} ne 'localhost';
-$DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
+$DB->{exec} .= " -P $DB->{host_port} " if $DB->{host_port} ne '';
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 #END { unlink $ERR_FILE }
 
@@ -66,7 +66,6 @@ sub exec_sql {
         $exec .= " -D $db" if $db;
         $exec .= " -P format=unaligned -P pager= -P footer=";
         $exec .= " < $file " if !$sql;
-#        print $exec."\n";
         @$res = `$exec`;
         # Shift off the column headers.
         shift @$res;
@@ -75,7 +74,6 @@ sub exec_sql {
         $exec .= qq{ -e "$sql" } if $sql;
         $exec .= " -D $db " if $db;
         $exec .= " < $file " if !$sql;
-#        print $exec."\n";
         system($exec) or return;
     }
 

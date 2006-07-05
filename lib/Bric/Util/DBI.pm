@@ -80,12 +80,13 @@ use strict;
 # DBI Error Handling.
 ##############################################################################
 use Bric::Config qw(:dbi);
-if (DBD_TYPE eq "Pg") {
-    use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
+
+BEGIN {
+    eval "require Bric::Util::DBD::".DBD_TYPE;
+    die $@ if $@;
+    ('Bric::Util::DBD::'.DBD_TYPE)->import(qw(:all));
 }
-if (DBD_TYPE eq "mysql") {
-    use Bric::Util::DBD::mysql qw(:all); # Required for our DB platform.    
-}
+
 use Bric::Util::Fault qw(throw_da);
 use DBI qw(looks_like_number);
 use Time::HiRes qw(gettimeofday);

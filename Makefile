@@ -35,8 +35,14 @@ BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib
 all 		: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf build_done
 
+# This scans for dbprobe_*.pl files and passes them to required.pl to let
+# the user choose the database he wants (database names should conform to
+# DBD:: package name, ex: dbprobe_Pg for PostgresSQL)
+
+DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
+
 required.db	: inst/required.pl
-	$(PERL) inst/required.pl $(INSTALL_VERBOSITY)
+	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES)
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 	$(PERL) inst/modules.pl $(INSTALL_VERBOSITY)
@@ -44,14 +50,8 @@ modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 apache.db	: inst/apache.pl required.db
 	$(PERL) inst/apache.pl $(INSTALL_VERBOSITY)
 
-# This scans for dbprobe_*.pl files and passes them to database.pl to let
-# the user choose the database he wants (database names should conform to
-# DBD:: package name, ex: dbprobe_Pg for PostgresSQL)
-
-DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
-
 database.db 	: inst/database.pl  required.db $(DATABASE_PROBES)
-	$(PERL) inst/database.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES)
+	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
 
 config.db	: inst/config.pl required.db apache.db database.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
@@ -203,7 +203,7 @@ db    		: inst/db.pl database.db $(DBLOAD_FILES)
 	$(PERL) inst/db.pl
 
 DBGRANT_FILES := $(shell find inst -name 'dbgrant_*.sql')
-db_grant	: inst/db.pl database.db $(DBGRANT_FILES)
+db_grant	: inst/dbgrant.pl database.db $(DBGRANT_FILES)
 	$(PERL) inst/dbgrant.pl 
 
 done		: bconf/bricolage.conf db files bin lib cpan

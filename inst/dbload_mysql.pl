@@ -166,7 +166,7 @@ sub create_user {
 
 # load schema and data into database
 sub load_db {
-    my $db_file = $DB->{DBSQL} || catfile('inst', "$DB->{db}.sql");
+    my $db_file = $DB->{DBSQL} || catfile('inst', "$DB->{db_type}.sql");
     unless (-e $db_file and -s _) {
         my $errmsg = "Missing or empty $db_file!\n\n"
           . "If you're using Subversion, you need to `make dist` first.\n"
