@@ -94,6 +94,7 @@ if (CHECK_PROCESS_SIZE) {
     # see Apache::SizeLimit manpage
     require Apache::SizeLimit;
 
+    # XXX These globals are deprecated in Apache::SizeLimit 0.9.
     # apache child processes larger than this size will be killed
     $Apache::SizeLimit::MAX_PROCESS_SIZE	= MAX_PROCESS_SIZE;
 
