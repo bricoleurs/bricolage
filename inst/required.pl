@@ -2,7 +2,8 @@
 
 =head1 NAME
 
-required.pl - installation script to probe for required software
+required.pl - installation script to probe for required software and 
+select database type
 
 =head1 VERSION
 
@@ -54,30 +55,42 @@ use Config;
 
 our %REQ;
 our %RESULTS;
+our %DBPROBES;
 
 # check to see whether we should ask questions or not
 our $QUIET;
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+shift if $QUIET or $ARGV[0] eq 'STANDARD';
 
 # collect data - configuration requirements data goes into %REQ, raw
 # binary pass/fail goes into %RESULTS.
 
+print "\n\n==> Selecting Database <==\n\n";
+
+# setup some defaults
+$REQ{DB_TYPE}   = get_default("DB_TYPE") || 'Pg';
+
+get_probes();
+get_database();
+
+print "\n\n==> Finished Selecting Database <==\n\n";
+
 print "\n\n==> Probing Required Software <==\n\n";
 
 # run tests
-$RESULTS{PG}      = find_pg();
-$RESULTS{MY}      = find_mysql();
+$RESULTS{PG}      = find_pg() if $REQ{DB_TYPE} eq "Pg";
+$RESULTS{MYSQL}   = find_mysql() if $REQ{DB_TYPE} eq "mysql";
 $RESULTS{APACHE}  = find_apache();
 $RESULTS{EXPAT}   = find_expat();
 
 # print error message and fail if something not found
-unless (($RESULTS{PG} or $RESULTS{MY}) and $RESULTS{APACHE} and
+unless (($RESULTS{PG} or $RESULTS{MYSQL}) and $RESULTS{APACHE} and
         $RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
             $RESULTS{PG}     ? "" :
             "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
-            $RESULTS{MY}     ? "" :
-            "\tMySQL >= 5.0.0 (http://mysql.com)\n",	    
+            $RESULTS{MYSQL}     ? "" :
+            "\tMySQL client >= 4.1.0 (http://mysql.com)\n",	    
             $RESULTS{APACHE} ? "" :
             "\tApache >= 1.3.12    (http://apache.org)\n",
             $RESULTS{EXPAT}  ? "" :
@@ -161,7 +174,7 @@ sub find_mysql {
     if ($REQ{MYSQL_CONFIG}) {
         print "Found MySQL's mysql_config at '$REQ{MYSQL_CONFIG}'.\n";
         unless (ask_yesno("Is this correct?", 1, $QUIET)) {
-            ask_confirm("Enter path to mysql_config", \$REQ{PG_CONFIG});
+            ask_confirm("Enter path to mysql_config", \$REQ{MYSQL_CONFIG});
         }
     } else {
         print "Failed to find mysql_config.\n";
@@ -287,3 +300,33 @@ sub find_expat {
 
     return 1;
 }
+
+sub get_probes {
+    my $temp1;
+    my $temp2;
+    while (@ARGV) {
+        $temp1=$temp2=shift @ARGV;
+        $temp1=~s/inst\/dbprobe_//;
+        $temp1=~s/.pl//;
+        $DBPROBES{$temp1}=$temp2;
+    }
+}
+
+# ask the user to choose a database
+sub get_database {
+    my $dbstring;
+    $dbstring=join(', ',keys(%DBPROBES));
+    print "\n";
+    ask_confirm("Database ($dbstring): ", \$REQ{DB_TYPE}, $QUIET);
+}
+
+
+
+
+
+
+
+
+
+
+

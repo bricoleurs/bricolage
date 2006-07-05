@@ -48,7 +48,11 @@ my $passwordsize = 10;
 my @alphanumeric = ('a'..'z', 'A'..'Z', 0..9);
 my $randpassword = join '', map $alphanumeric[rand @alphanumeric], 0..$passwordsize;
 
+our $REQ;
+do "./required.db" or die "Failed to read required.db : $!";
+
 # setup some defaults
+$DB{db_type} = $REQ->{DB_TYPE};
 $DB{root_user} = get_default("MYSQL_SUPERUSER") || 'root';
 $DB{root_pass} = $ENV{MYSQL_SUPERPASS} || '';
 $DB{sys_user}  = get_default("MYSQL_BRICUSER") || 'bric';
@@ -58,13 +62,8 @@ $DB{host_name} = $ENV{MYSQL_HOSTNAME} || '';
 $DB{host_port} = $ENV{MYSQL_HOSTPASS} || '';
 $DB{version} = '';
 
-our $REQ;
 
-do "./required.db" or die "Failed to read required.db : $!";
-do "./database.db" or die "Failed to read database.db : $!";
 
-get_include_dir();
-get_lib_dir();
 get_bin_dir();
 get_mysql();
 get_version();
@@ -79,29 +78,6 @@ close OUT;
 
 print "\n\n==> Finished Probing MySQL Configuration <==\n\n";
 exit 0;
-
-
-sub get_include_dir {
-    print "Extracting mysql include dir from $REQ->{MYSQL_CONFIG}.\n";
-
-    my $data = `$REQ->{MYSQL_CONFIG} --include`;
-    hard_fail("Unable to extract needed data from $REQ->{MYSQL_CONFIG}.")
-    unless $data;
-    chomp($data);
-    $data =~ s/(\d\.\d(\.\d)?).*/$1/;
-    $DB{include_dir} = $data;
-}
-
-sub get_lib_dir {
-    print "Extracting mysql lib dir from $REQ->{MYSQL_CONFIG}.\n";
-
-    my $data = `$REQ->{MYSQL_CONFIG} --libs`;
-    hard_fail("Unable to extract needed data from $REQ->{MYSQL_CONFIG}.")
-    unless $data;
-    chomp($data);
-    $data =~ s/(\d\.\d(\.\d)?).*/$1/;
-    $DB{lib_dir} = $data;
-}
 
 sub get_bin_dir {
     print "Extracting mysql bin dir from $REQ->{MYSQL_CONFIG}.\n";
@@ -134,7 +110,6 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    ask_confirm("MySql Root Username", \$DB{root_user}, $QUIET);
     ask_password("MySql Root Password (leave empty for no password)",
         \$DB{root_pass}, $QUIET);
 
@@ -180,10 +155,10 @@ sub get_host {
 # ask for host specifics
 sub get_server_version {
     print "\n";
-    my $cmd = "$DB{exec} -u $DB{root_user}";
-    $cmd .= "-p$DB{root_pass}" if $DB{root_pass};
-    $cmd .= "-h $DB{host_name}" if $DB{host_name};
-    $cmd .= "-P $DB{host_port}" if $DB{host_port};
+    my $cmd = "$DB{exec} -u $DB{root_user} ";
+    $cmd .= "-p$DB{root_pass} " if $DB{root_pass};
+    $cmd .= "-h $DB{host_name} " if $DB{host_name};
+    $cmd .= "-P $DB{host_port} " if $DB{host_port};
     my $data = `$cmd -e status | grep 'Server version:'`;
     hard_fail("Could not connect to database server")
       unless $data;

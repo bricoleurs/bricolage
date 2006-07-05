@@ -88,7 +88,7 @@ sub create_bricolage_conf {
     set_bric_conf_var(\$conf, SSL_CERTIFICATE_KEY_FILE  => $AP->{ssl_key});
     set_bric_conf_var(\$conf, SYS_USER        => $AP->{user});
     set_bric_conf_var(\$conf, SYS_GROUP       => $AP->{group});
-    set_bric_conf_var(\$conf, DB         => $DB->{db});    
+    set_bric_conf_var(\$conf, DB_TYPE         => $DB->{db_type});    
     set_bric_conf_var(\$conf, DB_NAME         => $DB->{db_name});
     set_bric_conf_var(\$conf, DBI_USER        => $DB->{sys_user});
     set_bric_conf_var(\$conf, DBI_PASS        => $DB->{sys_pass});

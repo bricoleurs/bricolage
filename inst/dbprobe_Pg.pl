@@ -48,7 +48,11 @@ my $passwordsize = 10;
 my @alphanumeric = ('a'..'z', 'A'..'Z', 0..9);
 my $randpassword = join '', map $alphanumeric[rand @alphanumeric], 0..$passwordsize;
 
+our $REQ;
+do "./required.db" or die "Failed to read required.db : $!";
+
 # setup some defaults
+$DB{db_type}  = $REQ->{DB_TYPE};
 $DB{root_user} = get_default("POSTGRES_SUPERUSER") || 'postgres';
 $DB{root_pass} = $ENV{POSTGRES_SUPERPASS} || '';
 $DB{sys_user}  = get_default("POSTGRES_BRICUSER") || 'bric';
@@ -58,10 +62,7 @@ $DB{host_name} = $ENV{POSTGRES_HOSTNAME} || '';
 $DB{host_port} = $ENV{POSTGRES_HOSTPASS} || '';
 $DB{version} = '';
 
-our $REQ;
 
-do "./required.db" or die "Failed to read required.db : $!";
-do "./database.db" or die "Failed to read database.db : $!";
 
 get_include_dir();
 get_lib_dir();

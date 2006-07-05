@@ -76,7 +76,7 @@ MYSQL_DB          = bric
 
 # Default database to use
 
-DATABASE          = Pg
+DB_TYPE          = Pg
 
 # Installation locations.
 

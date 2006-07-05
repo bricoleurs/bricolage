@@ -37,70 +37,28 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions;
 use Data::Dumper;
 
-# check whether questions should be asked
-our $QUIET;
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
-shift if $QUIET or $ARGV[0] eq 'STANDARD';
 
-print "\n\n==> Selecting Database <==\n\n";
-
-our %DB;
-our %DBPROBES;
-
-# setup some defaults
-$DB{db}   = get_default("DATABASE") || 'Pg';
-
-our $REQ;
-do "./required.db" or die "Failed to read required.db : $!";
 
 our @MOD;
 our $MOD;
 
+# check whether questions should be asked
+our $QUIET;
+$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 
-get_probes();
-get_database();
-
-
-# all done, dump out apache database, require apropriate DBD:: package
-# announce success, launch apropriate probe script,and exit
-open(OUT, ">database.db") or die "Unable to open database.db : $!";
-print OUT Data::Dumper->Dump([\%DB],['DB']);
-close OUT;
+our $REQ;
+do "./required.db" or die "Failed to read required.db : $!";
 
 set_required_mod();
-
-print "\n\n==> Finished Selecting Database <==\n\n";
-
 run_dbscript();
 
 exit 0;
 
-
-# ask the user to choose a database
-sub get_database {
-    my $dbstring;
-    $dbstring=join(', ',keys(%DBPROBES));
-    print "\n";
-    ask_confirm("Database ($dbstring): ", \$DB{db}, $QUIET);
-}
-
-sub get_probes {
-    my $temp1;
-    my $temp2;
-
-    while (@ARGV) {
-        $temp1=$temp2=shift @ARGV;
-        $temp1=~s/inst\/dbprobe_//;
-        $temp1=~s/.pl//;
-        $DBPROBES{$temp1}=$temp2;
-    }
-}
-
 sub run_dbscript {
-    my $dbscript=$DBPROBES{$DB{db}};
+    my $dbscript="./inst/dbprobe_".$REQ->{DB_TYPE}.".pl";
     $dbscript = $dbscript." ".$QUIET if $QUIET;
     do $dbscript;
-    do $dbscript or die "Failed to launch $DB{db} probing script $dbscript";
+    do $dbscript or die "Failed to launch $REQ->{DB_TYPE} probing script $dbscript";
 }
 
 sub set_required_mod {
@@ -108,7 +66,7 @@ sub set_required_mod {
     for my $i (0 .. $#$MOD) {
 #	print "\ntest=$MOD->[$i]{name}";
 	push @MOD , $MOD->[$i] if !($MOD->[$i]{name}=~/DBD::/);
-	push @MOD , $MOD->[$i] if $MOD->[$i]{name}=~/DBD::$DB{db}/
+	push @MOD , $MOD->[$i] if $MOD->[$i]{name}=~/DBD::$REQ->{DB_TYPE}/
     }
 
     open(OUT, ">modules.db") or die "Unable to open modules.db : $!";

@@ -75,8 +75,8 @@ use constant DBH_ATTR => ( );
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
-our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING DBH_ATTR 
-		    TRANSACTIONAL);
+our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING 
+		    db_datetime DBH_ATTR TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
@@ -97,6 +97,26 @@ sub next_key_sql {
 #    my ($table_name, $db_name) = @_;
     return 'NULL';
 } # next_key()
+
+##############################################################################
+
+sub db_datetime {
+    my $date = shift;
+    my $dt = eval {
+        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?$/;
+        DateTime->new( year      => $1,
+                       month     => $2,
+                       day       => $3,
+                       hour      => $4,
+                       minute    => $5,
+                       second    => $6,
+                       time_zone => 'UTC',
+                       nanosecond => $7 ? $7 * 1.0E9 : 0
+                   );
+    };
+    throw_dp "Unable to parse date: $@" if $@;
+    return $dt;
+}
 
 ##############################################################################
 sub db_date_parts {
