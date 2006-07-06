@@ -985,28 +985,69 @@ document.getParentByTagName = function(element, tagName) {
     return element;
 }
 
-function addKeyword(parent, value) {
-    parent = $(parent);
+// Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
+function fixSafariKeypressBug(e) {
+  if(navigator.appVersion.indexOf('AppleWebKit')>0 && e.keyCode == 13) {
+      var element = Event.element(e);
+      element.setSelectionRange(element.value.length, element.value.length);
+      return false;
+  }
+  return true;
+}
+
+var FastAdd = Class.create();
+FastAdd.prototype = {
+    initialize: function(type, options) {
+        this.options = Object.extend({
+            autocomplete: true
+        }, options || {});
+        this.type = type;
+        this.list = $('fast-add-' + type);
+        
+        if (this.options.autocomplete) this.initializeAutocompleter();
+    },
     
-    var span = Builder.node("span", { className: 'keyword' }, [
-        Builder.node("input", { type: 'hidden', name: 'new_keyword', value: value }),
-        Builder.node("span", { className: 'value' }, value),
-        " (",
-        Builder.node("a", { href: "#", onclick: "Element.remove(this.parentNode); return false" }, 'remove'),
-        "), "
-    ]);
+    initializeAutocompleter: function() {
+        this.autocompleter = new Ajax.Autocompleter(
+          'add_' + this.type, 
+          'add_' + this.type + '_autocomplete', 
+          '/widgets/story_prof/autocomplete_keywords.html', 
+          { parameters: Form.serialize(this.list) }
+        );
+        $('add_' + this.type).onkeypress = fixSafariKeypressBug;
+    },
     
-    var placed = false;
-    $A(document.getElementsByClassName('value', parent)).each(function(sibling) {
-        if (placed) return;
-        if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
-            parent.insertBefore(span, sibling.parentNode);
-            placed = true;
+    add: function(element) {
+        value = $F(element);
+
+        var item = Builder.node("li", { className: 'keyword' }, [
+            Builder.node("input", { type: 'hidden', name: 'new_' + this.type, value: value }),
+            Builder.node("span", { className: 'value' }, value),
+            " (",
+            Builder.node("a", { href: "#", onclick: "fastadd" + this.type + ".remove(this.parentNode); return false" }, 'remove'),
+            ")"
+        ]);
+
+        var placed = false;
+        $A(document.getElementsByClassName('value', this.list)).each((function(sibling) {
+            if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
+                this.list.insertBefore(item, sibling.parentNode);
+                placed = true;
+                throw $break;
+            }
+        }).bind(this));
+
+        if (!placed) {
+            this.list.appendChild(item);
         }
-    });
+        
+        $(element).value = '';
+        this.initializeAutocompleter();
+    },
     
-    if (!placed) {
-        parent.insertBefore(span, parent.firstChild);
+    remove: function(element) {
+        Element.remove(element);
+        this.initializeAutocompleter();
     }
 }
 

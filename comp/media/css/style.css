@@ -629,6 +629,7 @@ div.autocomplete ul li {
   padding: 2px 4px;
   cursor: pointer;
 }
+div.autocomplete span.highlight { font-weight: bold; }
 
 #new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }
 
