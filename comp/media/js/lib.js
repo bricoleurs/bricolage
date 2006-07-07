@@ -995,14 +995,28 @@ function fixSafariKeypressBug(e) {
   return true;
 }
 
+/*
+ * Handles the fast_add.mc widget, for adding multiple items such as keywords
+ * quickly.
+ *
+ * Options:
+ *  - autocomplete: determines whether an AJAX request will be made to list
+ *        existing options for the user to choose from. 
+ *        (default: true)
+ *  - uri: the URI of the page that will return the autocompletion list
+ *  - list: the ID or DOM object of the container list to which the new objects
+ *        will be added (default: 'fast-add-$type')
+ */
 var FastAdd = Class.create();
 FastAdd.prototype = {
     initialize: function(type, options) {
         this.options = Object.extend({
-            autocomplete: true
+            autocomplete: true,
+            uri: '/widgets/profile/fast_add/autocomplete_' + type + '.html',
+            list: 'fast-add-' + type
         }, options || {});
         this.type = type;
-        this.list = $('fast-add-' + type);
+        this.list = $(this.options.list);
         
         if (this.options.autocomplete) this.initializeAutocompleter();
     },
@@ -1011,7 +1025,7 @@ FastAdd.prototype = {
         this.autocompleter = new Ajax.Autocompleter(
           'add_' + this.type, 
           'add_' + this.type + '_autocomplete', 
-          '/widgets/story_prof/autocomplete_keywords.html', 
+          this.options.uri, 
           { parameters: Form.serialize(this.list) }
         );
         $('add_' + this.type).onkeypress = fixSafariKeypressBug;
@@ -1042,12 +1056,12 @@ FastAdd.prototype = {
         }
         
         $(element).value = '';
-        this.initializeAutocompleter();
+        if (this.options.autocomplete) this.initializeAutocompleter();
     },
     
     remove: function(element) {
         Element.remove(element);
-        this.initializeAutocompleter();
+        if (this.options.autocomplete) this.initializeAutocompleter();
     }
 }
 
