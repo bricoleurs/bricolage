@@ -59,7 +59,7 @@ sub save : Callback {
             $set->($ed, defined $param->{$f} ? 1 : 0);
         };
 
-        for my $f (qw(max_length rows cols length precision)) {
+        for my $f (qw(max_length rows cols length precision min_occurrence max_occurrence)) {
             $set_meta_number->($ed, $f, $param);
         }
 
@@ -82,9 +82,9 @@ sub save : Callback {
         }
         
         # The occurrence specs are string variables
-        for my $f (qw(min_occurrence max_occurrence)) {
-            $set_meta_string->($ed, $f, $param);
-        }
+        #for my $f (qw(min_occurrence max_occurrence)) {
+        #    $set_meta_string->($ed, $f, $param);
+        #}
 
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
         log_event("$type\_save", $ed);

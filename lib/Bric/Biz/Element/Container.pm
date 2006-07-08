@@ -2322,7 +2322,7 @@ sub _deserialize_pod {
                     || _bad_field(\%field_types, $kn, $line_num);
                 my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
-                if ($field_ord{$kn} && (($field_occurrence > $max_occur) && $max_occur)) {
+                if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears $field_occurrence }
                                   . qq{times around line $line_num.}
