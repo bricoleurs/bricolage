@@ -350,8 +350,8 @@ if (!$no_edit && defined $id) {
         numFields     => $num_fields,
         num           => ++$num,
         caption       => 'Add New Field',
-        useRequired   => 1,
-        useQuantifier => 1
+        useMinOccur   => 1,
+        useMaxOccur   => 1
     );
 } else {
     # Add the buttons.

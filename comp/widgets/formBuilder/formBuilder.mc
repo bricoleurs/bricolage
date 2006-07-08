@@ -62,8 +62,8 @@ $num                    => 2
 $caption                => "Create new data field"
 # $useRequired            => 0
 # $useQuantifier          => 0
-$useMinOccur            => 1
-$useMaxOccur            => 1
+$useMinOccur            => 0
+$useMaxOccur            => 0
 $stay                   => undef
 </%args>
 <%init>;
