@@ -937,12 +937,12 @@ C<mod_perl>.
 
 =cut
 
-unless (MOD_PERL) {
+#unless (MOD_PERL) {
     $SIG{__DIE__} = \&throw_gen;
     $SIG{__WARN__} = sub {
         print STDERR Bric::Util::Fault::Exception::GEN->new(error => shift)
     };
-}
+#}
 
 ##############################################################################
 
