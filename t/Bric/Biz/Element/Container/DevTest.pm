@@ -110,8 +110,77 @@ sub test_lookup : Test(36) {
 }
 
 ##############################################################################
+# Test field occurrence.
+sub test_occurrence : Test(54) {
+    my $self       = shift->create_element_types;
+    my $class      = $self->class;
+    my $story_type = $self->{story_type};
+    my $para       = $self->{para};
+    my $head       = $self->{head};
+    my @story_ids;
+
+    ok my $story = Bric::Biz::Asset::Business::Story->new({
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => "This is a test story",
+        slug            => "test_field_occurrence"
+    }), "Create a test story.";
+
+    ok $story->add_categories([1]), "Add it to the root category";
+    ok $story->set_primary_category(1),
+        "Make the root category the primary category";
+    ok $story->set_cover_date('2005-03-22 21:07:56'), "Set the cover date";
+    ok $story->checkin, "Check in the story";
+    ok $story->save, "Save the story";
+    $self->add_del_ids($story->get_id, 'story');
+    push @story_ids, $story->get_id;
+
+    # Add some content to it.
+    ok my $elem = $story->get_element, "Get the story element";
+
+    ok $elem->add_field($para, 'This is a paragraph'), "Add a paragraph";
+    ok $elem->add_field($para, 'Second paragraph'), "Add another paragraph";
+    ok $elem->add_field($head, "And then..."), "Add a header";
+    ok $elem->add_field($para, 'Third paragraph'), "Add a third paragraph";
+
+    # Make it so
+    ok $elem->save, "Saving the element.";
+
+    # Make sure there are 3 paragraphs
+    ok my @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 3, "Should have three paragraphs.";
+
+    # Try to limit it to 4 now
+    ok my $para_type = $elem->get_element_type->get_field_types('para'), 'Get the field type';
+    ok $para_type->set_max_occurrence(4), 'Set the max occurrence to four';
+    ok $para_type->save, 'Save the field';
+
+    # Paragraph should be in the possible fields (one more left)
+    ok my @field_types = $elem->get_possible_field_types, 'Get the possible fields';
+    is scalar @field_types, 2, "Should be able to add a paragraph or header";
+
+    # Add another now
+    ok $elem->add_field($para, 'Fourth paragraph'), "Add a fourth paragraph";
+    ok $elem->save, 'Save the field';
+    ok @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 4, "Should have four paragraphs.";
+
+    # Now check the possible fields
+    ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
+    is scalar @field_types, 1, "Should only be able to add a header";
+
+    # Clean up
+    ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
+    ok $para_type->save, 'Save the field';
+    ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
+    is scalar @field_types, 2, "Make sure we can add both again.";
+}
+
+##############################################################################
 # Test list.
-sub test_list : Test(188) {
+sub test_list : Test(159) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -130,19 +199,6 @@ sub test_list : Test(188) {
             title           => "This is Test $i",
             slug            => "test_list$i"
         }), "Create test story $i";
-
-
-##############################
-
-
-#
-#ok my @foo_array = $story->get_elements, "### DEBUG ###";
-#for my $foo_elem (@foo_array) {
-#	is scalar 2, 2, 'Element: ' . $foo_elem->get_element_name;
-#	is scalar 2, 2, 'Max/Min: ' . ($foo_elem->get_field_type)->get_max_occurrence . '/' . ($foo_elem->get_field_type)->get_min_occurrence;
-#}
-
-##############################
 
 
         ok $story->add_categories([1]), "Add it to the root category";
@@ -195,6 +251,7 @@ sub test_list : Test(188) {
         object_type => 'story',
         parent_id   => undef
     }), 'List story elements by object type';
+
     is scalar @elems, 5, 'There should be five top-level story elements';
     isa_ok $_, $class for @elems;
     my $top = $elems[0];
@@ -209,19 +266,6 @@ sub test_list : Test(188) {
     # Try the elements() method.
     ok @elems = $top->get_elements, 'Get subelements';
     is scalar @elems, 6, 'Should be six subelements';
-
-
-
-##############################
-
-
-#for my $blather (@elems) {
-#	is scalar 2, 2, 'Element: ' . $blather->get_element_name;
-#}
-
-
-##############################
-
 
 
     for my $e ($top->get_containers) {
@@ -278,7 +322,7 @@ sub test_list : Test(188) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(237) {
+sub test_pod : Test(231) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
@@ -661,41 +705,6 @@ sub test_pod : Test(237) {
     ok $para->set_max_occurrence(0), 'Allow repeating for paragarphs again';
     ok $para->save, 'Save paragraph field type';
 
-#################
-#
-# NOTE: I need help with this part. This obviously isn't working to add
-#        a new paragraph. Any suggestions of how to actually hook this up?
-#
-#################
-
-
-    # Try a cap on the fields
-    ok $para->set_max_occurrence(7), 'Limit it to seven fields max';
-    ok $para->save, 'Save paragraph field type';
-
-    ok $elem->add_field($para, 'The 7th paragraph'), "Add the 7th paragraph";
-    ok $elem->save, 'Save the element';
-
-    ok my @fields_arr = $elem->get_elements('para');
-    is scalar @fields_arr, 7, "Number of paragraphs is 7";
-
-    ok $elem->add_field($para, 'The 8th paragraph'), "Add the 8th paragraph";
-    ok $elem->save, 'Save the element';
-
-    ok my @fields_arr = $elem->get_elements('para');
-    is scalar @fields_arr, 7, "Number of paragraphs is still 7";
-
-    # Set things back to normal
-    ok my @fields_arr = $elem->get_elements('para'), "Get the paragraph fields";
-    ok $elem->delete_elements($fields_arr[6]->get_element_data_id), "Remove the last one";
-    ok $elem->delete_elements($fields_arr[5]->get_element_data_id), "Remove the second last one";
-    ok $elem->save, 'Save the element';
-
-    ok $para->set_max_occurrence(0), 'Allow repeating for paragarphs again';
-    ok $para->save, 'Save paragraph field type';
-
-
-    ################################################
 
     # Try a bad tag.
     eval { $elem->update_from_pod("=para\n\nfoo\n\n=foo bar\n\n") };
