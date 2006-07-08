@@ -142,14 +142,6 @@ sub test_list : Test(188) {
 #	is scalar 2, 2, 'Max/Min: ' . ($foo_elem->get_field_type)->get_max_occurrence . '/' . ($foo_elem->get_field_type)->get_min_occurrence;
 #}
 
-#######
-#
-# README
-#
-#   The fields for the quotes are not created by default, so they must
-#    be created before using them in testing.
-
-
 ##############################
 
 
@@ -678,12 +670,29 @@ sub test_pod : Test(237) {
 
 
     # Try a cap on the fields
-#    ok my @fields_arr = $elem->get_element_type->get_field_types('para');
-#    is scalar 2, 2, "DEBUG: Number of elements: " . @fields_arr;
-#    ok $elem->add_field($para, 'Another paragraph'), "Add another paragraph";
-#    ok $elem->save, 'Save the element';
-#    ok my @fields_arr = $elem->get_element_type->get_field_types('para');
-#    is scalar 2, 2, "DEBUG: Number of elements: " . $fields_arr[0]->get_key_name;
+    ok $para->set_max_occurrence(7), 'Limit it to seven fields max';
+    ok $para->save, 'Save paragraph field type';
+
+    ok $elem->add_field($para, 'The 7th paragraph'), "Add the 7th paragraph";
+    ok $elem->save, 'Save the element';
+
+    ok my @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 7, "Number of paragraphs is 7";
+
+    ok $elem->add_field($para, 'The 8th paragraph'), "Add the 8th paragraph";
+    ok $elem->save, 'Save the element';
+
+    ok my @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 7, "Number of paragraphs is still 7";
+
+    # Set things back to normal
+    ok my @fields_arr = $elem->get_elements('para'), "Get the paragraph fields";
+    ok $elem->delete_elements($fields_arr[6]->get_element_data_id), "Remove the last one";
+    ok $elem->delete_elements($fields_arr[5]->get_element_data_id), "Remove the second last one";
+    ok $elem->save, 'Save the element';
+
+    ok $para->set_max_occurrence(0), 'Allow repeating for paragarphs again';
+    ok $para->save, 'Save paragraph field type';
 
 
     ################################################
