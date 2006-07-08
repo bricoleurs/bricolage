@@ -918,21 +918,18 @@ sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
     my $field_type = $self->get_element_type->get_field_types('para');
-    if (($self->get_occurrence($field_type->get_key_name) < $field_type->get_max_occurrence) ||
-        !$field_type->get_max_occurrence) {
-        my $field = Bric::Biz::Element::Field->new({
-            active             => 1,
-            object_type        => $self->_get('object_type'),
-            object_instance_id => $self->_get('object_instance_id'),
-            field_type         => $atd,
-        });
+    my $field = Bric::Biz::Element::Field->new({
+        active             => 1,
+        object_type        => $self->_get('object_type'),
+        object_instance_id => $self->_get('object_instance_id'),
+        field_type         => $atd,
+    });
 
-        $field->set_value($data) if defined $data;
-        $self->add_element($field);
+    $field->set_value($data) if defined $data;
+    $self->add_element($field);
 
-        # have to do this after add_element() since add_element() modifies place
-        $field->set_place($place) if defined $place;
-    }
+    # have to do this after add_element() since add_element() modifies place
+    $field->set_place($place) if defined $place;
     return $self;
 }
 
