@@ -2009,12 +2009,10 @@ sub _podify {
                  .  "$indent=end $kn\n\n";
         } else {
             my $kn = $sub->get_key_name;
-            if (my $data = $sub->get_value) {
-                $data =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
-                $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
-                $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
-                $pod .= "$indent$data\n\n";
-            }
+            (my $data = $sub->get_value) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
+            $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
+            $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
+            $pod .= "$indent$data\n\n";
         }
     }
     return $pod;
