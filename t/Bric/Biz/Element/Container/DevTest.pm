@@ -180,7 +180,7 @@ sub test_occurrence : Test(54) {
 
 ##############################################################################
 # Test list.
-sub test_list : Test(159) {
+sub test_list : Test(158) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -673,14 +673,16 @@ sub test_pod : Test(231) {
     ok $err = $@, 'Catch non-repeatable field exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
-        'Non-repeatable field "by" appears more than once beginning at '
-      . 'line 7. Please remove all but one.',
+        'Field "by" appears 1 times around line 7.'
+      . 'Please remove all but 1.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Non-repeatable field "[_1]" appears more than once beginning at '
-      . 'line [_2]. Please remove all but one.',
+        'Field "[_1]" appears [_2] times around line [_3].'
+      . 'Please remove all but [_4].',
         'by',
+        1,
         7,
+        1,
     ], 'Should get the correct maketext array';
 
     # Try repeating a default field not allowed to be repeated.
@@ -691,14 +693,16 @@ sub test_pod : Test(231) {
     ok $err = $@, 'Catch non-repeatable default field exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
-        'Non-repeatable field "para" appears more than once beginning at '
-      . 'line 5. Please remove all but one.',
+        'Field "para" appears 6 times around line 5.'
+      . 'Please remove all but 1.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Non-repeatable field "[_1]" appears more than once beginning at '
-      . 'line [_2]. Please remove all but one.',
+        'Field "[_1]" appears [_2] times around line [_3].'
+      . 'Please remove all but [_4].',
         'para',
+        6,
         5,
+        1,
     ], 'Should get the correct maketext array';
 
     # Allow repeatable paragraphs again.

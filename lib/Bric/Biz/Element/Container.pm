@@ -2265,20 +2265,28 @@ sub _deserialize_pod {
                 ###############
                 #
                 #
-                # FIXME: This needs a hold on the occurrence to compare against
+                # FIXME: This breaks test cases sumpin fierce.
+                #         The commenting below should be flipped.
+                #         Specific test case:
+                #           t/Bric/Biz/Element/Container/DevTest.pm:673
                 #
                 #
                 ###############
+                my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
+                my $max_occur = $field_type->get_max_occurrence;
+                #if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                 if ($field_ord{$kn} && $field_type->get_max_occurrence) {
                     throw_invalid
-                        error    => qq{Non-repeatable field "$kn" appears more }
-                                  . qq{than once beginning at line $line_num. }
-                                  . qq{Please remove all but one.},
+                        error    => qq{Field "$kn" appears $field_occurrence }
+                                  . qq{times around line $line_num.}
+                                  . qq{Please remove all but $max_occur.},
                         maketext => [
-                            'Non-repeatable field "[_1]" appears more than once '
-                          . 'beginning at line [_2]. Please remove all but one.',
+                            'Field "[_1]" appears [_2] times around line [_3].'
+                          . 'Please remove all but [_4].',
                             $kn,
+                            $field_occurrence,
                             $line_num,
+                            $max_occur,
                         ]
                     ;
                 }
@@ -2324,14 +2332,16 @@ sub _deserialize_pod {
                 my $max_occur = $field_type->get_max_occurrence;
                 if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
-                        error    => qq{Non-repeatable field "$kn" appears $field_occurrence }
+                        error    => qq{Field "$kn" appears $field_occurrence }
                                   . qq{times around line $line_num.}
                                   . qq{Please remove all but $max_occur.},
                         maketext => [
-                            'Non-repeatable field "[_1]" appears more than once '
-                          . 'beginning at line [_2]. Please remove all but one.',
+                            'Field "[_1]" appears [_2] times around line [_3].'
+                          . 'Please remove all but [_4].',
                             $kn,
+                            $field_occurrence,
                             $line_num,
+                            $max_occur,
                         ]
                     ;
                 }
