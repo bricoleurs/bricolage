@@ -24,7 +24,7 @@ CREATE TABLE story (
                                       DEFAULT 3
                                         CHECK (priority BETWEEN 1 AND 5),
     source__id        INTEGER         NOT NULL, 
-    usr__id           INTEGER         NOT NULL,
+    usr__id           INTEGER,
     element_type__id  INTEGER         NOT NULL,
     primary_uri       VARCHAR(128),
     first_publish_date TIMESTAMP,
@@ -76,7 +76,7 @@ CREATE TABLE story_uri (
     id        INTEGER     NOT NULL AUTO_INCREMENT,
     story__id INTEGER     NOT NULL,
     site__id INTEGER      NOT NULL,
-    uri       TEXT            NOT NULL,
+    uri       TEXT        NOT NULL,
     CONSTRAINT pk_story_uri__id PRIMARY KEY (id)
 )
     ENGINE            InnoDB
@@ -123,7 +123,7 @@ CREATE TABLE story__category (
 --
 
 CREATE TABLE story__contributor (
-    id                  INTEGER   NOT NULL,
+    id                  INTEGER   AUTO_INCREMENT,
     story_instance__id  INTEGER   NOT NULL,
     member__id          INTEGER   NOT NULL,
     place               INT2      NOT NULL,
@@ -160,8 +160,7 @@ CREATE INDEX idx_story_instance__note ON story_instance(note (254));
 
 -- story_uri
 CREATE INDEX fkx_story__story_uri ON story_uri(story__id);
-CREATE UNIQUE INDEX udx_story_uri__site_id__uri
-ON story_uri(uri(254), site__id);
+CREATE UNIQUE INDEX udx_story_uri__site_id__uri ON story_uri(uri (254), site__id);
 
 -- story__category
 CREATE UNIQUE INDEX udx_story_category__story__cat ON story__category(story_instance__id, category__id);

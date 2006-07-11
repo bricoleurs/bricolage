@@ -787,6 +787,10 @@ sub build_query {
       $grp_by
       $order\n};
 
+    # LIMIT OFFSET compatibility measure for MySQL
+    $limit = "18446744073709551615"
+        if (!$limit and $offset);
+
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
     return \$sql;

@@ -19,7 +19,7 @@
 
 CREATE TABLE element_type  (
     id              INTEGER        NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(64)    NOT NULL,
+    name            VARCHAR(64)    NOT NULL COLLATE utf8_bin,
     key_name        VARCHAR(64)    NOT NULL,
     description     VARCHAR(256),
     top_level       BOOLEAN        NOT NULL DEFAULT FALSE,

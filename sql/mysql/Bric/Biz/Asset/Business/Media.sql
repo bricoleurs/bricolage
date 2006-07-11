@@ -24,7 +24,7 @@ CREATE TABLE media (
     source__id        INTEGER   NOT NULL,
     current_version   INTEGER,
     published_version INTEGER,
-    usr__id           INTEGER   NOT NULL,
+    usr__id           INTEGER,
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
     expire_date       TIMESTAMP,
@@ -179,8 +179,7 @@ CREATE INDEX idx_media_instance__note ON media_instance(note(254)) ;
 
 -- media_uri
 CREATE INDEX fkx_media__media_uri ON media_uri(media__id);
-CREATE UNIQUE INDEX udx_media_uri__site_id__uri
-ON media_uri(uri(254), site__id);
+CREATE UNIQUE INDEX udx_media_uri__site_id__uri ON media_uri(uri (254), site__id);
 
 -- media__output_channel
 CREATE INDEX fkx_media__oc__media ON media__output_channel(media_instance__id);
