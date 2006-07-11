@@ -21,6 +21,12 @@ This document lists the Changes to Bricolage introduced with each release.
 Added pick-a-type dropdown to Job Manager, so you can constrain the jobs
 listed to for example only today's job or only failed jobs. [Scott]
 
+=item *
+
+Added support for the FCKeditor WYSIWYG editor. See
+L<http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
+Technologies. [David]
+
 =back
 
 =head2 Improvements
