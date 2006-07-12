@@ -98,6 +98,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ADMIN_GRP_ID
                     PASSWD_LENGTH
                     PUBLISH_RELATED_ASSETS
+                    PUBLISH_RELATED_FAIL_BEHAVIOR
                     LOGIN_LENGTH
                     ERROR_URI
                     ENABLE_DIST
@@ -176,6 +177,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     WYSIWYG_EDITOR
                     XINHA_PLUGINS
                     XINHA_TOOLBAR
+                    FCKEDITOR_CONFIG
                     HTMLAREA_TOOLBAR
                     ENABLE_GZIP
                     RELATED_DOC_POD_TAG
@@ -241,7 +243,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
-                    pub       => [qw(PUBLISH_RELATED_ASSETS)],
+                    pub       => [qw(PUBLISH_RELATED_ASSETS 
+                                     PUBLISH_RELATED_FAIL_BEHAVIOR)],
                     dist      => [qw(ENABLE_DIST
                                      QUEUE_PUBLISH_JOBS
                                      FTP_UNLINK_BEFORE_MOVE
@@ -273,6 +276,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      WYSIWYG_EDITOR
                                      XINHA_PLUGINS
                                      XINHA_TOOLBAR
+                                     FCKEDITOR_CONFIG
                                      HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],
@@ -396,28 +400,44 @@ require Bric; our $VERSION = Bric->VERSION;
             ($config->{SERVER_WINDOW_NAME} =
              $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
-            # Set default plugins for Xinha
-            $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
+            my $wysiwyg = $config->{ENABLE_WYSIWYG} ? lc $config->{ENABLE_WYSIWYG} : '';
+            if ($wysiwyg && ($wysiwyg eq '1' || $wysiwyg eq 'on' || $wysiwyg eq 'yes')) {
+                my $ed = lc ($config->{WYSIWYG_EDITOR} ||= 'xinha');
 
-            # Set default toolbar for Xinha
-            $config->{XINHA_TOOLBAR} ||= "[['popupeditor','separator']," .
-                                         "['bold','italic','underline'," .
-                                         " 'strikethrough','separator']," .
-                                         "['subscript','superscript'," .
-                                         " 'separator']," .
-                                         "(HTMLArea.is_gecko ? [] : " .
-                                         "  ['cut','copy','paste'])," .
-                                         "['space','undo','redo','separator'],".
-                                         "['createlink','separator']," .
-                                         "['killword','removeformat'," .
-                                         " 'separator','htmlmode']]";
+                if ($ed eq 'xinha') {
+                    # Set default plugins for Xinha
+                    $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
 
-            # Set default toolbar for HtmlArea
-            $config->{HTMLAREA_TOOLBAR} ||= "['bold','italic','underline'," .
-              "'strikethrough','separator','subscript','superscript'," .
-              "'separator','copy','cut','paste','space','undo','redo'," .
-              "'createlink','htmlmode','separator','popupeditor'," .
-              "'separator','showhelp','about']";
+                    # Set default toolbar for Xinha
+                    $config->{XINHA_TOOLBAR}
+                         ||= q{[['popupeditor','separator'],['bold','italic',}
+                           . q{'underline','strikethrough','separator'],}
+                           . q{['subscript','superscript','separator'],}
+                           . q{(HTMLArea.is_gecko ? [] : ['cut','copy','paste']),}
+                           . q{['space','undo','redo','separator'],['createlink',}
+                           . q{'separator'],['killword','removeformat',}
+                           . q{'separator','htmlmode']]};
+
+                } elsif ($ed eq 'xhmlarea') {
+                    # Set default toolbar for HtmlArea
+                    $config->{HTMLAREA_TOOLBAR}
+                        ||= q{[['bold','italic','underline','strikethrough',}
+                          . q{'separator','subscript','superscript','separator',}
+                          . q{'copy','cut','paste','space','undo','redo',}
+                          . q{'createlink','htmlmode','separator','popupeditor',}
+                          . q{'separator','showhelp','about']]};
+
+                } elsif ($ed eq 'fckeditor') {
+                    # Set default toolbar for FCKeditor.
+                    $config->{FCKEDITOR_CONFIG}
+                        ||= q{FCKConfig.ToolbarSets.Default = }
+                          . q{[['Bold','Italic','Underline','StrikeThrough',}
+                          . q{'RemoveFormat','-','Subscript','Superscript'],}
+                          . q{['Cut','Copy','Paste','PasteText','PasteWord','-',}
+                          . q{'Undo','Redo'],['Link','Unlink','Anchor','Source',}
+                          . q{'SpellCheck']];};
+                }
+            }
         }
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR
@@ -559,6 +579,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Publishing Settings.
     use constant PUBLISH_RELATED_ASSETS => $config->{PUBLISH_RELATED_ASSETS};
+    use constant PUBLISH_RELATED_FAIL_BEHAVIOR => $config->{PUBLISH_RELATED_FAIL_BEHAVIOR} || 'warn';
 
     # Mason settings.
     use constant MASON_COMP_ROOT         => PREVIEW_LOCAL && PREVIEW_MASON ?
@@ -653,6 +674,7 @@ require Bric; our $VERSION = Bric->VERSION;
     # WYSIWYG editor settings
     use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
     use constant XINHA_TOOLBAR           => $config->{XINHA_TOOLBAR};
+    use constant FCKEDITOR_CONFIG        => $config->{FCKEDITOR_CONFIG};
     use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
 
     # The minimum login name and password lengths users can enter.

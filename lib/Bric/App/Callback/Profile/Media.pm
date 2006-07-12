@@ -17,7 +17,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:media);
-use Bric::Util::DBI;
+use Bric::Util::DBI qw(:trans);
 use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
@@ -273,12 +273,20 @@ sub checkin : Callback(priority => 6) {
         add_msg('Media "[_1]" saved and checked in to "[_2]".',
                 $media->get_title, $dname);
 
+        # Prevent loss of data due to publish failure.
+        commit(1);
+        begin(1);
+
         # Use the desk callback to save on code duplication.
-        my $pub = Bric::App::Callback::Desk->new
-          ( cb_request => $self->cb_request,
+        my $pub = Bric::App::Callback::Desk->new(
+            cb_request => $self->cb_request,
             apache_req => $self->apache_req,
             params     => { media_pub => { $media->get_version_id => $media } },
-          );
+        );
+
+        # Clear the state out, set redirect, and publish.
+        $self->clear_my_state;
+        $self->set_redirect('/');
         $pub->publish;
 
     } else {
@@ -308,11 +316,11 @@ sub checkin : Callback(priority => 6) {
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
         add_msg('Media "[_1]" saved and moved to "[_2]".',
                 $media->get_title, $dname);
-    }
 
-    # Clear the state out and set redirect.
-    $self->clear_my_state;
-    $self->set_redirect("/");
+        # Clear the state out and set redirect.
+        $self->clear_my_state;
+        $self->set_redirect('/');
+    }
 }
 
 ################################################################################

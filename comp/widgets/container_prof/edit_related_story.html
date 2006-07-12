@@ -1,5 +1,6 @@
 <& '/widgets/search/search.mc',
   object       => 'story',
+  state_key    => 'rel_story',
   type         => 'story',
   field        => 'title',
   use_form_tag => 0 &>
@@ -8,6 +9,7 @@
 <& '/widgets/wrappers/table_top.mc', caption => 'Choose a Related Story' &>
 <& /widgets/listManager/listManager.mc,
    object   => 'story',
+   state_key => 'rel_story',
    sortBy   => 'name',
    select   => undef,
    profile  => $related_profile,
