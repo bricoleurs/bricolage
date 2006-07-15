@@ -917,10 +917,23 @@ B<Notes:> NONE.
 sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
-    #my $field_type = $self->get_element_type->get_field_types('para');
     
-    if ($self->get_occurrence($atd->get_key_name) >= $atd->get_max_occurrence) {
+    if ($atd->get_max_occurrence && $self->get_occurrence($atd->get_key_name) >= $atd->get_max_occurrence) {
+        my $field_name = $atd->get_key_name;
+        my $field_occurrence = $self->get_occurrence($field_name);
+        my $field_max_occur = $atd->get_max_occurrence;
         # Throw an error
+        throw_invalid
+            error    => qq{Field "$field_name" can not be added. There are already currently }
+                      . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
+            maketext => [
+                'Field "[_1]" can not be added. There are already currently'
+              . '[_2] fields of this type, with a max of [_3].',
+                $field_name,
+                $field_occurrence,
+                $field_max_occur,
+            ]
+        ;
     }
     
     my $field = Bric::Biz::Element::Field->new({
