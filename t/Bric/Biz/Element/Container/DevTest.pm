@@ -44,12 +44,16 @@ sub construct {
 ################################################################################
 # Test the constructors
 
-sub test_new : Test(11) {
+sub test_new : Test(15) {
     my $self = shift;
 
     ok (my $cont = $self->construct,          'Construct Container');
     ok (my $at  = $cont->get_element_type,    'Get Element Type Object');
     ok (my $atd = ($at->get_field_types)[0],  'Get Field Type Object');
+
+    ok $atd->set_max_occurrence(2), 'Resetting the max to add another deck';
+    ok $atd->save, 'Save the field';
+
     ok ($cont->add_field($atd, 'Chomp'),      'Add Field Type - ' . $atd->get_name);
     ok ($cont->save,                          'Save Container');
     ok (my $c_id = $cont->get_id,             'Get Container ID');
@@ -67,6 +71,9 @@ sub test_new : Test(11) {
     ok (my $list = $self->class->list({object_type => 'story'}),
         'List Story Containers');
     ok (grep($_->get_id == $cont->get_id, @$list), 'Container is listed');
+
+    ok $atd->set_max_occurrence(1), 'Resetting the max back to 1';
+    ok $atd->save, 'Save the field';
 }
 
 ##############################################################################

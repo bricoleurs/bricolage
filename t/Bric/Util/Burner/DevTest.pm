@@ -342,12 +342,13 @@ sub subclass_burn_test {
     ok $pull_quote->save, "Save the subelement element";
     $self->add_del_ids($pull_quote->get_id, 'element_type');
 
+
     # Give it a paragraph field.
     ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         min_occurrence => 1,
-        max_occurrence => 1,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -389,12 +390,13 @@ sub subclass_burn_test {
         reference => 0, # No idea what this is.
     }), "Create a page subelement element";
 
+
     # Give it a paragraph field.
     ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
         min_occurrence => 0,
-        max_occurrence => 1,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
