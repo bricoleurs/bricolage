@@ -917,7 +917,12 @@ B<Notes:> NONE.
 sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
-    my $field_type = $self->get_element_type->get_field_types('para');
+    #my $field_type = $self->get_element_type->get_field_types('para');
+    
+    if ($self->get_occurrence($atd->get_key_name) >= $atd->get_max_occurrence) {
+        # Throw an error
+    }
+    
     my $field = Bric::Biz::Element::Field->new({
         active             => 1,
         object_type        => $self->_get('object_type'),
@@ -2260,20 +2265,9 @@ sub _deserialize_pod {
                 }
 
                 # Make sure that it's okay if it's repeatable.
-                ###############
-                #
-                #
-                # FIXME: This breaks test cases sumpin fierce.
-                #         The commenting below should be flipped.
-                #         Specific test case:
-                #           t/Bric/Biz/Element/Container/DevTest.pm:673
-                #
-                #
-                ###############
                 my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
-                #if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
-                if ($field_ord{$kn} && $field_type->get_max_occurrence) {
+                if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
                         error    => qq{Field "$kn" appears $field_occurrence }
                                   . qq{times around line $line_num.}

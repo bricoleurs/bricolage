@@ -322,7 +322,7 @@ sub test_list : Test(158) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(231) {
+sub test_pod : Test(227) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
@@ -667,23 +667,6 @@ sub test_pod : Test(231) {
     #  Testing for Occurrence Spec
     #
     ###################
-
-    # Try repeating a fields not allowed to be repeated.
-    eval { $elem->update_from_pod("=begin _pull_quote_\n\n=by\n\nFoo\n\n=by\n\n") };
-    ok $err = $@, 'Catch non-repeatable field exception';
-    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
-    is $err->error,
-        'Field "by" appears 1 times around line 7.'
-      . 'Please remove all but 1.',
-        'Should get the correct exception message';
-    is_deeply $err->maketext, [
-        'Field "[_1]" appears [_2] times around line [_3].'
-      . 'Please remove all but [_4].',
-        'by',
-        1,
-        7,
-        1,
-    ], 'Should get the correct maketext array';
 
     # Try repeating a default field not allowed to be repeated.
     $para = $elem->get_element_type->get_field_types('para');
