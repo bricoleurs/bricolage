@@ -924,10 +924,10 @@ sub add_field {
         my $field_max_occur = $atd->get_max_occurrence;
         # Throw an error
         throw_invalid
-            error    => qq{Field "$field_name" can not be added. There are already currently }
+            error    => qq{Field "$field_name" can not be added. There are already }
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
-                'Field "[_1]" can not be added. There are already currently'
+                'Field "[_1]" can not be added. There are already '
               . '[_2] fields of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,

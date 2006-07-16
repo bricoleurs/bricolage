@@ -733,7 +733,6 @@ To translate:
   'No context for content beginning at line [_1].' => 'No context for content beginning at line [_1].',
   'No such field "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
   'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?',
-  'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.' => 'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.',
   'Unknown tag "[_1]" at line [_2].' => 'Unknown tag "[_1]" at line [_2].',
   'No such site "[_1]" at line [_2].'=> 'No such site "[_1]" at line [_2].',
   'No such URI "[_1]" in site "[_2]" at line [_3].' => 'No such URI "[_1]" in site "[_2]" at line [_3].',
@@ -745,6 +744,8 @@ To translate:
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
+  'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].' => 'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].',
+  'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
 
 Notice:
 
