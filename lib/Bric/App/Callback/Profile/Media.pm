@@ -30,7 +30,7 @@ my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
 my $DESK_URL   = '/workflow/profile/desk/';
 
-my ($save_contrib, $save_category, $handle_delete);
+my ($save_category, $handle_delete);
 
 
 sub update : Callback(priority => 1) {
@@ -84,7 +84,9 @@ sub update : Callback(priority => 1) {
         push @$new, $kw;
     }
     $media->add_keywords(@$new) if $new;
-
+    
+    $self->_handle_contributors($media, $param, $widget);
+    
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
       if exists $param->{cover_date};
@@ -521,95 +523,6 @@ sub create : Callback {
 
 ################################################################################
 
-sub contributors : Callback {
-    my $self = shift;
-    $self->set_redirect("/workflow/profile/media/contributors.html");
-}
-
-##############################################################################
-
-sub assoc_contrib : Callback {
-    my $self = shift;
-    my $media = get_state_data($self->class_key, 'media');
-    chk_authz($media, EDIT);
-    my $contrib_id = $self->value;
-    my $contrib =
-      Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
-    my $roles = $contrib->get_roles;
-    if (scalar(@$roles)) {
-        set_state_data($self->class_key, 'contrib', $contrib);
-        $self->set_redirect("/workflow/profile/media/contributor_role.html");
-    } else {
-        $media->add_contributor($contrib);
-        log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-    }
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-}
-
-################################################################################
-
-sub assoc_contrib_role : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $param = $self->params;
-    my $media   = get_state_data($widget, 'media');
-    chk_authz($media, EDIT);
-    my $contrib = get_state_data($widget, 'contrib');
-    my $role    = $param->{"$widget|role"};
-    # Add the contributor
-    $media->add_contributor($contrib, $role);
-    log_event('media_add_contrib', $media, { Name => $contrib->get_name });
-    # Go back to the main contributor pick screen.
-    $self->set_redirect(last_page);
-    # Remove this page from the stack.
-    pop_page;
-}
-
-
-################################################################################
-
-sub unassoc_contrib : Callback {
-    my $self = shift;
-    my $media = get_state_data($self->class_key, 'media');
-    chk_authz($media, EDIT);
-    my $contrib_id = $self->value;
-    $media->delete_contributors([$contrib_id]);
-    my $contrib =
-      Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
-    log_event('media_del_contrib', $media, { Name => $contrib->get_name });
-}
-
-################################################################################
-
-sub save_contrib : Callback {
-    my $self = shift;
-    $save_contrib->($self->class_key, $self->params, $self);
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page);
-    # Pop this page off the stack.
-    pop_page();
-}
-
-##############################################################################i
-
-sub save_and_stay_contrib : Callback {
-    my $self = shift;
-    $save_contrib->($self->class_key, $self->params, $self);
-}
-
-###############################################################################
-
-sub leave_contrib : Callback {
-    my $self = shift;
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page);
-    # Pop this page off the stack.
-    pop_page();
-}
-
-################################################################################
-
 sub notes : Callback {
     my $self = shift;
     my $widget = $self->class_key;
@@ -846,6 +759,46 @@ sub handle_upload {
     return $self;
 }
 
+sub _handle_contributors {
+    my ($self, $media, $param, $widget) = @_;
+    
+    my $existing = { map { $_->get_id => $_ } $media->get_contributors };
+    
+    my $order = {};
+    foreach my $contrib_id (@{ mk_aref($param->{'contrib_id'}) }) {
+        if (defined $existing->{$contrib_id}) {
+            if ($existing->{$contrib_id}->{role} ne $param->{"$widget|contrib_role_$contrib_id"}) {
+                # Update role (add_contributor updates if $contrib_id already exists)
+                $media->add_contributor($contrib_id, $param->{"$widget|contrib_role_$contrib_id"});
+            }
+            delete $existing->{$contrib_id};
+        } else {
+            # Contributor did not previously exist, so add it
+            $media->add_contributor($contrib_id, $param->{"$widget|role_$contrib_id"});
+        }
+        $order->{$contrib_id} = $param->{$widget . '|contrib_order_' . $contrib_id};
+    }
+    
+    if (my @to_delete = keys %$existing) {
+        $media->delete_contributors(\@to_delete);
+        
+        my $contrib;
+        foreach my $id (@to_delete) {
+            $contrib = $existing->{$id}->{obj};
+            delete $existing->{$id};
+            log_event('media_del_contrib', $media,
+                      { Name => $contrib->get_name });
+        }
+        if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
+        else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
+    }
+    
+    $media->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
+    
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
+}
+
 ##############################################################################
 
 $handle_delete = sub {
@@ -860,50 +813,6 @@ $handle_delete = sub {
     log_event("media_rem_workflow", $media);
     log_event("media_deact", $media);
     add_msg('Media "[_1]" deleted.', $media->get_title);
-};
-
-
-$save_contrib = sub {
-    my ($widget, $param, $self) = @_;
-    # get the contribs to delete
-    my $media = get_state_data($widget, 'media');
-    my $existing;
-    foreach my $contrib ($media->get_contributors) {
-        my $id = $contrib->get_id();
-        $existing->{$id} = 1;
-    }
-
-    chk_authz($media, EDIT);
-    my $contrib_id = $param->{$widget . '|delete_id'};
-    my $contrib_number;
-    my @contrib_strings;
-    if ($contrib_id) {
-        my $contrib_id_list = ref $contrib_id ? $contrib_id : [ $contrib_id ];
-        $media->delete_contributors($contrib_id_list);
-        foreach my $id (@$contrib_id_list) {
-            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
-            push @contrib_strings, $contrib->get_name;
-            $contrib_number++;
-            delete $existing->{$id};
-        }
-    }
-    add_msg("[quant,_1,Contributor] \"[_2]\" associated.",
-            $contrib_number, join(", ", @contrib_strings))
-      if $contrib_number;
-
-    # get the remaining
-    # and reorder
-    foreach my $id (keys %$existing) {
-        my $key = $widget . '|reorder_' . $id;
-        my $place = $param->{$key};
-        $existing->{$id} = $place;
-    }
-
-    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-    $media->reorder_contributors(@no);
-
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
 };
 
 $save_category = sub {

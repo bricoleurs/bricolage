@@ -27,6 +27,7 @@ $title   => get_pref('Bricolage Instance Name')
 $jsInit  => ""
 $context
 $useSideNav => 1
+$popup      => 0
 $no_toolbar => NO_TOOLBAR
 $no_hist => 0
 $debug => undef
@@ -36,6 +37,8 @@ $scrolly => 0
 <%init>;
 $context =~ s/\&quot\;/\"/g;
 my @context =  split /\|/, $context;
+
+$useSideNav = 0 if $popup;
 
 for (@context){
     s/^\s+//g;
@@ -92,7 +95,7 @@ Event.observe(window, "load", function() { <% $jsInit %>; });
 % }
 
 % if ($no_toolbar) {
-if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideNav') {
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'BricolagePopup') {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
@@ -101,20 +104,23 @@ if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'sideN
 % } # if ($no_toolbar)
 --></script>
 </head>
-<body id="bricolage_<% SERVER_WINDOW_NAME %>">
+% my $popupClass = ($popup ? ' class="popup"' : '');
+<body id="bricolage_<% SERVER_WINDOW_NAME %>"<% $popupClass %>>
 <noscript>
 <h1><% $lang->maketext("Warning! Bricolage is designed to run with JavaScript enabled.") %></h1>
 <p><% $lang->maketext('Using Bricolage without JavaScript can result in corrupt data and system instability. Please activate JavaScript in your browser before continuing.') %></p>
 </noscript>
 
 <div id="mainContainer">
-<div id="bricLogo">
 % if ($useSideNav) {
+    <div id="bricLogo">
         <a href="#" title="About Bricolage" id="btnAbout" onclick="openAbout()"><img src="/media/images/bricolage.gif" alt="Bricolage" /></a>
-% } else {
+    </div>
+% } elsif (!$popup) {
+    <div id="bricLogo">
         <img src="/media/images/bricolage.gif" alt="Bricolage" />
+    </div>
 % }
-</div>
 <%perl>;
 # handle the various states of the side nav
 if ($useSideNav) {
@@ -146,7 +152,7 @@ if ($useSideNav) {
             <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
         </div>
 % }
-% if (defined get_user_id()) {
+% if (!$popup && defined get_user_id()) {
         <div class="userinfo">
             Logged in as <a href="/admin/profile/user/<% get_user_id %>" title="<% $lang->maketext("User Profile") %>"><strong><% get_user_object->format_name %></strong></a>
         </div>

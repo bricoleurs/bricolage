@@ -229,72 +229,38 @@ function textUnWrap (text) {
 }
 
 /*
-input: a form object, and the name of the form it contains
+input: a form object (e.g. input, select, textarea), and the container that groups
+       all of the reorder selects together
 output: none.
 This function is called when a position drop down is changed in a story profile.
-It looks for form elements named in the selectOrderNames array, and tries to find
-a new home for the now displaced value.
 */
-function reorder(obj) {
-
-    var newVal  = obj.selectedIndex;
-    var tmp;
-    var form  = obj.form;
-
-    // Bail if there are no names.
-    if (typeof selectOrderNames == "undefined") return false;
-
-    var curObjName;
-    var curObjVal;
-    var curObj = new Object();
-    var orderObjs = new Array(); 
-
-    // First order the elements by their index.
-    for (var i = 0; i < selectOrderNames.length; i++) {
-        curObjName = selectOrderNames[i];
-        curObj     = form[curObjName];
-        if (curObj.type == null) {
-            // It's an array. Process all if its elements.
-            for (var i = 0; i < curObj.length; i++) {
-                curObjVal = curObj[i].selectedIndex;
-                if (curObj[i] != obj) {
-                    orderObjs[curObjVal] = curObj[i];
-                }
-            }
-        } else {
-            // It's a normal input object.
-            curObjVal  = curObj.selectedIndex;
-            if (curObj != obj) {
-                orderObjs[curObjVal] = curObj;
-            }
-        }
-    }
-
+function reorder(obj, container) {
+    
+    var container = $(container);
+    var selects = $A(document.getElementsByClassName("reorder", container));
+    var newIndex = obj.selectedIndex;
+    
+    var order = $A();
+    selects.each(function(select) {
+        if (select != obj) order[select.selectedIndex] = select;
+    });
+    
     var offset = 0;
-
-    // Now go through and shift the elements forward or backward as required.
-    for (var i=0; i<orderObjs.length; i++) {
-        curObj     = orderObjs[i];
-
-        // If we hit an empty array slot, its where the moving element is; suck
-        // the subsequent elements toward it.
-        if (typeof curObj == "undefined") {
+    for (var i = 0; i < order.length; i++) {
+        var curObj = order[i];
+        
+        if (!(i in order)) {
             // This is the empty space left by the moving element; backshuffle
-            offset = offset - 1;
-
-
-        // Otherwise get the object and see if we need to update our offset
+            offset--;
         } else {
-
+            // Otherwise get the object and see if we need to update our offset
+            
             // No shifting has been done if offset is 0 
-            if ((i == newVal) && (offset == 0)) {
-                offset = offset + 1;
-            }
+            if (i == newIndex && offset == 0) offset++;
+            
             // Special adjustment to make sure all necessary elems are shifted
-            if ((i == (newVal+1)) && (offset == -1)) {
-                offset = 0;
-            }
-
+            if (i == newIndex + 1 && offset == -1) offset = 0;
+            
             // Update the index.
             curObj.selectedIndex = curObj.selectedIndex + offset;
         }
@@ -662,23 +628,44 @@ function Browser () {
 /*
 Open popup window
 */
-function openWindow(page) {
-    if (!/^\//.test(page)) page = '/' + page;
-    if (!/\.html$/.test(page)) page += '.html';
-    window.open(
-        '/help/' + lang_key + page,
-        'BricolageHelp',
-        'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,'
-        + 'height=600,width=505'
+function openWindow(uri, name, opts) {
+    var options = Object.extend({
+      width: 505,
+      height: 600,
+      scrollbars: 1,
+      status: 1,
+      personalbar: 0,
+      toolbar: 0,
+      location: 0,
+      menubar: 0,
+      resizable: 1,
+      closeOnUnload: false
+    }, opts || {});
+    
+    if (options['closeOnUnload']) {
+      Event.observe(window, "unload", (function() { 
+        if (win && !win.closed) win.close()
+      }).bindAsEventListener(this));
+    }
+    delete options['closeOnUnload'];
+    
+    var win = window.open(
+        uri,
+        name || 'BricolagePopup',
+        $H(options).map(function(opt) {
+          return opt[0] + "=" + opt[1];
+        }).join(",")
     );
-    return false;
+    return win;
 }
-function openAbout() { return openWindow("about"); }
+function openAbout() { return openWindow("/help/" + lang_key + "/about.html"); }
 function openHelp()  { 
     var uri = window.location.pathname.replace(/[\d\/]+$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
-    return openWindow(uri);
+    if (!/^\//.test(uri)) uri = '/' + uri;
+    if (!/\.html$/.test(uri)) uri += '.html';
+    return openWindow('/help/' + lang_key + uri, "BricolageHelp");
 }
 
 
@@ -969,6 +956,20 @@ function toggleMenu (el, id) {
     return false;
 }
 
+function alternateTableRows(element) {
+    element = $(element);
+    $A(element.getElementsByTagName("tr")).select(function(row) { 
+      return row.getElementsByTagName("td").length > 0 // Exclude header rows
+    }).each(function(row, index) {
+        if (index % 2 == 0) {
+            Element.addClassName(row, "even");
+            Element.removeClassName(row, "odd");
+        } else {
+            Element.addClassName(row, "odd");
+            Element.removeClassName(row, "even");
+        }
+    })
+}
 
 document.getParentByClassName = function(element, className) {
     element = $(element);
@@ -980,8 +981,11 @@ document.getParentByClassName = function(element, className) {
 document.getParentByTagName = function(element, tagName) {
     element = $(element);
     while (element.parentNode && (!element.tagName ||
-        (element.tagName.toUpperCase() != tagName.toUpperCase())))
-      element = element.parentNode;
+        (element.tagName.toUpperCase() != tagName.toUpperCase()))) {
+      alert(element);
+      element = element.parentNode;      
+    }
+    alert(element)
     return element;
 }
 
@@ -1026,7 +1030,7 @@ FastAdd.prototype = {
           'add_' + this.type, 
           'add_' + this.type + '_autocomplete', 
           this.options.uri, 
-          { parameters: Form.serialize(this.list) }
+          { paramName: 'value', parameters: Form.serialize(this.list) }
         );
         $('add_' + this.type).onkeypress = fixSafariKeypressBug;
     },
@@ -1117,6 +1121,24 @@ Abstract.ListManager.prototype = {
     }
 };
 
+var ContributorListManager = Class.create();
+ContributorListManager.prototype = Object.extend(new Abstract.ListManager(), {
+    initialize: function(element, options) {
+      this.element = $(element);
+      this.setOptions(options);
+    },
+    
+    updateList: function() {
+        this.updatePartial(this.options.uri);
+    },
+  
+    add: function(id) {
+        this.options.extraParameters.push("new_contrib_id=" + id);
+        this.updateList();
+        this.options.extraParameters.pop();
+    }
+});
+
 var AssociationListManager = Class.create();
 AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
     initialize: function(element, options) {
@@ -1194,3 +1216,9 @@ var Container = {
                        "It will not be permanently deleted until you save your changes.");
     }
 };
+
+Event.observe(window, 'load', function() {
+  $A(document.getElementsByClassName('listManager')).each(function(table) {
+      alternateTableRows(table);
+  })
+});

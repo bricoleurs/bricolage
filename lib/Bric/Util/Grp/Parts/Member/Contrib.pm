@@ -633,20 +633,16 @@ sub _do_list {
             push @wheres, "m.grp__id = ?";
             push @args, $params->{grp}->get_id;
         } elsif ($k eq 'grp_id') {
-            push @wheres, "m.grp__id = ?";
-            push @args, $v;
+            push @wheres, any_where($v, "m.grp__id = ?", \@args);
         } elsif ($k eq 'id') {
-            push @wheres, "m.id = ?";
-            push @args, $v;
+            push @wheres, any_where($v, "m.id = ?", \@args);
         } elsif ($k eq 'active') {
             push @wheres, "m.active = ?";
             push @args, $v;
         } elsif ($k eq 'person_id') {
-            push @wheres, "p.id = ?";
-            push @args, $v;
+            push @wheres, any_where($v, "p.id = ?", \@args);
         } elsif ($k eq 'no_grp_id') {
-            push @wheres, "m.grp__id <> ?";
-            push @args, $v;
+            push @wheres, any_where($v, "m.grp__id <> ?", \@args);
         } else {
             push @wheres, "LOWER(p.$k) LIKE ?";
             push @args, lc $v;

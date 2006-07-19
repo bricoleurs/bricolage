@@ -28,7 +28,7 @@ my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL   = '/workflow/profile/desk/';
 
-my ($save_contrib, $save_category, $unique_msgs);
+my ($save_category, $unique_msgs);
 
 sub view : Callback {
     my $self = shift;
@@ -498,90 +498,6 @@ sub update : Callback(priority => 1) {
     shift->_save_data();
 }
 
-sub contributors : Callback {
-    my $self = shift;
-    # Return if there were data errors
-    return unless $self->_save_data();
-    $self->set_redirect("/workflow/profile/story/contributors.html");
-}
-
-sub assoc_contrib : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $contrib_id = $self->value;
-    my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
-    my $roles = $contrib->get_roles;
-    if (@$roles > 1) {
-        set_state_data($self->class_key, 'contrib', $contrib);
-        $self->set_redirect("/workflow/profile/story/contributor_role.html");
-    } else {
-        $story->add_contributor($contrib);
-        log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-    }
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-}
-
-sub assoc_contrib_role : Callback {
-    my $self = shift;
-
-    my $story   = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $contrib = get_state_data($self->class_key, 'contrib');
-    my $role    = $self->params->{$self->class_key.'|role'};
-
-    # Add the contributor
-    $story->add_contributor($contrib, $role);
-    log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-
-    # Go back to the main contributor pick screen.
-    $self->set_redirect(last_page());
-
-    # Remove this page from the stack.
-    pop_page();
-}
-
-sub unassoc_contrib : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $cids = mk_aref($self->value);
-    $story->delete_contributors($cids);
-
-    # Log the dissociations.
-    foreach my $cid (@$cids) {
-        my $c = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $cid });
-        log_event('story_del_contrib', $story, { Name => $c->get_name });
-    }
-}
-
-sub save_contrib : Callback {
-    my $self = shift;
-
-    $save_contrib->($self->class_key, $self->params, $self);
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page());
-    # Pop this page off the stack.
-    pop_page();
-}
-
-sub save_and_stay_contrib : Callback {
-    my $self = shift;
-    $save_contrib->($self->class_key, $self->params, $self);
-}
-
-sub leave_contrib : Callback {
-    my $self = shift;
-
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page());
-    # Pop this page off the stack.
-    pop_page();
-}
-
 sub exit : Callback {
     my $self = shift;
 
@@ -743,51 +659,6 @@ sub clear_my_state {
 
 ##############################################################################
 
-$save_contrib = sub {
-    my ($widget, $param, $self) = @_;
-
-    # get the contribs to delete
-    my $story = get_state_data($widget, 'story');
-
-    my $existing = { map { $_->get_id => 1 } $story->get_contributors };
-
-    chk_authz($story, EDIT);
-    my $contrib_id = $param->{$widget.'|delete_id'};
-    my $msg;
-    if ($contrib_id) {
-        if (ref $contrib_id) {
-            $story->delete_contributors($contrib_id);
-            foreach my $id (@$contrib_id) {
-                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
-                delete $existing->{$id};
-                log_event('story_del_contrib', $story,
-                          { Name => $contrib->get_name });
-            }
-            add_msg('Contributors disassociated.');
-        } else {
-            $story->delete_contributors([$contrib_id]);
-            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-                { id => $contrib_id });
-            delete $existing->{$contrib_id};
-            log_event('story_del_contrib', $story,
-                      { Name => $contrib->get_name });
-            add_msg('Contributor "[_1]" disassociated.', $contrib->get_name);
-        }
-    }
-
-    # get the remaining and reorder
-    foreach my $id (keys %$existing) {
-        my $key = $widget . '|reorder_' . $id;
-        my $place = $param->{$key};
-        $existing->{$id} = $place;
-    }
-    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-    $story->reorder_contributors(@no);
-
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-};
-
 $save_category = sub {
     my ($widget, $param, $self) = @_;
 
@@ -898,7 +769,9 @@ sub _save_data {
     $self->_handle_categories($story, $param, $widget);
 
     $self->_handle_keywords($story, $param);
-
+    
+    $self->_handle_contributors($story, $param, $widget);
+    
     # avoid repeated messages from repeated calls to _save_data
     &$unique_msgs if $data_errors;
 
@@ -991,6 +864,46 @@ sub _handle_keywords {
     }
     $story->add_keywords(@$new) if $new;
 };
+
+sub _handle_contributors {
+    my ($self, $story, $param, $widget) = @_;
+    
+    my $existing = { map { $_->get_id => $_ } $story->get_contributors };
+    
+    my $order = {};
+    foreach my $contrib_id (@{ mk_aref($param->{'contrib_id'}) }) {
+        if (defined $existing->{$contrib_id}) {
+            if ($existing->{$contrib_id}->{role} ne $param->{"$widget|contrib_role_$contrib_id"}) {
+                # Update role (add_contributor updates if $contrib_id already exists)
+                $story->add_contributor($contrib_id, $param->{"$widget|contrib_role_$contrib_id"});
+            }
+            delete $existing->{$contrib_id};
+        } else {
+            # Contributor did not previously exist, so add it
+            $story->add_contributor($contrib_id, $param->{"$widget|role_$contrib_id"});
+        }
+        $order->{$contrib_id} = $param->{$widget . '|contrib_order_' . $contrib_id};
+    }
+    
+    if (my @to_delete = keys %$existing) {
+        $story->delete_contributors(\@to_delete);
+        
+        my $contrib;
+        foreach my $id (@to_delete) {
+            $contrib = $existing->{$id}->{obj};
+            delete $existing->{$id};
+            log_event('story_del_contrib', $story,
+                      { Name => $contrib->get_name });
+        }
+        if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
+        else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
+    }
+    
+    $story->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
+    
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
+}
 
 sub _handle_delete {
     my ($self, $story) = @_;

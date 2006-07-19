@@ -83,10 +83,6 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 
 if (defined $id) {
     $button = undef;
-    $m->out('<script type="text/javascript">
-var selectOrderNames = new Array("include_pos")
-</script>
-    ');
     my $inc = $oc->get_includes;
     my $opts = [ map { [ $_ => $_ + 1 ] } (0..$#$inc) ];
     my %exclude = ( map { $_->get_id => 1 } @$inc, $oc );
@@ -113,7 +109,7 @@ var selectOrderNames = new Array("include_pos")
                 value => $i++,
                 options => $opts,
                 useTable => 0,
-                js => qq{onChange="reorder(this, 'oc_profile')"}
+                js => qq{class="reorder" onchange="reorder(this, 'includes')"}
             );
         };
 
@@ -123,6 +119,7 @@ var selectOrderNames = new Array("include_pos")
             caption => 'Template Includes',
             number => $num++,
         );
+        $m->print(qq{<div id="includes">});
         $m->comp('/widgets/listManager/listManager.mc',
                  object         => 'output_channel',
                  userSort       => 0,
@@ -138,6 +135,7 @@ var selectOrderNames = new Array("include_pos")
                      'name', (@sites > 1 ? ('site') : ()), qw(description order)
                  ],
              );
+        $m->print(qq{</div>});
         if (@avail_ocs) {
             $m->print(qq{<div class="actions">\n});
             $m->comp(

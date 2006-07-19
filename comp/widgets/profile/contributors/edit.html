@@ -1,0 +1,91 @@
+<& '/widgets/wrappers/table_top.mc', 
+    caption => 'Current Contributors' 
+&>
+    <script type="text/javascript">
+    function deleteContrib(button) {
+        Element.remove('contrib_id_' + $(button).value); $(button).form.submit();
+    }
+    </script>
+    <div id="contribs">
+    <& '_list.html',
+        asset      => $asset,
+        asset_type => $asset_type,
+        widget     => $widget,
+        contribs   => \@contribs
+    &>
+    </div>
+    
+    <& '/widgets/profile/hidden.mc', id => "new_contrib_id", name => "new_contrib_id" &>
+    
+<& '/widgets/wrappers/table_bottom.mc' &>
+
+<& /widgets/search/search.mc,
+   object       => 'contrib',
+   field        => 'lname',
+   type         => 'dual',
+   use_form_tag => 0
+&>
+
+<& '/widgets/wrappers/table_top.mc', caption => 'Choose Contributors' &>
+    <& /widgets/listManager/listManager.mc,
+       object    => 'contrib',
+       select    => undef,
+       profile   => '',
+       exclude   => \@contrib_ids,
+       fields    => [qw(lname fname type action)],
+       field_titles => { action => '' },
+       field_values => $action_sub,
+       constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
+       addition  => '',
+       behavior => 'expand',
+    &>
+<& '/widgets/wrappers/table_bottom.mc' &>
+
+<& "/widgets/buttons/submit.mc",
+    disp      => 'Save',
+    name      => 'save',
+    button    => 'save_red',
+    js        => qq{onclick="window.opener.document.getElementById('contribs').innerHTML = \$('contribs').innerHTML; self.close(); return false"},
+    useTable  => 0
+&>
+<& "/widgets/profile/button.mc",
+    disp      => 'Cancel',
+    name      => 'cancel',
+    button    => 'cancel_lgreen',
+    js        => 'onclick="self.close(); return false"',
+    useTable  => 0
+&>
+
+<%args>
+$asset_type => 'story'
+$widget
+$param => undef
+</%args>
+
+<%init>
+my $asset = get_state_data($widget, $asset_type);
+my $contrib_pkg = get_package_name('contrib');
+my $contrib_id = $param->{contrib_id};
+my $new_contrib_id = $param->{new_contrib_id};
+
+my (@contribs, @contrib_ids);
+if ($contrib_id) {
+    @contrib_ids = @{ mk_aref($contrib_id) };
+    @contribs = $contrib_pkg->list({ id => ANY(@contrib_ids) });
+} else {
+    @contribs = $asset->get_contributors();
+    @contrib_ids = map { $_->get_id } @contribs;
+}
+if ($new_contrib_id) {
+    push @contribs, $contrib_pkg->lookup({ id => $new_contrib_id });
+    push @contrib_ids, $new_contrib_id;
+}
+</%init>
+
+<%once>
+my $action_sub = sub {
+   if ($_[1] eq 'action') {
+       qq|<a href="#" onclick="\$('new_contrib_id').value = | . $_[0]->get_id . qq|; \$('new_contrib_id').form.submit(); return false" class="redLink">Associate</a>|
+   }
+};
+</%once>

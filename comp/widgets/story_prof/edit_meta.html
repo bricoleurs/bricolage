@@ -166,6 +166,43 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 <& "/widgets/wrappers/table_bottom.mc" &>
 % }
 
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Contributors",
+    number  => $num++ 
+&>
+    <script type="text/javascript">
+    function deleteContrib(button) {
+        var id = $(button).value;
+        var index = $('contrib_order_' + id).selectedIndex;
+        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
+            if (select.selectedIndex > index) select.selectedIndex--;
+            Element.remove(select.options[select.options.length - 1]);
+        });
+        Element.remove($('contrib_id_' + id).parentNode.parentNode);
+        alternateTableRows('contribs');
+    }
+    </script>
+    <div id="contribs">
+    <& '/widgets/profile/contributors/_list.html',
+        asset      => $story,
+        asset_type => 'story',
+        widget     => $widget,
+        contribs   => \@{ $story->get_contributors() }
+    &>
+    </div>
+    
+    <div class="actions">
+        <& '/widgets/profile/button.mc',
+            disp    => $lang->maketext("Add"),
+            name    => "add_contributor",
+            button  => "add_lgreen",
+            useTable => 0,
+            js      => qq{onclick="openWindow('/workflow/profile/story/contributors.html', undefined, { closeOnUnload: true }); return false"}
+        &>
+    </div>
+    
+<& "/widgets/wrappers/table_bottom.mc" &>
+
 
 <& "/widgets/wrappers/table_top.mc",
     caption => "Associations",
@@ -190,25 +227,6 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
     globalImage => 1 &></td>
 </tr>
 % }
-
-<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
-<th><% $lang->maketext('Contributors') %>:</th>
-<td>
-% my @contribs = map { $_->get_name } $story->get_contributors;
-% $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
-</td>
-<td class="edit">
-% unless ($story->get_alias_id) {
-<& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'contributors_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &>
-% }
-</td>
-</tr>
 
 <tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>" style="line-height: 2em">
 <th><% $lang->maketext('Keywords') %>:</th>

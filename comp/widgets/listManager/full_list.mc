@@ -121,6 +121,7 @@ my $url       = $r->uri;
 my $sortBy    = $state->{sort_by} || $state->{default_sort};
 my $sortOrder = $state->{sort_order};
 my $sort_col  = 0;
+my $type      = get_class_info($object)->get_key_name;
 
 # Get the real values if these are code refs.  Handle profile and select
 # on a row by row basis.
@@ -133,7 +134,6 @@ $cols
 </%args>
 <%init>;
 my $url = $r->uri;
-my $style = qq{style="border-style:solid; border-color:#cccc99;"};
 $m->out(qq{<div class="paginate">\n});
 unless ($pagination->{pagination}) {
     $m->out(qq{<div class="all">} .

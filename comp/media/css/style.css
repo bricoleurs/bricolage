@@ -4,6 +4,7 @@ body {
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 70%;
 }
+body.popup { background: white; }
 th         { font-size: 1.1em; }
 pre        { font-size: 1.3em; padding: 1em; margin: 0; } 
 code       { font-size: 1.3em; }
@@ -30,8 +31,10 @@ textarea {
 
 #bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
 #mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
+body.popup #mainContainer { min-width: 450px; }
 #sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding: 8px 0 0 158px; }
+body.popup #contentContainer { padding: 0; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
@@ -66,6 +69,7 @@ textarea {
  * PAGE HEADER
  ***************************************************/
 #headerContainer               { position: relative; width: 100%; padding-top: 20px; }
+body.popup #headerContainer    { padding-top: 8px; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
@@ -366,7 +370,9 @@ form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
 table tr.odd { background: #f5f5e6; }
-table td.action { width: 30px; text-align: center; white-space: nowrap; }
+table td.action,
+table td.delete,
+table td.order { width: 30px; text-align: center; white-space: nowrap; }
 
 #bulkedit { width: 100%; }
 
@@ -629,6 +635,7 @@ div.autocomplete ul li {
   padding: 2px 4px;
   cursor: pointer;
 }
+div.autocomplete ul li span.value { display: none; }
 div.autocomplete span.highlight { font-weight: bold; }
 
 #new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }

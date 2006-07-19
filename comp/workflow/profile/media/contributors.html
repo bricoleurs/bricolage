@@ -1,6 +1,9 @@
+%# OPENS IN A POPUP!
+
 <& /widgets/wrappers/header.mc,
-        title => 'Contributor Association',
-        context => $context . $r->pnotes('media_prof|title') . ' | Contributors'
+    title => 'Contributor Association',
+    context => $context . $r->pnotes('media_prof|title') . ' | Contributors',
+    popup => 1
 &>
 
 <form action="<% $r->uri %>" method="post" name="theForm">
@@ -12,7 +15,7 @@
 
 <%once>;
 my $type = 'element';
-my $disp = get_disp_name('story');
+my $disp = get_disp_name('media');
 my $context = "Workflow | Profile | $disp | ";
 </%once>
 

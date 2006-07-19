@@ -160,5 +160,9 @@ if (my $story = get_state_data($widget, 'story')) {
     $r->pnotes("$widget|title", '&quot;' . $story->get_title . '&quot;');
 }
 
-$m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
+if ($state eq "edit" && $section eq "contributors") {
+    $m->comp("/widgets/profile/contributors/edit.html", asset_type => 'story', widget => $widget, param => $param);
+} else {
+    $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param);
+}
 </%init>
