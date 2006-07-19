@@ -1121,24 +1121,6 @@ Abstract.ListManager.prototype = {
     }
 };
 
-var ContributorListManager = Class.create();
-ContributorListManager.prototype = Object.extend(new Abstract.ListManager(), {
-    initialize: function(element, options) {
-      this.element = $(element);
-      this.setOptions(options);
-    },
-    
-    updateList: function() {
-        this.updatePartial(this.options.uri);
-    },
-  
-    add: function(id) {
-        this.options.extraParameters.push("new_contrib_id=" + id);
-        this.updateList();
-        this.options.extraParameters.pop();
-    }
-});
-
 var AssociationListManager = Class.create();
 AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
     initialize: function(element, options) {
