@@ -185,6 +185,16 @@ var cancelValidation = false
       
       <dt class="fb_value"><label for="fb_value"><% $lang->maketext('Default Value') %>:</label></dt>
       <dd class="fb_value"><input type="text" name="fb_value" id="fb_value"/></dd>
+      
+%if ($useMinOccur){
+      <dt><label for="fb_minOccur"><% $lang->maketext('Minimum Occurrence') %>:</label></dt>
+      <dd><input type="text" name="fb_minOccur" id="fb_minOccur" value="0" size="4" /></dd>
+%}
+%if ($useMaxOccur){
+      <dt><label for="fb_maxOccur"><% $lang->maketext('Maximum Occurrence') %>:</label></dt>
+      <dd><input type="text" name="fb_maxOccur" id="fb_maxOccur" value="0" size="4" /></dd>
+%}      
+      
     </dl>
 
     <dl class="opts">
@@ -221,15 +231,6 @@ var cancelValidation = false
           <% $numFieldsOpts %>
           </select>
       </dd>
-    
-%if ($useMinOccur){
-      <dt><label for="fb_minOccur"><% $lang->maketext('Minimum Odccurrence') %>:</label></dt>
-      <dd><input type="text" name="fb_minOccur" id="fb_minOccur" value="0" size="4" /></dd>
-%}
-%if ($useMaxOccur){
-      <dt><label for="fb_maxOccur"><% $lang->maketext('Maximum Occurrence') %>:</label></dt>
-      <dd><input type="text" name="fb_maxOccur" id="fb_maxOccur" valud="0" size="4" /></dd>
-%}
     </dl>
     
     <div class="submit">
