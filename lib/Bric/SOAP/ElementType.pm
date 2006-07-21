@@ -671,8 +671,8 @@ sub load_asset {
                 $data->set_key_name(    $field->{key_name});
                 $data->set_name(        $field->{name}        || $field->{label});
                 $data->set_description( $field->{description});
-                $data->set_required(    $field->{required});
-                $data->set_quantifier(  $field->{repeatable});
+                $data->set_min_occurrence( $field->{min_occur});
+                $data->set_max_occurrence( $field->{max_occur});
                 $data->set_sql_type(    $sql_type);
                 $data->set_place(       $place);
                 $data->set_max_length(  $field->{max_size});
@@ -695,8 +695,8 @@ sub load_asset {
                     key_name      => $field->{key_name},
                     name          => $field->{name}        || $field->{label},
                     description   => $field->{description},
-                    required      => $field->{required},
-                    quantifier    => $field->{repeatable},
+                    min_occurrence => $field->{min_occur},
+                    max_occurrence => $field->{max_occur},
                     sql_type      => $sql_type,
                     place         => $place,
                     max_length    => $field->{max_size},
@@ -848,8 +848,8 @@ sub serialize_asset {
         $writer->dataElement( key_name    => $data->get_key_name           );
         $writer->dataElement( name        => $data->get_name               );
         $writer->dataElement( description => $data->get_description        );
-        $writer->dataElement( required    => $data->get_required   ? 1 : 0 );
-        $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
+        $writer->dataElement( min_occur   => $data->get_min_occurrence     );
+        $writer->dataElement( max_occur   => $data->get_max_occurrence     );
         $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );
