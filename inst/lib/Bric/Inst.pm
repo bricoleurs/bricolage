@@ -39,7 +39,15 @@ This module exports function used by the installation system scripts.
 use strict;
 
 use File::Spec::Functions qw(catdir tmpdir catfile);
-use Term::ReadPassword;
+eval { require Term::ReadPassword };
+if ($@) {
+    print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
+Bricolage installation requires Term::ReadPassword. Please install
+this Perl module from CPAN.
+END
+
+    exit 1;
+}
 require Exporter;
 use base 'Exporter';
 our @EXPORT_OK = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice

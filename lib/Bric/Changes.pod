@@ -12,6 +12,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.10.3 (2006-09?)
 
+=head2 Improvements
+
+=over
+
+=item *
+
+If C<Term::ReadPassword> isn't found during installation, a better error
+message is displayed. [Scott]
+
+=back
+
 =head2 Bug Fixes
 
 =over
