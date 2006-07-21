@@ -39,7 +39,7 @@ This module exports function used by the installation system scripts.
 use strict;
 
 use File::Spec::Functions qw(catdir tmpdir catfile);
-eval { require Term::ReadPassword };
+eval { require Term::ReadPassword; import Term::ReadPassword 'read_password' };
 if ($@) {
     print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
 Bricolage installation requires Term::ReadPassword. Please install
