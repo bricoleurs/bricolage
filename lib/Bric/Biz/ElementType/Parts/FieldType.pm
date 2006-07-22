@@ -56,7 +56,7 @@ $LastChangedDate$
  
  # Get/Set max occurrence specification limit
  $field = $field->set_max_occurrence($amount)
- $max = $filed->get_max_occurrence()
+ $max = $field->get_max_occurrence()
 
  # Get/Set the data type (or SQL type) of this field.
  $field    = $field->set_sql_type();
