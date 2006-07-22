@@ -1393,18 +1393,20 @@ sub delete_elements {
         my $delete = undef;
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
+                my $elem_type = $_->get_element_type;
+                
                 # Check if we've seen this element type before
-                if ($delete_count{$_->get_element_type}) {
-                    $delete_count{$_->get_element_type} += 1;
+                if ($delete_count{$elem_type->get_key_name}) {
+                    $delete_count{$elem_type->get_key_name} += 1;
                 } else {
-                    $delete_count{$_->get_element_type} = 1;
+                    $delete_count{$elem_type->get_key_name} = 1;
                 }
                 
-#                my $occur_diff = $self->get_elem_occurrence($_) - 
-#                        $_->get_element_type->get_min_occurrence;
+#                my $occur_diff = $self->get_elem_occurrence($elem_type->get_key_name) - 
+#                        $elem_type->get_min_occurrence;
                 
                 # Check if we've deleted too many
-#                if ($delete_count{$_->get_element_type} > $occur_diff) {
+#                if ($delete_count{$elem_type->get_key_name} > $occur_diff) {
                     # Throw an error if we have
 #                } else {
                     # Schedule for deletion if we haven't
