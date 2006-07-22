@@ -53,6 +53,7 @@ To translate:
   "My jobs" => "My jobs",
   'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].' => 'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].',
   'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
+  'Field "[_1]" can not be deleted. There must be at least [_2] fields of this type.' => 'Field "[_1]" can not be deleted. There must be at least [_2] fields of this type.',
           'Slug required for non-fixed (non-cover) story type.'
 
           'Cannot both delete and make primary a single output channel.'

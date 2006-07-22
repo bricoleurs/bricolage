@@ -136,9 +136,11 @@ if ($at->is_related_media) {
     my $at_obj = $dt->get_field_type;
     
     # We check to make sure there are more than min
-    my $not_min = $dt->get_parent->get_occurrence($at_obj->get_key_name) > 
+    my $not_min = $dt->get_parent->get_field_occurrence($at_obj->get_key_name) > 
         $at_obj->get_min_occurrence;
-    $no_del = $not_min && $at_obj->is_active && $dt->get_object_order == 1;
+    # For now we want the delete to be shown if there is more than min
+#    $no_del = $not_min && $at_obj->is_active && $dt->get_object_order == 1;
+    $no_del = !$not_min && $at_obj->is_active;
 
     my $vals = { props => {
         type      => $at_obj->get_widget_type,

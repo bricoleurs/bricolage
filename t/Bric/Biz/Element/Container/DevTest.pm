@@ -118,7 +118,7 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test field occurrence.
-sub test_occurrence : Test(54) {
+sub test_occurrence : Test(64) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -178,8 +178,60 @@ sub test_occurrence : Test(54) {
     ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
     is scalar @field_types, 1, "Should only be able to add a header";
 
+    # Try adding one more (should fail)
+
+    eval { $elem->add_field($para_type, 'Fifth paragraph') };
+    ok my $err = $@, 'Catch max occurrence violation exception';
+    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
+    is $err->error,
+        'Field "para" can not be added. There are already 4'
+      . ' fields of this type, with a max of 4.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Field "[_1]" can not be added. There are already [_2]'
+      . ' fields of this type, with a max of [_3].',
+        'para',
+        4,
+        4,
+    ], 'Should get the correct maketext array';
+
+    ok @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 4, "Should have four paragraphs.";
+
+    # Reset the max occurrence
+    ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
+    ok $para_type->save, 'Save the field';
+
+###################
+#
+# Help Needed:
+#   It was suggested that I could do something like:
+#  my $field = $elem->add_field($field_type, 'Foo');
+#    This, however, returns the container ($elem if you will)
+#     so I can't really do anything with it (i.e. delete it).
+#     Any ideas on how I can get a hold of the field I'm creating?
+#
+###################
+
+
+    # Add a few more paragraphs and keep track of them
+#    ok my $new_para_1 = $elem->add_field($para_type, 'Fifth paragraph'), "Add a fifth paragraph";
+#    ok my $new_para_2 = $elem->add_field($para_type, 'Sixth paragraph'), "Add a sixth paragraph";
+#    ok $para_type->save, 'Save the field';
+
+    # Set a new minimum occurrence
+#    ok $para_type->set_min_occurrence(5), 'Set a new min occurrence';
+#    ok $para_type->save, 'Save the field';
+
+    # Try deleting the last paragraph
+#    ok $elem->delete_elements([$new_para_2]), 'Try deleting the last paragraph';
+
+    # Try deleting the second last paragraph
+#    ok $elem->delete_elements($new_para_1), 'Fail trying to delete the second last paragraph';
+
     # Clean up
     ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
+    ok $para_type->set_min_occurrence(0), 'Set the min occurrence back to none';
     ok $para_type->save, 'Save the field';
     ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
     is scalar @field_types, 2, "Make sure we can add both again.";

@@ -616,9 +616,10 @@ B<Notes:> NONE.
 
 ################################################################################
 
-=item $container->get_occurrence($field_type->get_key_name)
+=item $container->get_elem_occurrence($subelement->get_key_name)
     
-Returns the number of fields currently in this container of this type.
+Returns the number of subelements currently in this container
+which match the name passed in.
     
 B<Throws:> NONE.
 
@@ -628,7 +629,26 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_occurrence{
+sub get_elem_occurrence{
+    return scalar @{ shift->get_elements(@_) };
+}
+
+################################################################################
+
+=item $container->get_field_occurrence($field_type->get_key_name)
+    
+Returns the number of fields currently in this container
+which match the field name passed in.
+    
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_field_occurrence{
     return scalar @{ shift->get_fields(@_) };
 }
 
@@ -859,7 +879,7 @@ sub get_possible_field_types {
     for my $data (@$current) {
         if (my $atd = delete $at_info{$data->get_field_type_id}) {
             my $max = $atd->get_max_occurrence;
-            push @parts, $atd if !$max || $max > $self->get_occurrence($atd->get_key_name);
+            push @parts, $atd if !$max || $max > $self->get_field_occurrence($atd->get_key_name);
         }
     }
 
@@ -918,9 +938,9 @@ sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
     
-    if ($atd->get_max_occurrence && $self->get_occurrence($atd->get_key_name) >= $atd->get_max_occurrence) {
+    if ($atd->get_max_occurrence && ($self->get_field_occurrence($atd->get_key_name) >= $atd->get_max_occurrence)) {
         my $field_name = $atd->get_key_name;
-        my $field_occurrence = $self->get_occurrence($field_name);
+        my $field_occurrence = $self->get_field_occurrence($field_name);
         my $field_max_occur = $atd->get_max_occurrence;
         # Throw an error
         throw_invalid
@@ -1367,17 +1387,63 @@ sub delete_elements {
     my $cont_order;
     my $data_order;
     my $new_list = [];
+    my %delete_count;
+    
     foreach (@$elements) {
         my $delete = undef;
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
-                push @$del_elements, $_;
-                $delete = 1;
+                # Check if we've seen this element type before
+                if ($delete_count{$_->get_element_type}) {
+                    $delete_count{$_->get_element_type} += 1;
+                } else {
+                    $delete_count{$_->get_element_type} = 1;
+                }
+                
+#                my $occur_diff = $self->get_elem_occurrence($_) - 
+#                        $_->get_element_type->get_min_occurrence;
+                
+                # Check if we've deleted too many
+#                if ($delete_count{$_->get_element_type} > $occur_diff) {
+                    # Throw an error if we have
+#                } else {
+                    # Schedule for deletion if we haven't
+                    push @$del_elements, $_;
+                    $delete = 1;
+#                }
             }
         } else {
             if (exists $del_data{$_->get_id}) {
-                push @$del_elements, $_;
-                $delete = 1;
+                my $field_type = $_->get_field_type;
+                
+                # Check if we've seen this field type before
+                if ($delete_count{$field_type->get_key_name}) {
+                    $delete_count{$field_type->get_key_name} += 1;
+                } else {
+                    $delete_count{$field_type->get_key_name} = 1;
+                }
+                
+                my $occur_diff = $self->get_field_occurrence($field_type->get_key_name) - 
+                        $field_type->get_min_occurrence;
+                
+                # Check if we've deleted too many
+                if ($delete_count{$field_type->get_key_name} > $occur_diff) {
+                    # Throw an error if we have
+                    throw_invalid
+                        error    => qq{Field "$field_type->get_key_name" can not be deleted. }
+                                  . qq{There must be at least $field_type->get_min_occurrence fields of this type.},
+                        maketext => [
+                            'Field "[_1]" can not be deleted. There must '
+                          . 'be at least [_2] fields of this type.',
+                            $field_type->get_key_name,
+                            $field_type->get_min_occurrence,
+                        ]
+                    ;
+                } else {
+                    # Schedule for deletion if we haven't                
+                    push @$del_elements, $_;
+                    $delete = 1;
+                }
             }
         }
 
@@ -2278,7 +2344,7 @@ sub _deserialize_pod {
                 }
 
                 # Make sure that it's okay if it's repeatable.
-                my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
+                my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
                 if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
@@ -2333,7 +2399,7 @@ sub _deserialize_pod {
                 $kn = $def_field;
                 $field_type = $field_types{$kn}
                     || _bad_field(\%field_types, $kn, $line_num);
-                my $field_occurrence = $self->get_occurrence($field_type->get_key_name);
+                my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
                 if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
