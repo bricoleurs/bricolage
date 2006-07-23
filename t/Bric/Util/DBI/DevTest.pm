@@ -28,7 +28,7 @@ sub test_fetch_objects: Test(4) {
                 ten        INTEGER NULL,
                 eleven     INTEGER NULL,
                 twelve     INTEGER NULL
-            ) }));
+            ) })) if (DBD_TYPE eq "Pg");
 
     eval {
     my $sth = prepare(q{
@@ -59,12 +59,12 @@ sub test_fetch_objects: Test(4) {
     }
 
     # check that _fetch_objects produces the right objs
-    my $sql = q{ SELECT one, two, three, four, five, six, seven, eight,
-                 group_concat(DISTINCT nine), group_concat(DISTINCT ten),
-                 group_concat(DISTINCT eleven), group_concat(DISTINCT twelve)
+    my $sql = ' SELECT one, two, three, four, five, six, seven, eight,
+                 group_concat(DISTINCT nine '.GROUP_SEP.'), group_concat(DISTINCT ten '.GROUP_SEP.'),
+                 group_concat(DISTINCT eleven '.GROUP_SEP.'), group_concat(DISTINCT twelve '.GROUP_SEP.')
                  FROM test_fetch_objects
                  GROUP BY one, two, three, four, five, six, seven, eight
-                 ORDER BY one, eight ASC };
+                 ORDER BY one, eight ASC ';
     my $fields = [ qw( one two three four five six seven eight nine ) ];
     my $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 4, undef, undef, undef);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
@@ -220,7 +220,10 @@ sub test_fetch_objects: Test(4) {
     my $err = $@;
     Bric::Util::DBI::execute(
       Bric::Util::DBI::prepare('DROP TABLE test_fetch_objects')
-    );
+    ) if (DBD_TYPE eq "Pg");
+    Bric::Util::DBI::execute(
+      Bric::Util::DBI::prepare('DELETE FROM test_fetch_objects')
+    ) if (DBD_TYPE eq "mysql");    
     die $err if $err;
 }
 

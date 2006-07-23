@@ -1424,7 +1424,7 @@ $get_em = sub {
 
 # LIMIT OFFSET compatibility measure for MySQL
     $limit        = 'LIMIT 18446744073709551615 ' 
-	if (($limit eq '') and !($offset eq ''));
+	if ((DBD_TYPE eq "mysql") and ($limit eq '') and !($offset eq ''));
     
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {

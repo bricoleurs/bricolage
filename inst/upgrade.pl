@@ -175,7 +175,7 @@ sub confirm_paths {
 # output .db files used by installation steps
 sub output_dbs {
     # fake up the .dbs from %INSTALL
-    my %dbs = ( PG     => "postgres.db",
+    my %dbs = ( DB     => "database.db",
                 CONFIG => "config.db",
                 AP     => "apache.db"  );
     while ( my ($key, $file) = each %dbs) {

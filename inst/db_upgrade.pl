@@ -41,8 +41,8 @@ our $UPGRADE;
 do "./upgrade.db" or die "Failed to read upgrade.db : $!";
 our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
-our $PG;
-do './postgres.db' or die "Failed to read postgres.db : $!";
+our $DB;
+do './database.db' or die "Failed to read database.db : $!";
 
 # Create a directory that the PG user can, uh, use.
 my $tmpdir = catdir 'inst', 'db_tmp';
@@ -50,14 +50,14 @@ eval { mkpath $tmpdir };
 if (my $err = $@) {
     die "Cannot create '$tmpdir': $err\n";
 }
-chown $PG->{system_user_uid}, -1, $tmpdir
-  or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
+chown $DB->{system_user_uid}, -1, $tmpdir
+  or die "Cannot chown '$tmpdir' to $DB->{ROOT_USER}: $!\n";
 
 # Set environment variables for psql.
-$ENV{PGUSER} = $PG->{root_user};
-$ENV{PGPASSWORD} = $PG->{root_pass};
-$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
-$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
+$ENV{PGUSER} = $DB->{root_user};
+$ENV{PGPASSWORD} = $DB->{root_pass};
+$ENV{PGHOST} = $DB->{host_name} if ( $DB->{host_name} ne "localhost" );
+$ENV{PGPORT} = $DB->{host_port} if ( $DB->{host_port} ne "" );
 
 print "\n\n==> Starting Database Upgrade <==\n\n";
 
@@ -81,10 +81,10 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
         print "Running '$perl $script'.\n";
         my $ret = system(
             $perl, $script,
-            '-u', $PG->{root_user},
-            '-p', $PG->{root_pass},
-            '-i', $PG->{system_user_uid},
-            '-s', $PG->{system_user},
+            '-u', $DB->{root_user},
+            '-p', $DB->{root_pass},
+            '-i', $DB->{system_user_uid},
+            '-s', $DB->{system_user},
         );
 
         # Pass through abnormal exits so that `make` will be halted.

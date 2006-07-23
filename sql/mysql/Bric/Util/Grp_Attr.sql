@@ -42,7 +42,7 @@ CREATE TABLE attr_grp_val (
     id           INTEGER         NOT NULL AUTO_INCREMENT,
     object__id   INTEGER         NOT NULL,
     attr__id     INTEGER         NOT NULL,
-    date_val     TIMESTAMP,
+    date_val     DATETIME,
     short_val    VARCHAR(1024),
     blob_val     TEXT,
     serial       BOOLEAN         DEFAULT FALSE,

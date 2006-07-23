@@ -15,7 +15,7 @@ DELIMITER |
 CREATE TRIGGER ck_key_name_insert_class BEFORE INSERT ON class
     FOR EACH ROW 
 	BEGIN
-	    IF (NEW.key_name <> LOWER (key_name))
+	    IF (NEW.key_name <> LOWER (NEW.key_name))
 	        THEN SET NEW.key_name=NULL;
 		END IF;        
     

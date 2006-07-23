@@ -134,6 +134,29 @@ CREATE TABLE story__contributor (
     AUTO_INCREMENT    1024;
 
 -- -----------------------------------------------------------------------------
+-- Table test_fetch_objects
+-- 
+-- Description: mapping tables between story instances and contributorsflat fake story table for easy testing
+--
+--
+
+CREATE TABLE test_fetch_objects (
+    one	 		INTEGER   NULL,
+    two	 		INTEGER   NULL,    
+    three 		INTEGER   NULL,    
+    four		INTEGER   NULL,    
+    five 		INTEGER   NULL,
+    six 		INTEGER   NULL,
+    seven 		INTEGER   NULL,
+    eight		INTEGER   NULL,
+    nine		INTEGER   NULL,
+    ten 		INTEGER   NULL,
+    eleven 		INTEGER   NULL,
+    twelve 		INTEGER   NULL
+)
+    ENGINE            InnoDB;
+
+-- -----------------------------------------------------------------------------
 -- Indexes.
 --
 

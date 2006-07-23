@@ -41,9 +41,10 @@ ALTER TABLE story
 ADD CONSTRAINT fk_site__story FOREIGN KEY (site__id)
 	REFERENCES site(id) ON DELETE RESTRICT;
 
-ALTER TABLE story
-ADD CONSTRAINT fk_story__story_id FOREIGN KEY (alias_id)
-	REFERENCES story(id) ON DELETE RESTRICT;
+-- MySQL compatibility measure until same table foreign key reference works as it should
+-- ALTER TABLE story
+-- ADD CONSTRAINT fk_story__story_id FOREIGN KEY (alias_id)
+--	REFERENCES story(id) ON DELETE RESTRICT;
 
 ALTER TABLE story
 ADD CONSTRAINT fk_desk__story FOREIGN KEY (desk__id)

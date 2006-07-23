@@ -162,9 +162,9 @@ use constant CAN_DO_LIST => 1;
 use constant CAN_DO_LOOKUP => 1;
 use constant HAS_CLASS_ID => 1;
 
-use constant GROUP_COLS => ('group_concat(DISTINCT m.grp__id) AS grp_id',
-                            'group_concat(DISTINCT c.asset_grp_id) AS cat_grp_id',
-                            'group_concat(DISTINCT w.asset_grp_id) AS wf_grp_id');
+use constant GROUP_COLS => ('group_concat(DISTINCT '.MGROUP_SEP.') AS grp_id',
+                            'group_concat(DISTINCT '.CGROUP_SEP.') AS cat_grp_id',
+                            'group_concat(DISTINCT '.WGROUP_SEP.') AS wf_grp_id');
 
 # the mapping for building up the where clause based on params
 use constant WHERE => 'mt.id = i.media__id '

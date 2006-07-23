@@ -30,7 +30,6 @@ L<Bric::Admin>
 use strict;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 use File::Find qw(find);
 

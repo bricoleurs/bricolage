@@ -260,7 +260,8 @@ uninstall 	: is_root prep_uninstall stop db_uninstall rm_files clean
 prep_uninstall	:
 	$(PERL) inst/uninstall.pl
 
-db_uninstall	:
+DB_UNINST_FILES := $(shell find inst -name 'db_uninst_*.pl')
+db_uninstall	:$(DB_UNINST_FILES)
 	$(PERL) inst/db_uninstall.pl
 
 rm_files	:

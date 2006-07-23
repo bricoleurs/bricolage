@@ -7,7 +7,7 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
-$DBCONF = './postgres.db';
+$DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
 # Switch to postgres system user
@@ -76,13 +76,13 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$DB->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
-        system($DB->{psql}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
+        system($DB->{exec}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
           or return;
     }
 

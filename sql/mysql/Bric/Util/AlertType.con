@@ -10,9 +10,10 @@
 -- TABLE: alert_type 
 --
 
-ALTER TABLE    alert_type
-ADD CONSTRAINT fk_event_type__alert_type FOREIGN KEY (event_type__id)
-REFERENCES     event_type(ID) ON DELETE CASCADE;
+-- MySQL compatibility measure until I find out why it fails
+--ALTER TABLE    alert_type
+--ADD CONSTRAINT fk_event_type__alert_type FOREIGN KEY (event_type__id)
+--REFERENCES     event_type(ID) ON DELETE CASCADE;
 
 ALTER TABLE    alert_type
 ADD CONSTRAINT fk_usr__alert_type FOREIGN KEY (usr__id)

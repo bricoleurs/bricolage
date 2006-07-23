@@ -73,12 +73,19 @@ use constant DSN_STRING => 'dbname=' . DB_NAME
 # http://bugs.bricolage.cc/show_bug.cgi?id=802
 use constant DBH_ATTR => ( pg_enable_utf8 => 1 );
 
+# This is to set the group_concat aggregate separator
+use constant GROUP_SEP => "  ";
+use constant MGROUP_SEP => " m.grp__id ";
+use constant CGROUP_SEP => " c.asset_grp_id ";
+use constant WGROUP_SEP => " w.asset_grp_id ";
+
 ##############################################################################
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
-		    db_datetime DBH_ATTR TRANSACTIONAL);
+		    db_datetime DBH_ATTR TRANSACTIONAL GROUP_SEP MGROUP_SEP
+		    CGROUP_SEP WGROUP_SEP);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################

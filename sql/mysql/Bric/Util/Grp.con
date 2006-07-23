@@ -22,7 +22,7 @@ DELIMITER |
 CREATE TRIGGER ck_parent_id_insert_grp BEFORE INSERT ON grp
     FOR EACH ROW 
 	BEGIN
-	    IF (NEW.parent_id <> NEW.id)
+	    IF (NEW.parent_id = NEW.id)
 	        THEN SET NEW.id=NULL;
 		END IF;        
     
@@ -32,7 +32,7 @@ CREATE TRIGGER ck_parent_id_insert_grp BEFORE INSERT ON grp
 CREATE TRIGGER ck_parent_id_update_grp BEFORE UPDATE ON grp
     FOR EACH ROW 
 	BEGIN
-	    IF (NEW.parent_id <> NEW.id)
+	    IF (NEW.parent_id = NEW.id)
 	        THEN SET NEW.id=NULL;
 		END IF;        
     

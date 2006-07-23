@@ -41,9 +41,11 @@ ALTER TABLE media
 ADD CONSTRAINT fk_site__media FOREIGN KEY (site__id)
 	REFERENCES site(id) ON DELETE RESTRICT;
 
-ALTER TABLE media
-ADD CONSTRAINT fk_media__media_id FOREIGN KEY (alias_id)
-	REFERENCES media(id) ON DELETE RESTRICT;
+-- MySQL compatibility measure until same table foreign key works as it should
+--
+-- ALTER TABLE media
+-- ADD CONSTRAINT fk_media__media_id FOREIGN KEY (alias_id)
+--      REFERENCES media(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
 ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)

@@ -57,7 +57,7 @@ CREATE TRIGGER ck_uri_case_update_output_channel BEFORE UPDATE ON output_channel
 CREATE TRIGGER ck_include_oc_id_insert_output_channel_include BEFORE INSERT ON output_channel_include
     FOR EACH ROW 
 	BEGIN
-	    IF (NEW.include_oc_id <> output_channel__id)
+	    IF (NEW.include_oc_id = NEW.output_channel__id)
 		THEN SET NEW.include_oc_id=NULL;
 	    END IF;        
         END;
@@ -66,7 +66,7 @@ CREATE TRIGGER ck_include_oc_id_insert_output_channel_include BEFORE INSERT ON o
 CREATE TRIGGER ck_include_oc_id_update_output_channel_include BEFORE UPDATE ON output_channel_include
     FOR EACH ROW 
 	BEGIN
-	    IF (NEW.include_oc_id <> output_channel__id)
+	    IF (NEW.include_oc_id = NEW.output_channel__id)
 		THEN SET NEW.include_oc_id=NULL;
 	    END IF;        
         END;
