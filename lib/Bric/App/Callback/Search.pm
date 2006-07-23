@@ -213,24 +213,7 @@ sub clear : Callback {
     set_state_data($widget, $object => {});
 }
 
-sub set_advanced : Callback {
-    shift->_set_advanced(1);
-}
-
-sub unset_advanced : Callback {
-    shift->_set_advanced(0);
-}
-
 ###
-
-sub _set_advanced {
-    my ($self, $val) = @_;
-    my $widget = $self->class_key;
-    my $object = get_state_name($widget);
-    my $state  = get_state_data($widget => $object);
-    $state->{advanced_search} = $val;
-    set_state_data($widget, $object => $state);
-}
 
 sub _build_fields {
     my ($self, $field, $crit, $add) = @_;
