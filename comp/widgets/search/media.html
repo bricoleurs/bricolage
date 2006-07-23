@@ -10,7 +10,7 @@ $state
 my $advanced_search = $state->{advanced_search};
 $advanced_search = get_pref('Default Search')
   unless defined $advanced_search;
-my $asset_opts = $advanced_search ? {
+my $asset_opts = {
         '' => $lang->maketext('All Types'),
         map { $_->get_id, $_->get_name }
           Bric::Biz::ElementType->list({
@@ -18,7 +18,7 @@ my $asset_opts = $advanced_search ? {
               media     => 1,
               active    => 1,
           })
-    } : undef;
+    };
 my $sites = $c->get('__SITES__');
 
 unless ($sites) {
@@ -34,25 +34,12 @@ $sites = [grep { chk_authz($_, READ, 1) } @$sites];
 % }
 
 <%perl>
-my $caption;
-unless ($advanced_search) {
-    $caption = sprintf(qq{%s ~[<a href="%s?%s|set_advanced_cb=1" class="switchSearch">%s</a>~]},
-                   $lang->maketext('Search'),
-                   $r->uri,
-                   $widget,
-                   $lang->maketext('Advanced Search'));
-} else {
-    $caption = sprintf(qq{%s ~[<a href="%s?%s|unset_advanced_cb=1" class="switchSearch">%s</a>~]},
-                   $lang->maketext('Advanced Search'),
-                   $r->uri,
-                   $widget,
-                   $lang->maketext('Simple Search'));
-}
 $m->comp("/widgets/wrappers/table_top.mc",
-              caption => $caption,
+              caption => $lang->maketext('Search'),
               search  => 1);
 </%perl>
-% unless ($advanced_search) {
+
+<div id="basic-search"<% ($advanced_search) ? ' style="display: none"' : '' %>>
 
     <& '/widgets/profile/text.mc',
         name    => $widget.'|simple',
@@ -62,17 +49,22 @@ $m->comp("/widgets/wrappers/table_top.mc",
 %   # This hidden field is required to make the form submit when the user hits
 %   # the "enter" key.
     <& '/widgets/profile/hidden.mc',
+        id      => 'search-type',
         name    => $widget.'|media_cb',
-        value   => 'Search' &>
+        value   => 'simple' &>
 
     <& '/widgets/profile/button.mc',
         disp    => $lang->maketext('Search'),
-        widget  => $widget,
-        cb      => 'media_cb',
+        name    => 'simple_search',
         button  => 'search_red',
+        js      => qq{onclick="\$('search-type').value = 'simple'"},
         useTable => 0 &>
-        
-% } else {
+
+        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_name').value = $('search_simple').value; Element.toggle('basic-search', 'advanced-search'); return false">Show more options &raquo;</a>
+
+</div>
+
+<div id="advanced-search"<% ($advanced_search) ? '' : ' style="display: none"' %>>
 
     <& /widgets/profile/text.mc,
         disp    => $lang->maketext('Title'),
@@ -199,9 +191,9 @@ $m->comp("/widgets/wrappers/table_top.mc",
         <div class="input">
             <& /widgets/profile/button.mc,
                 disp    => $lang->maketext('Search'),
-                widget  => $widget,
-                cb      => 'media_cb',
+                name    => 'advanced_search',
                 button  => 'search_red',
+                js      => qq{onclick="\$('search-type').value = 'advanced'"},
                 useTable => 0 &>
             <& /widgets/profile/button.mc,
                 disp    => $lang->maketext('Clear Values'),
@@ -209,11 +201,15 @@ $m->comp("/widgets/wrappers/table_top.mc",
                 cb      => 'clear_cb',
                 button  => 'clear_values_lgreen',
                 useTable => 0 &>
+                
+            <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_name').value; Element.toggle('basic-search', 'advanced-search'); return false">&laquo; Show fewer options</a>
+
         </div>
     </div>
-% }
+</div>
+
 <& '/widgets/wrappers/table_bottom.mc' &>
-%#--- Log History ---#
+
 % if ($use_form_tag) {
 </form>
 % }

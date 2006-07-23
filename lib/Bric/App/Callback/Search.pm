@@ -56,29 +56,34 @@ sub alpha : Callback {
 
 sub story : Callback {
     my $self = shift;
-
+    
     my (@field, @crit);
-
-    _build_fields(
-        $self, \@field, \@crit,
-        [qw(simple title primary_uri category_uri keyword data_text)],
-    );
-    _build_id_fields(
-        $self, \@field, \@crit,
-        [qw(element_type_id site_id subelement_id)],
-    );
-    _build_bool_fields($self, \@field, \@crit, [qw(active)]);
-    _build_date_fields(
-        $self->class_key, $self->params, \@field, \@crit,
-        [qw(cover_date publish_date expire_date)],
-    );
-
+    
+    if ($self->value eq "simple") {
+        _build_fields($self, \@field, \@crit, ['simple']);
+    } else {
+        _build_fields(
+            $self, \@field, \@crit,
+            [qw(title primary_uri category_uri keyword data_text)],
+        );
+        _build_id_fields(
+            $self, \@field, \@crit,
+            [qw(element_type_id site_id subelement_id)],
+        );
+        _build_bool_fields($self, \@field, \@crit, [qw(active)]);
+        _build_date_fields(
+            $self->class_key, $self->params, \@field, \@crit,
+            [qw(cover_date publish_date expire_date)],
+        );
+    }
+    
     # Display no results for an empty search.
     return unless @field;
-
+    
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
+    $state->{advanced_search} = ($self->value eq "advanced");
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
     $state->{timestamp} = time();
@@ -87,21 +92,34 @@ sub story : Callback {
 
 sub media : Callback {
     my $self = shift;
-
+    
     my (@field, @crit);
-
-    _build_fields($self, \@field, \@crit, [qw(simple name uri data_text)]);
-    _build_id_fields($self, \@field, \@crit, [qw(element_type_id site_id)]);
-    _build_bool_fields($self, \@field, \@crit, [qw(active)]);
-    _build_date_fields($self->class_key, $self->params, \@field, \@crit,
-		       [qw(cover_date publish_date expire_date)]);
-
+    
+    if ($self->value eq "simple") {
+        _build_fields($self, \@field, \@crit, ['simple']);
+    } else {
+        _build_fields(
+            $self, \@field, \@crit, 
+            [qw(name uri data_text)]
+        );
+        _build_id_fields(
+            $self, \@field, \@crit, 
+            [qw(element_type_id site_id)]
+        );
+        _build_bool_fields($self, \@field, \@crit, [qw(active)]);
+        _build_date_fields(
+            $self->class_key, $self->params, \@field, \@crit,
+            [qw(cover_date publish_date expire_date)]
+        );
+    }
+    
     # Display no results for an empty search.
     return unless @field;
-
+    
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
+    $state->{advanced_search} = ($self->value eq "advanced");
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
     set_state_data($widget, $object => $state);
@@ -109,21 +127,34 @@ sub media : Callback {
 
 sub template : Callback {
     my $self = shift;
-
+    
     my (@field, @crit);
-
-    _build_fields($self, \@field, \@crit, [qw(simple name file_name)]);
-    _build_id_fields($self, \@field, \@crit, [qw(site_id output_channel_id)]);
-    _build_bool_fields($self, \@field, \@crit, [qw(active)]);
-    _build_date_fields($self->class_key, $self->params, \@field, \@crit,
-		       [qw(cover_date publish_date expire_date)]);
-
+    
+    if ($self->value eq "simple") {
+        _build_fields($self, \@field, \@crit, ['simple']);
+    } else {
+        _build_fields(
+            $self, \@field, \@crit, 
+            [qw(name file_name)]
+        );
+        _build_id_fields(
+            $self, \@field, \@crit, 
+            [qw(site_id output_channel_id)]
+        );
+        _build_bool_fields($self, \@field, \@crit, [qw(active)]);
+        _build_date_fields(
+            $self->class_key, $self->params, \@field, \@crit,
+            [qw(cover_date publish_date expire_date)]
+        );
+    }
+    
     # Display no results for an empty search.
     return unless @field;
 
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
+    $state->{advanced_search} = ($self->value eq "advanced");
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
     set_state_data($widget, $object => $state);
