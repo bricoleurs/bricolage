@@ -135,6 +135,7 @@ body.popup #headerContainer    { padding-top: 8px; }
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
+a.small         { font-size: .9em; }
 .orangeLink     { font-size:10px; color:#CC6633;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}

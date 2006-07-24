@@ -2,6 +2,26 @@
 % unless ($top_level) {
 <h3 class="name"><% $element->get_name %>:</h3>
 % }
+% if ($type->is_related_story) {
+<div id="element_<% $id %>_rel_story">
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'story',
+        asset => $story
+    &>
+</div>
+% }
+% if ($type->is_related_media) {
+<div id="element_<% $id %>_rel_media">
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'media',
+        asset => $story
+    &>
+</div>
+% }
 <ul id="element_<% $id %>" class="elements">
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {
@@ -71,6 +91,7 @@ $element
 </%args>
 
 <%init>
+my $story = get_state_data('story_prof', 'story');
 my $type = $element->get_element_type;
 my $id   = $element->get_id;
 my $name = 'con' . $id;

@@ -182,7 +182,6 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
     } else {
         for (var i in cbNames) {
             frm.elements[cbNames[i]].value = cbValues[i];
-            alert(frm.elements[cbNames[i]].name);
         }
     }
     if (optFunctions != null) {
@@ -630,7 +629,7 @@ Open popup window
 */
 function openWindow(uri, name, opts) {
     var options = Object.extend({
-      width: 505,
+      width: 600,
       height: 600,
       scrollbars: 1,
       status: 1,
@@ -665,7 +664,7 @@ function openHelp()  {
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
     if (!/^\//.test(uri)) uri = '/' + uri;
     if (!/\.html$/.test(uri)) uri += '.html';
-    return openWindow('/help/' + lang_key + uri, "BricolageHelp");
+    return openWindow('/help/' + lang_key + uri, "BricolageHelp", { width: 505 });
 }
 
 
@@ -982,10 +981,8 @@ document.getParentByTagName = function(element, tagName) {
     element = $(element);
     while (element.parentNode && (!element.tagName ||
         (element.tagName.toUpperCase() != tagName.toUpperCase()))) {
-      alert(element);
       element = element.parentNode;      
     }
-    alert(element)
     return element;
 }
 
@@ -1196,6 +1193,30 @@ var Container = {
     confirmDelete: function() {
         return confirm("Are you sure you want to remove this element?\n\n" +
                        "It will not be permanently deleted until you save your changes.");
+    },
+    
+    // Used to associate a story or media with an element, from a popup.  It returns the updated
+    // partial, which is then inserted into the parent window.
+    // Takes the container ID to which to add the asset and the ID of the asset to relate
+    update_related: function(action, type, widget, container_id, asset_id) {
+        new Ajax.Updater(
+          window.opener.document.getElementById('element_' + container_id + '_rel_' + type),
+          '/widgets/container_prof/_related.html', {
+              parameters: 'type=' + type + '&widget=' + widget + '&container_id=' + container_id + '&container_prof|' + action + '_' + type + '_cb=' + asset_id,
+              asynchronous: true, 
+              onComplete: function(request) { 
+                  window.close();
+              }
+          }
+        )
+    },
+    
+    relate: function(type, widget, container_id, asset_id) {
+        return Container.update_related('relate', type, widget, container_id, asset_id);
+    },
+    
+    unrelate: function(type, widget, container_id, asset_id) {
+        return Container.update_related('unrelate', type, widget, container_id, asset_id);
     }
 };
 

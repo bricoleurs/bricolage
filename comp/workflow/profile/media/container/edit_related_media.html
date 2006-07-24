@@ -22,25 +22,25 @@ $LastChangedDate$
 <%once>;
 my $type = 'element';
 my $disp = get_disp_name($type);
-my $sdisp = get_disp_name('story');
 my $mdisp = get_disp_name('media');
 my $context = "Workflow | Profile | $mdisp | $disp |";
 </%once>
+
 <%args>
+$id
 </%args>
-<%init>;
-</%init>
 
 <& /widgets/wrappers/header.mc, 
     title => "Select Related $mdisp",
     context => $context . get_state_data('container_prof', 'crumb') .
-                   " | Related $mdisp"
+                   " | Related $mdisp",
+    popup => 1
 &>
 <form action="<% $r->uri %>" method="post">
-<& /widgets/container_prof/container_prof.mc,
-    element_type => 'media"',
-    action    => 'edit_related_media',
-    args      => \%ARGS,
-&>
+    <& '/widgets/profile/related/edit.html',
+        type => 'media',
+        id   => $id,
+        args    => \%ARGS
+    &>
 </form>
 <& /widgets/wrappers/footer.mc &>

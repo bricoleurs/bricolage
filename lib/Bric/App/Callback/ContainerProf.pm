@@ -47,7 +47,7 @@ sub bulk_edit : Callback {
     my $r = $self->apache_req;
 
     my $element = get_state_data($self->class_key, 'element');
-    my $edit_element = $self->_locate_subelement($element, $param);
+    my $edit_element = $self->_locate_subelement($element, $self->value);
 
     # Push the current element onto the stack.
     $self->_push_element_stack($edit_element);
@@ -240,10 +240,9 @@ sub relate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_media($self->value);
-    $self->_handle_related_up;
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    $element->set_related_media_id($self->value);
 }
 
 sub unrelate_media : Callback {
@@ -251,10 +250,9 @@ sub unrelate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_media(undef);
-    $self->_handle_related_up;
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    $element->set_related_media_id(undef);
 }
 
 sub pick_related_story : Callback {
@@ -273,10 +271,9 @@ sub relate_story : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_story_id($self->value);
-    $self->_handle_related_up;
 }
 
 sub unrelate_story : Callback {
@@ -285,9 +282,8 @@ sub unrelate_story : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $element = get_state_data($self->class_key, 'element');
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_story_id(undef);
-    $self->_handle_related_up;
 }
 
 sub related_up : Callback {
@@ -533,8 +529,8 @@ sub _delete_element {
 }
 
 sub _locate_subelement {
-    my ($self, $element, $param) = @_;
-    my $locate_id = $self->value;
+    my ($self, $element, $locate_id) = @_;
+    $locate_id ||= $self->value;
     
     {
         no warnings 'uninitialized';
@@ -544,7 +540,7 @@ sub _locate_subelement {
     foreach my $t ($element->get_elements) {
         next unless $t->is_container;
             
-        my $locate_element = $self->_locate_subelement($t, $param);
+        my $locate_element = $self->_locate_subelement($t, $locate_id);
         return $locate_element if $locate_element;
     }
 }
