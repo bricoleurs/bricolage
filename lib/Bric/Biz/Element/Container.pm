@@ -1397,7 +1397,7 @@ sub delete_elements {
                 
                 # Check if we've seen this element type before
                 if ($delete_count{$elem_type->get_key_name}) {
-                    $delete_count{$elem_type->get_key_name} += 1;
+                    $delete_count{$elem_type->get_key_name}++;
                 } else {
                     $delete_count{$elem_type->get_key_name} = 1;
                 }
@@ -1420,7 +1420,7 @@ sub delete_elements {
                 
                 # Check if we've seen this field type before
                 if ($delete_count{$field_type->get_key_name}) {
-                    $delete_count{$field_type->get_key_name} += 1;
+                    $delete_count{$field_type->get_key_name}++;
                 } else {
                     $delete_count{$field_type->get_key_name} = 1;
                 }

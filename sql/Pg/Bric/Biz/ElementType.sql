@@ -63,6 +63,8 @@ CREATE TABLE element_type  (
     et_grp__id      INTEGER,
     type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
+    min_occurrence  INTEGER        NOT NULL DEFAULT 0,
+    max_occurrence  INTEGER        NOT NULL DEFAULT 0,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 );
 
