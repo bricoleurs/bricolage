@@ -321,7 +321,7 @@ Defaults to 0
 
 =item max_occurrence
 
-Defaults to 0
+Defaults to 0, meaning there is no maximum
 
 =back
 
