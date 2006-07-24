@@ -79,13 +79,16 @@ use constant MGROUP_SEP => " m.grp__id ";
 use constant CGROUP_SEP => " c.asset_grp_id ";
 use constant WGROUP_SEP => " w.asset_grp_id ";
 
+# This is the a compatibility measure for MySQL for LIMIT-OFFSET
+use constant LIMIT_DEFAULT => undef;
+
 ##############################################################################
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
 		    db_datetime DBH_ATTR TRANSACTIONAL GROUP_SEP MGROUP_SEP
-		    CGROUP_SEP WGROUP_SEP);
+		    CGROUP_SEP WGROUP_SEP LIMIT_DEFAULT);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################

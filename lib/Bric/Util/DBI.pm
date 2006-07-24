@@ -133,7 +133,7 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    bind_param begin commit rollback finish is_num row_array
 		    all_aref fetch_objects order_by group_by build_query
 		    build_simple_query where_clause tables ANY any_where DBD_TYPE
-		    GROUP_SEP MGROUP_SEP CGROUP_SEP WGROUP_SEP);
+		    GROUP_SEP MGROUP_SEP CGROUP_SEP WGROUP_SEP LIMIT_DEFAULT);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
@@ -790,9 +790,7 @@ sub build_query {
       $order\n};
 
     # LIMIT OFFSET compatibility measure for MySQL
-    $limit = "18446744073709551615"
-        if ((DBD_TYPE eq "mysql") and !$limit and $offset);
-
+    $limit = LIMIT_DEFAULT if ($offset);
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
     return \$sql;

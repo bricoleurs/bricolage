@@ -1412,20 +1412,17 @@ $get_em = sub {
         $order_by .= ' ' . delete $params->{OrderDirection}
             if $params->{OrderDirection};
     }
-
-    my $limit     = exists $params->{Limit}
-        ? 'LIMIT ' . delete $params->{Limit}
-        : ''
+    my $limit = LIMIT_DEFAULT if (exists $params->{Offset});
+    $limit     = (exists $params->{Limit})
+        ? delete $params->{Limit}
+        : '' if !$limit;
         ;
+    $limit = 'LIMIT ' . $limit if $limit ne '';    
     my $offset    = exists $params->{Offset}
         ? 'OFFSET ' . delete $params->{Offset}
         : ''
         ;
 
-# LIMIT OFFSET compatibility measure for MySQL
-    $limit        = 'LIMIT 18446744073709551615 ' 
-	if ((DBD_TYPE eq "mysql") and ($limit eq '') and !($offset eq ''));
-    
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {
             # It's a date column.

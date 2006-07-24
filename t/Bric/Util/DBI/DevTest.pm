@@ -153,6 +153,7 @@ sub test_fetch_objects: Test(4) {
     is_deeply($stories, $expect, 'limit of 2 gets first two objects');
     # test offset
     $sql =~ s/LIMIT 2//;
+    $sql .= ' LIMIT ' . LIMIT_DEFAULT if LIMIT_DEFAULT;
     $sql .= ' OFFSET 2';
     $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 4, undef);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
@@ -185,7 +186,7 @@ sub test_fetch_objects: Test(4) {
     is_deeply($stories, $expect, 'offset of two gets last two objects');
     # test limit and offset together
     $sql =~ s/OFFSET 2/OFFSET 1/;
-    $sql .= ' LIMIT 2';
+    $sql =~ s/LIMIT LIMIT_DEFAULT/LIMIT 2/ if LIMIT_DEFAULT;
     $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 4, undef, 2, 1);
     $_->{nine} = [sort { $a <=> $b } @{$_->{nine}}] for @$stories;
     $expect = [
