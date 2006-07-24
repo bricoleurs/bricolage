@@ -75,11 +75,11 @@ $LastChangedDate$
   $element  = $element->activate()
   $element  = $element->deactivate()
   (undef || 1) = $element->is_active()
-  
+
   # Get/set the minimum occurrence
   $element_type = $element_type->set_min_occurrence($amount)
   $min = $element_type->get_min_occurrence()
- 
+
   # Get/Set the maximum occurrence
   $element_type = $element_type->set_max_occurrence($amount)
   $max = $element_type->get_max_occurrence()
@@ -524,7 +524,7 @@ The minimum number of times this subelement must occur.
 =item max_occurrence
 
 The maximum number of times this subelement may occur.
-    
+
 =back
 
 B<Throws:>
@@ -1054,20 +1054,20 @@ based on the element type can have another media related to them.
 The C<media> attribute is a boolean that indicates whether elements based on
 the element type are media documents. This attribute is a redundant
 combination fo the C<biz_type_id> and C<top_level> attributes.
-    
+
 =head3 min_occurrence
 
   my $min = $element_type->get_min_occurrence;
   $element_type = $element_type->set_min_occurrence($min);
-  
+
 The C<min_occurrence> attribute is a scalar that indicates how many subelements
 must exist in a parent container of this type.
-    
+
 =head3 max_occurrence
 
   my $max = $element_type->get_max_occurrence;
   $element_type = $element_type->set_max_occurrence($max);
-  
+
 The C<max_occurrence> attribute is a scalar that indicates how many subelements
 may exist in a parent container of this type.
 
