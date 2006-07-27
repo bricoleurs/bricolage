@@ -29,7 +29,7 @@ sub table { 'element_type' };
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_new : Test(24) {
+sub test_new : Test(26) {
     my $self = shift;
 
     my %et = (
@@ -80,6 +80,8 @@ sub test_new : Test(24) {
     ok !$et->is_related_media, 'Should not be related media';
     ok !$et->is_paginated,     'Should not be paginated';
     ok !$et->is_media,         'Should not be media';
+    is $et->get_min_occurrence, 0, 'Minimum occurrence should default to 0';
+    is $et->get_max_occurrence, 0, 'Maximum occurrence should default to 0';
 }
 
 ##############################################################################
@@ -94,7 +96,7 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(65) {
+sub test_list : Test(73) {
     my $self = shift;
 
     # Create a new element group.
@@ -111,10 +113,10 @@ sub test_list : Test(65) {
         if ($n % 2) {
             # There'll be three of these.
             $args{description} .= $n;
-            @args{qw(fixed_uri related_media related_story)} = (1,1,1);
+            @args{qw(fixed_uri related_media related_story min_occurrence max_occurrence)} = (1,1,1,1,1);
         } else {
             # There'll be two of these.
-            @args{qw(top_level media biz_class_id)} = (1,1,$media_class_id);
+            @args{qw(top_level media biz_class_id min_occurrence max_occurrence)} = (1,1,$media_class_id, 2, 2);
         }
         ok( my $elem = Bric::Biz::ElementType->new(\%args), "Create $args{name}" );
         ok( $elem->save, "Save $args{name}" );
@@ -157,6 +159,24 @@ sub test_list : Test(65) {
         description => "$elem{description}%"
     }), "Look up description '$elem{description}%'" );
     is( scalar @ets, 5, "Check for 5 element types" );
+
+    # Try min_occurrence
+    ok ( @ets = Bric::Biz::ElementType->list({
+            min_occurrence => 1 }), "Look up min_occurrence." );
+    is ( scalar @ets, 3, "Check for 3 elements" );
+
+    ok ( @ets = Bric::Biz::ElementType->list({
+            min_occurrence => 2 }), "Look up min_occurrence." );
+    is ( scalar @ets, 2, "Check for 2 elements" );
+
+    # Try max_occurrence
+    ok ( @ets = Bric::Biz::ElementType->list({
+            max_occurrence => 1 }), "Look up max_occurrence." );
+    is ( scalar @ets, 3, "Check for 3 elements" );
+
+    ok ( @ets = Bric::Biz::ElementType->list({
+            max_occurrence => 2 }), "Look up max_occurrence." );
+    is ( scalar @ets, 2, "Check for 2 elements" );
 
     # Try ANY(description).
     ok( @ets = Bric::Biz::ElementType->list({
@@ -271,7 +291,7 @@ sub test_my_meths : Test(11) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(62) {
+sub test_list_ids : Test(70) {
     my $self = shift;
 
     # Create a new element group.
@@ -288,10 +308,10 @@ sub test_list_ids : Test(62) {
         if ($n % 2) {
             # There'll be three of these.
             $args{description} .= $n;
-            @args{qw(fixed_uri related_media related_story)} = (1,1,1);
+            @args{qw(fixed_uri related_media related_story min_occurrence max_occurrence)} = (1,1,1,1,1);
         } else {
             # There'll be two of these.
-            @args{qw(top_level media biz_class_id)} = (1,1,$media_class_id);
+            @args{qw(top_level media biz_class_id min_occurrence max_occurrence)} = (1,1,$media_class_id,2,2);
         }
         ok( my $elem = Bric::Biz::ElementType->new(\%args), "Create $args{name}" );
         ok( $elem->save, "Save $args{name}" );
@@ -340,6 +360,24 @@ sub test_list_ids : Test(62) {
         description => ANY($elem{description}, "$elem{description}1")
     }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
     is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+
+    # Try min_occurrence
+    ok ( @et_ids = Bric::Biz::ElementType->list_ids({
+            min_occurrence => 1 }), "Look up min_occurrence." );
+    is ( scalar @et_ids, 3, "Check for 3 elements" );
+
+    ok ( @et_ids = Bric::Biz::ElementType->list_ids({
+            min_occurrence => 2 }), "Look up min_occurrence." );
+    is ( scalar @et_ids, 2, "Check for 2 elements" );
+
+    # Try max_occurrence
+    ok ( @et_ids = Bric::Biz::ElementType->list_ids({
+            max_occurrence => 1 }), "Look up max_occurrence." );
+    is ( scalar @et_ids, 3, "Check for 3 elements" );
+
+    ok ( @et_ids = Bric::Biz::ElementType->list_ids({
+            max_occurrence => 2 }), "Look up max_occurrence." );
+    is ( scalar @et_ids, 2, "Check for 2 elements" );
 
     # Try grp_id.
     my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
