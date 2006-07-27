@@ -224,7 +224,7 @@ sub test_occurrence : Test(64) {
 #    ok $para_type->save, 'Save the field';
 
     # Try deleting the last paragraph
-#    ok $elem->delete_elements([$new_para_2]), 'Try deleting the last paragraph';
+#    ok $elem->delete_elements([ $new_para_2 ]), 'Try deleting the last paragraph';
 
     # Try deleting the second last paragraph
 #    ok $elem->delete_elements($new_para_1), 'Fail trying to delete the second last paragraph';

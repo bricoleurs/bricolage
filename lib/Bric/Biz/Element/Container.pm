@@ -938,7 +938,9 @@ sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
     
-    if ($atd->get_max_occurrence && ($self->get_field_occurrence($atd->get_key_name) >= $atd->get_max_occurrence)) {
+    if ($atd->get_max_occurrence && 
+        ($self->get_field_occurrence($atd->get_key_name) >= 
+            $atd->get_max_occurrence)) {
         my $field_name = $atd->get_key_name;
         my $field_occurrence = $self->get_field_occurrence($field_name);
         my $field_max_occur = $atd->get_max_occurrence;
@@ -968,7 +970,7 @@ sub add_field {
 
     # have to do this after add_element() since add_element() modifies place
     $field->set_place($place) if defined $place;
-    return $self;
+    return $field;
 }
 
 sub add_data { shift->add_field(@_) }
@@ -1356,7 +1358,7 @@ sub delete_elements {
     my (%del_data, %del_cont, $error);
 
     my $err_msg = 'Improper args to delete elements';
-
+    
     for my $elem (@$elements_arg) {
         if (ref $elem eq 'HASH') {
             throw_gen(error => $err_msg)
@@ -1394,20 +1396,33 @@ sub delete_elements {
         if ($_->is_container) {
             if (exists $del_cont{$_->get_id}) {
                 my $elem_type = $_->get_element_type;
+                my $elem_name = $elem_type->get_key_name;
                 
                 # Check if we've seen this element type before
-                if ($delete_count{$elem_type->get_key_name}) {
-                    $delete_count{$elem_type->get_key_name}++;
+                if ($delete_count{$elem_name}) {
+                    $delete_count{$elem_name}++;
                 } else {
-                    $delete_count{$elem_type->get_key_name} = 1;
+                    $delete_count{$elem_name} = 1;
                 }
+                # NOTE: This is waiting to be released when the time is right.
                 
-#                my $occur_diff = $self->get_elem_occurrence($elem_type->get_key_name) - 
+#                my $occur_diff = $self->get_elem_occurrence($elem_name) - 
 #                        $elem_type->get_min_occurrence;
                 
                 # Check if we've deleted too many
-#                if ($delete_count{$elem_type->get_key_name} > $occur_diff) {
+#                if ($delete_count{$elem_name} > $occur_diff) {
+#                    my $the_min_occur = $elem_type->get_min_occurrence;
                     # Throw an error if we have
+#                    throw_invalid
+#                        error    => qq{Element "$elem_name" cannot be deleted. }
+#                                  . qq{There must be at least $the_min_occur fields of this type.},
+#                        maketext => [
+#                            'Element "[_1]" cannot be deleted. There must '
+#                          . 'be at least [_2] fields of this type.',
+#                            $elem_name,
+#                            $the_min_occur,
+#                        ]
+#                    ;
 #                } else {
                     # Schedule for deletion if we haven't
                     push @$del_elements, $_;
@@ -1417,28 +1432,30 @@ sub delete_elements {
         } else {
             if (exists $del_data{$_->get_id}) {
                 my $field_type = $_->get_field_type;
+                my $field_name = $field_type->get_key_name;
                 
                 # Check if we've seen this field type before
-                if ($delete_count{$field_type->get_key_name}) {
-                    $delete_count{$field_type->get_key_name}++;
+                if ($delete_count{$field_name}) {
+                    $delete_count{$field_name}++;
                 } else {
-                    $delete_count{$field_type->get_key_name} = 1;
+                    $delete_count{$field_name} = 1;
                 }
                 
-                my $occur_diff = $self->get_field_occurrence($field_type->get_key_name) - 
+                my $occur_diff = $self->get_field_occurrence($field_name) - 
                         $field_type->get_min_occurrence;
                 
                 # Check if we've deleted too many
-                if ($delete_count{$field_type->get_key_name} > $occur_diff) {
+                if ($delete_count{$field_name} > $occur_diff) {
+                    my $the_min_occur = $field_type->get_min_occurrence;
                     # Throw an error if we have
                     throw_invalid
-                        error    => qq{Field "$field_type->get_key_name" can not be deleted. }
-                                  . qq{There must be at least $field_type->get_min_occurrence fields of this type.},
+                        error    => qq{Field "$field_name" cannot be deleted. }
+                                  . qq{There must be at least $the_min_occur fields of this type.},
                         maketext => [
-                            'Field "[_1]" can not be deleted. There must '
+                            'Field "[_1]" cannot be deleted. There must '
                           . 'be at least [_2] fields of this type.',
-                            $field_type->get_key_name,
-                            $field_type->get_min_occurrence,
+                            $field_name,
+                            $the_min_occur,
                         ]
                     ;
                 } else {
