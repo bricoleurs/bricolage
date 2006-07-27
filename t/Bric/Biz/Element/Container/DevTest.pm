@@ -118,7 +118,7 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test field occurrence.
-sub test_occurrence : Test(64) {
+sub test_occurrence : Test(74) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -215,16 +215,21 @@ sub test_occurrence : Test(64) {
 
 
     # Add a few more paragraphs and keep track of them
-#    ok my $new_para_1 = $elem->add_field($para_type, 'Fifth paragraph'), "Add a fifth paragraph";
-#    ok my $new_para_2 = $elem->add_field($para_type, 'Sixth paragraph'), "Add a sixth paragraph";
-#    ok $para_type->save, 'Save the field';
+    ok my $new_para_1 = $elem->add_field($para_type, 'Fifth paragraph'), "Add a fifth paragraph";
+    ok my $new_para_2 = $elem->add_field($para_type, 'Sixth paragraph'), "Add a sixth paragraph";
+    ok $para_type->save, 'Save the field';
 
     # Set a new minimum occurrence
-#    ok $para_type->set_min_occurrence(5), 'Set a new min occurrence';
-#    ok $para_type->save, 'Save the field';
+    ok $para_type->set_min_occurrence(5), 'Set a new min occurrence';
+    ok $para_type->save, 'Save the field';
+
+    # Make sure we have 6 paragraphs, and the min is 5
+    ok @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 6, "Should have six paragraphs.";
+    is $para_type->get_min_occurrence, 5, "Min should now be five.";
 
     # Try deleting the last paragraph
-#    ok $elem->delete_elements([ $new_para_2 ]), 'Try deleting the last paragraph';
+    ok $elem->delete_elements([ $new_para_2 ]), 'Try deleting the last paragraph';
 
     # Try deleting the second last paragraph
 #    ok $elem->delete_elements($new_para_1), 'Fail trying to delete the second last paragraph';
