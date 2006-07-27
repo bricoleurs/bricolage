@@ -273,9 +273,9 @@ sub burn_one {
               )) {
                 # We'll handle this exception ourselves to prevent it from
                 # percolating back up to the UI and returning a 404.
-		$err = "Mason error: ". $err->message;
-                $msg = "Template '$tmpl_name' not found in path '$tmpl_path'";
-	    } elsif (isa_exception($err)) {
+                $err = "Mason error: ". $err->message;
+                $msg = "Template '$tmpl_name' not found in path '$tmpl_path' for output channel '" . $oc->get_name . "'";
+        } elsif (isa_exception($err)) {
                 # Just dump it.
                 rethrow_exception($err);
             } else {
