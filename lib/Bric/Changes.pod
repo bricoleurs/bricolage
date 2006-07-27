@@ -21,6 +21,11 @@ This document lists the Changes to Bricolage introduced with each release.
 If C<Term::ReadPassword> isn't found during installation, a better error
 message is displayed. [Scott]
 
+=item *
+
+Added output channel name to "Could not find template" error message in 
+the Mason Burner. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
