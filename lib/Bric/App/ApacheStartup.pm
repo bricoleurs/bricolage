@@ -102,11 +102,11 @@ if (CHECK_PROCESS_SIZE) {
     $Apache::SizeLimit::CHECK_EVERY_N_REQUESTS	= CHECK_FREQUENCY;
 
     $Apache::SizeLimit::MIN_SHARE_SIZE		= MIN_SHARE_SIZE
-	if MIN_SHARE_SIZE > 0;
+        if MIN_SHARE_SIZE > 0;
 
     $Apache::SizeLimit::MAX_UNSHARED_SIZE	= MAX_UNSHARED_SIZE
-	if MAX_UNSHARED_SIZE > 0;
-    }
+        if MAX_UNSHARED_SIZE > 0;
+}
 
 if (PREVIEW_LOCAL) {
     # This will slow down every request; thus we recommend that previews
