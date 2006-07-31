@@ -188,8 +188,8 @@ sub test_occurrence : Test(74) {
       . ' fields of this type, with a max of 4.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Field "[_1]" can not be added. There are already [_2]'
-      . ' fields of this type, with a max of [_3].',
+        'Field "[_1]" can not be added. There are already'
+      . ' [quant,_2,field] of this type, with a max of [_3].',
         'para',
         4,
         4,
@@ -217,11 +217,11 @@ sub test_occurrence : Test(74) {
     # Add a few more paragraphs and keep track of them
     ok my $new_para_1 = $elem->add_field($para_type, 'Fifth paragraph'), "Add a fifth paragraph";
     ok my $new_para_2 = $elem->add_field($para_type, 'Sixth paragraph'), "Add a sixth paragraph";
-    ok $para_type->save, 'Save the field';
+    ok $elem->save, 'Save the element container';
 
     # Set a new minimum occurrence
     ok $para_type->set_min_occurrence(5), 'Set a new min occurrence';
-    ok $para_type->save, 'Save the field';
+    ok $para_type->save, 'Save the field type';
 
     # Make sure we have 6 paragraphs, and the min is 5
     ok @fields_arr = $elem->get_elements('para');
@@ -230,14 +230,20 @@ sub test_occurrence : Test(74) {
 
     # Try deleting the last paragraph
     ok $elem->delete_elements([ $new_para_2 ]), 'Try deleting the last paragraph';
+#####################
+#
+# It now busts here
+#
+#####################
+    ok $elem->save, 'Save the element container';
 
     # Try deleting the second last paragraph
-#    ok $elem->delete_elements($new_para_1), 'Fail trying to delete the second last paragraph';
+    ok $elem->delete_elements([ $new_para_1 ]), 'Fail trying to delete the second last paragraph';
 
     # Clean up
     ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
     ok $para_type->set_min_occurrence(0), 'Set the min occurrence back to none';
-    ok $para_type->save, 'Save the field';
+    ok $para_type->save, 'Save the field type';
     ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
     is scalar @field_types, 2, "Make sure we can add both again.";
 }

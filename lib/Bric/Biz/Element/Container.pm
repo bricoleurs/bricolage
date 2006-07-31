@@ -925,6 +925,7 @@ Pass a Bric::Biz::ElementType::Parts::FieldType object and a value for a new fie
 element, and that new field element will be created and added as a subelement
 of the container element. An optional third argument specifies the C<place>
 for that field element in the order of subelements of this container element.
+This returns the field that was created/added.
 
 B<Throws:> NONE.
 
@@ -950,7 +951,7 @@ sub add_field {
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
                 'Field "[_1]" can not be added. There are already '
-              . '[_2] fields of this type, with a max of [_3].',
+              . '[quant,_2,field] of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,
                 $field_max_occur,
@@ -1391,19 +1392,16 @@ sub delete_elements {
     my $new_list = [];
     my %delete_count;
     
-    foreach (@$elements) {
+    for my $elem (@$elements) {
         my $delete = undef;
-        if ($_->is_container) {
-            if (exists $del_cont{$_->get_id}) {
-                my $elem_type = $_->get_element_type;
+        if ($elem->is_container) {
+            if (exists $del_cont{$elem->get_id}) {
+                my $elem_type = $elem->get_element_type;
                 my $elem_name = $elem_type->get_key_name;
                 
-                # Check if we've seen this element type before
-                if ($delete_count{$elem_name}) {
-                    $delete_count{$elem_name}++;
-                } else {
-                    $delete_count{$elem_name} = 1;
-                }
+                # Increase the deletion counter
+                $delete_count{$elem_name}++;
+                
                 # NOTE: This is waiting to be released when the time is right.
                 
 #                my $occur_diff = $self->get_elem_occurrence($elem_name) - 
@@ -1430,16 +1428,12 @@ sub delete_elements {
 #                }
             }
         } else {
-            if (exists $del_data{$_->get_id}) {
-                my $field_type = $_->get_field_type;
+            if (exists $del_data{$elem->get_id}) {
+                my $field_type = $elem->get_field_type;
                 my $field_name = $field_type->get_key_name;
                 
-                # Check if we've seen this field type before
-                if ($delete_count{$field_name}) {
-                    $delete_count{$field_name}++;
-                } else {
-                    $delete_count{$field_name} = 1;
-                }
+                # Increase the deletion counter
+                $delete_count{$field_name}++;
                 
                 my $occur_diff = $self->get_field_occurrence($field_name) - 
                         $field_type->get_min_occurrence;
@@ -1468,26 +1462,26 @@ sub delete_elements {
 
         unless ($delete) {
             my $count;
-            $_->set_place($order);
-            if ($_->is_container()) {
-                if (exists $cont_order->{$_->get_element_type_id }) {
-                    $count = scalar @{ $cont_order->{$_->get_element_type_id } };
+            $elem->set_place($order);
+            if ($elem->is_container()) {
+                if (exists $cont_order->{$elem->get_element_type_id }) {
+                    $count = scalar @{ $cont_order->{$elem->get_element_type_id } };
                 } else {
                     $count = 0;
-                    $cont_order->{$_->get_element_type_id } = [];
+                    $cont_order->{$elem->get_element_type_id } = [];
                 }
-                $_->set_object_order($count);
+                $elem->set_object_order($count);
             } else {
-                if (exists $data_order->{ $_->get_field_type_id }) {
+                if (exists $data_order->{ $elem->get_field_type_id }) {
                     $count = scalar
-                      @{ $data_order->{$_->get_field_type_id } };
+                      @{ $data_order->{$elem->get_field_type_id } };
                 } else {
                     $count = 0;
-                    $data_order->{$_->get_field_type_id } = [];
+                    $data_order->{$elem->get_field_type_id } = [];
                 }
-                $_->set_object_order($count);
-                push @{ $data_order->{$_->get_field_type_id} },
-                  $_->get_id;
+                $elem->set_object_order($count);
+                push @{ $data_order->{$elem->get_field_type_id} },
+                  $elem->get_id;
             }
             push @$new_list, $_;
             $order++;
