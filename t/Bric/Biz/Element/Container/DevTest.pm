@@ -118,7 +118,7 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test field occurrence.
-sub test_occurrence : Test(74) {
+sub test_occurrence : Test(80) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -202,18 +202,6 @@ sub test_occurrence : Test(74) {
     ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
     ok $para_type->save, 'Save the field';
 
-###################
-#
-# Help Needed:
-#   It was suggested that I could do something like:
-#  my $field = $elem->add_field($field_type, 'Foo');
-#    This, however, returns the container ($elem if you will)
-#     so I can't really do anything with it (i.e. delete it).
-#     Any ideas on how I can get a hold of the field I'm creating?
-#
-###################
-
-
     # Add a few more paragraphs and keep track of them
     ok my $new_para_1 = $elem->add_field($para_type, 'Fifth paragraph'), "Add a fifth paragraph";
     ok my $new_para_2 = $elem->add_field($para_type, 'Sixth paragraph'), "Add a sixth paragraph";
@@ -230,15 +218,27 @@ sub test_occurrence : Test(74) {
 
     # Try deleting the last paragraph
     ok $elem->delete_elements([ $new_para_2 ]), 'Try deleting the last paragraph';
-#####################
-#
-# It now busts here
-#
-#####################
     ok $elem->save, 'Save the element container';
 
+    # Make sure we have 5 paragraphs, and the min is 5
+    ok @fields_arr = $elem->get_elements('para');
+    is scalar @fields_arr, 5, "Should have five paragraphs left.";
+    is $para_type->get_min_occurrence, 5, "Min should still be five.";
+
     # Try deleting the second last paragraph
-    ok $elem->delete_elements([ $new_para_1 ]), 'Fail trying to delete the second last paragraph';
+    eval { $elem->delete_elements([ $new_para_1 ]) };
+    ok my $err = $@, 'Catch min occurrence violation exception';
+    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
+    is $err->error,
+        'Field "para" cannot be deleted. There must'
+      . ' be at least 5 fields of this type.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Field "[_1]" cannot be deleted. There must be'
+      . ' at least [_2] fields of this type.',
+        'para',
+        5,
+    ], 'Should get the correct maketext array';
 
     # Clean up
     ok $para_type->set_max_occurrence(0), 'Set the max occurrence back to unlimited';
