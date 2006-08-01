@@ -1423,7 +1423,7 @@ sub delete_elements {
 #                    ;
 #                } else {
                     # Schedule for deletion if we haven't
-                    push @$del_elements, $_;
+                    push @$del_elements, $elem;
                     $delete = 1;
 #                }
             }
@@ -1454,7 +1454,7 @@ sub delete_elements {
                     ;
                 } else {
                     # Schedule for deletion if we haven't                
-                    push @$del_elements, $_;
+                    push @$del_elements, $elem;
                     $delete = 1;
                 }
             }
@@ -1483,11 +1483,11 @@ sub delete_elements {
                 push @{ $data_order->{$elem->get_field_type_id} },
                   $elem->get_id;
             }
-            push @$new_list, $_;
+            push @$new_list, $elem;
             $order++;
         }
     }
-
+    
     return $self->_set(
         ['_subelems',  '_del_subelems'],
         [ $new_list,    $del_elements ]
