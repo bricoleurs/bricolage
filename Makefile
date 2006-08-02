@@ -89,7 +89,7 @@ dist            : check_dist distclean inst/Pg.sql dist_dir \
 check_dist      :
 	$(PERL) inst/check_dist.pl $(BRIC_VERSION)
 
-distclean	: clean cloneclean
+distclean	: cloneclean
 	-rm -f inst/*.sql
 
 dist_dir	:
@@ -143,8 +143,7 @@ devclone  : distclean clone.db clone_dist_dir clone_files clone_sql \
     clone_tar 
 
 cloneclean	: clean
-	-rm -rf bricolage-$(BRIC_VERSION)
-	-rm -f  bricolage-$(BRIC_VERSION).tar.gz
+	-rm -rf bricolage-*
 	-rm -rf dist
 
 clone.db	:
