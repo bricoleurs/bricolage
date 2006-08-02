@@ -996,6 +996,43 @@ function fixSafariKeypressBug(e) {
   return true;
 }
 
+var Desk = {
+    visibleMenu: '',
+    
+    update: function(element, opts) {
+        element = $(element);
+        var options = Object.extend({
+            uri: '/widgets/desk/desk_item.html',
+            parameters: ''
+        }, opts || {});
+        Desk.hideMenu();
+        new Ajax.Updater(element, options.uri, { insertion: Element.replace, asynchronous: true, parameters: options.parameters });
+    },
+    
+    request: function(opts) {
+        var options = Object.extend({
+            uri: document.location,
+            parameters: ''
+        }, opts || {});
+        Desk.hideMenu();
+        new Ajax.Request(options.uri, { asynchronous: true, parameters: options.parameters });
+    },
+    
+    showMenu: function(button, event) {
+        Desk.hideMenu();
+        Desk.visibleMenu = button.id + "_desks";
+        Element.show(Desk.visibleMenu);
+        Event.stop(event);
+        Event.observe(document, "click", Desk.hideMenu);
+    },
+    
+    hideMenu: function() {
+        if (Desk.visibleMenu != '') Element.hide(Desk.visibleMenu);
+        Desk.visibleMenu = '';
+        Event.stopObserving(document, "click", Desk.hideMenu);
+    }
+};
+
 /*
  * Handles the fast_add.mc widget, for adding multiple items such as keywords
  * quickly.

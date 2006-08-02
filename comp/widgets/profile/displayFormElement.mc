@@ -230,6 +230,9 @@ my $inpt_sub = sub {
     my $src = ref $vals && defined $vals->{props}{src}
       ? ' src="' . $vals->{props}{src} . '"'
       : '';
+    my $title = ref $vals && defined $vals->{props}{title}
+      ? ' title="' . $vals->{props}{title} . '"'
+      : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
     
@@ -249,7 +252,7 @@ my $inpt_sub = sub {
 
         $out .= qq{        <div class="input">} if $useTable;
         if (!$readOnly) {
-            $out .= qq{<input type="$type"$class name="$key" id="$idout"$src$disp_value$extra$js />};
+            $out .= qq{<input type="$type"$class name="$key" id="$idout"$src$title$disp_value$extra$js />};
         } else {
             $out .= qq{<p>};
             $out .= ($type ne "password") ? $value : "********";

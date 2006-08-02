@@ -82,7 +82,6 @@ use Bric::App::Callback::Search;
 use Bric::App::Callback::SelectObject;
 use Bric::App::Callback::SelectTime;
 use Bric::App::Callback::SiteContext;
-use Bric::App::Callback::Workspace;
 
 use Bric::App::Callback::Profile::Action;
 use Bric::App::Callback::Profile::AlertType;
