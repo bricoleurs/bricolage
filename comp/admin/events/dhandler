@@ -1,35 +1,56 @@
-<%perl>;
-$m->comp('/widgets/wrappers/header.mc',
-	 title =>  "$disp Events",
-	 context => "Workflow | Profile | $disp | &quot;"
-	 . $obj->get_name . "&quot; | Events"
-);
-$m->out("<p></p>");
-$m->comp('/widgets/eventList/eventList.mc',
-	 object => $type,
-         obj_id => $id,
-	 alert_uri => "/admin/alerts");
-$m->out("<br />\n");
-$m->comp('/lib/util/back_button.mc');
-$m->comp('/widgets/wrappers/footer.mc');
-</%perl>
+<& '/widgets/wrappers/header.mc',
+    title => "$disp Events",
+    context => "Admin | Profile | $disp | &quot;"
+        . $obj->get_name . "&quot; | Events"
+&>
+
+<form method="post" action="<% $r->uri %>">
+
+<& /widgets/wrappers/table_top.mc,
+   caption => $lang->maketext('Filter'),
+   search  => 1
+&>
+
+<& '/widgets/search/filter.html',
+    objs     => \@event_types,
+    selected => $filter_by,
+    type     => $type
+&>
+
+<& '/widgets/wrappers/table_bottom.mc' &>
+
+<& '/widgets/eventList/eventList.mc',
+    object => $type,
+    obj_id => $id,
+    alert_uri => "/workflow/alerts",
+    ( scalar @$filter_by ? (constrain => { key_name => ANY(@$filter_by) }) : () )
+&>
+
+<& '/lib/util/back_button.mc' &>
+
+</form>
+
+<& '/widgets/wrappers/footer.mc' &>
 
 <%args>
 $id => undef
+$filter_by => undef
 </%args>
-<%init>;
+<%init>
 # Figure out where we are.
-my ($section, $mode, $type, $oid) = parse_uri($r->uri);
-# Redirect if necessary. Should change this to a 404 error page.
+my ($type, $oid) = (parse_uri($r->uri))[2,3];
+
+# Redirect if necessary.
 $m->comp('/errors/404.mc') unless $type;
-# HACK - This really should be correct in the database instead.
-$type = 'element' if $type eq 'element';
 
 # Instantiate the object and check permissions.
 $id ||= $oid;
-my $obj = get_package_name($type)->lookup({ id => $id });
-unless ($type eq 'user' && $id == get_user_id()) {
-    chk_authz($obj, READ);
-}
+my $pkg = get_package_name($type);
+my $obj = $pkg->lookup({ id => $id });
+chk_authz($obj, READ) unless ($type eq 'user' && $id == get_user_id());
+
 my $disp = get_disp_name($type);
+
+$filter_by = mk_aref($filter_by);
+my @event_types = sort { $a->get_name cmp $b->get_name } @{Bric::Util::EventType->list({ class => $pkg })};
 </%init>

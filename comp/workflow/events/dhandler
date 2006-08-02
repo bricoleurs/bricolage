@@ -1,21 +1,40 @@
-<%perl>
-$m->comp('/widgets/wrappers/header.mc',
-         title => "$disp->{$type} Events",
-         context => "Workflow | Profile | $disp->{$type} | &quot;"
-         . $obj->get_name . "&quot; | Events"
-);
+<& '/widgets/wrappers/header.mc',
+    title => "$disp Events",
+    context => "Workflow | Profile | $disp | &quot;"
+        . $obj->get_name . "&quot; | Events"
+&>
 
-$m->comp('/widgets/eventList/eventList.mc',
-         object => $type,
-         obj_id => $id,
-         alert_uri => "/workflow/alerts");
+<form method="post" action="<% $r->uri %>">
 
-$m->comp('/lib/util/back_button.mc');
-$m->comp('/widgets/wrappers/footer.mc');
-</%perl>
+<& /widgets/wrappers/table_top.mc,
+   caption => $lang->maketext('Filter'),
+   search  => 1
+&>
+
+<& '/widgets/search/filter.html',
+    objs     => \@event_types,
+    selected => $filter_by,
+    type     => $type
+&>
+
+<& '/widgets/wrappers/table_bottom.mc' &>
+
+<& '/widgets/eventList/eventList.mc',
+    object => $type,
+    obj_id => $id,
+    alert_uri => "/workflow/alerts",
+    ( scalar @$filter_by ? (constrain => { key_name => ANY(@$filter_by) }) : () )
+&>
+
+<& '/lib/util/back_button.mc' &>
+
+</form>
+
+<& '/widgets/wrappers/footer.mc' &>
 
 <%args>
 $id => undef
+$filter_by => undef
 </%args>
 <%init>
 # Figure out where we are.
@@ -26,19 +45,12 @@ $m->comp('/errors/404.mc') unless $type;
 
 # Instantiate the object and check permissions.
 $id ||= $oid;
-my $obj = $pkg->{$type}->lookup({ id => $id });
+my $pkg = get_package_name($type);
+my $obj = $pkg->lookup({ id => $id });
 chk_authz($obj, READ);
-</%init>
 
-<%once>;
-my $disp = {
-    media    => get_disp_name('media'),
-    story    => get_disp_name('story'),
-    template => get_disp_name('template')
-};
-my $pkg =  {
-    media    => get_package_name('media'),
-    story    => get_package_name('story'),
-    template => get_package_name('template')
-};
-</%once>
+my $disp = get_disp_name($type);
+
+$filter_by = mk_aref($filter_by);
+my @event_types = sort { $a->get_name cmp $b->get_name } @{Bric::Util::EventType->list({ class => $pkg })};
+</%init>

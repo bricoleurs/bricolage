@@ -538,7 +538,7 @@ sub trail : Callback {
     my $self = shift;
     my $media = get_state_data($self->class_key, 'media');
     my $id = $media->get_id();
-    $self->set_redirect("/workflow/trail/media/$id");
+    $self->set_redirect("/workflow/events/media/$id?filter_by=media_moved");
 }
 
 ################################################################################

@@ -247,7 +247,7 @@ sub trail : Callback {
     &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
     
     # Set a redirection to the code page to be enacted later.
-    $self->set_redirect("/workflow/trail/template/$id");
+    $self->set_redirect("/workflow/events/template/$id?filter_by=template_moved");
 }
 
 sub create_next : Callback {

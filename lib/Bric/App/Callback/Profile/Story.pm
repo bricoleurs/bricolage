@@ -491,7 +491,7 @@ sub trail : Callback {
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    $self->set_redirect("/workflow/trail/story/$id");
+    $self->set_redirect("/workflow/events/story/$id?filter_by=story_moved");
 }
 
 sub update : Callback(priority => 1) {

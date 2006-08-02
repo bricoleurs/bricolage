@@ -1,0 +1,70 @@
+<div id="filter" style="display: none">
+<div>
+    <div class="clearboth">
+    <ul style="float: left; width: 48%; padding-right: 10px">
+% foreach my $i (0..($#$objs / 2)) {
+%   my $obj = $objs->[$i];
+        <li><& '/widgets/profile/checkbox.mc',
+            name  => 'filter_by',
+            disp  => $obj->get_name,
+            value => $obj->get_key_name,
+            checked => $existing_filters{$obj->get_key_name},
+            label_after => 1
+        &></li>
+% }
+    </ul>
+    <ul style="float: left; width: 48%">
+% foreach my $i (($#$objs / 2)+1..$#$objs) {
+%   my $obj = $objs->[$i];
+        <li><& '/widgets/profile/checkbox.mc',
+            name  => 'filter_by',
+            disp  => $obj->get_name,
+            value => $obj->get_key_name,
+            checked => $existing_filters{$obj->get_key_name},
+            label_after => 1
+        &></li>
+% }
+    </ul>
+    </div>
+    
+    <div style="margin-top: 10px;">
+        <input type="submit" value="Filter" /> or 
+        <a href="#" onclick="Effect.BlindUp('filter'), Effect.Appear('filter-closed', { duration: 1.5 }); return false">cancel</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    
+        <a href="#" onclick="$A(document.getElementsByName('filter_by')).each(function(checkbox) { checkbox.checked = true }); return false">Check all</a> | 
+        <a href="#" onclick="$A(document.getElementsByName('filter_by')).each(function(checkbox) { checkbox.checked = false }); return false">Uncheck all</a>
+    </div>
+</div>
+</div>
+<div id="filter-closed" class="nonefound" style="position: relative;">
+    <div class="row">
+        <div class="label"><% $lang->maketext('Filtered by') %>:</div>
+% if (@$selected == 0 || scalar @$selected == scalar @$objs) {
+        <div class="input">Everything</div>
+% } else {
+% foreach my $obj (@$objs) {
+%       next unless $existing_filters{$obj->get_key_name};
+        <div class="input"><% $obj->get_name %></div>
+% }
+% }
+        <div class="input">
+%       if ($type eq 'story' || $type eq 'media' || $type eq 'template') {
+%           if (@$selected == 1 && $selected->[0] eq "$type\_moved") {
+                <a href="<% $r->uri %>">Show all</a> | 
+%           } else {
+                <a href="<% $r->uri %>?filter_by=<% $type %>_moved">Show trail</a> | 
+%           }
+%       }
+        <a href="#" onclick="Effect.Appear('filter'); Element.hide('filter-closed'); return false">Customize</a></div>
+    </div>
+</div>
+
+<%args>
+$objs
+$type
+$selected => []
+</%args>
+
+<%init>
+my %existing_filters = map { $_ => 1 } @$selected;
+</%init>
