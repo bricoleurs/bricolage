@@ -76,14 +76,6 @@ $LastChangedDate$
   $element  = $element->deactivate()
   (undef || 1) = $element->is_active()
 
-  # Get/set the minimum occurrence
-  $element_type = $element_type->set_min_occurrence($amount)
-  $min = $element_type->get_min_occurrence()
-
-  # Get/Set the maximum occurrence
-  $element_type = $element_type->set_max_occurrence($amount)
-  $max = $element_type->get_max_occurrence()
-
   # Save this element type.
   $element = $element->save()
 
@@ -156,8 +148,6 @@ use constant ORD => qw(
     media
     biz_class_id
     active
-    min_occurrence
-    max_occurrence
 );
 
 #==============================================================================#
@@ -190,8 +180,6 @@ my @cols = qw(
     type__id
     et_grp__id
     active
-    min_occurrence
-    max_occurrence
 );
 
 my @props = qw(
@@ -208,8 +196,6 @@ my @props = qw(
     type_id
     et_grp_id
     _active
-    min_occurrence
-    max_occurrence
 );
 
 my $sel_cols = join ', ', 'a.id', map({ "a.$_" } @cols), 'm.grp__id';
@@ -245,8 +231,6 @@ BEGIN {
         biz_class_id        => Bric::FIELD_RDWR,
         type_id             => Bric::FIELD_READ,
         grp_ids             => Bric::FIELD_READ,
-        min_occurrence      => Bric::FIELD_RDWR,
-        max_occurrence      => Bric::FIELD_RDWR,
 
         _site_primary_oc_id => Bric::FIELD_NONE,
         _active             => Bric::FIELD_NONE,
@@ -315,14 +299,6 @@ Defaults to false.
 
 Defaults to the ID for Bric::Biz::Asset::Business::Story.
 
-=item min_occurrence
-
-Defaults to 0
-
-=item max_occurrence
-
-Defaults to 0, meaning there is no maximum
-
 =back
 
 B<Throws:> NONE.
@@ -356,9 +332,6 @@ sub new {
         $init->{biz_class_id} ||= STORY_CLASS_ID;
     }
     
-    # Set the default occurrence values
-    $init->{$_} ||= 0 for qw(min_occurrence max_occurrence);
-
     # Set the instance group ID.
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
@@ -516,14 +489,6 @@ must be for a class object representing one of
 L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses. May use C<ANY> for a list of possible values.
-
-=item min_occurrence
-
-The minimum number of times this subelement must occur.
-
-=item max_occurrence
-
-The maximum number of times this subelement may occur.
 
 =back
 
@@ -912,38 +877,6 @@ sub my_meths {
             type     => 'short',
             props    => { type => 'checkbox' }
         },
-        max_occurrence    => {
-            name      => 'max_occurrence',
-            get_meth  => sub { shift->get_max_occurrence() },
-            get_args  => [],
-            set_meth  => sub { shift->set_max_occurrence(@_) },
-            set_args  => [],
-            disp      => 'Maximum Occurrence',
-            search    => 1,
-            len       => 8,
-            type      => 'short',
-            props     => {
-                type      => 'text',
-                length    => 8,
-                maxlength => 8,
-            },
-        },
-        min_occurrence    => {
-            name      => 'min_occurrence',
-            get_meth  => sub { shift->get_min_occurrence() },
-            get_args  => [],
-            set_meth  => sub { shift->set_min_occurrence(@_) },
-            set_args  => [],
-            disp      => 'Minimum Occurrence',
-            search    => 1,
-            len       => 8,
-            type      => 'short',
-            props     => {
-                type      => 'text',
-                length    => 8,
-                maxlength => 8,
-            },
-        },
     };
 
     if ($ord) {
@@ -1054,22 +987,6 @@ based on the element type can have another media related to them.
 The C<media> attribute is a boolean that indicates whether elements based on
 the element type are media documents. This attribute is a redundant
 combination fo the C<biz_type_id> and C<top_level> attributes.
-
-=head3 min_occurrence
-
-  my $min = $element_type->get_min_occurrence;
-  $element_type = $element_type->set_min_occurrence($min);
-
-The C<min_occurrence> attribute is a scalar that indicates how many subelements
-must exist in a parent container of this type.
-
-=head3 max_occurrence
-
-  my $max = $element_type->get_max_occurrence;
-  $element_type = $element_type->set_max_occurrence($max);
-
-The C<max_occurrence> attribute is a scalar that indicates how many subelements
-may exist in a parent container of this type.
 
 =cut
 
@@ -2166,8 +2083,6 @@ sub _do_list {
             $tables .= ", element_type__site es";
             push @wheres, 'es.element_type__id = a.id', "es.active = '1'";
             push @wheres, any_where($v, 'es.site__id = ?', \@params);
-        } elsif ($k eq 'min_occurrence' || $k eq 'max_occurrence') {
-            push @wheres, any_where($v, "a.$k = ?", \@params);
         } elsif (exists $bool_attrs{$k}) {
             push @wheres, "a.$k = ?";
             push @params, $v ? 1 : 0;
