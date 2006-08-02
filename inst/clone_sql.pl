@@ -27,7 +27,6 @@ L<Bric::Admin>
 
 =cut
 
-
 use strict;
 use FindBin;
 use lib "$FindBin::Bin/lib";
@@ -44,6 +43,12 @@ do "./postgres.db" or die "Failed to read postgres.db: $!";
 # Switch to postgres system user
 if (my $sys_user = $PG->{system_user}) {
     print "Becoming $sys_user...\n";
+
+    # Make sure that the user can write out inst/Pg.sql.
+    chown $PG->{system_user_uid}, -1, 'inst'
+        or die "Cannot chown inst/ to $PG->{system_user_uid} ($sys_user).\n";
+
+    # Become the user.
     $> = $PG->{system_user_uid};
     die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
         unless $> == $PG->{system_user_uid};

@@ -48,6 +48,14 @@ on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
 The "Trail" link in the template profile works again. Spotted by Marshall.
 [David]
 
+=item *
+
+If run as root, C<make clone> now C<chown>s the F<inst> directory to the
+PostgreSQL user before becoming the PostgreSQL user, so that the user has
+permission to create the F<inst/Pg.sql> file. [David]
+
+During C<make clone>, when the 
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
