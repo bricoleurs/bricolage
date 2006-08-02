@@ -43,6 +43,11 @@ Fixed some foreign key constraints in the C<story_instance> and
 C<template_instance> tables that improperly has C<ON DELETE SET NULL> clauses
 on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
 
+=item *
+
+The "Trail" link in the template profile works again. Spotted by Marshall.
+[David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
