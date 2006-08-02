@@ -58,7 +58,11 @@ permission to create the F<inst/Pg.sql> file. [David]
 
 C<make clone> no longer runs C<distclean>, and therefore no longer deletes
 F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
-directory, instead over replacing th existing F<Pg.sql>.
+directory, instead over replacing th existing F<Pg.sql>. [David]
+
+=item *
+
+Deleting categories via SOAP works again. Reported by Brad Harder. [David]
 
 =back
 

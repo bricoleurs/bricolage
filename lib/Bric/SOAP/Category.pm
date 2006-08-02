@@ -342,7 +342,7 @@ sub delete {
                 if DEBUG;
 
         # lookup category
-        my $category = Bric::Biz::Category->lookup({ id => $category_id, site_id => $args->{site_id} });
+        my $category = Bric::Biz::Category->lookup({ id => $category_id });
         throw_ap(error => __PACKAGE__
                    . "::delete : no category found for id \"$category_id\"")
           unless $category;
