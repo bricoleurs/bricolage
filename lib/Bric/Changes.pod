@@ -54,7 +54,11 @@ If run as root, C<make clone> now C<chown>s the F<inst> directory to the
 PostgreSQL user before becoming the PostgreSQL user, so that the user has
 permission to create the F<inst/Pg.sql> file. [David]
 
-During C<make clone>, when the 
+=item *
+
+C<make clone> no longer runs C<distclean>, and therefore no longer deletes
+F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
+directory, instead over replacing th existing F<Pg.sql>.
 
 =back
 

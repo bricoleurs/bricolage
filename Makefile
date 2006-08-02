@@ -89,11 +89,8 @@ dist            : check_dist distclean inst/Pg.sql dist_dir \
 check_dist      :
 	$(PERL) inst/check_dist.pl $(BRIC_VERSION)
 
-distclean	: clean
-	-rm -rf bricolage-$(BRIC_VERSION)
-	-rm -f  bricolage-$(BRIC_VERSION).tar.gz
+distclean	: clean cloneclean
 	-rm -f inst/*.sql
-	-rm -rf dist
 
 dist_dir	:
 	-rm -rf dist
@@ -135,15 +132,20 @@ inst/Pg.sql : $(SQL_FILES)
 ##########################
 
 
-clone           : distclean clone.db clone_dist_dir clone_sql clone_files \
+clone           : cloneclean clone.db clone_dist_dir clone_files clone_sql \
 		  rm_svn rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
-devclone  : distclean clone.db clone_dist_dir clone_sql clone_files \
+devclone  : distclean clone.db clone_dist_dir clone_files clone_sql \
     rm_svn rm_tmp \
     dist/INSTALL dist/Changes dist/License \
     clone_lightweight \
     clone_tar 
+
+cloneclean	: clean
+	-rm -rf bricolage-$(BRIC_VERSION)
+	-rm -f  bricolage-$(BRIC_VERSION).tar.gz
+	-rm -rf dist
 
 clone.db	:
 	$(PERL) inst/clone.pl
@@ -270,7 +272,6 @@ dev_symlink :
 	$(PERL) inst/dev.pl
 
 dev			: inst/Pg.sql install dev_symlink clean
-	
 
 ##########################
 # test rules             #
