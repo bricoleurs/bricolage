@@ -1,22 +1,26 @@
 % # Do paging
 % if ($num_pages) {
+
 <div class="paginate">
-<div class="pages">
-      <% $prev_link %>
-%     foreach my $page (0 .. $num_pages) {
-%         if ($page == $offset) {
-      <span class="current"><% $page + 1 %></span>&nbsp;
-%         } else {
-%             my $off = $page * $limit;
-      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>&nbsp;
-%     }}
-      <% $next_link %>
+    <div class="pages">
+        <% $prev_link %>
+%       foreach my $page (0 .. $num_pages) {
+%           if ($page == $offset) {
+                <span class="current"><% $page + 1 %></span>&nbsp;
+%           } else {
+%               my $off = $page * $limit;
+                <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>&nbsp;
+%           }
+%       }
+        <% $next_link %>
+    </div>
+% unless ($show_all) {
+    <div class="all"><a href="<% $url %>?show_all=1">Show All</a></div>
+% }
 </div>
-%     unless ($show_all) {
-     <div class="all"><a href="<% $url %>?show_all=1">Show All</a></div>
-%     }
+
 % }  # if $num_pages
-</div>
+
 </div><!-- end .desk -->
 
 <%args>
