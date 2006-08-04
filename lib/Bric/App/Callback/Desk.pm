@@ -51,6 +51,8 @@ sub checkin : Callback {
         log_event("${class}_rem_workflow", $obj);
     } elsif ($next_desk_id eq 'publish') {
         # XXX: FINISH ME
+    } elsif ($next_desk_id eq 'deploy') {
+        # XXX: FINISH ME
     } elsif ($next_desk_id) {
         if ($desk->get_id != $next_desk_id) {
             my $next = $pkgs->{desk}->lookup({ id => $next_desk_id });
@@ -75,31 +77,26 @@ sub checkin : Callback {
 sub checkout : Callback {
     my $self = shift;
 
-    my ($a_class, $a_id) = split(/_/, $self->value);
-    my $pkg     = get_package_name($a_class);
-    my $a_obj   = $pkg->lookup({'id' => $a_id});
-    my $d       = $a_obj->get_current_desk;
-
-    $d->checkout($a_obj, get_user_id());
-    $d->save;
-    $a_obj->save;
-    log_event("${a_class}_checkout", $a_obj);
-
-    $a_id = $a_obj->get_id;
-
-    my $profile;
-    if ($a_class eq 'template') {
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
-        $sb->deploy($a_obj);
-
-        $profile = '/workflow/profile/template';
-    } elsif ($a_class eq 'media') {
-        $profile = '/workflow/profile/media';
-    } else {
-        $profile = '/workflow/profile/story';
+    my ($class, $id) = split(/_/, $self->value);
+    my $pkg  = get_package_name($class);
+    my $obj  = $pkg->lookup({'id' => $id});
+    
+    unless ($obj->get_checked_out) {
+        my $desk = $obj->get_current_desk;
+        $desk->checkout($obj, get_user_id());
+        $desk->save;
+        $obj->save;
+        log_event("${class}_checkout", $obj);
+    
+        $id = $obj->get_id;
+    
+        if ($class eq 'template') {
+            my $sandbox = Bric::Util::Burner->new({user_id => get_user_id() });
+            $sandbox->deploy($obj);
+        }
     }
-
-    $self->set_redirect("$profile/$a_id/?checkout=1");
+    
+    $self->set_redirect("/workflow/profile/$class/$id/?checkout=1");
 }
 
 sub move : Callback {
@@ -138,6 +135,9 @@ sub move : Callback {
     } elsif ($next_desk_id eq 'publish') {
         # XXX: FINISH ME
         return;
+    } elsif ($next_desk_id eq 'deploy') {
+        # XXX: FINISH ME
+        return;
     }
 
     # Get the next desk.
@@ -171,8 +171,16 @@ sub publish : Callback {
     my $param = $self->params;
     my $story_pub = $param->{story_pub} || {};
     my $media_pub = $param->{media_pub} || {};
-    my $mpkg = 'Bric::Biz::Asset::Business::Media';
-    my $spkg = 'Bric::Biz::Asset::Business::Story';
+    
+    # If we were passed a string instead of an object, find the object
+    for my $pub (\$story_pub, \$media_pub) {
+        next if ref $$pub;
+        
+        my ($class, $version_id) = split /_/, $$pub;
+        my $obj = $pkgs->{$class}->lookup({ version_id => $version_id });
+        $$pub = { $obj->get_version_id => $obj };
+    }
+    
     my $story = mk_aref($param->{$self->class_key.'|story_pub_ids'});
     my $media = mk_aref($param->{$self->class_key.'|media_pub_ids'});
     my (@rel_story, @rel_media);
@@ -180,8 +188,8 @@ sub publish : Callback {
     # start with the objects checked for publish
     my @stories = values %$story_pub;
     my @media   = values %$media_pub;
-    push @stories, $spkg->list({ version_id => ANY(@$story) }) if @$story;
-    push @media,   $mpkg->list({ version_id => ANY(@$media) }) if @$media;
+    push @stories, $pkgs->{story}->list({ version_id => ANY(@$story) }) if @$story;
+    push @media,   $pkgs->{media}->list({ version_id => ANY(@$media) }) if @$media;
 
     my %selected = (
         story => { map { $_->get_id => undef } @stories },
@@ -361,34 +369,34 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    if (my $a_ids = $self->params->{"$widget|template_pub_ids"}) {
-        my $b = Bric::Util::Burner->new;
-
-        $a_ids = ref $a_ids ? $a_ids : [$a_ids];
-
-        if (my $count = @$a_ids) {
-            for my $fa (Bric::Biz::Asset::Template->list({
-                version_id => ANY(@$a_ids)
+    if (my $ids = $self->params->{"$widget|template_pub_ids"}) {
+        my $burner = Bric::Util::Burner->new;
+        
+        $ids = mk_aref($ids);
+        
+        if (my $count = @$ids) {
+            for my $template (Bric::Biz::Asset::Template->list({
+                version_id => ANY(@$ids)
             })) {
-                my $action = $fa->get_deploy_status ? 'template_redeploy'
+                my $action = $template->get_deploy_status ? 'template_redeploy'
                     : 'template_deploy';
-                $b->deploy($fa);
-                $fa->set_deploy_date(strfdate());
-                $fa->set_deploy_status(1);
-                $fa->set_published_version($fa->get_current_version);
-                $fa->save;
-                log_event($action, $fa);
+                $burner->deploy($template);
+                $template->set_deploy_date(strfdate());
+                $template->set_deploy_status(1);
+                $template->set_published_version($template->get_current_version);
+                $template->save;
+                log_event($action, $template);
 
                 # Get the current desk and remove the asset from it.
-                my $d = $fa->get_current_desk;
-                $d->remove_asset($fa);
-                $d->save;
+                my $desk = $template->get_current_desk;
+                $desk->remove_asset($template);
+                $desk->save;
 
                 # Clear the workflow ID.
-                $fa->set_workflow_id(undef);
-                $fa->save;
-                log_event("template_rem_workflow", $fa);
-                add_msg('Template "[_1]" deployed.', $fa->get_uri)
+                $template->set_workflow_id(undef);
+                $template->save;
+                log_event("template_rem_workflow", $template);
+                add_msg('Template "[_1]" deployed.', $template->get_uri)
                     if $count == 1;
             }
             # Sum it up for them
@@ -397,13 +405,12 @@ sub deploy : Callback {
             }
         }
     }
-
+    
     # If there are stories or media to be published, publish them!
     if ($self->params->{"$widget|story_pub_ids"}
           || $self->params->{"$widget|media_pub_ids"}) {
         $self->publish;
     }
-
 }
 
 sub clone : Callback {

@@ -31,29 +31,8 @@
     </dl>
     
     <div class="actions">
-        <p>Desk: <% $desk->get_name %></p>
-% if ($user) {
-        <p><% $user %></p>
-% }
-% if ($label && $label !~ /^Check/) {
-%       my $uri = $r->uri . "?" . join('&amp;', "$widget|$action=$id", "$widget|asset_class=$class");
-        <p><a href="<% $uri %>"><% $label %></a></p>
-% }
-        
-        <div class="mover">
-% if ($can_edit && $can_publish && !$obj->get_checked_out) {
-%         my $obj_id = $obj->get_version_id; # Publish uses version id.
-          <& /widgets/profile/checkbox.mc,
-              name  => "$widget|${class}_pub_ids",
-              id    => "$widget\_$obj_id",
-              value => $obj_id
-          &>
-            <label for="<% "$widget\_$obj_id" %>"><% $lang->maketext($class eq 'template' ? 'Deploy' : 'Publish') %></label>
-% }
-        </div>
-        
         <ul class="action">
-            <li><a href="<% $link %>" title="<% $vlabel . " &#x201c;$name&#x201d;" %>">
+            <li><a href="<% $link %>" title="<% $vlabel %>">
                 <img src="/media/images/<% lc $vlabel %>.gif" alt="<% $vlabel %>" /></a></li>
             <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $id %>" title="<% $lang->maketext("Notes") %>">
                 <img src="/media/images/notes.png" alt="Notes" /></a></li>
@@ -89,7 +68,7 @@
                     button => "checkin",
                     globalImage => 1,
                     useTable => 0,
-                    js => qq|onclick="Desk.showMenu(this, event); return false" ondblclick="Desk.request({ uri: '| . $r->uri . qq|', parameters: '| . join('&amp;', "desk_asset|checkin_cb=$class\_$id") . qq|' }); Effect.Shrink('$class\_$id'); return false"|
+                    js => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . $checkin_js->(undef) . '"'
                 &>
                 <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
                     <h4>Check in:</h4>
@@ -101,7 +80,8 @@
                 </div>
             </li>
 % } elsif (!$user && $action eq 'checkout_cb') {
-            <li><& /widgets/profile/button.mc,
+            <li>
+            <& /widgets/profile/button.mc,
                   disp => "Check out",
                   widget => $widget,
                   cb => "checkout_cb",
@@ -128,7 +108,43 @@
                 </div>
             </li>
 % }
+
+% if ($can_publish && !$obj->get_checked_out) {
+            <li>
+%           if ($class eq 'template') {
+                <& /widgets/profile/button.mc,
+                    disp => "Deploy",
+                    name   => "deploy_${class}_${id}",
+                    button => "deploy",
+                    js     => 'onclick="' . &$publish_js . '"',
+                    globalImage => 1,
+                    useTable => 0
+                &>    
+%           } else {
+                <& /widgets/profile/button.mc,
+                    disp => "Publish (double click to publish now)",
+                    name   => "publish_${class}_${id}",
+                    button => "publish",
+                    js     => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . &$publish_js . '"',
+                    globalImage => 1,
+                    useTable => 0
+                &>
+                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="width: auto; display: none">
+                    <h4>Publish:</h4>
+                    <ul>
+                        <li><a href="#" onclick="<% &$publish_js %>">Now</a></li>
+                        <li><a href="<% $r->uri %>?desk_asset|publish_cb=1&amp;desk_asset|<% $class %>_pub_ids=<% $obj->get_version_id %>">Later</a></li>
+                    </ul>
+                </div>
+%           }
+            </li>
+% }
         </ul>
+        
+        <p><% $desk->get_name %> Desk</p>
+%       if ($user) {
+        <p>Checked out by <% $user %></p>
+%       }
     </div>
   </div>
 </div>
@@ -170,14 +186,12 @@ my $workflow = $obj->get_workflow_object;
 my $can_publish = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
 my $can_edit = $can_publish || chk_authz($obj, EDIT, 1);
 
-my $label = $can_edit ? 'Check Out' : '';
 my $action = 'checkout_cb';
 
 my $checkin_opts = [];
 my $move_opts = [];
 
 if ($checked_out_by_current_user) {
-    $label = $lang->maketext('Check in to [_1]', $desk->get_name);
     $action = 'checkin_cb';
 } elsif (defined $user_id) {
     $checkin_opts = undef;
@@ -216,9 +230,14 @@ if ($checkin_opts || $move_opts) {
             }
         }
     }
-    if ($can_publish) {
-        my @and_publish = ['publish', $lang->maketext('and Publish')];
-        push @$checkin_opts, @and_publish;
+    if ($checked_out_by_current_user && chk_authz($obj, PUBLISH, 1)) {
+        if ($class eq 'template') {
+            my @and_deploy = ['deploy', $lang->maketext('and Deploy')];
+            push @$checkin_opts, @and_deploy;
+        } else {
+            my @and_publish = ['publish', $lang->maketext('and Publish')];
+            push @$checkin_opts, @and_publish;
+        }
     }
     my @and_shelve = ['shelve', $lang->maketext('and Shelve')];
     push @$checkin_opts, @and_shelve;
@@ -280,7 +299,7 @@ my $checkin_js = sub {
         # If the next desk isn't the same as the current desk, it needs
         # to disappear.
         my $uri = $r->uri;
-        my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", "desk_asset|next_desk=$next_desk");
+        my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", ($next_desk ? ("desk_asset|next_desk=$next_desk") : ()));
         return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
     } else {
         my $parameters = join('&amp;', "desk_type=workflow", 
@@ -309,6 +328,18 @@ my $move_js = sub {
                                        "desk_asset|move_cb=${class}_${id}", 
                                        "desk_asset|next_desk=$next_desk");
         return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
+    }
+};
+
+my $publish_js = sub {
+    my $version_id = $obj->get_version_id;
+    my $uri = $r->uri;
+    if ($class eq 'template') {
+        my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
+        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";        
+    } else {
+        my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
+        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";                
     }
 };
 

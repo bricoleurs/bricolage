@@ -289,34 +289,27 @@ div.debug dt:after {
     border-top: solid white 1px;
     padding: 0 5px;
 }
-.desk .item .actions p { margin: 5px 0 0 0; }
-.desk .item .actions .mover { 
-    margin: 0;
-    padding: 15px 0 10px 0;
-}
-.desk .short .actions .mover {
-    padding: 8px 0 0 0;
-}
-.desk .item .actions .mover select {
-    vertical-align: middle;
-}
+.desk .item .actions p { margin: 0; padding: 5px 0; line-height: 20px; }
 .desk .item .actions ul { 
-    margin: 0; 
+    margin: 5px 0; 
     padding: 0; 
     list-style: none; 
 }
 .desk .item .actions ul.action li {
-    display: block;
-    float: left;
+    display: inline;
     margin: 0;
     padding: 0;
     line-height: 2em;
 }
 .desk .item .actions ul li.inactive { color: #999; }
-.desk .item .actions ul.action { float: left; }
+.desk .item .actions ul.action { text-align: right; }
+
+.desk .item .tall .actions ul.action { margin-bottom: 20px; }
+.desk .item .short .actions ul.action { margin-bottom: 5px; }
+
 .desk .item .actions ul.view { float: right; }
-.desk .item .actions ul.action li { padding: 0px 10px 0px 0px; }
-.desk .item .actions ul.view li   { padding: 0px 10px 0px 0px; }
+.desk .item .actions ul.action li { padding: 0px 5px 0px 0px; }
+.desk .item .actions ul.view li   { padding: 0px 5px 0px 0px; }
 
 .desk .item .actions li,
 .desk .item .actions img,
