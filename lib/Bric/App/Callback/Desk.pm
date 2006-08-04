@@ -50,7 +50,39 @@ sub checkin : Callback {
         $obj->save;
         log_event("${class}_rem_workflow", $obj);
     } elsif ($next_desk_id eq 'publish') {
-        # XXX: FINISH ME
+        my ($pub_desk, $no_log);
+        
+        # Find a publish desk.
+        if ($desk->can_publish) {
+            # Already on one.
+            $pub_desk = $desk;
+            $no_log = 1;
+        } else {
+            # Find one in this workflow.
+            my $workflow = $obj->get_workflow_object;
+            foreach my $d ($workflow->allowed_desks) {
+                $pub_desk = $d and last if $d->can_publish;
+            }
+            # Transfer the story to the publish desk.
+            if ($desk) {
+                $desk->transfer({ to    => $pub_desk,
+                                  asset => $obj });
+                $desk->save;
+            } else {
+                $pub_desk->accept({ asset => $obj });
+            }
+            $pub_desk->save;
+        }
+        
+        $obj->save;
+        
+        # Log it!
+        my $dname = $pub_desk->get_name;
+        log_event("${class}_moved", $obj, { Desk => $dname }) unless $no_log;
+        
+        $self->params->{"${class}_pub"} = { $obj->get_version_id => $obj };
+        $self->publish;
+        
     } elsif ($next_desk_id eq 'deploy') {
         # XXX: FINISH ME
     } elsif ($next_desk_id) {

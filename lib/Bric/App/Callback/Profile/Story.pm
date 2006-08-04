@@ -165,8 +165,7 @@ sub checkin : Callback(priority => 6) {
             $no_log = 1;
         } else {
             # Find one in this workflow.
-            $wf ||= Bric::Biz::Workflow->lookup
-              ({ id => $story->get_workflow_id });
+            $wf ||= $story->get_workflow_object;
             foreach my $d ($wf->allowed_desks) {
                 $pub_desk = $d and last if $d->can_publish;
             }
