@@ -36,4 +36,16 @@ do_sql q{CREATE TABLE subelement_type  (
     min_occurrence  INTEGER        NOT NULL DEFAULT 0,
     max_occurrence  INTEGER        NOT NULL DEFAULT 0,
     CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
-)};
+)},
+       q{CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id)},
+       q{CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id)},
+       q{CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id)},
+
+       q{ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__parent_id FOREIGN KEY (parent_id)
+    REFERENCES element_type(id) ON DELETE CASCADE},
+
+       q{ALTER TABLE subelement_type ADD
+    CONSTRAINT fkx_element_type__subelement__child_id FOREIGN KEY (child_id)
+    REFERENCES element_type(id) ON DELETE CASCADE},
+;

@@ -187,12 +187,10 @@ CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
 CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
 CREATE INDEX fkx_class__element_type ON element_type(biz_class__id);
 
-/* Subelement_type indexes for future reference.
 CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id);
 CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id);
 CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id);
 
-*/
 
 CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(element_type__id, output_channel__id);
 CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
