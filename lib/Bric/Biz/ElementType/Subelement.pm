@@ -216,8 +216,9 @@ sub new {
     
     my $min = delete $init->{min_occurrence} || 0;
     my $max = delete $init->{max_occurrence} || 0;
-    my $place = delete $init->{place};
-    my $parent_id = delete $init->{parent_id} || delete $init->{parent}->get_id;
+    my $place = delete $init->{place} || 0;
+    my $parent = delete $init->{parent};
+    my $parent_id = delete $init->{parent_id} || $parent->get_id;
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
