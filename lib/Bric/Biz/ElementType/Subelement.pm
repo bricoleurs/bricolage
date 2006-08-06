@@ -214,10 +214,10 @@ B<Notes:> NONE.
 sub new {
     my ($pkg, $init) = @_;
     
-    my $min = delete $init->{min_occurrence} || delete $init->{min};
-    my $max = delete $init->{max_occurrence} || delete $init->{max};
+    my $min = delete $init->{min_occurrence} || 0;
+    my $max = delete $init->{max_occurrence} || 0;
     my $place = delete $init->{place};
-    my $parent_id = delete $init->{parent_id} || delete $init->{parent};
+    my $parent_id = delete $init->{parent_id} || delete $init->{parent}->get_id;
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
