@@ -211,6 +211,21 @@ my %bool_attrs = map { $_ => undef } qw(
     active
 );
 
+# Needed from the subelement
+my $SEL_TABLES = "$table et";
+my $SEL_WHERES = "et.id = et.id";
+my $SEL_ORDER = "et.name, et.id";
+my $GRP_ID_IDX = $#sel_props;
+
+# These are provided for the ElementType::Subelement subclass to take
+# advantage of.
+sub SEL_PROPS  { @sel_props }
+sub SEL_COLS   { $sel_cols }
+sub SEL_TABLES { $SEL_TABLES }
+sub SEL_WHERES { $SEL_WHERES }
+sub SEL_ORDER  { $SEL_ORDER }
+sub GRP_ID_IDX { $GRP_ID_IDX }
+
 #--------------------------------------#
 # Instance Fields
 
