@@ -1,0 +1,573 @@
+package Bric::Biz::ElementType::Subelement;
+#############################################################################
+
+=head1 NAME
+
+Bric::Biz::ElementType::Subelement - Maps a subelement ElementType 
+to it's parent's Element Types with occurrence relations and place.
+
+=head1 VERSION
+
+$LastChangedRevision$
+
+=cut
+
+require Bric; our $VERSION = Bric->VERSION;
+
+=head1 DATE
+
+$LastChangedDate: 2006-03-17 20:10:10 -0500 (Fri, 17 Mar 2006) $
+
+=head1 SYNOPSIS
+
+  use Bric::Biz::ElementType::Subelement;
+
+  # Constructors.
+  my $subelem = Bric::Biz::ElementType::Subelement->new($init);
+  my $subelems_href = Bric::Biz::ElementType::Subelement->href($params);
+
+  # Instance methods.
+  my $element_type_id = $subelem->get_parent_element_type_id;
+  $subelem->set_parent_element_type_id($element_type_id);
+  
+  my $min = $subelem->get_min_occurrence;
+  $subelem->set_min_occurrence($min);
+  
+  my $max = $subelem->get_max_occurrence;
+  $subelem->set_max_occurrence($max);
+  
+  my $place = $subelem->get_place;
+  $subelem->set_place($place);
+  
+  $subelem->save;
+
+=head1 DESCRIPTION
+
+This subclass of Bric::Biz::ElementType manages the relationship between
+parent ElementTypes and subelement ElementTypes. It contains information
+on the minimum and maximum occurrence that can be used, and also the place
+it should appear in when displaying. This class provides accessors to the
+relevant properties, as well as an C<href()> method to help along the use
+of a Bric::Util::Coll object.
+
+=cut
+
+##############################################################################
+# Dependencies
+##############################################################################
+# Standard Dependencies
+use strict;
+
+##############################################################################
+# Programmatic Dependences
+use Bric::Util::DBI qw(:all);
+
+##############################################################################
+# Inheritance
+##############################################################################
+use base qw(Bric::Biz::ElementType);
+
+##############################################################################
+# Function and Closure Prototypes
+##############################################################################
+# None.
+
+##############################################################################
+# Constants
+##############################################################################
+use constant DEBUG => 0;
+
+##############################################################################
+# Fields
+##############################################################################
+# Public Class Fields
+
+##############################################################################
+# Private Class Fields
+my $SEL_COLS = Bric::Biz::ElementType::SEL_COLS() .
+  ', sube.id, sube.parent_id, sube.child_id, sube.place,' .
+  ' sube.min_occurrence, sube.max_occurrence';
+my @SEL_PROPS = (Bric::Biz::ElementType::SEL_PROPS(),
+                 qw(min_occurrence max_occurrence place parent_id _map_id));
+
+# Grabbed knowledge from parent, but the outer join depends on it. :-(
+my $SEL_TABLES = 'element_type et LEFT OUTER JOIN ' .
+  'subelement_type subet ON (et.id = subet.child_id)';
+
+sub SEL_PROPS { @SEL_PROPS }
+sub SEL_COLS { $SEL_COLS }
+sub SEL_TABLES { $SEL_TABLES }
+
+##############################################################################
+# Instance Fields
+BEGIN {
+    Bric::register_fields({
+        min_occurrence  => Bric::FIELD_RDWR,
+        max_occurrence  => Bric::FIELD_RDWR,
+        place           => BRIC::FIELD_RDWR,
+        parent_id       => BRIC::FIELD_RDWR,
+        _map_id         => BRIC::FIELD_NONE,
+    });
+}
+
+##############################################################################
+# Class Methods
+##############################################################################
+
+=head1 INTERFACE
+
+This class inherits the majority of its interface from
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>. Only additional methods
+are documented here.
+
+=head2 Constructors
+
+=over 4
+
+=item my $subelem = Bric::Biz::ElementType::Subelement->new($init);
+
+Constructs a new Bric::Biz::ElementType::Subelement object intialized with the
+values in the C<$init> hash reference and returns it. The suported values for
+the C<$init> hash reference are the same as those supported by
+C<< Bric::Biz::ElementType::Subelement->new >>, with the addition of the
+following:
+
+=over 4
+
+=item C<child_id>
+
+The ID of the element type object on which the new
+Bric::Biz::ElementType::Subelement will be based. The relevant
+Bric::Biz::ElementType object will be looked up from the database. Note that
+all of the C<$init> parameters documented in
+L<Bric::Biz::ElementType|Bric::Biz::ElementType> will be ignored if this
+parameter is passed.
+
+=item C<child>
+
+The element type object on which the new Bric::Biz::ElementType::Subelement
+will be based. Note that all of the C<$init> parameters documented in
+L<Bric::Biz::ElementType|Bric::Biz::ElementType> will be ignored if this
+parameter is passed.
+
+=item C<parent_id>
+
+The ID of the Bric::Biz::ElementType object to which this subelement is
+mapped.
+
+=item C<min_occurrence>
+
+The minimum occurrence that the child ElementType must exist within any
+element with the parent ElementType
+
+=item C<max_occurrence>
+
+The maximum occurrence that the child ElementType may exist within any
+element with the parent ElementType. A max of 0 means that there is no
+maximum.
+
+=item C<place>
+
+The place that the child exists in relation to the other children within
+the parent element type.
+    
+=back
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> If you pass in an element type object via the C<child>
+parameter, that element type will be converted into a
+Bric::Biz::ElementType::Subelement object.
+
+B<Notes:> NONE.
+
+=cut
+
+sub new {
+    my ($pkg, $init) = @_;
+    
+    my $min = delete $init->{min_occurrence} || delete $init->{min};
+    my $max = delete $init->{max_occurrence} || delete $init->{max};
+    my $place = delete $init->{place};
+    my $parent_id = delete $init->{parent_id} || delete $init->{parent};
+    my ($child, $childid) = delete @{$init}{qw(child child_id)};
+    my $self;
+    if ($child) {
+        # Rebless the existing element type object.
+        $self = bless $child, ref $pkg || $pkg;
+    } elsif ($childid) {
+        # Lookup the existing output channel object.
+        $self = $pkg->lookup({ id => $childid });
+    } else {
+        # Construct a new element type object.
+        $self = $pkg->SUPER::new($init);
+    }
+    # Set the necessary properties and return.
+    $self->_set([qw(min_occurrence max_occurrence place parent_id _map_id)], [$min, $max, $place, $parent_id, undef]);
+    # New relationships should always trigger a save.
+    $self->_set__dirty(1);
+}
+
+##############################################################################
+
+=item my $subelem_href = Bric::Biz::ElementType::Subelement->href({ element_type_id => $eid });
+
+Returns a hash reference of Bric::Biz::ElementType::Subelement objects. Each
+hash key is a Bric::Biz::ElementType::Subelement ID, and the values are the
+corresponding Bric::Biz::ElementType::Subelement objects. Only a single
+parameter argument is allowed, C<element_type_id>, though C<ANY> may be used
+to specify a list of element type IDs. All of the child element types associated
+with that parent element type ID will be returned.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub href {
+    my ($pkg, $p) = @_;
+    $p->{element_type_id} = delete $p->{element_id} if exists $p->{element_id};
+    my $class = ref $pkg || $pkg;
+
+    # XXX Really there's too much going on here getting information from
+    # the parent class. Perhaps one day we'll have a SQL factory class to
+    # handle all this stuff, but this will have to do for now.
+    my $ord = $pkg->SEL_ORDER;
+    my $cols = $pkg->SEL_COLS;
+    my $tables = $pkg->SEL_TABLES;
+    my @params;
+    my $wheres = $pkg->SEL_WHERES
+               . ' AND et.id = subet.child_id AND '
+               . any_where $p->{element_type_id}, 'subet.parent_id = ?', \@params;
+    my $sel = prepare_c(qq{
+        SELECT $cols
+        FROM   $tables
+        WHERE  $wheres
+        ORDER BY $ord
+    }, undef);
+
+    execute($sel, @params);
+    my (@d, %ocs, $grp_ids);
+    my @sel_props = $pkg->SEL_PROPS;
+    bind_columns($sel, \@d[0..$#sel_props]);
+    my $last = -1;
+    $pkg = ref $pkg || $pkg;
+    my $grp_id_idx = $pkg->GRP_ID_IDX;
+    while (fetch($sel)) {
+        if ($d[0] != $last) {
+            $last = $d[0];
+            # Create a new server type object.
+            my $self = $pkg->SUPER::new;
+            # Get a reference to the array of group IDs.
+            $grp_ids = $d[$grp_id_idx] = [$d[$grp_id_idx]];
+            $self->_set(\@sel_props, \@d);
+            $self->_set__dirty; # Disables dirty flag.
+            $ocs{$d[0]} = $self;
+        } else {
+            push @$grp_ids, $d[$grp_id_idx];
+        }
+    }
+    # Return the objects.
+    return \%ocs;
+}
+
+=back
+
+##############################################################################
+
+=head2 Public Instance Methods
+
+=over 4
+
+=item my $eid = $subelem->get_parent_id
+
+Returns the ID of the Element Type definition of the parent with which this
+sub element is associated.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $subelem = $subelem->set_parent_id($eid)
+
+Sets the ID of the parent element type definition with which this sub element is
+associated.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_element_id { shift->get_element_type_id     }
+sub set_element_id { shift->set_element_type_id(@_) }
+
+##############################################################################
+
+=item $subelem = $subelem->set_min_occurrence($min)
+
+Set the minimum occurrence for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $min = $subelem->get_min_occurrence
+
+Get the minimum occurrence for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_min_occurrence { $_[0]->_set(['min_occurrence'], [1]) }
+sub get_min_occurrence { shift->_get(['min_occurrence']) }
+
+##############################################################################
+
+=item $subelem = $subelem->set_max_occurrence($max)
+
+Set the maximum occurrence for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $max = $subelem->get_max_occurrence
+
+Get the maximum occurrence for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_max_occurrence { $_[0]->_set(['max_occurrence'], [1]) }
+sub get_max_occurrence { shift->_get(['max_occurrence']) }
+
+##############################################################################
+
+=item $subelem = $subelem->set_place($place)
+
+Set the place for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $place = $subelem->get_place
+
+Get the place for this subelement
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_place { $_[0]->_set(['place'], [1]) }
+sub get_place { shift->_get(['place']) }
+
+##############################################################################
+
+=item $subelem = $subelem->remove
+
+Marks this parent/child element type association to be removed. Call the
+C<save()> method to remove the mapping from the database.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub remove { $_[0]->_set(['_del'], [1]) }
+
+##############################################################################
+
+=item $subelem = $subelem->save
+
+Saves the subelement.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to select row.
+
+=item *
+
+Incorrect number of args to _set.
+
+=item *
+
+Bric::_set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub save {
+    my $self = shift;
+    return $self unless $self->_get__dirty;
+    # Save the base class' properties.
+    $self->SUPER::save;
+    # Save the occurrence and place.
+    my ($childid, $parentid, $min, $max, $place, $map_id, $del) =
+      $self->_get(qw(id parent_id min_occurrence max_occurrence place _map_id _del));
+    if ($del and $map_id) {
+        # Delete it.
+        my $del = prepare_c(qq{
+            DELETE FROM subelement_type
+            WHERE  id = ?
+        }, undef);
+        execute($del, $map_id);
+        $self->_set([qw(_map_id _del)], []);
+
+    } elsif ($map_id) {
+        # Update the existing value.
+        my $upd = prepare_c(qq{
+            UPDATE subelement_type
+            SET    parent_id = ?,
+                   child_id = ?,
+                   place = ?,
+                   min_occurrence = ?,
+                   max_occurrence = ?
+            WHERE  id = ?
+        }, undef);
+        execute($parentid, $childid, $place, $min, $max, $map_id);
+
+    } else {
+        # Insert a new record.
+        my $nextval = next_key('subelement_type');
+        my $ins = prepare_c(qq{
+            INSERT INTO subelement_type
+                        (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+            VALUES ($nextval, ?, ?, ?, ?, ?)
+        }, undef);
+        execute($ins, $parentid, $childid, $place, $min, $max);
+        $self->_set(['_map_id'], [last_key('subelement_type')]);
+    }
+    return $self;
+}
+
+1;
+__END__
+
+=back
+
+=head1 NOTES
+
+NONE.
+
+=head1 AUTHOR
+
+David Wheeler <christian.muise@gmail.com>
+
+=head1 SEE ALSO
+
+L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
+
+=cut
