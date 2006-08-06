@@ -57,6 +57,7 @@ of a Bric::Util::Coll object.
 ##############################################################################
 # Standard Dependencies
 use strict;
+use Bric::Util::Fault qw(throw_invalid);
 
 ##############################################################################
 # Programmatic Dependences
@@ -104,12 +105,11 @@ BEGIN {
     Bric::register_fields({
         min_occurrence  => Bric::FIELD_RDWR,
         max_occurrence  => Bric::FIELD_RDWR,
-        place           => BRIC::FIELD_RDWR,
-        parent_id       => BRIC::FIELD_RDWR,
-        _map_id         => BRIC::FIELD_NONE,
+        place           => Bric::FIELD_RDWR,
+        parent_id       => Bric::FIELD_RDWR,
+        _map_id         => Bric::FIELD_NONE,
     });
 }
-
 ##############################################################################
 # Class Methods
 ##############################################################################
@@ -217,8 +217,19 @@ sub new {
     my $min = delete $init->{min_occurrence} || 0;
     my $max = delete $init->{max_occurrence} || 0;
     my $place = delete $init->{place} || 0;
+    
+    # Throw an error if we get a string when a number is needed
+    throw_invalid error => qq{min_occurrence must be a positive number.}
+        unless (($min =~ /^\d+$/) && ($min >= 0));
+    throw_invalid error => qq{max_occurrence must be a positive number.}
+        unless (($max =~ /^\d+$/) && ($max >= 0));
+    throw_invalid error => qq{place must be a positive number.} unless
+        (($place =~ /^\d+$/) && ($place >= 0));
+        
+    # Throw an error if we have an invalid place number??
+    
     my $parent = delete $init->{parent};
-    my $parent_id = delete $init->{parent_id} || $parent->get_id;
+    my $parent_id = delete $init->{parent_id} || $parent->get_id if $parent;
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
@@ -390,8 +401,13 @@ B<Notes:> NONE.
 
 =cut
 
-sub set_min_occurrence { $_[0]->_set(['min_occurrence'], [1]) }
-sub get_min_occurrence { shift->_get(['min_occurrence']) }
+sub set_min_occurrence {
+    my ($this, $min) = @_;
+    # Throw an error if we get a string when a number is needed
+    throw_invalid error => qq{min_occurrence must be a positive number.}
+        unless (($min =~ /^\d+$/) && ($min >= 0));
+    $this->_set(['min_occurrence'], [$min])
+}
 
 ##############################################################################
 
@@ -417,8 +433,13 @@ B<Notes:> NONE.
 
 =cut
 
-sub set_max_occurrence { $_[0]->_set(['max_occurrence'], [1]) }
-sub get_max_occurrence { shift->_get(['max_occurrence']) }
+sub set_max_occurrence {
+    my ($this, $max) = @_;
+    # Throw an error if we get a string when a number is needed
+    throw_invalid error => qq{max_occurrence must be a positive number.}
+        unless (($max =~ /^\d+$/) && ($max >= 0));
+    $this->_set(['max_occurrence'], [$max])
+}
 
 ##############################################################################
 
@@ -444,8 +465,13 @@ B<Notes:> NONE.
 
 =cut
 
-sub set_place { $_[0]->_set(['place'], [1]) }
-sub get_place { shift->_get(['place']) }
+sub set_place {
+    my ($this, $place) = @_;
+    # Throw an error if we get a string when a number is needed
+    throw_invalid error => qq{place must be a positive number.}
+        unless (($place =~ /^\d+$/) && ($place >= 0));
+    $this->_set(['place'], [$place])
+}
 
 ##############################################################################
 
@@ -520,11 +546,11 @@ sub save {
       $self->_get(qw(id parent_id min_occurrence max_occurrence place _map_id _del));
     if ($del and $map_id) {
         # Delete it.
-        my $del = prepare_c(qq{
+        my $delete = prepare_c(qq{
             DELETE FROM subelement_type
             WHERE  id = ?
         }, undef);
-        execute($del, $map_id);
+        execute($delete, $map_id);
         $self->_set([qw(_map_id _del)], []);
 
     } elsif ($map_id) {

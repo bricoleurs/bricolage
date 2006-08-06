@@ -13,7 +13,7 @@ sub _test_load : Test(1) {
 
 ##############################################################################
 # Test the new() constructor.
-sub test_new : Test(9) {
+sub test_new : Test(13) {
     my %et = (
         name        => 'Test ElementType',
         key_name    => 'test_element_type',
@@ -25,7 +25,6 @@ sub test_new : Test(9) {
     # Try creating one from the element type object
     ok( my $sube = Bric::Biz::ElementType::Subelement->new({child => $elemt}),
         "Create Subelement with object" );
-
     isa_ok($sube, 'Bric::Biz::ElementType::Subelement');
     isa_ok($sube, 'Bric::Biz::ElementType');
     is scalar $sube->get_min_occurrence, 0, "Check min occurrence";
