@@ -26,17 +26,14 @@ do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER},
        q{ALTER TABLE field_type ALTER COLUMN min_occurrence SET DEFAULT 0},
 ;
 
-# FIXME for wherever the element occurrence is now set.
-
-#do_sql q{ALTER TABLE element_type ADD max_occurrence INTEGER},
-#       q{UPDATE element_type SET max_occurrence='0' WHERE 1},
-
-#       q{ALTER TABLE element_type ADD min_occurrence INTEGER},
-#       q{UPDATE element_type SET min_occurrence='0' WHERE 1},
-
-#       q{ALTER TABLE element_type ALTER COLUMN max_occurrence SET NOT NULL},
-#       q{ALTER TABLE element_type ALTER COLUMN min_occurrence SET NOT NULL},
-
-#       q{ALTER TABLE element_type ALTER COLUMN max_occurrence SET DEFAULT 0},
-#       q{ALTER TABLE element_type ALTER COLUMN min_occurrence SET DEFAULT 0},
-#;
+# Add the table for subelements
+do_sql q{CREATE TABLE subelement_type  (
+    id              INTEGER        NOT NULL
+                                   DEFAULT NEXTVAL('seq_subelement_type'),
+    parent_id       INTEGER        NOT NULL,
+    child_id        INTEGER        NOT NULL,
+    place           INTEGER        NOT NULL DEFAULT 1,
+    min_occurrence  INTEGER        NOT NULL DEFAULT 0,
+    max_occurrence  INTEGER        NOT NULL DEFAULT 0,
+    CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
+)};
