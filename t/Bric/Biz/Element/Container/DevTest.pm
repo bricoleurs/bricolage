@@ -227,7 +227,7 @@ sub test_occurrence : Test(80) {
 
     # Try deleting the second last paragraph
     eval { $elem->delete_elements([ $new_para_1 ]) };
-    ok my $err = $@, 'Catch min occurrence violation exception';
+    ok $err = $@, 'Catch min occurrence violation exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
         'Field "para" cannot be deleted. There must'
