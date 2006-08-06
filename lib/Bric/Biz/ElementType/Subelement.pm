@@ -3,7 +3,7 @@ package Bric::Biz::ElementType::Subelement;
 
 =head1 NAME
 
-Bric::Biz::ElementType::Subelement - Maps a subelement ElementType 
+Bric::Biz::ElementType::Subelement - Maps a subelement ElementType
 to it's parent's Element Types with occurrence relations and place.
 
 =head1 VERSION
@@ -29,16 +29,16 @@ $LastChangedDate: 2006-03-17 20:10:10 -0500 (Fri, 17 Mar 2006) $
   # Instance methods.
   my $element_type_id = $subelem->get_parent_element_type_id;
   $subelem->set_parent_element_type_id($element_type_id);
-  
+
   my $min = $subelem->get_min_occurrence;
   $subelem->set_min_occurrence($min);
-  
+
   my $max = $subelem->get_max_occurrence;
   $subelem->set_max_occurrence($max);
-  
+
   my $place = $subelem->get_place;
   $subelem->set_place($place);
-  
+
   $subelem->save;
 
 =head1 DESCRIPTION
@@ -170,7 +170,7 @@ maximum.
 
 The place that the child exists in relation to the other children within
 the parent element type.
-    
+
 =back
 
 B<Throws:>
@@ -213,7 +213,7 @@ B<Notes:> NONE.
 
 sub new {
     my ($pkg, $init) = @_;
-    
+
     my $min = delete $init->{min_occurrence} || 0;
     my $max = delete $init->{max_occurrence} || 0;
     my $place = delete $init->{place} || 0;
