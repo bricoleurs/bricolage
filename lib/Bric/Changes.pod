@@ -69,6 +69,11 @@ Deleting categories via SOAP works again. Reported by Brad Harder. [David]
 Fixed loading of deprecated classes so that older templates that still use
 them will continue to work. [David]
 
+=item *
+
+Removed "Teaser" field from the story search interface, since there is no such
+field, and so it did nothing, anyway. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
