@@ -53,7 +53,7 @@
                 extension => 'png',
                 globalImage => 1,
                 useTable => 0,
-                js    => qq/onclick="Desk.request({ uri: '/ . $r->uri . qq/', parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); return false"/
+                js    => qq/onclick="Desk.request({ parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); return false"/
             &>
             </li>
 % }
@@ -300,7 +300,7 @@ my $checkin_js = sub {
         # to disappear.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", ($next_desk ? ("desk_asset|next_desk=$next_desk") : ()));
-        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
     } else {
         my $parameters = join('&amp;', "desk_type=workflow", 
                                        "obj=${class}_${id}", 
@@ -340,10 +340,10 @@ my $publish_js = sub {
     my $uri = $r->uri;
     if ($class eq 'template') {
         my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
-        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";        
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";        
     } else {
         my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
-        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";                
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";                
     }
 };
 
