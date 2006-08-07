@@ -14,7 +14,7 @@
         desk     => $d,
         wf       => $wf,
         work_id  => $w_id,
-        sort_by  => $sort->{$class},
+        sort_by  => $ARGS{"${class}_sort_by"},
         class    => $class,
         offset   => $offset,
         show_all => $show_all,
@@ -35,9 +35,6 @@
 
 
 <%args>
-$story_sort_by    => undef
-$media_sort_by    => undef
-$template_sort_by => undef
 $offset           => 0
 $show_all         => undef
 </%args>
@@ -48,11 +45,6 @@ my $d = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $d_id});
 my $d_name = $d ? $d->get_name : 'Unknown';
 my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
 my $wfname = '&quot;' . $wf->get_name . '&quot;';
-my $sort = {
-    story    => $story_sort_by,
-    media    => $media_sort_by,
-    template => $template_sort_by
-};
 </%init>
 
 <%doc>
