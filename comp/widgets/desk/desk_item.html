@@ -327,7 +327,11 @@ my $move_js = sub {
                                        "highlight=$highlight", 
                                        "desk_asset|move_cb=${class}_${id}", 
                                        "desk_asset|next_desk=$next_desk");
-        return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
+        if ($next_desk eq 'shelve') {
+            return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        } else {
+            return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
+        }
     }
 };
 
