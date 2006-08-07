@@ -1,76 +1,84 @@
-package Bric::Biz::OutputChannel::Element::DevTest;
+package Bric::Biz::ElementType::Subelement::DevTest;
 use strict;
 use warnings;
-use base qw(Bric::Biz::OutputChannel::DevTest);
+use base qw(Bric::Biz::ElementType::DevTest);
 use Test::More;
-use Bric::Biz::OutputChannel::Element;
+use Bric::Biz::ElementType::Subelement;
 
 ##############################################################################
 # Test constructors.
 ##############################################################################
 # Test the href() constructor.
-sub test_href : Test(12) {
+sub test_href : Test(17) {
     my $self = shift;
-    ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_type_id => 1 }), "Get Story OCs" );
-    is( scalar keys %$href, 1, "Check for one OC" );
-    ok( my $oce = $href->{1}, "Grab OC ID 1" );
-    is( $oce->get_name, 'Web', "Check OC name 'Web'" );
+     ok( my $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_type_id => 1 }), "Get Story ElementTypes" );
 
-    # Check the enabled attribute.
-    ok( $oce->is_enabled, "Check is_enabled" );
-    ok( $oce->set_enabled_off, "Turn enabled off" );
-    ok( ! $oce->is_enabled, "Check is_enabled off" );
-    ok( $oce->set_enabled_on, "Turn enabled on" );
-    ok( $oce->is_enabled, "Check is_enabled on" );
+    is( scalar keys %$href, 1, "Check for one ElementType" );
+    ok( my $sube = $href->{10}, "Grab subelement ID 10" );
+    is( $sube->get_name, 'Page', "Check Subelement name 'Page'" );
 
-    # Check the element_id attribute.
-    is( $oce->get_element_type_id, 1, "Check element_type_id eq 1" );
-    ok( $oce->set_element_type_id(2), "Set element_type_id to 2" );
-    is( $oce->get_element_type_id, 2, "Check element_type_id eq 2" );
+    # Check the occurrence attributes.
+    is( scalar $sube->get_min_occurrence, 0, "Check the min occurrence");
+    ok( $sube->set_min_occurrence(1), "Set the min occurrence to 1");
+    is( scalar $sube->get_min_occurrence, 1, "Check the min occurrence");
+    ok( $sube->set_min_occurrence(0), "Set the min occurrence back to 0");
+    is( scalar $sube->get_max_occurrence, 0, "Check the max occurrence");
+    ok( $sube->set_max_occurrence(1), "Set the max occurrence to 1");
+    is( scalar $sube->get_max_occurrence, 1, "Check the max occurrence");
+    ok( $sube->set_max_occurrence(0), "Set the max occurrence back to 0");
+
+    # Check the child_id attribute.
+    is( $sube->get_parent_id, 1, "Check parent_id eq 1" );
+    is( $sube->get_id, 10, "Check the child id eq 1" );
+    ok( $sube->set_parent_id(2), "Set parent_id to 2" );
+    is( $sube->get_parent_id, 2, "Check parent_id eq 2" );
+    ok( $sube->set_parent_id(1), "Set parent_id back to 1" );
 }
 
 ##############################################################################
 # Test the new() constructor.
-sub test_new : Test(16) {
+sub test_new : Test(17) {
     my $self = shift;
-    # Try creating one from an OC ID.
-    ok( my $oce = Bric::Biz::OutputChannel::Element->new({oc_id => 1}),
-        "Create OCE from OC ID 1" );
-    isa_ok($oce, 'Bric::Biz::OutputChannel::Element');
-    isa_ok($oce, 'Bric::Biz::OutputChannel');
-    is( $oce->get_name, "Web", "Check name 'Web'" );
+    # Try creating one from an ElementType ID.
+    ok( my $sube = Bric::Biz::ElementType::Subelement->new({child_id => 1}),
+        "Create Subelement from ElementType ID 1" );
+    isa_ok($sube, 'Bric::Biz::ElementType::Subelement');
+    isa_ok($sube, 'Bric::Biz::ElementType');
+    is( $sube->get_name, "Story", "Check name 'Story'" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 1,
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({min_occurrence => 1,
                                                        site_id => 100}),
-        "Create enabled OC" );
-    ok( $oce->is_enabled, "OC is enabled" );
+        "Create Subelement with min occurrence" );
+    is( scalar $sube->get_min_occurrence, 1, "Subelement is has right occurrence" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 1,
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({max_occurrence => 3,
                                                        site_id => 100}),
-        "Create enabled OC" );
-    ok( $oce->is_enabled, "Enabled OC is enabled" );
+        "Create Subelement with max occurrence" );
+    is( scalar $sube->get_max_occurrence, 3, "Subelement is has right occurrence" );
 
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({enabled => 0,
-                                                       site_id => 100}),
-        "Create disabled OC" );
-    ok( ! $oce->is_enabled, "disabled OC is not enabled" );
+    # Create a new element type object.
+    my %et = (
+        name        => 'Test ElementType',
+        key_name    => 'test_element_type',
+        description => 'Testing Element Type API',
+    );
 
-    # Create a new output channel object.
-    ok( my $oc = Bric::Biz::OutputChannel->new({ name => 'Foober',
-                                                 site_id => 100 }),
-        "Create new OC" );
-    ok( $oc->save, "Save OC" );
-    ok( my $ocid = $oc->get_id, "Get ID" );
-    $self->add_del_ids([$ocid]);
+    ok( my $et = Bric::Biz::ElementType->new, 'Create empty element type' );
+    ok( $et = Bric::Biz::ElementType->new(\%et), 'Create a new element');
+    isa_ok($et, 'Bric::Biz::ElementType');
+    isa_ok($et, 'Bric');
+    ok( $et->save, "Save the ElementType");
+    ok( my $etid = $et->get_id, "Get the id" );
+    $self->add_del_ids([$etid]);
 
-    # Create a new OCElement.
-    ok( $oce = Bric::Biz::OutputChannel::Element->new({ oc_id => $ocid }),
-        "Create OCE from OC ID $ocid" );
+    # Create a new Subelement.
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({ child_id => $etid }),
+        "Create Subelement from element type ID $etid" );
     # It should not yet have a Map ID!
-    ok(! defined $oce->_get('_map_id'), "Map ID is undefined" );
+    ok(! defined $sube->_get('_map_id'), "Map ID is undefined" );
     # It should have only one group membership.
-    my @gids = $oce->get_grp_ids;
+    my @gids = $sube->get_grp_ids;
     is( scalar @gids, 1, "Check for one group ID" );
 }
 
@@ -80,117 +88,120 @@ sub test_new : Test(16) {
 # Test save() method's update ability.
 sub test_update : Test(13) {
     my $self = shift;
-    # Grab an existing OCE from the database.
-    ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_type_id => 1 }), "Get Story OCs" );
-    ok( my $oce = $href->{1}, "Grab OC ID 1" );
+    # Grab an existing subelement from the database.
+    ok( my $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_type_id => 1 }), "Get Story subelements" );
+    ok( my $sube = $href->{10}, "Grab subelement ID 10" );
 
-    # Set enable to false.
-    ok( $oce->is_enabled, "Check is_enabled" );
-    ok( $oce->set_enabled_off, "Set enable off" );
-    ok( $oce->save, "Save OCE" );
+    # Set min occurrence to 3.
+    is( $sube->get_min_occurrence, 0, "Check min occurrence is 0" );
+    ok( $sube->set_min_occurrence(3), "Set min occurrence to 3" );
+    ok( $sube->save, "Save the subelement" );
 
     # Look it up again.
-    ok( $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_type_id => 1 }), "Get Story OCs again" );
-    ok( $oce = $href->{1}, "Grab OC ID 1 again" );
+    ok( $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_type_id => 1 }), "Get Story subelements again" );
+    ok( $sube = $href->{10}, "Grab subelement ID 10 again" );
 
-    # Enable should be false, now.
-    ok( ! $oce->is_enabled, "Check is_enabled off" );
-    ok( $oce->set_enabled_on, "Set enable on" );
-    ok( $oce->save, "Save OCE again" );
+    # Min occurrence should be 3, now.
+    is( $sube->get_min_occurrence, 3, "Check min_occurrence is 3" );
+    ok( $sube->set_min_occurrence(0), "Set min_occurrence back to 0" );
+    ok( $sube->save, "Save subelement again" );
 
     # Look it up one last time.
-    ok( $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_id => 1 }), "Get Story OCs last" );
-    ok( $oce = $href->{1}, "Grab OC ID 1 last" );
-    ok( $oce->is_enabled, "Check is_enabled on again" );
+    ok( $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_id => 1 }), "Get Story subelements last" );
+    ok( $sube = $href->{10}, "Grab subelement ID 10 last" );
+    is( $sube->get_min_occurrence, 0, "Check min_occurrence is 0 last" );
 }
 
 ##############################################################################
 # Test save()'s insert and delete abilities.
-sub test_insert : Test(11) {
+sub test_insert : Test(10) {
     my $self = shift;
-    # Create a new output channel.
-    ok(my $oce = Bric::Biz::OutputChannel::Element->new({
+    # Create a new subelement.
+    ok(my $sube = Bric::Biz::ElementType::Subelement->new({
         name       => "Foober",
+        key_name   => "foober",
         element_type_id => 1,
+        parent_id =>2,
         site_id    => 100,
-    }), "Create a brand new OCE" );
+    }), "Create a brand new subelement" );
 
-    # Now save it. It should be inserted as both an OC and as an OCE.
-    ok( $oce->save, "Save new OCE" );
-    ok( my $ocid = $oce->get_id, "Get ID" );
-    $self->add_del_ids([$ocid]);
+    # Now save it. It should be inserted as both an ElementType and as an Subelement.
+    ok( $sube->save, "Save new Subelement" );
+
+    ok( my $etid = $sube->get_id, "Get ID" );
+    $self->add_del_ids([$etid]);
 
     # Now retreive it.
-    ok( my $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_type_id => 1 }), "Get Story OCs" );
-    ok( $oce = $href->{$ocid}, "Grab OC ID $ocid" );
-
+    ok( my $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_type_id => 2 }), "Get subelements with parent id of 2" );
     # Check its attributes.
-    is( $oce->get_id, $ocid, "Check ID" );
-    is( $oce->get_name, "Foober", "Check name 'Foober'" );
+    is( $sube->get_id, $etid, "Check ID" );
+    is( $sube->get_name, "Foober", "Check name 'Foober'" );
 
     # Now delete it.
-    ok( $oce->remove, "Remove OCE" );
-    ok( $oce->save, "Save removed OCE" );
+    ok( $sube->remove, "Remove Subelement" );
+    ok( $sube->save, "Save removed Subelement" );
 
     # Now try to retreive it.
-    ok( $href = Bric::Biz::OutputChannel::Element->href
-        ({ element_type_id => 1 }), "Get Story OCs" );
-    ok( ! exists $href->{$ocid}, "ID $ocid gone" );
+    ok( $href = Bric::Biz::ElementType::Subelement->href
+        ({ element_type_id => 1 }), "Get Story Subelements" );
+    ok( ! exists $href->{$etid}, "ID $etid gone" );
 }
 
 ##############################################################################
-# A concentrated test to make sure that the right OCE gets deleted no
+# A concentrated test to make sure that the right subelement gets deleted no
 # matter how many there are and which was changed most recently.
 sub test_delete : Test(24) {
     my $self = shift;
-    my @oces;
-    # Create some OCE objects
+    my @subes;
+    # Create some Subelement objects
     foreach my $name (qw(Gar GarGar GarGarGar Bar BarBar BarBarBar)) {
-        ok( my $oce = Bric::Biz::OutputChannel::Element->new({
+        ok( my $sube = Bric::Biz::ElementType::Subelement->new({
             name            => $name,
+            key_name        => $name . "_key",
             element_type_id => 1,
+            parent_id       => 2,
             site_id         => 100,
-        }), "Create OC '$name'" );
+        }), "Create Subelement '$name'" );
 
-        # Now save it. It should be inserted as both an OC and as an OCE.
-        ok( $oce->save, "Save OC '$name'" );
-        $self->add_del_ids([$oce->get_id]);
-        push @oces, $oce;
+        # Now save it. It should be inserted as both an ElementType and as a Subelement.
+        ok( $sube->save, "Save Subelement '$name'" );
+        $self->add_del_ids([$sube->get_id]);
+        push @subes, $sube;
     }
 
-    # Change and save the fourth OCE, so that it will be the most recently
+    # Change and save the fourth Subelement, so that it will be the most recently
     # updated, which might then cause PostgreSQL to return it instead of
     # another one.
-    ok( $oces[3]->set_name('Ha Ha!'), "Set fourth OC name's to 'Ha Ha!'" );
-    ok( $oces[3]->save, "Save OC 'Ha Ha!'" );
+    ok( $subes[3]->set_name('Ha Ha!'), "Set fourth Subelement name's to 'Ha Ha!'" );
+    ok( $subes[3]->save, "Save subelement 'Ha Ha!'" );
 
     # Try deleting the third OC.
-    ok( my $testid = $oces[2]->get_id, "Get third OC's ID" );
-    ok( $oces[2]->remove, "Remove third OC" );
-    ok( $oces[2]->save, "Save third OC" );
+    ok( my $testid = $subes[2]->get_id, "Get third Subelement's ID" );
+    ok( $subes[2]->remove, "Remove third Subelement" );
+    ok( $subes[2]->save, "Save third Subelement" );
 
-    # Now get the hash ref of all output channels associated with element
+    # Now get the hash ref of all subelements associated with element
     # ID 1.
-    ok( my $href = Bric::Biz::OutputChannel::Element->href({
+    ok( my $href = Bric::Biz::ElementType::Subelement->href({
         element_type_id => 1
-    }), "Get OC href" );
+    }), "Get Subelement href" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );
 
     # Now try deleting the first and see if we get the right one.
-    ok( $testid = $oces[0]->get_id, "Get first OC's ID" );
-    ok( $oces[0]->remove, "Remove first OC" );
-    ok( $oces[0]->save, "Save first OC" );
+    ok( $testid = $subes[0]->get_id, "Get first Subelement's ID" );
+    ok( $subes[0]->remove, "Remove first subelement" );
+    ok( $subes[0]->save, "Save first subelement" );
 
-    # Get the hash ref of all output channels associated with element ID 1
+    # Get the hash ref of all subelements associated with element ID 1
     # again.
-    ok( $href = Bric::Biz::OutputChannel::Element->href({
+    ok( $href = Bric::Biz::ElementType::Subelement->href({
         element_type_id => 1
-    }), "Get OC href again" );
+    }), "Get subelement href again" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );
 }
