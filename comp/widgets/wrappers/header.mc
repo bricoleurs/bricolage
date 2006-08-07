@@ -168,8 +168,11 @@ if ($useSideNav) {
         </form>
 % }
     </div>
+    
+<div id="errors">
 <%perl>;
 # handle error messaging
+my $count = 1;
 while (my $txt = next_msg) {
      # insert whitespace on top to balance the line break the form tag inserts after these messages.
     if ($txt =~ /(.*)<span class="l10n">(.*)<\/span>(.*)/) {
@@ -179,7 +182,15 @@ while (my $txt = next_msg) {
         $txt = escape_html($txt);
     }
 </%perl>
-    <p class="errorBox">
-        <span class="errorMsg"><% $txt %></span>
-    </p>
+
+%   if ($count++ == 4) {  # Start the extraErrors box on the 4th error
+    <div id="showMoreErrors">(<a href="#" onclick="Element.hide(this.parentNode); Effect.BlindDown('extraErrors'); return false">more</a>)</div>
+    <div id="extraErrors" style="display: none;">
+%   }
+    <div class="errorMsg"><% $txt %></div>
 % }
+% if ($count > 3) {  # Close the extraErrors box if there were more than 3 errors
+    <div id="showFewerErrors">(<a href="#" onclick="Effect.BlindUp(this.parentNode.parentNode); Effect.Appear('showMoreErrors', { queue: 'end'}); return false;">close</a>)</div>
+    </div>
+%   }
+</div>

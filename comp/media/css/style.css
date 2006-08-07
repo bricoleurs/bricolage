@@ -150,11 +150,6 @@ a.small         { font-size: .9em; }
 .label          { font-weight: bold }
 .label.required { font-weight: bold; color: red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
-.errorMsg    { color: red; font-weight: bold}
-.statusMsg   { display: none; } /* Status messages are sent to the browser before the */
-                                /* stylesheet.  If this style ever gets applied, that */
-                                /* means there was an error and these messages should */
-                                /* be hidden. (See bug 751) */
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
 
@@ -162,6 +157,13 @@ a.small         { font-size: .9em; }
 .medHeader      {background:#999966;}
 .lightHeader    {background-color: #cccc99;}
 .alias          { font-style:italic; }
+
+#errors      { margin: 10px 0; }
+.errorMsg    { padding: 3px 0; color: red; font-weight: bold}
+.statusMsg   { display: none; } /* Status messages are sent to the browser before the */
+                                /* stylesheet.  If this style ever gets applied, that */
+                                /* means there was an error and these messages should */
+                                /* be hidden. (See bug 751) */
 
 .desk .alias          {background: #99cc99 url("/media/images/link.png") 112px -5px no-repeat !important; margin-left: 18px;}
 .listManager .alias {background: url("/media/images/link.png") 0px -10px no-repeat; margin-left: 18px; margin: 0; padding-left: 15px; }
