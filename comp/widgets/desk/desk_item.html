@@ -93,7 +93,7 @@
              </li> 
 % }
 
-% if ($can_edit && $move_opts) {
+% if (!$user && $can_edit && $move_opts) {
             <li>
                 <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move">
                     <img src="/media/images/move.gif" alt="Move" />
@@ -105,6 +105,13 @@
                         <li><a href="#" onclick="<% $move_js->($_->[0]) %>"><% $_->[1] %></a></li>
 % }
                     </ul>
+%                   if (!$obj->get_checked_out) {
+                    <h4>Other:</h4>
+                    <ul>
+                        <li><a href="#" onclick="<% $move_js->(($class eq 'template') ? 'deploy' : 'publish') %>"><% $lang->maketext(($class eq 'template') ? 'Deploy' : 'Publish') %></a></li>
+                        <li><a href="#" onclick="<% $move_js->('shelve') %>"><% $lang->maketext('Shelve') %></a></li>
+                    </ul>
+%                   }
                 </div>
             </li>
 % }
@@ -141,9 +148,10 @@
 % }
         </ul>
         
-        <p><% $desk->get_name %> Desk</p>
 %       if ($user) {
-        <p>Checked out by <% $user %></p>
+        <p><% $user %></p>
+%       } else {
+        <p><% $desk->get_name %> Desk</p>
 %       }
     </div>
   </div>
@@ -241,7 +249,6 @@ if ($checkin_opts || $move_opts) {
     }
     my @and_shelve = ['shelve', $lang->maketext('and Shelve')];
     push @$checkin_opts, @and_shelve;
-    push @$move_opts, @and_shelve;
 }
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);

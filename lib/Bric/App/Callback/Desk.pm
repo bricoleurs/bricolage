@@ -50,41 +50,15 @@ sub checkin : Callback {
         $obj->save;
         log_event("${class}_rem_workflow", $obj);
     } elsif ($next_desk_id eq 'publish') {
-        my ($pub_desk, $no_log);
-        
-        # Find a publish desk.
-        if ($desk->can_publish) {
-            # Already on one.
-            $pub_desk = $desk;
-            $no_log = 1;
-        } else {
-            # Find one in this workflow.
-            my $workflow = $obj->get_workflow_object;
-            foreach my $d ($workflow->allowed_desks) {
-                $pub_desk = $d and last if $d->can_publish;
-            }
-            # Transfer the story to the publish desk.
-            if ($desk) {
-                $desk->transfer({ to    => $pub_desk,
-                                  asset => $obj });
-                $desk->save;
-            } else {
-                $pub_desk->accept({ asset => $obj });
-            }
-            $pub_desk->save;
-        }
-        
-        $obj->save;
-        
-        # Log it!
-        my $dname = $pub_desk->get_name;
-        log_event("${class}_moved", $obj, { Desk => $dname }) unless $no_log;
-        
+        $self->_move_to_publish_desk($obj);
         $self->params->{"${class}_pub"} = { $obj->get_version_id => $obj };
         $self->publish;
-        
     } elsif ($next_desk_id eq 'deploy') {
-        # XXX: FINISH ME
+        if ($class eq 'template') {
+            $self->_move_to_publish_desk($obj);
+            $self->params->{"desk_asset|template_pub_ids"} = [ $obj->get_version_id ];
+            $self->deploy;
+        }
     } elsif ($next_desk_id) {
         if ($desk->get_id != $next_desk_id) {
             my $next = $pkgs->{desk}->lookup({ id => $next_desk_id });
@@ -165,10 +139,16 @@ sub move : Callback {
         log_event("${class}_rem_workflow", $obj);
         return;
     } elsif ($next_desk_id eq 'publish') {
-        # XXX: FINISH ME
+        $self->_move_to_publish_desk($obj);
+        $self->params->{"${class}_pub"} = { $obj->get_version_id => $obj };
+        $self->publish;
         return;
     } elsif ($next_desk_id eq 'deploy') {
-        # XXX: FINISH ME
+        if ($class eq 'template') {
+            $self->_move_to_publish_desk($obj);
+            $self->params->{"desk_asset|template_pub_ids"} = [ $obj->get_version_id ];
+            $self->deploy;
+        }
         return;
     }
 
@@ -625,6 +605,37 @@ sub _merge_properties {
 
     return 1 unless $err;
     return;
+}
+
+sub _move_to_publish_desk {
+    my ($self, $obj) = @_;
+    
+    my $class = $obj->key_name;
+    my $cur_desk = $obj->get_current_desk;
+    
+    # Publish the template and remove it from workflow.
+    my ($pub_desk, $no_log);
+    # Find a publish desk.
+    if ($cur_desk->can_publish) {
+        # We've already got one.
+        $pub_desk = $cur_desk;
+        $no_log = 1;
+    } else {
+        # Find one in this workflow.
+        my $workflow = $obj->get_workflow_object;
+        foreach my $d ($workflow->allowed_desks) {
+            $pub_desk = $d and last if $d->can_publish;
+        }
+        # Transfer the template to the publish desk.
+        $cur_desk->transfer({ to    => $pub_desk,
+                              asset => $obj });
+        $cur_desk->save;
+        $pub_desk->save;
+    }
+    
+    $obj->save;
+    
+    log_event("${class}_moved", $obj, { Desk => $pub_desk->get_name }) unless $no_log;
 }
 
 1;
