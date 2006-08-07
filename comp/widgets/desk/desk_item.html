@@ -318,7 +318,7 @@ my $move_js = sub {
         # disappear when it's moved to a different desk.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|move_cb=$class\_$id", "desk_asset|next_desk=$next_desk");
-        return "Desk.request({ uri: '$uri', parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
     } else {
         # The workspace shows assets from many desks, so the asset needs
         # to be updated.
