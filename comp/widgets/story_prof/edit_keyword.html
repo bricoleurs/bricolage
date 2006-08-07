@@ -1,5 +1,5 @@
 <& '/widgets/wrappers/sharky/table_top.mc',
-    caption => "Category Keywords", 
+    caption => "Category Keywords",
     number  => 1,
 &>
 
@@ -7,7 +7,7 @@
 % foreach my $cat ($story->get_categories) {
     <dt><% $lang->maketext('Category') %></dt>
     <dd><% $cat->get_name %></dd>
-    
+
     <dt><% $lang->maketext('Keywords') %></dt>
     <dd><% join(', ', map { $_->get_name } $cat->get_keywords) %></dd>
 % }
@@ -16,20 +16,20 @@
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
 <& '/widgets/wrappers/sharky/table_top.mc',
-    caption => "Story Keywords", 
+    caption => "Story Keywords",
     number  => 2
 &>
 
 <& '/widgets/add_more/add_more.mc',
     type    => 'keyword',
     param => $param,
-    fields => [qw(keyword)], 
-    name => 'keyword', 
+    fields => [qw(keyword)],
+    name => 'keyword',
     deleteLabelOnly => 1,
-    reset_key => $story->get_id, 
-    objs => $keywords, 
+    reset_key => $story->get_id,
+    objs => $keywords,
     incr => 4,
-    no_edit => [qw(keyword)], 
+    no_edit => [qw(keyword)],
     num => @$keywords >= 4 ? @$keywords + 2 : 4
 &>
 

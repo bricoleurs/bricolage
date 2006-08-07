@@ -259,6 +259,7 @@ sub burn_one {
     no warnings 'redefine';
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
+        return $self->inherit_start_path if $self->flag('inherit');
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
         return $self->{inherit_start_path};
     };

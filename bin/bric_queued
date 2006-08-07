@@ -147,6 +147,11 @@ use Bric::Dist::Action::Mover;
 use Bric::Dist::Action::Email;
 use Bric::Dist::Action::DTDValidate;
 
+# Allow templates from before 1.10 to keep working.
+use Bric::Biz::Asset::Business::Parts::Tile::Container;
+use Bric::Biz::Asset::Formatting;
+use Bric::Biz::AssetType;
+
 ##############################################################################
 # Constants.
 ##############################################################################

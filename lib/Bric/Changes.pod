@@ -64,6 +64,11 @@ directory, instead over replacing th existing F<Pg.sql>. [David]
 
 Deleting categories via SOAP works again. Reported by Brad Harder. [David]
 
+=item *
+
+Fixed loading of deprecated classes so that older templates that still use
+them will continue to work. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
