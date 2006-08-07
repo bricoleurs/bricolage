@@ -16,7 +16,7 @@
 CREATE SEQUENCE seq_element_type START 1024;
 
 -- Unique IDs for the subelement table
---CREATE SEQUENCE seq_subelement_type START 1024;
+CREATE SEQUENCE seq_subelement_type START 1024;
 
 -- Unique IDs for element__output_channel
 CREATE SEQUENCE seq_element_type__output_channel START 1024;

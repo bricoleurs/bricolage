@@ -315,11 +315,21 @@ VALUES ('301', '330', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('1', '10', '301');
 
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('1', '1', '10', '1', '0', '0');
+
+
+
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('302', '331', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('2', '10', '302');
+
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('2', '2', '10', '1', '0', '0');
+
+
 
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('303', '332', '22', '1');
@@ -327,11 +337,21 @@ VALUES ('303', '332', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('3', '10', '303');
 
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('3', '3', '10', '1', '0', '0');
+
+
+
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('305', '340', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('5', '7', '305');
+
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('4', '5', '7', '1', '0', '0');
+
+
 
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('306', '340', '22', '1');
@@ -339,11 +359,21 @@ VALUES ('306', '340', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('6', '6', '306');
 
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('5', '6', '6', '1', '0', '0');
+
+
+
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('307', '330', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('7', '7', '307');
+
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('6', '7', '7', '1', '0', '0');
+
+
 
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('308', '341', '22', '1');
@@ -351,11 +381,21 @@ VALUES ('308', '341', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('8', '9', '308');
 
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('7', '8', '9', '1', '0', '0');
+
+
+
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('309', '332', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('9', '11', '309');
+
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('8', '9', '11', '1', '0', '0');
+
+
 
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('310', '335', '22', '1');
@@ -363,11 +403,19 @@ VALUES ('310', '335', '22', '1');
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('10', '8', '310');
 
+INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+VALUES ('9', '10', '8', '1', '0', '0');
+
+
+
 INSERT INTO member (id, grp__id, class__id, active) 
 VALUES ('311', '335', '22', '1');
 
 INSERT INTO element_type_member (id, object_id, member__id) 
 VALUES ('24', '12', '311');
+
+-- INSERT INTO subelement_type (id, parent_id, child_id, place, min_occurrence, max_occurrence)
+-- VALUES ('10', '24', '12', '1', '0', '0');
 
 
 
