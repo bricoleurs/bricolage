@@ -790,7 +790,7 @@ sub build_query {
       $order\n};
 
     # LIMIT OFFSET compatibility measure for MySQL
-    $limit = LIMIT_DEFAULT if ($offset);
+    $limit = LIMIT_DEFAULT if ($offset and !$limit);
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
     return \$sql;

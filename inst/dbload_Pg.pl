@@ -76,13 +76,11 @@ sub exec_sql {
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
 	@$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
-	print "$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=";	    
         # Shift off the column headers.
         shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
-        print $DB->{exec}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db;	    
 	system($DB->{exec}, '--variable', 'ON_ERROR_STOP=1', '-q', @args, '-d', $db)
 	  or return;
     }

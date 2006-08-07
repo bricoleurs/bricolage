@@ -11,25 +11,6 @@ use Bric::Biz::Asset;
 ##############################################################################
 sub test_fetch_objects: Test(4) {
     my $self = shift;
-    # create a fake story table. It doesn't need to have
-    # the same structure as the real ones, it just needs
-    # to produce the same result
-#    Bric::Util::DBI::execute( Bric::Util::DBI::prepare(q{
-#         CREATE TABLE test_fetch_objects (
-#                one        INTEGER NULL,
-#                two        INTEGER NULL,
-#                three      INTEGER NULL,
-#                four       INTEGER NULL,
-#                five       INTEGER NULL,
-#                six        INTEGER NULL,
-#                seven      INTEGER NULL,
-#                eight      INTEGER NULL,
-#                nine       INTEGER NULL,
-#                ten        INTEGER NULL,
-#                eleven     INTEGER NULL,
-#                twelve     INTEGER NULL
-#            ) })) if (DBD_TYPE eq "Pg");
-
     eval {
     my $sth = prepare(q{
         INSERT INTO story (
@@ -65,6 +46,7 @@ sub test_fetch_objects: Test(4) {
                  FROM story
                  GROUP BY site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id
                  ORDER BY site__id, workflow__id ASC ';
+    my $sqltemp=$sql;                 
     my $fields = [ qw( site__id uuid source__id desk__id element_type__id current_version workflow__id alias_id ) ];
     my $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 2, undef, undef , undef);
 #    print ('//'.$stories->[0]{priority}.'//');
@@ -118,7 +100,6 @@ sub test_fetch_objects: Test(4) {
     is_deeply($stories, $expect,
               'Checking that _fetch_objects produces the correct object structure');
     # test limit
-    my $sqltemp=$sql;
     $sql = $sqltemp.' LIMIT 2';
     $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 2,  undef, 2, undef);
     $_->{alias_id} = [sort { $a <=> $b } @{$_->{alias_id}}] for @$stories;

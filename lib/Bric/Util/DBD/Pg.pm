@@ -80,7 +80,7 @@ use constant CGROUP_SEP => " c.asset_grp_id ";
 use constant WGROUP_SEP => " w.asset_grp_id ";
 
 # This is the a compatibility measure for MySQL for LIMIT-OFFSET
-use constant LIMIT_DEFAULT => undef;
+use constant LIMIT_DEFAULT => "";
 
 ##############################################################################
 # Inheritance
