@@ -86,14 +86,15 @@ use constant DEBUG => 0;
 ##############################################################################
 # Private Class Fields
 my $SEL_COLS = Bric::Biz::ElementType::SEL_COLS() .
-  ', sube.id, sube.parent_id, sube.child_id, sube.place,' .
-  ' sube.min_occurrence, sube.max_occurrence';
+  ', subet.id, subet.parent_id, subet.place,' .
+  ' subet.min_occurrence, subet.max_occurrence';
 my @SEL_PROPS = (Bric::Biz::ElementType::SEL_PROPS(),
-                 qw(min_occurrence max_occurrence place parent_id _map_id));
+                 qw(_map_id parent_id place min_occurrence max_occurrence));
 
 # Grabbed knowledge from parent, but the outer join depends on it. :-(
-my $SEL_TABLES = 'element_type et LEFT OUTER JOIN ' .
-  'subelement_type subet ON (et.id = subet.child_id)';
+my $SEL_TABLES = 'element_type a LEFT OUTER JOIN ' .
+  'subelement_type subet ON (a.id = subet.child_id), ' .
+  'member m, element_type_member etm';
 
 sub SEL_PROPS { @SEL_PROPS }
 sub SEL_COLS { $SEL_COLS }
@@ -218,18 +219,10 @@ sub new {
     my $max = delete $init->{max_occurrence} || 0;
     my $place = delete $init->{place} || 0;
     
-    # Throw an error if we get a string when a number is needed
-    throw_invalid error => qq{min_occurrence must be a positive number.}
-        unless (($min =~ /^\d+$/) && ($min >= 0));
-    throw_invalid error => qq{max_occurrence must be a positive number.}
-        unless (($max =~ /^\d+$/) && ($max >= 0));
-    throw_invalid error => qq{place must be a positive number.} unless
-        (($place =~ /^\d+$/) && ($place >= 0));
-        
-    # Throw an error if we have an invalid place number??
     
-    my $parent = delete $init->{parent};
-    my $parent_id = delete $init->{parent_id} || $parent->get_id if $parent;
+    my $parent = delete $init->{parent} || 0;
+    my $parent_id = ($parent == 0) ? 0 : $parent->get_id;
+    $parent_id = delete $init->{parent_id} || $parent_id;
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
@@ -308,7 +301,7 @@ sub href {
     my $tables = $pkg->SEL_TABLES;
     my @params;
     my $wheres = $pkg->SEL_WHERES
-               . ' AND et.id = subet.child_id AND '
+               . ' AND a.id = subet.child_id AND '
                . any_where $p->{element_type_id}, 'subet.parent_id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
@@ -316,7 +309,7 @@ sub href {
         WHERE  $wheres
         ORDER BY $ord
     }, undef);
-
+    
     execute($sel, @params);
     my (@d, %ocs, $grp_ids);
     my @sel_props = $pkg->SEL_PROPS;
@@ -373,9 +366,6 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
-
-sub get_element_id { shift->get_element_type_id     }
-sub set_element_id { shift->set_element_type_id(@_) }
 
 ##############################################################################
 
@@ -564,7 +554,7 @@ sub save {
                    max_occurrence = ?
             WHERE  id = ?
         }, undef);
-        execute($parentid, $childid, $place, $min, $max, $map_id);
+        execute($upd, $parentid, $childid, $place, $min, $max, $map_id);
 
     } else {
         # Insert a new record.
