@@ -212,9 +212,10 @@ my %bool_attrs = map { $_ => undef } qw(
 );
 
 # Needed from the subelement
-my $SEL_TABLES = "$table et";
-my $SEL_WHERES = "et.id = et.id";
-my $SEL_ORDER = "et.name, et.id";
+my $SEL_TABLES = "$table a, $mem_table m, $map_table etm";
+my $SEL_WHERES = "a.id = etm.object_id AND etm.member__id = m.id " .
+    "AND m.active = '1'";
+my $SEL_ORDER = "a.name, a.id";
 my $GRP_ID_IDX = $#sel_props;
 
 # These are provided for the ElementType::Subelement subclass to take
