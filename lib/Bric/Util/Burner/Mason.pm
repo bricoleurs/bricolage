@@ -3,7 +3,7 @@ package Bric::Util::Burner::Mason;
 
 =head1 NAME
 
-Bric::Util::Burner::Mason Publish sturies using Mason templates
+Bric::Util::Burner::Mason - Publish sturies using Mason templates
 
 =head1 VERSION
 
@@ -90,28 +90,28 @@ my $xml_fh = INCLUDE_XML_WRITER
 
 BEGIN {
     Bric::register_fields({
-                         #- Per burn/deploy values.
-                         'job'            => Bric::FIELD_READ,
-                         'more_pages'     => Bric::FIELD_READ,
+        #- Per burn/deploy values.
+        'job'             => Bric::FIELD_READ,
+        'more_pages'      => Bric::FIELD_READ,
 
-                         # Private Fields
-                         '_interp'         => Bric::FIELD_NONE,
-                         '_comp_root'      => Bric::FIELD_NONE,
-                         '_buf'            => Bric::FIELD_NONE,
-                         '_writer'         => Bric::FIELD_NONE,
-                         '_elem'           => Bric::FIELD_NONE,
-                         '_at'             => Bric::FIELD_NONE,
-                         '_files'          => Bric::FIELD_NONE,
-                         '_page_place'     => Bric::FIELD_NONE,
-                        });
+        # Private Fields
+        '_interp'         => Bric::FIELD_NONE,
+        '_comp_root'      => Bric::FIELD_NONE,
+        '_buf'            => Bric::FIELD_NONE,
+        '_writer'         => Bric::FIELD_NONE,
+        '_elem'           => Bric::FIELD_NONE,
+        '_at'             => Bric::FIELD_NONE,
+        '_files'          => Bric::FIELD_NONE,
+        '_page_place'     => Bric::FIELD_NONE,
+    });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_MASON,
-                               category_fn    => 'autohandler',
-                               cat_fn_has_ext => 0,
-                               exts           =>
-                                 { mc => 'Mason Component (.mc)' }
-                             );
+__PACKAGE__->_register_burner(
+    Bric::Biz::OutputChannel::BURNER_MASON,
+    category_fn    => 'autohandler',
+    cat_fn_has_ext => 0,
+    exts           => { mc => 'Mason Component (.mc)' },
+);
 
 #==============================================================================#
 
@@ -122,11 +122,6 @@ __PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_MASON,
 =over 4
 
 =cut
-
-#--------------------------------------#
-# Constructors
-
-#------------------------------------------------------------------------------#
 
 =item $obj = Bric::Util::Burner::Mason->new($burner);
 
@@ -259,9 +254,16 @@ sub burn_one {
     no warnings 'redefine';
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
-#        return $self->inherit_start_path if $self->flag('inherit');
+        # Allow template-defined disabled inheritance to work.
+#        return $self->inherit_start_path
+#            if exists $self->{flags}->{inherit}
+#            && ! defined $self->{flags}->{inherit};
+
+        # Use the template path if executing our dhandler.
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
-        return $self->{inherit_start_path};
+
+        # Otherwise, just fall back on Mason's default.
+        return $self->inherit_start_path;
     };
 
     while (1) {
