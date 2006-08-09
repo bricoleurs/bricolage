@@ -74,6 +74,12 @@ them will continue to work. [David]
 Removed "Teaser" field from the story search interface, since there is no such
 field, and so it did nothing, anyway. [David]
 
+=item *
+
+Publishing media documents that have had new files uploaded to them no longer
+causes a publish failure. Reported by Christian Niles and numerous others.
+[David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
