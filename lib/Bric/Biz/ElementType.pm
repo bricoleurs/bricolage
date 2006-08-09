@@ -104,13 +104,14 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::Grp::ElementType;
-use Bric::Util::Grp::SubelementType;
+#use Bric::Util::Grp::SubelementType; ## GRAVEYARD ##
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Util::Attribute::ElementType;
 use Bric::Util::Class;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
+use Bric::Util::Coll::Subelement;
 use Bric::Util::Coll::Site;
 use Bric::App::Cache;
 use List::Util qw(first);
@@ -124,7 +125,7 @@ use base qw( Bric Exporter );
 #=============================================================================#
 # Function Prototypes                  #
 #======================================#
-my ($get_oc_coll, $get_site_coll, $remove, $make_key_name);
+my ($get_oc_coll, $get_site_coll, $get_sub_coll, $remove, $make_key_name);
 
 #==============================================================================#
 # Constants                            #
@@ -252,10 +253,11 @@ BEGIN {
         _active             => Bric::FIELD_NONE,
         _oc_coll            => Bric::FIELD_NONE,
         _site_coll          => Bric::FIELD_NONE,
+        _sub_coll           => Bric::FIELD_NONE,
         _parts              => Bric::FIELD_NONE,
         _new_parts          => Bric::FIELD_NONE,
         _del_parts          => Bric::FIELD_NONE,
-        _et_grp_obj         => Bric::FIELD_NONE,
+#        _et_grp_obj         => Bric::FIELD_NONE, ## GRAVEYARD ##
         _attr               => Bric::FIELD_NONE,
         _meta               => Bric::FIELD_NONE,
         _attr_obj           => Bric::FIELD_NONE,
@@ -1211,9 +1213,10 @@ assocation between each output channel and this element object.
 
 =cut
 
-##############################################################################
-
 sub get_output_channels { $get_oc_coll->(shift)->get_objs(@_) }
+
+
+##############################################################################
 
 =item add_output_channel
 
@@ -1750,46 +1753,124 @@ sub del_data { shift->del_field_types(@_) }
 
   $element_type->add_containers(@element_types);
   $element_type->add_containers(\@element_types);
+  $element_type->add_containers(@element_type_ids);
+  $element_type->add_containers(\@element_type_ids);
 
-Add element types to the element type as subelement types.
+Add element types to the element type as subelement types. This function
+accepts a list or array reference of ElementTypes, or ElementType ids.
+    
+B<Throws:> NONE.
+
+B<Side Effects:> Any Bric::Biz::ElementType objects passed in will be
+converted into Bric::Biz::ElementType::Subelement objects.
+
+B<Notes:> NONE.
 
 =cut
 
 sub add_containers {
     my $self = shift;
-    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-    my $grp = $self->_get_element_type_grp;
-
-    # Construct the proper array to pass to 'add_members'
-    my @mem = map {
-        ref $_ ? {obj => $_ }
-               : {id  => $_, package => __PACKAGE__ }
-    } @$ets;
-
-    return unless $grp->add_members(\@mem);
+    my $subs = ref $_[0] eq 'ARRAY' ? shift : \@_;
+    $self->add_container($_) for @$subs;
     return $self;
 }
+
+## GRAVEYARD ##
+#sub add_containers {
+#    my $self = shift;
+#    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
+#    my $grp = $self->_get_element_type_grp;
+
+    # Construct the proper array to pass to 'add_members'
+#    my @mem = map {
+#        ref $_ ? {obj => $_ }
+#               : {id  => $_, package => __PACKAGE__ }
+#    } @$ets;
+
+#    return unless $grp->add_members(\@mem);
+#    return $self;
+#}
+
+
+##############################################################################
+
+=item add_container
+
+  $element_type->add_container($et);
+  $element_type->add_container($et_id);
+
+Adds a subelement to this element type object and returns the resulting
+Bric::Biz::ElementType::Subelement object. Can pass in either an ElementType
+object or an ElementType ID.
+
+B<Throws:> NONE.
+
+B<Side Effects:> If a Bric::Biz::ElementType object is passed in as the
+first argument, it will be converted into a Bric::Biz::ElementType::Subelement
+object.
+
+B<Notes:> NONE.
+
+=cut
+
+sub add_container {
+    my ($self, $et) = @_;
+    my $et_coll = $get_sub_coll->($self);
+    $et_coll->new_obj({ (ref $et ? 'child' : 'child_id') => $et,
+                        element_type_id => $self->_get('id') });
+}
+
+
+
 
 ##############################################################################
 
 =item get_containers
 
   my @element_types      = $element_type->get_containers;
+  my @element_types      = $element_type->get_containers(@et_ids);
   my $element_types_aref = $element_type->get_containers;
+  my $element_types_aref = $element_type->get_containers(@et_ids);
   my $element_type       = $element_type->get_containers($key_name);
 
-Returns all subelement element types.
+Returns a list or array reference of subelement element types. If C<@et_ids>
+is passed, then only the subelements with those IDs are returned, if they are
+indeed children of this container.
+    
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> The objects returned will be Bric::Biz::ElementType::Subelement
+objects, and these objects contain extra information relevant to the
+assocation between each subelement of this container, and the container itself.
 
 =cut
 
 sub get_containers {
-    my ($self, $key_name) = @_;
-
-    my $grp = $self->_get_element_type_grp;
-    return $grp->get_objects unless defined $key_name;
-
-    return first { $_->get_key_name eq $key_name } $grp->get_objects;
+    my ($self, $param) = @_;
+    
+    # The case when no parameter is passed in
+    return $get_sub_coll->($self)->get_objs("ANY") unless defined $param;
+    
+    # The case when an array of element type id's is passed in
+    return $get_sub_coll->($self)->get_objs($param) if (ref($param) == "ARRAY");
+    
+    # The case when a single key_name has been passed in
+    return $get_sub_coll->($self)->get_objs([ Bric::Biz::ElementType->lookup([ keyname => $param ])->get_id ]) if (ref($param) == "ARRAY");
 }
+
+
+## GRAVEYARD ##
+#sub get_containers {
+#    my ($self, $key_name) = @_;
+
+#    my $grp = $self->_get_element_type_grp;
+#    return $grp->get_objects unless defined $key_name;
+
+#    return first { $_->get_key_name eq $key_name } $grp->get_objects;
+#}
+
 
 ##############################################################################
 
@@ -1806,18 +1887,31 @@ type.
 
 sub del_containers {
     my $self = shift;
-    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-    my $grp  = $self->_get_element_type_grp;
-
-    # Construct the proper array to pass to 'add_members'
-    my @mem = map {
-        ref $_ ? { obj => $_ }
-               : { id  => $_, package => __PACKAGE__ }
-    } @$ets;
-
-    return unless $grp->delete_members(\@mem);
+    my $ets = ref $_[0] eq 'ARRAY' ? shift : \@_;
+    my $sub_coll = $get_sub_coll->($self);
+    
+    # I don't know what this is for, and I think it's unneeded
+    #no warnings 'uninitialized';
+    
+    $sub_coll->del_objs(@$ets);
     return $self;
 }
+
+## GRAVEYARD ##
+#sub del_containers {
+#    my $self = shift;
+#    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
+#    my $grp  = $self->_get_element_type_grp;
+
+    # Construct the proper array to pass to 'add_members'
+#    my @mem = map {
+#        ref $_ ? { obj => $_ }
+#               : { id  => $_, package => __PACKAGE__ }
+#    } @$ets;
+
+#    return unless $grp->delete_members(\@mem);
+#    return $self;
+#}
 
 ##############################################################################
 
@@ -1835,11 +1929,11 @@ field type associatesions, to the database.
 sub save {
     my $self = shift;
 
-    my ($id, $oc_coll, $site_coll, $primary_oc_site)
-        = $self->_get(qw(id _oc_coll _site_coll _site_primary_oc_id));
+    my ($id, $oc_coll, $site_coll, $sub_coll, $primary_oc_site)
+        = $self->_get(qw(id _oc_coll _site_coll _sub_coll _site_primary_oc_id));
 
     # Save the group information.
-    $self->_get_element_type_grp->save;
+    # $self->_get_element_type_grp->save; ## GRAVEYARD ##
 
     if ($id) {
         # Save the parts and the output channels.
@@ -1847,6 +1941,9 @@ sub save {
 
         # Save the sites if object has an id
         $site_coll->save($id, $primary_oc_site) if $site_coll;
+        
+        # Save the subelements if object has an id
+        $sub_coll->save($id) if $sub_coll;
     }
 
     # Don't do anything else unless the dirty bit is set.
@@ -1872,6 +1969,9 @@ sub save {
 
         # Save the output channels.
         $oc_coll->save($id) if $oc_coll;
+        
+        # Save the subelements
+        $sub_coll->save($id) if $sub_coll;
     }
 
     # Save the mapping of primary oc per site
@@ -2314,28 +2414,30 @@ sub _save_attr {
 
 =cut
 
-sub _get_element_type_grp {
-    my $self = shift;
-    my $atg_id  = $self->get_et_grp_id;
-    my $atg_obj = $self->_get('_et_grp_obj');
+  ## GRAVEYARD ##
 
-    return $atg_obj if $atg_obj;
+#sub _get_element_type_grp {
+#    my $self = shift;
+#    my $atg_id  = $self->get_et_grp_id;
+#    my $atg_obj = $self->_get('_et_grp_obj');
 
-    if ($atg_id) {
-        $atg_obj = Bric::Util::Grp::SubelementType->lookup({'id' => $atg_id});
-        $self->_set(['_et_grp_obj'], [$atg_obj]);
-    } else {
-        $atg_obj = Bric::Util::Grp::SubelementType->new({
-            name => 'ElementType Group'
-        });
-        $atg_obj->save;
+#    return $atg_obj if $atg_obj;
 
-        $self->_set(['et_grp_id',     '_et_grp_obj'],
-                    [$atg_obj->get_id, $atg_obj]);
-    }
+#    if ($atg_id) {
+#        $atg_obj = Bric::Util::Grp::SubelementType->lookup({'id' => $atg_id});
+#        $self->_set(['_et_grp_obj'], [$atg_obj]);
+#    } else {
+#        $atg_obj = Bric::Util::Grp::SubelementType->new({
+#            name => 'ElementType Group'
+#        });
+#        $atg_obj->save;
 
-    return $atg_obj;
-}
+#        $self->_set(['et_grp_id',     '_et_grp_obj'],
+#                    [$atg_obj->get_id, $atg_obj]);
+#    }
+
+#    return $atg_obj;
+#}
 
 ##############################################################################
 
@@ -2630,6 +2732,75 @@ $get_site_coll = sub {
 
 ##############################################################################
 
+=item my $sub_coll = $get_sub_coll->($element_type)
+
+Returns the collection of subelements for this element type. The collection is a
+L<Bric::Util::Coll::Subelement|Bric::Util::Coll::Subelement> object. See that class and
+its parent, L<Bric::Util::Coll|Bric::Util::Coll>, for interface details.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=item *
+
+Unable to bind to columns to statement handle.
+
+=item *
+
+Unable to fetch row from statement handle.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+$get_sub_coll = sub {
+    my $self = shift;
+    my $dirt = $self->_get__dirty;
+    my ($id, $sub_coll) = $self->_get('id', '_sub_coll');
+    return $sub_coll if $sub_coll;
+    $sub_coll = Bric::Util::Coll::Subelement->new(
+        defined $id ? {element_type_id => $id} : undef
+    );
+    $self->_set(['_sub_coll'] => [$sub_coll]);
+    $self->_set__dirty($dirt); # Reset the dirty flag.
+    return $sub_coll;
+};
+
+##############################################################################
+
 =item my $key_name = $make_key_name->($name)
 
 Takes an element type name and turns it into the key name. This is the name
@@ -2670,4 +2841,5 @@ L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.
 
 =cut
+
 
