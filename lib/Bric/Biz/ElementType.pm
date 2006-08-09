@@ -179,9 +179,10 @@ my @cols = qw(
     media
     biz_class__id
     type__id
-    et_grp__id
     active
 );
+##      ^^^^    ##
+#    et_grp__id ## GRAVEYARD ##
 
 my @props = qw(
     name
@@ -195,9 +196,10 @@ my @props = qw(
     media
     biz_class_id
     type_id
-    et_grp_id
     _active
 );
+#   ^^^^^  ##
+#    et_grp_id ## GRAVEYARD ##
 
 my $sel_cols = join ', ', 'a.id', map({ "a.$_" } @cols), 'm.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
@@ -234,7 +236,7 @@ sub GRP_ID_IDX { $GRP_ID_IDX }
 BEGIN {
     Bric::register_fields({
         id                  => Bric::FIELD_READ,
-        et_grp_id           => Bric::FIELD_READ,
+#        et_grp_id           => Bric::FIELD_READ, ## GRAVEYARD ##
         key_name            => Bric::FIELD_RDWR,
         name                => Bric::FIELD_RDWR,
         description         => Bric::FIELD_RDWR,
@@ -1179,8 +1181,8 @@ sub clear_media { shift->_set(['media'] => [0] ) }
 
 sub get_type__id   { shift->get_type_id       }
 sub set_type__id   { shift->set_type_id(@_)   }
-sub get_at_grp__id { shift->get_et_grp_id     }
-sub set_at_grp__id { shift->set_et_grp_id(@_) }
+# sub get_at_grp__id { shift->get_et_grp_id     } ## GRAVEYARD ##
+# sub set_at_grp__id { shift->set_et_grp_id(@_) } ## GRAVEYARD ##
 sub get_at_type    { shift->_get_at_type_obj  }
 sub get_fixed_url  { shift->is_fixed_uri      }
 
@@ -1846,18 +1848,13 @@ objects, and these objects contain extra information relevant to the
 assocation between each subelement of this container, and the container itself.
 
 =cut
-
 sub get_containers {
-    my ($self, $param) = @_;
-    
-    # The case when no parameter is passed in
-    return $get_sub_coll->($self)->get_objs("ANY") unless defined $param;
-    
-    # The case when an array of element type id's is passed in
-    return $get_sub_coll->($self)->get_objs($param) if (ref($param) == "ARRAY");
-    
-    # The case when a single key_name has been passed in
-    return $get_sub_coll->($self)->get_objs([ Bric::Biz::ElementType->lookup([ keyname => $param ])->get_id ]) if (ref($param) == "ARRAY");
+    my $self = shift;
+    my $coll = $get_sub_coll;
+    return $coll->get_objs unless @_;
+    return $coll->get_objs(@_) if @_ > 1 || $_[0] =~ /^\d+$/;
+    my $key_name = shift;
+    return first { $_->get_key_name eq $key_name } $coll->get_objs;
 }
 
 
@@ -2066,7 +2063,7 @@ sub all_attr {
 
     # Evil delete on a hash slice based on values returned by grep...
     delete @{$ah}{ grep { substr $_, 0, 1 eq '_' } keys %$ah };
-    return $ah
+    return $ah;
 }
 
 ##############################################################################
@@ -2285,19 +2282,23 @@ sub _is_referenced {
     return 1 if $rows;
 
     # Make sure this isn't used by another element type.
-    $sql = 'SELECT COUNT(*) '.
-           'FROM element_type_member atm, member m, element_type at '.
-       'WHERE atm.object_id = ? AND '.
-                  'm.id         = atm.member__id AND '.
-                  'm.grp__id    = at.et_grp__id';
+      ## TODO ##
+    # Find if there are any subelement collections that have this element type
+    
+    ## GRAVEYARD ##
+#    $sql = 'SELECT COUNT(*) '.
+#           'FROM element_type_member atm, member m, element_type at '.
+#       'WHERE atm.object_id = ? AND '.
+#                  'm.id         = atm.member__id AND '.
+#                  'm.grp__id    = at.et_grp__id';
 
-    $sth  = prepare_c($sql, undef);
-    execute($sth, $self->get_id);
-    bind_columns($sth, \$rows);
-    fetch($sth);
-    finish($sth);
+#    $sth  = prepare_c($sql, undef);
+#    execute($sth, $self->get_id);
+#    bind_columns($sth, \$rows);
+#    fetch($sth);
+#    finish($sth);
 
-    return 1 if $rows;
+#    return 1 if $rows;
 
     # Make sure this isn't referenced from a template.
     $sql  = "SELECT COUNT(*) FROM template WHERE element_type__id = ?";
