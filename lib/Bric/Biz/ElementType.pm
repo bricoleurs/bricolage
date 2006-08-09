@@ -509,6 +509,14 @@ must be for a class object representing one of
 L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses. May use C<ANY> for a list of possible values.
+    
+=item child_id
+
+ElementType id for children with the specified id.
+    
+=item parent_id
+
+ElementType id for parents with the specified id
 
 =back
 
@@ -2141,6 +2149,20 @@ sub _do_list {
     my @wheres = ('a.id = c.object_id', 'c.member__id = m.id',
                   "m.active = '1'");
     my @params;
+    
+    # Set up the child and parent parameters
+    if (exists $params->{child_id}) {
+        my $val = delete $params->{child_id};
+        $tables .= ", subelement_type subet";
+        push @wheres, "a.id = subet.id";
+        push @wheres, any_where($val, "a.id = ?", \@params);
+    }
+    if (exists $params->{parent_id}) {
+        my $val = delete $params->{parent_id};
+        $tables .= ", subelement_type subet";
+        push @wheres, "a.id = subet.id";
+        push @wheres, any_where($val, "a.id = ?", \@params);
+    }
 
     # Set up the active parameter.
     if (exists $params->{active}) {
@@ -2282,8 +2304,8 @@ sub _is_referenced {
     return 1 if $rows;
 
     # Make sure this isn't used by another element type.
-      ## TODO ##
-    # Find if there are any subelement collections that have this element type
+    my $et_id = $self->get_id;
+    return 1 if scalar Bric::Biz::ElementType->list({ child_id => "$et_id" });
     
     ## GRAVEYARD ##
 #    $sql = 'SELECT COUNT(*) '.
