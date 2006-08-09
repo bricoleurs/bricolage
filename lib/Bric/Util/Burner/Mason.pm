@@ -378,9 +378,9 @@ if it does not. For example:
 
 The find_template() method will look first for '/foo/bar/bletch/story.mc', and
 return that string if the template exists. If it doesn't, it'll look for
-'/foo/bar/story.mc'. If it doesn't find that, it'll look for '/foo/story.mc' and
-then '/story.mc'. If it finds none of these, it will rutrn null (or an empty
-list in an array context.
+'/foo/bar/story.mc'. If it doesn't find that, it'll look for '/foo/story.mc'
+and then '/story.mc'. If it finds none of these, it will return null (or an
+empty list in an array context.
 
 B<Throws:> NONE.
 
