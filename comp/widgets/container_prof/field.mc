@@ -22,13 +22,17 @@
 % }
 
 % unless ($no_del) {
+    <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
         name      => 'delete_' . $name,
-        button    => 'delete_red',
+        button    => 'delete',
+        extension => 'png',
+        globalImage => 1,
         js        => qq{onclick="if (Container.confirmDelete()) \{ \$('container_prof_delete_cb').value = '$name'; Container.refresh(} . $element->get_parent_id . qq{); \$('container_prof_delete_cb').value = ''; \} return false;"},
         useTable  => 0 
     &>
+    </div>
 % }
 </div>
 

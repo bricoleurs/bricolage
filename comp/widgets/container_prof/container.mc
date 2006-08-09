@@ -1,6 +1,7 @@
 <div id="element_<% $id %>_content" class="content">
 % unless ($top_level) {
-<h3 class="name"><% $element->get_name %>:</h3>
+<fieldset>
+<legend class="name"><% $element->get_name %>:</legend>
 % }
 % if ($type->is_related_story) {
 <div id="element_<% $id %>_rel_story">
@@ -53,15 +54,6 @@ Container.updateOrder('element_<% $id %>');
 </script>
 
 <div class="actions">
-% unless ($top_level) {
-    <& '/widgets/profile/button.mc',
-        disp      => $lang->maketext("Delete"),
-        name      => 'delete_' . $name,
-        button    => 'delete_red',
-        js        => qq|onclick="if (Container.confirmDelete()) { \$('container_prof_delete_cb').value = '$name'; Container.refresh(| . $element->get_parent_id . qq|); \$('container_prof_delete_cb').value = ''; } return false;"|,
-        useTable  => 0 
-    &>
-% }
     <& '/widgets/profile/button.mc',
         id         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id,
         widget     => 'container_prof',
@@ -83,6 +75,24 @@ Container.updateOrder('element_<% $id %>');
     &>
 %   }
 </div>
+% unless ($top_level) {
+</fieldset>
+% }
+
+% unless ($top_level) {
+<div class="delete">
+    <& '/widgets/profile/button.mc',
+        disp      => $lang->maketext("Delete"),
+        name      => 'delete_' . $name,
+        button    => 'delete',
+        extension => 'png',
+        globalImage => 1,
+        js        => qq|onclick="if (Container.confirmDelete()) { \$('container_prof_delete_cb').value = '$name'; Container.refresh(| . $element->get_parent_id . qq|); \$('container_prof_delete_cb').value = ''; } return false;"|,
+        useTable  => 0 
+    &>
+</div>
+% }
+
 </div>
 
 <%args>

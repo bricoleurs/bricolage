@@ -583,6 +583,19 @@ div.addelement { text-align: right;}
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
+#containerprof fieldset {
+    border: solid #CC9 1px;
+    background: #F3F3F3;
+    margin-right: 24px;
+}
+#containerprof fieldset fieldset {
+    background: white;
+}
+#containerprof fieldset fieldset fieldset {
+    background: #F3F3F3;
+}
+#containerprof h3,
+#containerprof fieldset legend { background: transparent; font-weight: bold; font-size: 1em; }
 
 #containerprof ul { margin: 0; padding: 10px; }
 #containerprof ul li {
@@ -591,31 +604,34 @@ div.addelement { text-align: right;}
 #containerprof ul li.element {
   padding: 10px;
 }
-#containerprof ul li.container {
-  border: solid #E8E8CD 1px;
-}
 #containerprof ul li ul {
   padding: 10px;
 }
 #containerprof ul li li {
-  padding: 0 !important; margin: 0; border: none;
+  padding: 0 !important; border: none;
 }
-#containerprof ul li.element .name { 
+#containerprof ul li.element h3.name { 
   margin: 0; clear: both;
   float: left; width: 75px;
   text-align: right;
   padding: 3px 10px 0 0 !important;
   background: transparent !important;
 }
-#containerprof ul li.container .name {
+#containerprof ul li.container h3.name {
   background: #E8E8CD; margin: 0;
   padding: 5px 10px;
 }
 #containerprof ul li.element .content {
-  float: left;
-  padding: 0;
+  position: relative;
+  margin-left: 85px;
+  padding: 0 20px 0 0;
 }
-
+#containerprof .content .delete {
+    position: absolute;
+    top: 0; right: 0;
+}
+#containerprof .container .delete { top: 5px; }
+#containerprof .actions { background: transparent; }
 
 div.autocomplete {
   position: absolute;
