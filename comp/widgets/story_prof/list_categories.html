@@ -69,7 +69,6 @@ new Effect.Highlight('category-<% $new_category_id %>');
 <input type="text" id="new_category_uri" name="new_category_autocomplete" /><div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
 <script type="text/javascript">
 new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { onEmpty: function() { Element.show('new_cat_warning'); }, onNotEmpty: function() { Element.hide('new_cat_warning') } });
-$('new_category_uri').onkeypress = fixSafariKeypressBug;
 </script>
 </div>
 % }

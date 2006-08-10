@@ -30,11 +30,40 @@ Object.extend(Form.EventObserver.prototype, {
     }
 });
 
-// Extend Ajax.Autocompleter to add a callback when the returned list is empty
-// See http://dev.rubyonrails.org/ticket/5120
 Ajax.Autocompleter.prototype._onComplete = 
   Ajax.Autocompleter.prototype.onComplete;
+Ajax.Autocompleter.prototype._initialize = 
+  Ajax.Autocompleter.prototype.initialize;
 Object.extend(Ajax.Autocompleter.prototype, {
+  initialize: function(element, update, url, options) {
+      this._initialize(element, update, url, options);
+      Event.observe(element, "keypress", this.fixKeypress);
+  },
+  
+  fixKeypress: function(e) {
+      
+      // Catch <enter> keypresses
+      if (e.keyCode == 13) {
+          
+          // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
+          // This makes the selection go to the end.
+          if(navigator.appVersion.indexOf('AppleWebKit') > 0) {
+              var element = Event.element(e);
+              element.setSelectionRange(element.value.length, element.value.length);
+              return false;
+          }
+          
+          // Don't submit the form when you click enter!
+          Event.stop(e);
+          
+          return false;
+      }
+      return true;
+      
+  },
+  
+  // Extend Ajax.Autocompleter to add a callback when the returned list is empty
+  // See http://dev.rubyonrails.org/ticket/5120
   onComplete: function(request) {
     this._onComplete(request);
     if (this.entryCount == 0 && this.options.onEmpty) {
@@ -986,16 +1015,6 @@ document.getParentByTagName = function(element, tagName) {
     return element;
 }
 
-// Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
-function fixSafariKeypressBug(e) {
-  if(navigator.appVersion.indexOf('AppleWebKit')>0 && e.keyCode == 13) {
-      var element = Event.element(e);
-      element.setSelectionRange(element.value.length, element.value.length);
-      return false;
-  }
-  return true;
-}
-
 var Desk = {
     visibleMenu: '',
     
@@ -1064,9 +1083,8 @@ FastAdd.prototype = {
           'add_' + this.type, 
           'add_' + this.type + '_autocomplete', 
           this.options.uri, 
-          { paramName: 'value', parameters: Form.serialize(this.list) }
+          { parameters: Form.serialize(this.list) }
         );
-        $('add_' + this.type).onkeypress = fixSafariKeypressBug;
     },
     
     add: function(element) {
