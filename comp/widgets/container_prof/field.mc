@@ -29,7 +29,7 @@
         button    => 'delete',
         extension => 'png',
         globalImage => 1,
-        js        => qq{onclick="if (Container.confirmDelete()) \{ \$('container_prof_delete_cb').value = '$name'; Container.refresh(} . $element->get_parent_id . qq{); \$('container_prof_delete_cb').value = ''; \} return false;"},
+        js        => qq{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
         useTable  => 0 
     &>
     </div>

@@ -1202,10 +1202,20 @@ AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
  * Container profile
  */
 var Container = {
-    refresh: function(container_id) {
+    refresh: function(container_id, opts) {
+        var options = Object.extend({
+            extraParameters: ''
+        }, opts || {});
+        
         var element = $('element_' + container_id + '_content');
+        
+        var params = 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form"));
+        if (options.extraParameters != '') {
+            params = params + '&' + options.extraParameters;
+        }
+        
         new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', { 
-            parameters: 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form")), 
+            parameters: params,
             asynchronous: true, 
             onComplete: function(request) { 
                 Container.updateOrder('element_' + container_id)
@@ -1228,8 +1238,7 @@ var Container = {
     },
     
     confirmDelete: function() {
-        return confirm("Are you sure you want to remove this element?\n\n" +
-                       "It will not be permanently deleted until you save your changes.");
+        return confirm(warn_delete_msg);
     },
     
     // Used to associate a story or media with an element, from a popup.  It returns the updated
@@ -1254,6 +1263,20 @@ var Container = {
     
     unrelate: function(type, widget, container_id, asset_id) {
         return Container.update_related('unrelate', type, widget, container_id, asset_id);
+    },
+    
+    addElement: function(container_id, element_id) {
+        Container.refresh(container_id, { 
+            extraParameters: 'container_prof|add_element_cb=' + container_id + '&container_prof|add_element_to_' + container_id + '=' + element_id
+        });
+    },
+    
+    deleteElement: function(container_id, element_id) {
+        if (Container.confirmDelete()) { 
+            Container.refresh(container_id, { 
+                extraParameters: 'container_prof|delete_cb=' + element_id 
+            });
+        }
     }
 };
 

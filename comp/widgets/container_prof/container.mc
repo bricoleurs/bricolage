@@ -54,26 +54,23 @@ Container.updateOrder('element_<% $id %>');
 </script>
 
 <div class="actions">
-    <& '/widgets/profile/button.mc',
-        id         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id,
-        widget     => 'container_prof',
-        cb         => $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_cb',
-        button     => 'bulk_edit_lgreen',
-        value      => $id,
-        useTable   => 0
-    &>
-    
 %   if (scalar @$elem_opts) {
 %   # XXX mroch: Don't leave this hard-coded! Make a component.
-    <input type="image" src="/media/images/<% $lang_key %>/add_element_lgreen.gif" alt="Add Element" onclick="$('container_prof_add_element_cb').value = '<% $id %>'; Container.refresh(<% $id %>); $('container_prof_add_element_cb').value = ''; return false" />
-    
-    <& /widgets/profile/select.mc, name     => $widget.'|add_element_to_'.$id,
-                                   options  => $elem_opts,
-                                   useTable => 0,
-                                   multiple => 0,
-                                   size     => 1,
-    &>
+    <div class="clearboth" style="float: left; position: relative;">
+    <button id="element_<% $id %>_add" onclick="Desk.showMenu(this, event); return false"><img src="/media/images/add-element.png" alt="Add Element" /> Add Element</button>
+    <div id="element_<% $id %>_add_desks" class="popup-menu" style="left: 0; right: auto; width: auto; display: none; padding: 0;">
+        <ul>
+%           foreach my $opt (@$elem_opts) {
+            <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false"><% $opt->[1] %></a></li>
+%           }
+        </ul>
+    </div>
+    </div>
 %   }
+
+<button id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" name="container_prof|<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_cb' %>" value="<% $id %>">
+    <img src="/media/images/bulk-edit.png" alt="Bulk Edit" /> Bulk Edit
+</button>
 </div>
 % unless ($top_level) {
 </fieldset>
@@ -87,7 +84,7 @@ Container.updateOrder('element_<% $id %>');
         button    => 'delete',
         extension => 'png',
         globalImage => 1,
-        js        => qq|onclick="if (Container.confirmDelete()) { \$('container_prof_delete_cb').value = '$name'; Container.refresh(| . $element->get_parent_id . qq|); \$('container_prof_delete_cb').value = ''; } return false;"|,
+        js        => qq|onclick="Container.deleteElement(| . $element->get_parent_id . qq|, '$name'); return false;"|,
         useTable  => 0 
     &>
 </div>

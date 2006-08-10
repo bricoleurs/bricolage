@@ -13,6 +13,7 @@ h3         { font-size: 1.1em; }
 img        { vertical-align: middle; }
 a          { color: #006666; }
 a img      { border: none; }
+button img { vertical-align: bottom; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
@@ -323,9 +324,9 @@ div.debug dt:after {
 .desk .item .movers li { position: relative; float: right; margin: 0 0 0 5px; }
 .desk .item .movers li li { float: none; }
 
-.desk .item div.popup-menu {
+div.popup-menu {
   position: absolute;
-	right: 0;
+  right: 0;
   width: 250px;
   background-color: white;
   border: 1px solid #888;
@@ -333,20 +334,20 @@ div.debug dt:after {
   padding: 0px;
   z-index: 1000;
 }
-.desk .item div.popup-menu ul {
+div.popup-menu ul {
   list-style-type: none;
-  margin: 0px;
-  padding: 0px;
+  margin: 0px !important;
+  padding: 0px !important;
 }
-.desk .item div.popup-menu ul li {
+div.popup-menu ul li {
   list-style-type: none;
   display: block;
-  margin: 0;
-	white-space: nowrap;
+  margin: 0 !important;
+  white-space: nowrap;
 }
-.desk .item div.popup-menu h4 { font-size: .9em; margin: 0; padding: 3px 4px 4px 4px; background: #EAEAEA; color: #999; border-bottom: solid #CCC 1px; }
-.desk .item div.popup-menu a { display: block; padding: 3px 4px; color: black; text-decoration: none; }
-.desk .item div.popup-menu a:hover { background-color: #336FCB; color: white; }
+div.popup-menu h4 { font-size: .9em; margin: 0; padding: 3px 4px 4px 4px; background: #EAEAEA; color: #999; border-bottom: solid #CCC 1px; }
+div.popup-menu a { display: block; padding: 3px 4px; color: black; text-decoration: none; }
+div.popup-menu a:hover { background-color: #336FCB; color: white; }
 
 form .row {
     position: relative;
@@ -632,6 +633,9 @@ div.addelement { text-align: right;}
 }
 #containerprof .container .delete { top: 5px; }
 #containerprof .actions { background: transparent; }
+#containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
+
+
 
 div.autocomplete {
   position: absolute;
