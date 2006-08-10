@@ -2305,7 +2305,7 @@ sub _is_referenced {
 
     # Make sure this isn't used by another element type.
     my $et_id = $self->get_id;
-    return 1 if scalar Bric::Biz::ElementType->list({ child_id => "$et_id" });
+    return 1 if Bric::Biz::ElementType->list({ child_id => "$et_id" });
     
     ## GRAVEYARD ##
 #    $sql = 'SELECT COUNT(*) '.
