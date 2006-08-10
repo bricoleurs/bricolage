@@ -25,7 +25,8 @@ CREATE SEQUENCE seq_element_type__output_channel START 1024;
 --CREATE SEQUENCE seq_element__language START 1024;
 
 -- Unique IDs for element_type_member
-CREATE SEQUENCE seq_element_type_member START 1024;
+--GRAVEYARD
+--CREATE SEQUENCE seq_element_type_member START 1024;
 
 -- Unique IDs for the attr_element table
 CREATE SEQUENCE seq_attr_element_type START 1024;
@@ -60,7 +61,7 @@ CREATE TABLE element_type  (
     related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
     media           BOOLEAN        NOT NULL DEFAULT FALSE,
     biz_class__id   INTEGER        NOT NULL,
-    et_grp__id      INTEGER,
+--    et_grp__id      INTEGER, GRAVEYARD
     type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
@@ -120,14 +121,14 @@ CREATE TABLE element_type__output_channel (
 -- 
 -- Description: The link between element objects and member objects
 --
-
-CREATE TABLE element_type_member (
-    id          INTEGER  NOT NULL
-                         DEFAULT NEXTVAL('seq_element_type_member'),
-    object_id   INTEGER  NOT NULL,
-    member__id  INTEGER  NOT NULL,
-    CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
-);
+-- GRAVEYARD
+--CREATE TABLE element_type_member (
+--    id          INTEGER  NOT NULL
+--                         DEFAULT NEXTVAL('seq_element_type_member'),
+--    object_id   INTEGER  NOT NULL,
+--    member__id  INTEGER  NOT NULL,
+---    CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
+--);
 
 -- -----------------------------------------------------------------------------
 -- Table: attr_element
@@ -184,7 +185,7 @@ CREATE TABLE attr_element_type_meta (
 --
 CREATE UNIQUE INDEX udx_element_type__key_name ON element_type(LOWER(key_name));
 CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
-CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
+--CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id); GRAVEYARD
 CREATE INDEX fkx_class__element_type ON element_type(biz_class__id);
 
 CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id);
@@ -196,8 +197,9 @@ CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(elem
 CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
 CREATE INDEX fkx_element__et_oc ON element_type__output_channel(element_type__id);
 
-CREATE INDEX fkx_element_type__et_member ON element_type_member(object_id);
-CREATE INDEX fkx_member__et_member ON element_type_member(member__id);
+-- GRAVEYARD
+--CREATE INDEX fkx_element_type__et_member ON element_type_member(object_id);
+--CREATE INDEX fkx_member__et_member ON element_type_member(member__id);
 
 CREATE UNIQUE INDEX udx_element_type__site on element_type__site(element_type__id, site__id);
 
