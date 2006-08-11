@@ -1234,6 +1234,7 @@ var Container = {
         new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', { 
             parameters: params,
             asynchronous: true, 
+            evalScripts: true,
             onComplete: function(request) { 
                 Container.updateOrder('element_' + container_id)
             } 
