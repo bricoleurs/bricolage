@@ -98,7 +98,7 @@
                 <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move">
                     <img src="/media/images/move.gif" alt="Move" />
                 </a>
-                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="width: auto; display: none">
+                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
                     <h4>Move:</h4>
                     <ul>
 % foreach (@$move_opts) {
@@ -136,7 +136,7 @@
                     globalImage => 1,
                     useTable => 0
                 &>
-                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="width: auto; display: none">
+                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; width: auto; display: none">
                     <h4>Publish:</h4>
                     <ul>
                         <li><a href="#" onclick="<% &$publish_js %>">Now</a></li>
