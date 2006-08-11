@@ -9,13 +9,15 @@ use Bric::Biz::ElementType::Subelement;
 # Test constructors.
 ##############################################################################
 # Test the href() constructor.
-sub test_href : Test(17) {
+sub test_href : Test(19) {
     my $self = shift;
      ok( my $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 1 }), "Get Story ElementTypes" );
+        ({ element_type_id => 1 }), "Get Story's Subelement ElementTypes" );
 
-    is( scalar keys %$href, 1, "Check for one ElementType" );
-    ok( my $sube = $href->{10}, "Grab subelement ID 10" );
+    is( scalar keys %$href, 2, "Check for two subelements" );
+    ok( my $sube = $href->{7}, "Check for subelement ID 7" );
+    is( $sube->get_name, 'Pull Quote', "Check Subelement name 'Pull Quote'" );
+    ok( my $sube = $href->{10}, "Check for subelement ID 10" );
     is( $sube->get_name, 'Page', "Check Subelement name 'Page'" );
 
     # Check the occurrence attributes.
