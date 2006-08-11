@@ -17,7 +17,7 @@ sub test_href : Test(19) {
     is( scalar keys %$href, 2, "Check for two subelements" );
     ok( my $sube = $href->{7}, "Check for subelement ID 7" );
     is( $sube->get_name, 'Pull Quote', "Check Subelement name 'Pull Quote'" );
-    ok( my $sube = $href->{10}, "Check for subelement ID 10" );
+    ok( $sube = $href->{10}, "Check for subelement ID 10" );
     is( $sube->get_name, 'Page', "Check Subelement name 'Page'" );
 
     # Check the occurrence attributes.
