@@ -15,7 +15,7 @@ my $num_fields = @$attr;
 my $sel_opts = [ map { [ $_ => $_] } 1..$num_fields ];
 my $curField = 1;
 
-$m->out(qq{<div id="containerprof"><ul id="attrs">});
+$m->out(qq{<div id="containerprof"><ul id="attrs" class="elements">});
 
 foreach my $attr (@$attr) {
     # Assemble the properties.
@@ -68,8 +68,6 @@ foreach my $attr (@$attr) {
          readOnly => $readOnly
     );
     
-    $m->out("</div>");
-    
     if ($useEdit) {
         $m->out(qq{<div class="edit">\n});
 
@@ -87,12 +85,16 @@ foreach my $attr (@$attr) {
             '/widgets/profile/button.mc',
             disp      => $lang->maketext("Delete"),
             name      => 'delete_' . $attr_name,
-            button    => 'delete_red',
-            js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs'); } return false"],
+            button    => 'delete',
+            extension => 'png',
+            globalImage => 1,
+            js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs'); } return false"],
             useTable  => 0
         );
         $m->out("</div>\n");
     }
+    
+    $m->out("</div>");
 
     $m->out("</li>\n");
 }
