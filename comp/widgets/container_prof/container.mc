@@ -58,7 +58,7 @@ Container.updateOrder('element_<% $id %>');
 %   # XXX mroch: Don't leave this hard-coded! Make a component.
     <div style="display: inline; position: relative;">
     <button id="element_<% $id %>_add" onclick="Desk.showMenu(this, event); return false"><img src="/media/images/add-element.png" alt="Add Element" /> Add Element</button>
-    <div id="element_<% $id %>_add_desks" class="popup-menu" style="display: none; width: 15em; padding: 0;">
+    <div id="element_<% $id %>_add_desks" class="popup-menu" style="display: none; width: 10em; padding: 0;">
         <ul>
 %           foreach my $opt (@$elem_opts) {
             <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false"><% $opt->[1] %></a></li>

@@ -600,6 +600,7 @@ div.addelement { text-align: right;}
 #containerprof ul.elements li.container,
 #containerprof ul.elements li.element {
   margin: 0 0 10px 0;
+  position: relative;
 }
 #containerprof ul.elements li.element h3.name { 
   margin: 0; clear: both;
@@ -624,7 +625,7 @@ div.addelement { text-align: right;}
 #containerprof .container .delete { top: 5px; }
 #containerprof .actions { background: transparent; }
 #containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
-
+#containerprof div.popup-menu ul li { white-space: normal; }
 
 
 div.autocomplete {
