@@ -17,7 +17,7 @@
 </div>
 
 <script type="text/javascript">
-var fastadd<% $type %> = new FastAdd('<% $type %>');
+var fastadd<% $type %> = new FastAdd('<% $type %>', {}, { onEnter: function(element) { fastadd<% $type %>.add(element) }});
 </script>
 
 <%args>

@@ -32,34 +32,35 @@ Object.extend(Form.EventObserver.prototype, {
 
 Ajax.Autocompleter.prototype._onComplete = 
   Ajax.Autocompleter.prototype.onComplete;
-Ajax.Autocompleter.prototype._initialize = 
-  Ajax.Autocompleter.prototype.initialize;
+Ajax.Autocompleter.prototype._onKeyPress = 
+  Ajax.Autocompleter.prototype.onKeyPress;
 Object.extend(Ajax.Autocompleter.prototype, {
-  initialize: function(element, update, url, options) {
-      this._initialize(element, update, url, options);
-      Event.observe(element, "keypress", this.fixKeypress);
-  },
-  
-  fixKeypress: function(e) {
+  onKeyPress: function(event) {
+      var originallyActive = this.active;
+      this._onKeyPress(event);
       
       // Catch <enter> keypresses
-      if (e.keyCode == 13) {
+      if (event.keyCode == 13) {
           
           // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
           // This makes the selection go to the end.
           if(navigator.appVersion.indexOf('AppleWebKit') > 0) {
-              var element = Event.element(e);
+              var element = Event.element(event);
               element.setSelectionRange(element.value.length, element.value.length);
               return false;
           }
           
           // Don't submit the form when you click enter!
-          Event.stop(e);
+          Event.stop(event);
+
+          if (!originallyActive && this.options.onEnter) {
+              this.options.onEnter(this.element);
+          }
           
           return false;
       }
-      return true;
       
+      return true;
   },
   
   // Extend Ajax.Autocompleter to add a callback when the returned list is empty
@@ -1066,7 +1067,7 @@ var Desk = {
  */
 var FastAdd = Class.create();
 FastAdd.prototype = {
-    initialize: function(type, options) {
+    initialize: function(type, options, autocomplete_options) {
         this.options = Object.extend({
             autocomplete: true,
             uri: '/widgets/profile/fast_add/autocomplete_' + type + '.html',
@@ -1075,16 +1076,14 @@ FastAdd.prototype = {
         this.type = type;
         this.list = $(this.options.list);
         
-        if (this.options.autocomplete) this.initializeAutocompleter();
-    },
-    
-    initializeAutocompleter: function() {
-        this.autocompleter = new Ajax.Autocompleter(
-          'add_' + this.type, 
-          'add_' + this.type + '_autocomplete', 
-          this.options.uri, 
-          { parameters: Form.serialize(this.list) }
-        );
+        if (this.options.autocomplete) {
+          this.autocompleter = new Ajax.Autocompleter(
+            'add_' + this.type, 
+            'add_' + this.type + '_autocomplete', 
+            this.options.uri, 
+            autocomplete_options
+          );
+        }
     },
     
     add: function(element) {
@@ -1112,12 +1111,12 @@ FastAdd.prototype = {
         }
         
         $(element).value = '';
-        if (this.options.autocomplete) this.initializeAutocompleter();
+        if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
     },
     
     remove: function(element) {
         Element.remove(element);
-        if (this.options.autocomplete) this.initializeAutocompleter();
+        if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
     }
 }
 
