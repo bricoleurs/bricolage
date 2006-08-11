@@ -17,7 +17,7 @@ use Bric::Util::Grp::CategorySet;
 use Bric::Util::Grp::ContribType;
 use Bric::Util::Grp::Desk;
 use Bric::Util::Grp::Dest;
-use Bric::Util::Grp::SubelementType;
+#use Bric::Util::Grp::SubelementType; GRAVEYARD
 use Bric::Util::Grp::ATType;
 use Bric::Util::Grp::Event;
 use Bric::Util::Grp::Template;
@@ -297,50 +297,51 @@ sub test_members : Test(36) {
         "No has_member" );
 
     # Now try an element group.
-    my $story_elem_grp_id = 330;
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story subelement type group" );
-    isa_ok($grp, "Bric::Util::Grp::SubelementType");
-    ok( @mems = $grp->get_members, "Get story subelement type grp members" );
-    is( scalar @mems, 2, "Check number of story subelement type grp mems" );
+    # NO WAY...GRAVEYARD
+#    my $story_elem_grp_id = 330;
+#    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+#        "Look up story subelement type group" );
+#    isa_ok($grp, "Bric::Util::Grp::SubelementType");
+#    ok( @mems = $grp->get_members, "Get story subelement type grp members" );
+#    is( scalar @mems, 2, "Check number of story subelement type grp mems" );
 
     # Add a new element to the group.
-    ok my $et = Bric::Biz::ElementType->new({
-        name          => 'Test Element',
-        key_name      => 'test_element',
-        description   => 'Testing Element API',
-        top_level     => 1,
-        primary_oc_id => 1,
-    }), 'Create new element type';
-    ok $et->save, 'Save it';
-    ok my $et_id = $et->get_id, 'Get element type id';
-    $self->add_del_ids($et_id, 'element_type');
+#    ok my $et = Bric::Biz::ElementType->new({
+#        name          => 'Test Element',
+#        key_name      => 'test_element',
+#        description   => 'Testing Element API',
+#        top_level     => 1,
+#        primary_oc_id => 1,
+#    }), 'Create new element type';
+#    ok $et->save, 'Save it';
+#    ok my $et_id = $et->get_id, 'Get element type id';
+#    $self->add_del_ids($et_id, 'element_type');
 
-    ok $grp->add_member({
-        id      => $et_id,
-        package => ref $et,
-    }), 'Add test element to group';
-    ok $grp->save, 'Save element group';
+#    ok $grp->add_member({
+#        id      => $et_id,
+#        package => ref $et,
+#    }), 'Add test element to group';
+#    ok $grp->save, 'Save element group';
 
     # Look it up again and make sure all is well.
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group again" );
-    ok( @mems = $grp->get_members, "Get story element members" );
-    is( scalar @mems, 3, "Check number of story element mems" );
+#    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+#        "Look up story element group again" );
+#    ok( @mems = $grp->get_members, "Get story element members" );
+#    is( scalar @mems, 3, "Check number of story element mems" );
 
     # Now remove the new element.
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group again" );
-    ok( ($mem) = (grep { $_->get_obj_id == $et_id  } @mems),
-        "Get element type member" );
-    ok( $grp->delete_member($mem), "Delete element type member" );
-    ok( $grp->save, "Save element group again" );
+#    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+#        "Look up story element group again" );
+#    ok( ($mem) = (grep { $_->get_obj_id == $et_id  } @mems),
+#        "Get element type member" );
+#    ok( $grp->delete_member($mem), "Delete element type member" );
+#    ok( $grp->save, "Save element group again" );
 
     # Look it up again and make sure all is well.
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group yet again" );
-    ok( @mems = $grp->get_members, "Get story element members" );
-    is( scalar @mems, 2, "Check number of story element mems" );
+#    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+#        "Look up story element group yet again" );
+#    ok( @mems = $grp->get_members, "Get story element members" );
+#    is( scalar @mems, 2, "Check number of story element mems" );
 }
 
 ##############################################################################
@@ -356,12 +357,13 @@ sub test_get_objects : Test(8) {
     isa_ok( $prefs[0], 'Bric::Util::Pref' );
 
     # Try an element group, just for the heck of it.
-    my $story_elem_grp_id = 330;
-    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
-        "Look up story element group" );
-    ok( my @ats = $grp->get_objects, "Get story element objects" );
-    is( scalar @ats, 2, "Check number of story elements" );
-    isa_ok( $ats[0], 'Bric::Biz::ElementType');
+    # Or not...Deprecated and GRAVEYARD'd
+#    my $story_elem_grp_id = 330;
+#    ok( $grp = Bric::Util::Grp->lookup({ id => $story_elem_grp_id }),
+#        "Look up story element group" );
+#    ok( my @ats = $grp->get_objects, "Get story element objects" );
+#    is( scalar @ats, 2, "Check number of story elements" );
+#    isa_ok( $ats[0], 'Bric::Biz::ElementType');
 }
 
 ##############################################################################
