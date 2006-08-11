@@ -8,6 +8,7 @@ use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Biz::OutputChannel;
 use Bric::Util::DBI qw(:junction);
+use Bric::Biz::ElementType::Subelement;
 
 my %elem = (
     name          => 'Test Element',
@@ -94,13 +95,26 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(65) {
+sub test_list : Test(55) {
     my $self = shift;
 
-    # Create a new element group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new({
-        name => 'Test ElementGrp'
-    }), "Create group" );
+#################################################
+#
+#  GRAVEYARD
+# Justification:
+#   The Subelement collection should not be tested here.
+#  It should have its own test case, or at the very least
+#  be in with the testing for Bric::Biz::ElementType::Subelement
+#
+######################
+
+    # Create a new subelement collection.
+    # I'm using "Related Story" as the parent because it doesn't
+    #  already have any children.
+#    ok( my $sub_coll = Bric::Util::Coll::Subelement->new({
+#        element_type_id => 9
+#      }),
+#        "Create new subelement Collection" );
 
     # Create some test records.
     for my $n (1..5) {
@@ -120,13 +134,10 @@ sub test_list : Test(65) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
-        $grp->add_member({ obj => $elem }) if $n % 2;
+#        $sub_coll->add_objs([ $elem ]) if $n % 2;
     }
 
-    ok( $grp->save, "Save group" );
-    ok( my $grp_id = $grp->get_id, "Get group ID" );
-    $self->add_del_ids([$grp_id], 'grp');
+#    ok( $sub_coll->save, "Save collection" );
 
     # Try name + wildcard.
     ok( my @ets = Bric::Biz::ElementType->list({ name => "$elem{name}%" }),
@@ -164,31 +175,17 @@ sub test_list : Test(65) {
     }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
     is( scalar @ets, 3, "Check for 3 element types" );
 
-    # Try grp_id.
-    my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
-    ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
-    is( scalar @ets, 3, "Check for 3 elements" );
-    # Make sure we've got all the Group IDs we think we should have.
-    foreach my $elem (@ets) {
-        my %grp_ids = map { $_ => 1 } @{ $elem->get_grp_ids };
-        ok( $grp_ids{$all_grp_id} && $grp_ids{$grp_id},
-          "Check for both IDs" );
-    }
+    # Try parent_id.
+    my $et_id = 1;
+    ok( @ets = Bric::Biz::ElementType->list({ parent_id => $et_id }),
+        "Look up parent_id $et_id" );
+    is( scalar @ets, 2, "Check for 2 subelements" );
 
-    # Try ANY(grp_id).
-    ok( @ets = Bric::Biz::ElementType->list({ grp_id => ANY ($grp_id) }),
-        "Look up grp_id ANY($grp_id)" );
-    is( scalar @ets, 3, "Check for 3 element types" );
-
-    # Try deactivating one group membership.
-    ok( my $mem = $grp->has_member({ obj => $ets[0] }), "Get member" );
-    ok( $mem->deactivate->save, "Deactivate and save member" );
-
-    # Now there should only be two using grp_id.
-    ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
-    is( scalar @ets, 2, "Check for 2 element types" );
+    # Try child_id.
+    $et_id = 10;
+    ok( @ets = Bric::Biz::ElementType->list({ child_id => $et_id }),
+        "Look up child_id $et_id" );
+    is( scalar @ets, 3, "Check for 3 parents" );
 
     # Try active. There are 13 existing already.
     ok( @ets = Bric::Biz::ElementType->list({ active => 1 }),
@@ -271,13 +268,13 @@ sub test_my_meths : Test(11) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(62) {
+sub test_list_ids : Test(51) {
     my $self = shift;
 
     # Create a new element group.
-    ok( my $grp = Bric::Util::Grp::ElementType->new({
-        name => 'Test ElementGrp'
-    }), "Create group" );
+#    ok( my $grp = Bric::Util::Grp::ElementType->new({
+#        name => 'Test ElementGrp'
+#    }), "Create group" );
 
     # Create some test records.
     for my $n (1..5) {
@@ -297,13 +294,16 @@ sub test_list_ids : Test(62) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
-        $grp->add_member({ obj => $elem }) if $n % 2;
+#        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
+#        $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
-    ok( $grp->save, "Save group" );
-    ok( my $grp_id = $grp->get_id, "Get group ID" );
-    $self->add_del_ids([$grp_id], 'grp');
+#    ok( $grp->save, "Save group" );
+#    ok( my $grp_id = $grp->get_id, "Get group ID" );
+#    $self->add_del_ids([$grp_id], 'grp');
+
+
+###  ^^^ GRAVEYARDING ^^^ ###
 
     # Try name + wildcard.
     ok( my @et_ids = Bric::Biz::ElementType->list_ids({ name => "$elem{name}%" }),
@@ -341,28 +341,31 @@ sub test_list_ids : Test(62) {
     }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
     is( scalar @et_ids, 3, "Check for 3 element type IDs" );
 
+### REPLACE with testing for list_id on [child/parent]_id ###
+## GRAVEYARD ##
+
     # Try grp_id.
-    my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
-    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
-    is( scalar @et_ids, 3, "Check for 3 elements" );
+#    my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
+#    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
+#        "Look up grp_id $grp_id" );
+#    is( scalar @et_ids, 3, "Check for 3 elements" );
 
     # Try ANY(grp_id).
-    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => ANY ($grp_id) }),
-        "Look up grp_id ANY($grp_id)" );
-    is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+#    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => ANY ($grp_id) }),
+#        "Look up grp_id ANY($grp_id)" );
+#    is( scalar @et_ids, 3, "Check for 3 element type IDs" );
 
     # Try deactivating one group membership.
-    ok( my $mem = $grp->has_member({
-        id => $et_ids[0],
-        package => 'Bric::Biz::ElementType'
-    }), "Get member" );
-    ok( $mem->deactivate->save, "Deactivate and save member" );
+#    ok( my $mem = $grp->has_member({
+#        id => $et_ids[0],
+#        package => 'Bric::Biz::ElementType'
+#    }), "Get member" );
+#    ok( $mem->deactivate->save, "Deactivate and save member" );
 
     # Now there should only be two using grp_id.
-    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
-        "Look up grp_id $grp_id" );
-    is( scalar @et_ids, 2, "Check for 2 element type IDs" );
+#    ok( @et_ids = Bric::Biz::ElementType->list_ids({ grp_id => $grp_id }),
+#        "Look up grp_id $grp_id" );
+#    is( scalar @et_ids, 2, "Check for 2 element type IDs" );
 
     # Try active. There are 13 existing already.
     ok( @et_ids = Bric::Biz::ElementType->list_ids({ active => 1 }),
