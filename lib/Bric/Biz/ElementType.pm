@@ -1858,7 +1858,7 @@ assocation between each subelement of this container, and the container itself.
 =cut
 sub get_containers {
     my $self = shift;
-    my $coll = $get_sub_coll;
+    my $coll = $get_sub_coll->($self);
     return $coll->get_objs unless @_;
     return $coll->get_objs(@_) if @_ > 1 || $_[0] =~ /^\d+$/;
     my $key_name = shift;
@@ -2154,14 +2154,14 @@ sub _do_list {
     if (exists $params->{child_id}) {
         my $val = delete $params->{child_id};
         $tables .= ", subelement_type subet";
-        push @wheres, "a.id = subet.id";
-        push @wheres, any_where($val, "a.id = ?", \@params);
+        push @wheres, "a.id = subet.parent_id";
+        push @wheres, any_where($val, "subet.child_id = ?", \@params);
     }
     if (exists $params->{parent_id}) {
         my $val = delete $params->{parent_id};
         $tables .= ", subelement_type subet";
-        push @wheres, "a.id = subet.id";
-        push @wheres, any_where($val, "a.id = ?", \@params);
+        push @wheres, "a.id = subet.child_id";
+        push @wheres, any_where($val, "subet.parent_id = ?", \@params);
     }
 
     # Set up the active parameter.
