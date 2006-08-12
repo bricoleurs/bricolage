@@ -288,16 +288,13 @@ sub new {
 
     # Prepopulate from the element type object
     foreach my $ft ($init->{_element_type_obj}->get_field_types) {
-        # Add a new field for each that is required
-        #for (0..$ft->get_min_occurrence) {
-        #    $self->add_field($ft);
-        #}
-        # Yes, I'm having trouble making this idiomatic (I am trying though)
-        # ($self->add_field($ft) for 1..$ft->get_min_occurrence) unless !$ft->get_min_occurrence;
         if (my $min = $ft->get_min_occurrence) {
             $self->add_field($ft) for 1..$min;
         }
     }
+    
+    #### TODO ####
+    # Prepopulate the elements based on min occurrence
 
     $self->_set__dirty(1);
     return $self;

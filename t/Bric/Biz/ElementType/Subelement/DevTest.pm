@@ -11,8 +11,8 @@ use Bric::Biz::ElementType::Subelement;
 # Test the href() constructor.
 sub test_href : Test(19) {
     my $self = shift;
-     ok( my $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 1 }), "Get Story's Subelement ElementTypes" );
+    ok( my $href = Bric::Biz::ElementType::Subelement->href
+        ({ parent_id => 1 }), "Get Story's Subelement ElementTypes" );
 
     is( scalar keys %$href, 2, "Check for two subelements" );
     ok( my $sube = $href->{7}, "Check for subelement ID 7" );
@@ -40,7 +40,7 @@ sub test_href : Test(19) {
 
 ##############################################################################
 # Test the new() constructor.
-sub test_new : Test(17) {
+sub test_new : Test(36) {
     my $self = shift;
     # Try creating one from an ElementType ID.
     ok( my $sube = Bric::Biz::ElementType::Subelement->new({child_id => 1}),
@@ -74,14 +74,51 @@ sub test_new : Test(17) {
     ok( my $etid = $et->get_id, "Get the id" );
     $self->add_del_ids([$etid]);
 
-    # Create a new Subelement.
-    ok( $sube = Bric::Biz::ElementType::Subelement->new({ child_id => $etid }),
-        "Create Subelement from element type ID $etid" );
+    # Try creating one from the element type object
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({child => $et}),
+        "Create Subelement with object" );
+    isa_ok($sube, 'Bric::Biz::ElementType::Subelement');
+    isa_ok($sube, 'Bric::Biz::ElementType');
+    is scalar $sube->get_min_occurrence, 0, "Check min occurrence";
+    is scalar $sube->get_max_occurrence, 0, "Check max occurrence";
+    is scalar $sube->get_place, 0, "Check place";
     # It should not yet have a Map ID!
     ok(! defined $sube->_get('_map_id'), "Map ID is undefined" );
     # It should have only one group membership.
     my @gids = $sube->get_grp_ids;
     is( scalar @gids, 1, "Check for one group ID" );
+
+    # Try creating one from the element type id
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({child_id => $et->get_id}),
+        "Create Subelement with id" );
+    isa_ok($sube, 'Bric::Biz::ElementType::Subelement');
+    isa_ok($sube, 'Bric::Biz::ElementType');
+    is scalar $sube->get_min_occurrence, 0, "Check min occurrence";
+    is scalar $sube->get_max_occurrence, 0, "Check max occurrence";
+    is scalar $sube->get_place, 0, "Check place";
+    # It should not yet have a Map ID!
+    ok(! defined $sube->_get('_map_id'), "Map ID is undefined" );
+    # It should have only one group membership.
+    @gids = $sube->get_grp_ids;
+    is( scalar @gids, 1, "Check for one group ID" );
+
+    # Try creating one with a parent so it's place is set.
+    my %subet = (
+        child_id    => 'Test ElementType',
+        key_name    => 'test_element_type',
+        description => 'Testing Element Type API',
+    );
+    ok( $sube = Bric::Biz::ElementType::Subelement->new({
+        child_id => $et->get_id,
+        parent_id => 1,
+        min_occurrence => 2
+    }),
+        "Create Subelement with id, parent, and min" );
+    isa_ok($sube, 'Bric::Biz::ElementType::Subelement');
+    isa_ok($sube, 'Bric::Biz::ElementType');
+    is scalar $sube->get_min_occurrence, 2, "Check min occurrence";
+    is scalar $sube->get_max_occurrence, 0, "Check max occurrence";
+    is scalar $sube->get_place, 3, "Check place. Should be 3 because Story already has 2 subelements.";
 }
 
 ##############################################################################
@@ -92,7 +129,7 @@ sub test_update : Test(13) {
     my $self = shift;
     # Grab an existing subelement from the database.
     ok( my $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 1 }), "Get Story subelements" );
+        ({ parent_id => 1 }), "Get Story subelements" );
     ok( my $sube = $href->{10}, "Grab subelement ID 10" );
 
     # Set min occurrence to 3.
@@ -102,7 +139,7 @@ sub test_update : Test(13) {
 
     # Look it up again.
     ok( $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 1 }), "Get Story subelements again" );
+        ({ parent_id => 1 }), "Get Story subelements again" );
     ok( $sube = $href->{10}, "Grab subelement ID 10 again" );
 
     # Min occurrence should be 3, now.
@@ -112,7 +149,7 @@ sub test_update : Test(13) {
 
     # Look it up one last time.
     ok( $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_id => 1 }), "Get Story subelements last" );
+        ({ parent_id => 1 }), "Get Story subelements last" );
     ok( $sube = $href->{10}, "Grab subelement ID 10 last" );
     is( $sube->get_min_occurrence, 0, "Check min_occurrence is 0 last" );
 }
@@ -138,7 +175,7 @@ sub test_insert : Test(10) {
 
     # Now retreive it.
     ok( my $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 2 }), "Get subelements with parent id of 2" );
+        ({ parent_id => 2 }), "Get subelements with parent id of 2" );
     # Check its attributes.
     is( $sube->get_id, $etid, "Check ID" );
     is( $sube->get_name, "Foober", "Check name 'Foober'" );
@@ -149,7 +186,7 @@ sub test_insert : Test(10) {
 
     # Now try to retreive it.
     ok( $href = Bric::Biz::ElementType::Subelement->href
-        ({ element_type_id => 1 }), "Get Story Subelements" );
+        ({ parent_id => 1 }), "Get Story Subelements" );
     ok( ! exists $href->{$etid}, "ID $etid gone" );
 }
 
@@ -189,7 +226,7 @@ sub test_delete : Test(24) {
     # Now get the hash ref of all subelements associated with element
     # ID 1.
     ok( my $href = Bric::Biz::ElementType::Subelement->href({
-        element_type_id => 1
+        parent_id => 1
     }), "Get Subelement href" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );
@@ -202,7 +239,7 @@ sub test_delete : Test(24) {
     # Get the hash ref of all subelements associated with element ID 1
     # again.
     ok( $href = Bric::Biz::ElementType::Subelement->href({
-        element_type_id => 1
+        parent_id => 1
     }), "Get subelement href again" );
 
     ok( ! exists $href->{$testid}, "ID $testid gone" );

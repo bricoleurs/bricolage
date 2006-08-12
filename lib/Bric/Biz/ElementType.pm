@@ -111,7 +111,7 @@ use Bric::Util::Class;
 use Bric::Biz::Site;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Util::Coll::OCElement;
-use Bric::Util::Coll::Subelement;
+require Bric::Util::Coll::Subelement;
 use Bric::Util::Coll::Site;
 use Bric::App::Cache;
 use List::Util qw(first);
@@ -1189,10 +1189,22 @@ sub clear_media { shift->_set(['media'] => [0] ) }
 
 sub get_type__id   { shift->get_type_id       }
 sub set_type__id   { shift->set_type_id(@_)   }
-# sub get_at_grp__id { shift->get_et_grp_id     } ## GRAVEYARD ##
-# sub set_at_grp__id { shift->set_et_grp_id(@_) } ## GRAVEYARD ##
+sub get_at_grp__id { shift->get_et_grp_id     } ## Deprecated ##
+sub set_at_grp__id { shift->set_et_grp_id(@_) } ## Deprecated ##
 sub get_at_type    { shift->_get_at_type_obj  }
 sub get_fixed_url  { shift->is_fixed_uri      }
+sub get_et_grp_id {
+    require Carp && Carp::carp(
+    __PACKAGE__ . '->get_[e/a]t_grp_id has been deprecated and will ' .
+          'be removed in a future version of Bricolage');
+    return 0;
+}
+sub set_et_grp_id {
+    require Carp && Carp::carp(
+    __PACKAGE__ . '->set_[e/a]t_grp_id has been deprecated and will ' .
+          'be removed in a future version of Bricolage');
+    shift;
+}
 
 ##############################################################################
 
@@ -2145,8 +2157,10 @@ ids or objects
 
 sub _do_list {
     my ($pkg, $params, $ids) = @_;
-    my $tables = "$table a, $mem_table m, $map_table c";
-    my @wheres = ('a.id = c.object_id', 'c.member__id = m.id',
+    my $tables = $SEL_TABLES;
+    #my @wheres = $WHERES; ## NEED TO SPLIT THIS ON ', ' ##
+    #my $tables = "$table a, $mem_table m, $map_table c";
+    my @wheres = ('a.id = etm.object_id', 'etm.member__id = m.id',
                   "m.active = '1'");
     my @params;
     
@@ -2305,7 +2319,7 @@ sub _is_referenced {
 
     # Make sure this isn't used by another element type.
     my $et_id = $self->get_id;
-    return 1 if Bric::Biz::ElementType->list({ child_id => "$et_id" });
+    return 1 if Bric::Biz::ElementType->list_ids({ child_id => "$et_id" });
     
     ## GRAVEYARD ##
 #    $sql = 'SELECT COUNT(*) '.
@@ -2815,7 +2829,7 @@ $get_sub_coll = sub {
     my ($id, $sub_coll) = $self->_get('id', '_sub_coll');
     return $sub_coll if $sub_coll;
     $sub_coll = Bric::Util::Coll::Subelement->new(
-        defined $id ? {element_type_id => $id} : undef
+        defined $id ? {parent_id => $id} : undef
     );
     $self->_set(['_sub_coll'] => [$sub_coll]);
     $self->_set__dirty($dirt); # Reset the dirty flag.

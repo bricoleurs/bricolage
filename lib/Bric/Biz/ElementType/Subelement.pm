@@ -223,6 +223,12 @@ sub new {
     my $parent = delete $init->{parent} || 0;
     my $parent_id = ($parent == 0) ? 0 : $parent->get_id;
     $parent_id = delete $init->{parent_id} || $parent_id;
+    
+    # Set the place to one more than the number of subelements there are already
+    my $href = Bric::Biz::ElementType::Subelement->href({ parent_id => $parent_id })
+        unless ($parent_id == 0 || $place != 0);
+    $place = 1 + scalar keys %$href unless ($parent_id == 0 || $place != 0);
+    
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
@@ -236,21 +242,22 @@ sub new {
         $self = $pkg->SUPER::new($init);
     }
     # Set the necessary properties and return.
-    $self->_set([qw(min_occurrence max_occurrence place parent_id _map_id)], [$min, $max, $place, $parent_id, undef]);
+    $self->_set([qw(min_occurrence max_occurrence place parent_id _map_id)], 
+        [$min, $max, $place, $parent_id, undef]);
     # New relationships should always trigger a save.
     $self->_set__dirty(1);
 }
 
 ##############################################################################
 
-=item my $subelem_href = Bric::Biz::ElementType::Subelement->href({ element_type_id => $eid });
+=item my $subelem_href = Bric::Biz::ElementType::Subelement->href({ parent_id => $eid });
 
 Returns a hash reference of Bric::Biz::ElementType::Subelement objects. Each
 hash key is a Bric::Biz::ElementType::Subelement ID, and the values are the
 corresponding Bric::Biz::ElementType::Subelement objects. Only a single
-parameter argument is allowed, C<element_type_id>, though C<ANY> may be used
-to specify a list of element type IDs. All of the child element types associated
-with that parent element type ID will be returned.
+parameter argument is allowed, C<parent_id>, though C<ANY> may be used
+to specify a list of element type IDs. All of the child element types
+associated with that parent element type ID will be returned.
 
 B<Throws:>
 
@@ -290,7 +297,6 @@ B<Notes:> NONE.
 
 sub href {
     my ($pkg, $p) = @_;
-    $p->{element_type_id} = delete $p->{element_id} if exists $p->{element_id};
     my $class = ref $pkg || $pkg;
 
     # XXX Really there's too much going on here getting information from
@@ -302,7 +308,7 @@ sub href {
     my @params;
     my $wheres = $pkg->SEL_WHERES
                . ' AND a.id = subet.child_id AND '
-               . any_where $p->{element_type_id}, 'subet.parent_id = ?', \@params;
+               . any_where $p->{parent_id}, 'subet.parent_id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
         FROM   $tables

@@ -36,6 +36,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+#require Bric::Biz::ElementType::Subelement;
 
 ################################################################################
 # Inheritance
@@ -238,6 +239,8 @@ NONE.
 NONE.
 
 =cut
+
+require Bric::Biz::ElementType::Subelement;
 
 1;
 __END__
