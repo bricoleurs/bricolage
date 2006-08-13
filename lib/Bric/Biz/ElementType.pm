@@ -221,6 +221,10 @@ my $SEL_WHERES = "a.id = etm.object_id AND etm.member__id = m.id " .
 my $SEL_ORDER = "a.name, a.id";
 my $GRP_ID_IDX = $#sel_props;
 
+# The subclass *must* be loaded after the above scalars are set so that it can
+# access their values via the below methods. C'est la vie.
+require Bric::Biz::ElementType::Subelement;
+
 # These are provided for the ElementType::Subelement subclass to take
 # advantage of.
 sub SEL_PROPS  { @sel_props }
@@ -351,7 +355,7 @@ sub new {
         # Set up default business class ID.
         $init->{biz_class_id} ||= STORY_CLASS_ID;
     }
-    
+
     # Set the instance group ID.
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
 
@@ -509,11 +513,11 @@ must be for a class object representing one of
 L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, or one
 of its subclasses. May use C<ANY> for a list of possible values.
-    
+
 =item child_id
 
 ElementType id for children with the specified id.
-    
+
 =item parent_id
 
 ElementType id for parents with the specified id
@@ -1780,7 +1784,7 @@ sub del_data { shift->del_field_types(@_) }
 
 Add element types to the element type as subelement types. This function
 accepts a list or array reference of ElementTypes, or ElementType ids.
-    
+
 B<Throws:> NONE.
 
 B<Side Effects:> Any Bric::Biz::ElementType objects passed in will be
@@ -1858,7 +1862,7 @@ sub add_container {
 Returns a list or array reference of subelement element types. If C<@et_ids>
 is passed, then only the subelements with those IDs are returned, if they are
 indeed children of this container.
-    
+
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
@@ -1906,10 +1910,10 @@ sub del_containers {
     my $self = shift;
     my $ets = ref $_[0] eq 'ARRAY' ? shift : \@_;
     my $sub_coll = $get_sub_coll->($self);
-    
+
     # I don't know what this is for, and I think it's unneeded
     #no warnings 'uninitialized';
-    
+
     $sub_coll->del_objs(@$ets);
     return $self;
 }
@@ -1958,7 +1962,7 @@ sub save {
 
         # Save the sites if object has an id
         $site_coll->save($id, $primary_oc_site) if $site_coll;
-        
+
         # Save the subelements if object has an id
         $sub_coll->save($id) if $sub_coll;
     }
@@ -1986,7 +1990,7 @@ sub save {
 
         # Save the output channels.
         $oc_coll->save($id) if $oc_coll;
-        
+
         # Save the subelements
         $sub_coll->save($id) if $sub_coll;
     }
@@ -2163,7 +2167,7 @@ sub _do_list {
     my @wheres = ('a.id = etm.object_id', 'etm.member__id = m.id',
                   "m.active = '1'");
     my @params;
-    
+
     # Set up the child and parent parameters
     if (exists $params->{child_id}) {
         my $val = delete $params->{child_id};
@@ -2320,7 +2324,7 @@ sub _is_referenced {
     # Make sure this isn't used by another element type.
     my $et_id = $self->get_id;
     return 1 if Bric::Biz::ElementType->list_ids({ child_id => "$et_id" });
-    
+
     ## GRAVEYARD ##
 #    $sql = 'SELECT COUNT(*) '.
 #           'FROM element_type_member atm, member m, element_type at '.
@@ -2878,5 +2882,3 @@ L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.
 
 =cut
-
-

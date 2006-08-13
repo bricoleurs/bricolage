@@ -240,8 +240,6 @@ NONE.
 
 =cut
 
-require Bric::Biz::ElementType::Subelement;
-
 1;
 __END__
 

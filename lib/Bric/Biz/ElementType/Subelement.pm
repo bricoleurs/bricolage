@@ -218,17 +218,17 @@ sub new {
     my $min = delete $init->{min_occurrence} || 0;
     my $max = delete $init->{max_occurrence} || 0;
     my $place = delete $init->{place} || 0;
-    
-    
+
+
     my $parent = delete $init->{parent} || 0;
     my $parent_id = ($parent == 0) ? 0 : $parent->get_id;
     $parent_id = delete $init->{parent_id} || $parent_id;
-    
+
     # Set the place to one more than the number of subelements there are already
     my $href = Bric::Biz::ElementType::Subelement->href({ parent_id => $parent_id })
         unless ($parent_id == 0 || $place != 0);
     $place = 1 + scalar keys %$href unless ($parent_id == 0 || $place != 0);
-    
+
     my ($child, $childid) = delete @{$init}{qw(child child_id)};
     my $self;
     if ($child) {
@@ -242,7 +242,7 @@ sub new {
         $self = $pkg->SUPER::new($init);
     }
     # Set the necessary properties and return.
-    $self->_set([qw(min_occurrence max_occurrence place parent_id _map_id)], 
+    $self->_set([qw(min_occurrence max_occurrence place parent_id _map_id)],
         [$min, $max, $place, $parent_id, undef]);
     # New relationships should always trigger a save.
     $self->_set__dirty(1);
@@ -315,7 +315,7 @@ sub href {
         WHERE  $wheres
         ORDER BY $ord
     }, undef);
-    
+
     execute($sel, @params);
     my (@d, %ocs, $grp_ids);
     my @sel_props = $pkg->SEL_PROPS;
