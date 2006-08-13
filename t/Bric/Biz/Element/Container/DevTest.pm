@@ -189,7 +189,7 @@ sub test_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" can not be added. There are already'
-      . ' [quant,_2,field] of this type, with a max of [_3].',
+      . ' [_2][quant,_2,field] of this type, with a max of [_3].',
         'para',
         4,
         4,
@@ -235,7 +235,7 @@ sub test_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" cannot be deleted. There must be'
-      . ' at least [_2] fields of this type.',
+      . ' at least [_2][quant,_2,field] of this type.',
         'para',
         5,
     ], 'Should get the correct maketext array';
