@@ -892,11 +892,12 @@ sub get_possible_data { shift->get_possible_field_types(@_) }
 
 =item my @elements = $container->get_possible_containers
 
-Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
+Returns a list or anonymous array of the Bric::Biz::ElementType
 objects that define the types of data elements that can be subelements of this
 container element. This is synonymous with
-C<< $container->get_element_type->get_containers >>, since containers do not
-support occurence constraints.
+C<< $container->get_element_type->get_containers >>, with the exception that
+it will only return those containers that don't already have the max allowed
+according to the max_occurrence.
 
 B<Throws:> NONE.
 
@@ -909,7 +910,16 @@ B<Notes:> NONE.
 sub get_possible_containers {
     my $self = shift;
     my $at = $self->get_element_type or return;
-    $at->get_containers;
+    my $containers = $at->get_containers;
+    my @possible_cons;
+    
+    for my $data (@$containers) {
+        my $max = $data->get_max_occurrece;
+        push @possible_cons, $data if !$max || 
+            $max > $self->get_elem_occurrence($data->get_key_name);
+    }
+
+    return wantarray ? @possible_cons : \@possible_cons;
 }
 
 ################################################################################
@@ -948,7 +958,7 @@ sub add_field {
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
                 'Field "[_1]" can not be added. There are already '
-              . '[quant,_2,field] of this type, with a max of [_3].',
+              . '[_2][quant,_2,field] of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,
                 $field_max_occur,
@@ -991,6 +1001,29 @@ B<Notes:> NONE.
 
 sub add_container {
     my ($self, $atc) = @_;
+    
+    my @subets = $self->get_element_type->get_containers([ $atc->get_id ]);
+    
+    
+    my $max_occur = $subets[0]->get_max_occurrence;
+    
+    if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >= 
+            $max_occur)) {
+        my $elem_name = $atc->get_key_name;
+        my $elem_occurrence = $self->get_elem_occurrence($elem_name);
+        # Throw an error
+        throw_invalid
+            error    => qq{Element "$elem_name" can not be added. There are already }
+                      . qq{$elem_occurrence elements of this type, with a max of $max_occur.},
+            maketext => [
+                'Element "[_1]" can not be added. There are already '
+              . '[_2][quant,_2,element] of this type, with a max of [_3].',
+                $elem_name,
+                $elem_occurrence,
+                $max_occur,
+            ]
+        ;
+    }
 
     # create a new Container Object with this one as its parent
     my $container = Bric::Biz::Element::Container->new({
@@ -1399,30 +1432,30 @@ sub delete_elements {
                 # Increase the deletion counter
                 $delete_count{$elem_name}++;
                 
-                # NOTE: This is waiting to be released when the time is right.
+                # Get the minimum occurrence for this parent/child relation
+                my @subets = $self->get_element_type->get_containers([ $elem_type->get_id ]);
+                my $min_occur = $subets[0]->get_min_occurrence;
                 
-#                my $occur_diff = $self->get_elem_occurrence($elem_name) - 
-#                        $elem_type->get_min_occurrence;
+                my $occur_diff = $self->get_elem_occurrence($elem_name) - $min_occur;
                 
                 # Check if we've deleted too many
-#                if ($delete_count{$elem_name} > $occur_diff) {
-#                    my $the_min_occur = $elem_type->get_min_occurrence;
+                if ($delete_count{$elem_name} > $occur_diff) {
                     # Throw an error if we have
-#                    throw_invalid
-#                        error    => qq{Element "$elem_name" cannot be deleted. }
-#                                  . qq{There must be at least $the_min_occur fields of this type.},
-#                        maketext => [
-#                            'Element "[_1]" cannot be deleted. There must '
-#                          . 'be at least [_2] fields of this type.',
-#                            $elem_name,
-#                            $the_min_occur,
-#                        ]
-#                    ;
-#                } else {
+                    throw_invalid
+                        error    => qq{Element "$elem_name" cannot be deleted. }
+                                  . qq{There must be at least $min_occur elements of this type.},
+                        maketext => [
+                            'Element "[_1]" cannot be deleted. There must '
+                          . 'be at least [_2][quant,_2,element] of this type.',
+                            $elem_name,
+                            $min_occur,
+                        ]
+                    ;
+                } else {
                     # Schedule for deletion if we haven't
                     push @$del_elements, $elem;
                     $delete = 1;
-#                }
+                }
             }
         } else {
             if (exists $del_data{$elem->get_id}) {
@@ -1444,7 +1477,7 @@ sub delete_elements {
                                   . qq{There must be at least $the_min_occur fields of this type.},
                         maketext => [
                             'Field "[_1]" cannot be deleted. There must '
-                          . 'be at least [_2] fields of this type.',
+                          . 'be at least [_2][quant,_2,field] of this type.',
                             $field_name,
                             $the_min_occur,
                         ]
