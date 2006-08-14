@@ -447,60 +447,9 @@ sub test_index($) {
     my $index = shift;
     return fetch_sql(qq{
         SELECT 1
-        FROM   pg_class c,
-               pg_index i
-        WHERE  i.indexrelid = c.oid
-               and c.relname = '$index'
-    });
-}
-
-##############################################################################
-
-=head2 test_function
-
-  exit if test_function $function_name;
-
-This function returns true if the specified function exits in the Bricolage
-database, and false if it does not. This is useful in upgrade scripts that add
-a new function, and want to verify that the function has not already been
-created.
-
-=cut
-
-sub test_function($) {
-    my $function = shift;
-    return fetch_sql(qq{
-        SELECT 1
-        FROM   pg_proc p
-        WHERE  p.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
-               AND p.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype
-               AND NOT p.proisagg
-               AND pg_catalog.pg_function_is_visible(p.oid)
-               AND p.proname = '$function'
-    });
-}
-
-##############################################################################
-
-=head2 test_aggregate
-
-  exit if test_aggregate $aggregate_name;
-
-This aggregate returns true if the specified aggregate exits in the Bricolage
-database, and false if it does not. This is useful in upgrade scripts that add
-a new aggregate, and want to verify that the aggregate has not already been
-created.
-
-=cut
-
-sub test_aggregate($) {
-    my $aggregate = shift;
-    return fetch_sql(qq{
-        SELECT 1
-        FROM   pg_proc p
-        WHERE  p.proisagg
-               AND pg_catalog.pg_function_is_visible(p.oid)
-               AND p.proname = '$aggregate'
+        FROM   information_schema.statistics a
+        WHERE  a.table_schema = '$db'
+               and a.index_name = '$index'
     });
 }
 
