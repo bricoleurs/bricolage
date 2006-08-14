@@ -569,6 +569,10 @@ sub subclass_burn_test {
     ok $elem->add_data($head, "And then..."), "Add a header";
     ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
 
+    # Add the pull quote to valid subelements
+    ok $elem->get_element_type->add_container($pull_quote),
+        "Adding the temp subelement to the parent.";
+
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
     ok $pq->get_field('para')->set_data(
@@ -667,6 +671,10 @@ sub subclass_burn_test {
     ok -e $prev_file, "File should now exist" or return "Failed to create $file!";
     file_contents_is($prev_file, $self->story_output,
                      "Check the preview file contents");
+
+    # Add the pull quote to valid subelements
+    ok $elem->get_element_type->add_container($page),
+        "Adding the temp subelement to the parent.";
 
     # Okay, cool. Let's just stick to burning and try adding a couple of
     # pages.

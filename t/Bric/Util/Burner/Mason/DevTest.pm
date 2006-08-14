@@ -6,7 +6,7 @@ use warnings;
 use base qw(Bric::Util::Burner::DevTest);
 use Test::More;
 
-sub test_burn : Test(121) {
+sub test_burn : Test(117) {
     my $self = shift;
     return $self->subclass_burn_test(
         'Mason',
