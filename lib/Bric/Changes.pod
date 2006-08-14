@@ -26,6 +26,13 @@ message is displayed. [Scott]
 Added output channel name to "Could not find template" error message in 
 the Mason Burner. [Paul Orrock]
 
+=item *
+
+The contributed Linux start script (F<contrib/start_scripts/linux>) now
+restarts the C<bric_queued> server when the C<restart> command is used and the
+C<bric_queued> server is enabled. It also now also passes a log file name to
+C<bric_queued> so that publishing errors can more easily be traced. [David]
+
 =back
 
 =head2 Bug Fixes
