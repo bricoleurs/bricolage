@@ -1002,9 +1002,9 @@ B<Notes:> NONE.
 sub add_container {
     my ($self, $atc) = @_;
     
-    my @subets = $self->get_element_type->get_containers([ $atc->get_id ]);
+    my @subets = $self->get_element_type->get_containers($atc->get_key_name);
     
-    
+    # TODO: Throw an error here if $subets[0] doesn't exist
     my $max_occur = $subets[0]->get_max_occurrence;
     
     if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >= 
