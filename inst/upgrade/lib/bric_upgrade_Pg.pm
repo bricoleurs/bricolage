@@ -97,9 +97,9 @@ while scripts are running.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(prompt y_n do_sql test_column test_table test_constraint
-                    test_foreign_key test_index test_function test_aggregate
-                    fetch_sql db_version test_primary_key);
+our @EXPORT_OK = qw(do_sql test_column test_table test_constraint
+                    test_foreign_key test_index test_function test_aggregate 
+                    fetch_sql db_version test_primary_key test_trigger);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
@@ -514,6 +514,31 @@ sub test_aggregate($) {
                AND p.proname = '$aggregate'
     });
 }
+
+##############################################################################
+
+=head2 test_trigger
+
+  exit if test_trigger $trigger_name;
+
+This trigger returns true if the specified trigger exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new trigger, and want to verify that the trigger has not already been
+created.
+
+=cut
+
+sub test_trigger($) {
+    my $trigger = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   pg_trigger p,
+    	       pg_class c
+        WHERE  p.tgrelid = c.oid
+               AND p.tgname = '$trigger'
+    });
+}
+
 
 ##############################################################################
 

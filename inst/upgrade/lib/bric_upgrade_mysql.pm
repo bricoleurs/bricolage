@@ -97,8 +97,8 @@ while scripts are running.
 use strict;
 require Exporter;
 use base qw(Exporter);
-our @EXPORT_OK = qw(prompt y_n do_sql test_column test_table test_constraint
-                    test_foreign_key test_index test_function test_aggregate
+our @EXPORT_OK = qw(do_sql test_column test_table test_constraint
+                    test_foreign_key test_index test_function test_trigger
                     fetch_sql db_version test_primary_key);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
@@ -455,6 +455,51 @@ sub test_index($) {
 
 ##############################################################################
 
+=head2 test_function
+
+  exit if test_function $function_name;
+
+This function returns true if the specified function exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new function, and want to verify that the function has not already been created.
+
+=cut
+
+sub test_function($) {
+    my $function = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   information_schema.routines a
+        WHERE  a.routine_schema = '$db'
+               and a.routine_name = '$function'
+    });
+}
+
+##############################################################################
+
+=head2 test_trigger
+
+  exit if test_trigger $trigger_name;
+
+This function returns true if the specified trigger exits in the Bricolage
+database, and false if it does not. This is useful in upgrade scripts that add
+a new trigger, and want to verify that the trigger has not already been created.
+
+=cut
+
+sub test_trigger($) {
+    my $trigger = shift;
+    return fetch_sql(qq{
+        SELECT 1
+        FROM   information_schema.triggers a
+        WHERE  a.trigger_schema = '$db'
+               and a.trigger_name = '$function'
+    });
+}
+
+
+##############################################################################
+
 =head2 fetch_sql()
 
   exit if fetch_sql($sql);
@@ -568,8 +613,8 @@ my $version;
 
 sub db_version() {
     return $version if $version;
-    $version = col_aref("SELECT version()")->[0];
-    $version =~ s/\s*PostgreSQL\s+(\d\.\d(\.\d)?).*/$1/;
+    $version = col_aref("status")->[0];
+    $version =~ s/\s*Distrib\s+(\d\.\d(\.\d)?).*/$1/;
     return $version;
 }
 
