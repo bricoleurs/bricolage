@@ -373,12 +373,26 @@ database.
 
 =head2 Where to Learn More
 
-See Josh Berkus' article, "Tuning PostgreSQL for performance" at
-L<http://www.varlena.com/varlena/GeneralBits/Tidbits/perf.html>. You can
-search the archives of the pgsql-performance list at
-L<http://archives.postgresql.org/pgsql-performance/> and subscribe to the list
-at
-L<http://webmail.postgresql.org/mj/mj_wwwusr?domain=postgresql.org&func=lists-long-full&extra=pgsql-performance>.
+=over
+
+=item L<http://powerpostgresql.com/Downloads/annotated_conf_80.html>
+
+The "Annotated F<postgresql.conf> Guide for PostgreSQL," by Josh Berkus and
+Joe Conway.
+
+=item L<http://www.varlena.com/varlena/GeneralBits/Tidbits/perf.html>
+
+"Tuning PostgreSQL for performance," by Josh Berkus.
+
+=item L<http://archives.postgresql.org/pgsql-performance/>
+
+Search the archives of the pgsql-performance list.
+
+=item L<http://webmail.postgresql.org/mj/mj_wwwusr?domain=postgresql.org&func=lists-long-full&extra=pgsql-performance>.
+
+Subscribe to the pgsql-performance list.
+
+=back
 
 =head1 MORE PERFORMANCE TIPS
 
