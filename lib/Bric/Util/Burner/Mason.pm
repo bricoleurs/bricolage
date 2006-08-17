@@ -255,9 +255,8 @@ sub burn_one {
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
         # Allow template-defined disabled inheritance to work.
-#        return $self->inherit_start_path
-#            if exists $self->{flags}->{inherit}
-#            && ! defined $self->{flags}->{inherit};
+        return $self->inherit_start_path if exists $self->{flags}{inherit};
+#            && ! defined $self->{flags}{inherit};
 
         # Use the template path if executing our dhandler.
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
@@ -394,7 +393,7 @@ template exists.
 sub find_template {
     my ($self, $uri, $name) = @_;
     my $interp = $self->_get('_interp');
-    my @dirs = $fs->split_uri($uri);
+    my @dirs = grep { $_ || $_ ne '' } $fs->split_uri($uri);
     while (@dirs) {
         my $tmpl = $fs->cat_uri(@dirs, $name);
         return $tmpl if $interp->comp_exists($tmpl);
