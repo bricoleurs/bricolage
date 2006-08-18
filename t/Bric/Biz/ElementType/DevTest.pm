@@ -698,7 +698,7 @@ sub test_site : Test(26) {
 
 ##############################################################################
 # Make sure that subelement types and fields work properly.
-sub test_subelement_types : Test(48) {
+sub test_subelement_types : Test(57) {
     my $self = shift;
 
     # Create an output channel.
@@ -853,7 +853,7 @@ sub test_subelement_types : Test(48) {
     ok @conts = $story_type->get_containers($pull_quote->get_id),
       'Get the story type\'s container with a single id';
     is scalar @conts, 1, 'There should be one containers';
-    my %subs = map { $_->get_key_name => $_} @conts;
+    %subs = map { $_->get_key_name => $_} @conts;
     ok $subs{_pull_quote_}, '... One should be a pull quote';
 
 
@@ -867,7 +867,24 @@ sub test_subelement_types : Test(48) {
         'Get the story type\'s containers';
     is scalar @conts, 2, 'There should be two containers';
     %subs = map { $_->get_key_name => $_} @conts;
-    ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Test deleting one of them
+    ok $story_type->del_containers($page->get_id), "Delete the page container";
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 1, 'There should be one container left';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... It should be a pull quote';
+
+    # Put it back
+    ok $story_type->add_containers($page->get_id), "Put the container back";
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 2, 'There should be two containers';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
     ok $subs{_page_}, '... The other should be a page';
 
     # Try the subelements' subelements.
