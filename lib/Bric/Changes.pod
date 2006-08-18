@@ -33,6 +33,16 @@ restarts the C<bric_queued> server when the C<restart> command is used and the
 C<bric_queued> server is enabled. It also now also passes a log file name to
 C<bric_queued> so that publishing errors can more easily be traced. [David]
 
+=item *
+
+Overriding Mason inheritance in story element templates by setting C<$inherit>
+in the C<< <%flags> >> block now works correctly. Thanks to Alexey Sheynuk for
+tracking down the issue. Reported by Ashlee Caul. [David]
+
+=item *
+
+Added start script for FreeBSD, F<contrib/start_scripts/freebsd>.
+
 =back
 
 =head2 Bug Fixes
