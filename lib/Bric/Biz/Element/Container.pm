@@ -914,7 +914,7 @@ sub get_possible_containers {
     my @possible_cons;
     
     for my $data (@$containers) {
-        my $max = $data->get_max_occurrece;
+        my $max = $data->get_max_occurrence;
         push @possible_cons, $data if !$max || 
             $max > $self->get_elem_occurrence($data->get_key_name);
     }
@@ -958,7 +958,7 @@ sub add_field {
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
                 'Field "[_1]" can not be added. There are already '
-              . '[_2][quant,_2,field] of this type, with a max of [_3].',
+              . '[_2] [quant,_2,field] of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,
                 $field_max_occur,
@@ -1017,7 +1017,7 @@ sub add_container {
                       . qq{$elem_occurrence elements of this type, with a max of $max_occur.},
             maketext => [
                 'Element "[_1]" can not be added. There are already '
-              . '[_2][quant,_2,element] of this type, with a max of [_3].',
+              . '[_2] [quant,_2,element] of this type, with a max of [_3].',
                 $elem_name,
                 $elem_occurrence,
                 $max_occur,
@@ -1446,7 +1446,7 @@ sub delete_elements {
                                   . qq{There must be at least $min_occur elements of this type.},
                         maketext => [
                             'Element "[_1]" cannot be deleted. There must '
-                          . 'be at least [_2][quant,_2,element] of this type.',
+                          . 'be at least [_2] [quant,_2,element] of this type.',
                             $elem_name,
                             $min_occur,
                         ]
@@ -1477,7 +1477,7 @@ sub delete_elements {
                                   . qq{There must be at least $the_min_occur fields of this type.},
                         maketext => [
                             'Field "[_1]" cannot be deleted. There must '
-                          . 'be at least [_2][quant,_2,field] of this type.',
+                          . 'be at least [_2] [quant,_2,field] of this type.',
                             $field_name,
                             $the_min_occur,
                         ]

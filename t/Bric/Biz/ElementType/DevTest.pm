@@ -698,7 +698,7 @@ sub test_site : Test(26) {
 
 ##############################################################################
 # Make sure that subelement types and fields work properly.
-sub test_subelement_types : Test(39) {
+sub test_subelement_types : Test(48) {
     my $self = shift;
 
     # Create an output channel.
@@ -838,12 +838,35 @@ sub test_subelement_types : Test(39) {
     is $fts[0]->get_key_name, 'header', '... The first should be header';
     is $fts[1]->get_key_name, 'para', '... The second should be paragraph';
 
+
     # Get its subelement container types.
     # XXX Eventually we should be able to order these.
-    ok my @conts = $story_type->get_containers,
-        'Get the story type\'s containers';
+    # Test the get_containers with a ids specified
+    ok my @conts = $story_type->get_containers($pull_quote->get_id, $page->get_id),
+      'Get the story type\'s containers with the id\'s';
     is scalar @conts, 2, 'There should be two containers';
     my %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Test the get_containers with a single id specified
+    ok @conts = $story_type->get_containers($pull_quote->get_id),
+      'Get the story type\'s container with a single id';
+    is scalar @conts, 1, 'There should be one containers';
+    my %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+
+
+    # Test the get_containers with the keyname specified
+    ok my $cont_et = $story_type->get_containers($page->get_key_name),
+      'Get the story type\'s container with the key name.';
+    is $cont_et->get_key_name, '_page_', "Make sure it's a page";
+
+    # Just get all of them
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 2, 'There should be two containers';
+    %subs = map { $_->get_key_name => $_} @conts;
     ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
     ok $subs{_page_}, '... The other should be a page';
 

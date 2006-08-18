@@ -580,10 +580,14 @@ To translate:
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
-  'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].' => 'Field "[_1]" can not be added. There are already [_2] fields of this type, with a max of [_3].',
+  'Field "[_1]" can not be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].' => 'Field "[_1]" can not be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].',
+  'Element "[_1]" can not be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].' => 'Element "[_1]" can not be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].',
+  'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.' => 'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.',
+  'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.' => 'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.',
+  'min_occurrence must be a positive number.' => 'min_occurrence must be a positive number.',
+  'max_occurrence must be a positive number.' => 'max_occurrence must be a positive number.',
+  'place must be a positive number.' => 'place must be a positive number.',
   'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
-    'Field "[_1]" cannot be deleted. There must be at least [_2] fields of this type.' => 'Field "[_1]" cannot be deleted. There must be at least [_2] fields of this type.',
-  'Element "[_1]" cannot be deleted. There must be at least [_2] elements of this type.' => 'Element "[_1]" cannot be deleted. There must be at least [_2] elements of this type.',
 
 =end comment
 
