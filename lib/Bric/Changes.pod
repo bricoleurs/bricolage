@@ -41,7 +41,7 @@ tracking down the issue. Reported by Ashlee Caul. [David]
 
 =item *
 
-Added start script for FreeBSD, F<contrib/start_scripts/freebsd>.
+Added start script for FreeBSD, F<contrib/start_scripts/freebsd>. [David]
 
 =back
 
