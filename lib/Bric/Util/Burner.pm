@@ -483,10 +483,14 @@ B<Notes:> NONE.
 =item $b = $burner->set_encoding($encoding)
 
 Sets the character set encoding to be used to write out the contents of a burn
-to a file under Perl 5.8.0 and later. Use this attribute if templates are
-converting output data from Bricolage's native UTF-8 encoding to another
-encoding. Use "raw" if your templates are outputting binary data. Defaults to
-"utf8".
+to a file under Perl 5.8.0 and later. This value will be used to set the IO
+layer for the file handle used for template output. For example, if you wanted
+the output to be automatically converted to iso-8859-2, set the encoding like
+so:
+
+  $burner->set_encoding('encoding(iso-8859-2)');
+
+Use "raw" if your templates are outputting binary data. Defaults to "utf8".
 
 B<Throws:> NONE.
 
