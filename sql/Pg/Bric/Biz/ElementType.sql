@@ -29,7 +29,6 @@ CREATE SEQUENCE seq_element_type__output_channel START 1024;
 
 
 -- Unique IDs for element_type_member
---GRAVEYARD
 CREATE SEQUENCE seq_element_type_member START 1024;
 
 
@@ -69,7 +68,6 @@ CREATE TABLE element_type  (
     related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
     media           BOOLEAN        NOT NULL DEFAULT FALSE,
     biz_class__id   INTEGER        NOT NULL,
---    et_grp__id      INTEGER, GRAVEYARD
     type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
@@ -129,7 +127,6 @@ CREATE TABLE element_type__output_channel (
 -- 
 -- Description: The link between element objects and member objects
 --
--- GRAVEYARD
 CREATE TABLE element_type_member (
     id          INTEGER  NOT NULL
                          DEFAULT NEXTVAL('seq_element_type_member'),
@@ -196,7 +193,6 @@ CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
 
 
 
---CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id); GRAVEYARD
 
 
 
@@ -214,7 +210,6 @@ CREATE INDEX fkx_element__et_oc ON element_type__output_channel(element_type__id
 
 
 
--- GRAVEYARD
 CREATE INDEX fkx_element_type__et_member ON element_type_member(object_id);
 CREATE INDEX fkx_member__et_member ON element_type_member(member__id);
 

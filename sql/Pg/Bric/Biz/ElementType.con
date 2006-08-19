@@ -11,10 +11,6 @@ ALTER TABLE element_type ADD
     CONSTRAINT fk_at_type__element FOREIGN KEY (type__id)
     REFERENCES at_type(id) ON DELETE CASCADE;
 
---GRAVEYARD
---ALTER TABLE element_type ADD
---    CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
---    REFERENCES grp(id) ON DELETE CASCADE;
 
 ALTER TABLE element_type ADD
 	CONSTRAINT fk_class__element_type FOREIGN KEY (biz_class__id)

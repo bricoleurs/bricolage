@@ -123,7 +123,6 @@ sub test_list : Test(69) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-#        $self->add_del_ids([$elem->get_et_grp_id], 'grp'); ## GRAVEYARD ##
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -313,7 +312,6 @@ sub test_list_ids : Test(66) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-#        $self->add_del_ids([$elem->get_et_grp_id], 'grp'); ## GRAVEYARD ##
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -846,7 +844,7 @@ sub test_subelement_types : Test(57) {
       'Get the story type\'s containers with the id\'s';
     is scalar @conts, 2, 'There should be two containers';
     my %subs = map { $_->get_key_name => $_} @conts;
-    ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
     ok $subs{_page_}, '... The other should be a page';
 
     # Test the get_containers with a single id specified

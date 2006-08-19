@@ -104,7 +104,6 @@ use strict;
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Fault qw(throw_gen throw_dp);
 use Bric::Util::Grp::ElementType;
-#use Bric::Util::Grp::SubelementType; ## GRAVEYARD ##
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Util::Attribute::ElementType;
 use Bric::Util::Class;
@@ -181,8 +180,6 @@ my @cols = qw(
     type__id
     active
 );
-##      ^^^^    ##
-#    et_grp__id ## GRAVEYARD ##
 
 my @props = qw(
     name
@@ -198,8 +195,6 @@ my @props = qw(
     type_id
     _active
 );
-#   ^^^^^  ##
-#    et_grp_id ## GRAVEYARD ##
 
 my $sel_cols = join ', ', 'a.id', map({ "a.$_" } @cols), 'm.grp__id';
 my @sel_props = ('id', @props, 'grp_ids');
@@ -240,7 +235,6 @@ sub GRP_ID_IDX { $GRP_ID_IDX }
 BEGIN {
     Bric::register_fields({
         id                  => Bric::FIELD_READ,
-#        et_grp_id           => Bric::FIELD_READ, ## GRAVEYARD ##
         key_name            => Bric::FIELD_RDWR,
         name                => Bric::FIELD_RDWR,
         description         => Bric::FIELD_RDWR,
@@ -263,7 +257,6 @@ BEGIN {
         _parts              => Bric::FIELD_NONE,
         _new_parts          => Bric::FIELD_NONE,
         _del_parts          => Bric::FIELD_NONE,
-#        _et_grp_obj         => Bric::FIELD_NONE, ## GRAVEYARD ##
         _attr               => Bric::FIELD_NONE,
         _meta               => Bric::FIELD_NONE,
         _attr_obj           => Bric::FIELD_NONE,
@@ -1801,22 +1794,6 @@ sub add_containers {
     return $self;
 }
 
-## GRAVEYARD ##
-#sub add_containers {
-#    my $self = shift;
-#    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-#    my $grp = $self->_get_element_type_grp;
-
-    # Construct the proper array to pass to 'add_members'
-#    my @mem = map {
-#        ref $_ ? {obj => $_ }
-#               : {id  => $_, package => __PACKAGE__ }
-#    } @$ets;
-
-#    return unless $grp->add_members(\@mem);
-#    return $self;
-#}
-
 
 ##############################################################################
 
@@ -1882,17 +1859,6 @@ sub get_containers {
 }
 
 
-## GRAVEYARD ##
-#sub get_containers {
-#    my ($self, $key_name) = @_;
-
-#    my $grp = $self->_get_element_type_grp;
-#    return $grp->get_objects unless defined $key_name;
-
-#    return first { $_->get_key_name eq $key_name } $grp->get_objects;
-#}
-
-
 ##############################################################################
 
 =item del_containers
@@ -1918,22 +1884,6 @@ sub del_containers {
     return $self;
 }
 
-## GRAVEYARD ##
-#sub del_containers {
-#    my $self = shift;
-#    my $ets  = ref $_[0] eq 'ARRAY' ? shift : \@_;
-#    my $grp  = $self->_get_element_type_grp;
-
-    # Construct the proper array to pass to 'add_members'
-#    my @mem = map {
-#        ref $_ ? { obj => $_ }
-#               : { id  => $_, package => __PACKAGE__ }
-#    } @$ets;
-
-#    return unless $grp->delete_members(\@mem);
-#    return $self;
-#}
-
 ##############################################################################
 
 =back
@@ -1953,8 +1903,6 @@ sub save {
     my ($id, $oc_coll, $site_coll, $sub_coll, $primary_oc_site)
         = $self->_get(qw(id _oc_coll _site_coll _sub_coll _site_primary_oc_id));
 
-    # Save the group information.
-    # $self->_get_element_type_grp->save; ## GRAVEYARD ##
 
     if ($id) {
         # Save the parts and the output channels.
@@ -2325,21 +2273,6 @@ sub _is_referenced {
     my $et_id = $self->get_id;
     return 1 if Bric::Biz::ElementType->list_ids({ child_id => "$et_id" });
 
-    ## GRAVEYARD ##
-#    $sql = 'SELECT COUNT(*) '.
-#           'FROM element_type_member atm, member m, element_type at '.
-#       'WHERE atm.object_id = ? AND '.
-#                  'm.id         = atm.member__id AND '.
-#                  'm.grp__id    = at.et_grp__id';
-
-#    $sth  = prepare_c($sql, undef);
-#    execute($sth, $self->get_id);
-#    bind_columns($sth, \$rows);
-#    fetch($sth);
-#    finish($sth);
-
-#    return 1 if $rows;
-
     # Make sure this isn't referenced from a template.
     $sql  = "SELECT COUNT(*) FROM template WHERE element_type__id = ?";
     $sth  = prepare_c($sql, undef);
@@ -2448,37 +2381,6 @@ sub _save_attr {
 
     $a_obj->save;
 }
-
-##############################################################################
-
-=item _get_element_type_grp
-
-=cut
-
-  ## GRAVEYARD ##
-
-#sub _get_element_type_grp {
-#    my $self = shift;
-#    my $atg_id  = $self->get_et_grp_id;
-#    my $atg_obj = $self->_get('_et_grp_obj');
-
-#    return $atg_obj if $atg_obj;
-
-#    if ($atg_id) {
-#        $atg_obj = Bric::Util::Grp::SubelementType->lookup({'id' => $atg_id});
-#        $self->_set(['_et_grp_obj'], [$atg_obj]);
-#    } else {
-#        $atg_obj = Bric::Util::Grp::SubelementType->new({
-#            name => 'ElementType Group'
-#        });
-#        $atg_obj->save;
-
-#        $self->_set(['et_grp_id',     '_et_grp_obj'],
-#                    [$atg_obj->get_id, $atg_obj]);
-#    }
-
-#    return $atg_obj;
-#}
 
 ##############################################################################
 

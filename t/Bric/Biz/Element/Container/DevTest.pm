@@ -118,7 +118,7 @@ sub test_lookup : Test(36) {
 
 ##############################################################################
 # Test field occurrence.
-sub test_occurrence : Test(80) {
+sub test_field_occurrence : Test(80) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -189,7 +189,7 @@ sub test_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" can not be added. There are already'
-      . ' [_2][quant,_2,field] of this type, with a max of [_3].',
+      . ' [_2] [quant,_2,field] of this type, with a max of [_3].',
         'para',
         4,
         4,
@@ -235,7 +235,7 @@ sub test_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" cannot be deleted. There must be'
-      . ' at least [_2][quant,_2,field] of this type.',
+      . ' at least [_2] [quant,_2,field] of this type.',
         'para',
         5,
     ], 'Should get the correct maketext array';
@@ -246,6 +246,158 @@ sub test_occurrence : Test(80) {
     ok $para_type->save, 'Save the field type';
     ok @field_types = $elem->get_possible_field_types, 'Get the possible fields';
     is scalar @field_types, 2, "Make sure we can add both again.";
+}
+
+##############################################################################
+# Test element occurrence.
+sub test_zelem_occurrence : Test(89) {
+    my $self       = shift->create_element_types;
+    my $class      = $self->class;
+    my $story_type = $self->{story_type};
+    my @story_ids;
+
+    ok my $story = Bric::Biz::Asset::Business::Story->new({
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => "This is a test story",
+        slug            => "test_elem_occurrence"
+    }), "Create a test story.";
+
+    ok $story->add_categories([1]), "Add it to the root category";
+    ok $story->set_primary_category(1),
+        "Make the root category the primary category";
+    ok $story->set_cover_date('2005-03-22 21:07:56'), "Set the cover date";
+    ok $story->checkin, "Check in the story";
+    ok $story->save, "Save the story";
+    $self->add_del_ids($story->get_id, 'story');
+    push @story_ids, $story->get_id;
+
+    # Test the prepopulation of subelements
+    my @pre_conts = $story->get_element->get_containers;
+    is scalar @pre_conts, 0, 'There should be no containers to start.';
+    ok my $subelem = $story->get_element_type->get_containers('_page_'),
+        'Get the subelement to set the occurrence relation.';
+    ok $subelem->set_min_occurrence(1), 'Set the min occurrence to 1';
+    ok $subelem->save, 'Save the subelement';
+    ok $story->save, 'Save the story';
+
+    ok my $story_pre_pop = Bric::Biz::Asset::Business::Story->new({
+        user__id        => $self->user_id,
+        site_id         => 100,
+        element_type_id => $story_type->get_id,
+        source__id      => 1,
+        title           => "This is a test story for prepopulated subelements",
+        slug            => "test_elem_occurrence_prepop"
+    }), "Create a test story.";
+
+    ok $story_pre_pop->add_categories([1]), "Add it to the root category";
+    ok $story_pre_pop->set_primary_category(1),
+        "Make the root category the primary category";
+    ok $story_pre_pop->set_cover_date('2005-04-22 21:07:56'), "Set the cover date";
+    ok $story_pre_pop->checkin, "Check in the story";
+    ok $story_pre_pop->save, "Save the story";
+    $self->add_del_ids($story_pre_pop->get_id, 'story');
+    push @story_ids, $story_pre_pop->get_id;
+
+    ok @pre_conts = $story_pre_pop->get_element->get_containers,
+        'Get the containers this story started with,';
+    is scalar @pre_conts, 1, 'There should be one container to start.';
+    is $pre_conts[0]->get_key_name, '_page_', 'Make sure a page was added by default.';\
+    ok $subelem->set_min_occurrence(0), 'Set the min occurrence back to 0';
+    ok $subelem->save, 'Save the subelement';
+    ok $story_pre_pop->save, 'Save the story';
+
+    ok my $elem = $story->get_element, 'Get the story element';
+
+    # Check the possible containers
+    ok my @ets = $elem->get_possible_containers, "Get all of the possible containers.";
+    is scalar @ets, 2, 'There should be two containers';
+    my %subs = map { $_->get_key_name => $_} @ets;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Try adding an element type that isn't a subelement of story
+    eval { $elem->add_container($story->get_element_type) };
+    ok my $err = $@, 'Catch invalid subelement violation exception';
+    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
+    is $err->error,
+        '_testing_ is not a possible subelement of this container.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        '[_1] is not a possible subelement of this container.',
+        '_testing_',
+    ], 'Should get the correct maketext array';
+
+    # Try adding a few that are subelements of the story
+    ok my $cont1 = $elem->add_container($ets[0]), 'Add a subelement ' . $ets[0]->get_key_name;
+    ok my $cont2 = $elem->add_container($ets[0]), 'Add another ' . $ets[0]->get_key_name;
+
+    # Save it
+    ok $elem->save, 'Make it so';
+
+    # Delete them and add them again
+    ok $elem->delete_elements([ $cont1, $cont2 ]), 'Deleting the containers';
+    ok $elem->save, 'Make it so';
+    ok $cont1 = $elem->add_container($ets[0]), 'Add a subelement ' . $ets[0]->get_key_name;
+    ok $cont2 = $elem->add_container($ets[0]), 'Add another ' . $ets[0]->get_key_name;
+    ok $elem->save, 'Make it so';
+
+    # Set the occurrence so we can't add/delete anymore
+    ok $subelem = $story->get_element_type->get_containers($ets[0]->get_key_name),
+        'Get the subelement for the occurrence relation.';
+    ok $subelem->set_min_occurrence(2), 'Set the min occurrence to 2';
+    ok $subelem->set_max_occurrence(2), 'Set the max occurrence to 2';
+    ok $subelem->save, 'Save the subelemnt';
+    ok $elem->save, 'Save the story';
+
+    # Try adding more to break max occurrence
+    eval { $elem->add_container($ets[0]) };
+    ok $err = $@, 'Catch max occurrence violation exception';
+    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
+    is $err->error,
+        'Element "' . $ets[0]->get_key_name . '" can not be added.'
+      . ' There are already 2 elements of this type, with a max of 2.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Element "[_1]" can not be added. There are already [_2]'
+      . ' [quant,_2,element] of this type, with a max of [_3].',
+        $ets[0]->get_key_name,
+        2,
+        2,
+    ], 'Should get the correct maketext array';
+
+    # Try removing one to break min occurrence
+    ok my @conts = $elem->get_containers($ets[0]->get_key_name);
+    ok my $cont = $elem->get_container($ets[0]->get_key_name);
+    is $cont, $conts[0], 'Making sure get_containers and get_container behave the same';
+    eval { $elem->delete_elements([ $cont ]) };
+    ok $err = $@, 'Catch min occurrence violation exception';
+    isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
+    is $err->error,
+        'Element "' . $ets[0]->get_key_name . '" cannot be deleted.'
+      . ' There must be at least 2 elements of this type.',
+        'Should get the correct exception message';
+    is_deeply $err->maketext, [
+        'Element "[_1]" cannot be deleted. There must be at least'
+      . ' [_2] [quant,_2,element] of this type.',
+        $ets[0]->get_key_name,
+        2,
+    ], 'Should get the correct maketext array';
+
+
+    # Check the possible containers - should now only be one
+    ok my @ets2 = $elem->get_possible_containers, "Get all of the possible containers.";
+    is scalar @ets2, 1, 'There should be only one container allowed now';
+    is $ets[1], $ets2[0], 'Should have only ' . $ets[1]->get_key_name . ' left.';
+
+    # Clean up
+    ok $subelem->set_min_occurrence(0), 'Set the min occurrence to 2';
+    ok $subelem->set_max_occurrence(0), 'Set the max occurrence to 2';
+    ok $subelem->save, 'Save the subelemnt';
+    ok $elem->delete_elements([ $cont1, $cont2 ]), 'Deleting the containers';
+    ok $elem->save, 'Save the story';
 }
 
 ##############################################################################

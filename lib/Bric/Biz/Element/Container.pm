@@ -293,8 +293,12 @@ sub new {
         }
     }
     
-    #### TODO ####
     # Prepopulate the elements based on min occurrence
+    foreach my $subet ($init->{_element_type_obj}->get_containers) {
+        if (my $min = $subet->get_min_occurrence) {
+            $self->add_container($subet) for 1..$min;
+        }
+    }
 
     $self->_set__dirty(1);
     return $self;
@@ -890,7 +894,7 @@ sub get_possible_data { shift->get_possible_field_types(@_) }
 
 ################################################################################
 
-=item my @elements = $container->get_possible_containers
+=item my @elementtypes = $container->get_possible_containers
 
 Returns a list or anonymous array of the Bric::Biz::ElementType
 objects that define the types of data elements that can be subelements of this
@@ -1002,9 +1006,19 @@ B<Notes:> NONE.
 sub add_container {
     my ($self, $atc) = @_;
     
-    my @subets = $self->get_element_type->get_containers($atc->get_key_name);
+    my $elem_key_name = $atc->get_key_name; 
+    my @subets = $self->get_element_type->get_containers($elem_key_name);
     
-    # TODO: Throw an error here if $subets[0] doesn't exist
+    # Throw an error if $subets[0] doesn't exist
+    if (!($subets[0])) {
+    throw_invalid
+        error    => qq{$elem_key_name is not a possible subelement }
+                  . qq{of this container.},
+        maketext => [ '[_1] is not a possible subelement of this container.', 
+            $elem_key_name,
+        ]
+    ;
+    }
     my $max_occur = $subets[0]->get_max_occurrence;
     
     if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >= 
@@ -1426,15 +1440,14 @@ sub delete_elements {
         my $delete = undef;
         if ($elem->is_container) {
             if (exists $del_cont{$elem->get_id}) {
-                my $elem_type = $elem->get_element_type;
-                my $elem_name = $elem_type->get_key_name;
+                my $subelement_type = $elem->get_element_type;
+                my $elem_name = $subelement_type->get_key_name;
                 
                 # Increase the deletion counter
                 $delete_count{$elem_name}++;
                 
                 # Get the minimum occurrence for this parent/child relation
-                my @subets = $self->get_element_type->get_containers([ $elem_type->get_id ]);
-                my $min_occur = $subets[0]->get_min_occurrence;
+                my $min_occur = $subelement_type->get_min_occurrence;
                 
                 my $occur_diff = $self->get_elem_occurrence($elem_name) - $min_occur;
                 
