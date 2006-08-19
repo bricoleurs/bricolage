@@ -97,6 +97,12 @@ Publishing media documents that have had new files uploaded to them no longer
 causes a publish failure. Reported by Christian Niles and numerous others.
 [David]
 
+=item *
+
+Added even I<more> code to the C<inst/upgrade/1.8.9/fix_publish_status.pl>
+upgrade script to better cover the possible variations in publish status
+inaccuracies. [Alex Howarth, David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
