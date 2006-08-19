@@ -254,9 +254,8 @@ sub burn_one {
     no warnings 'redefine';
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
-        # Allow template-defined disabled inheritance to work.
+        # Allow template-defined inheritance to work.
         return $self->inherit_start_path if exists $self->{flags}{inherit};
-#            && ! defined $self->{flags}{inherit};
 
         # Use the template path if executing our dhandler.
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
