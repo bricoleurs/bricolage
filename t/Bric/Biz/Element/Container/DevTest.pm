@@ -323,10 +323,11 @@ sub test_zelem_occurrence : Test(89) {
     ok my $err = $@, 'Catch invalid subelement violation exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
-        '_testing_ is not a possible subelement of this container.',
+        '_testing_ cannot be a subelement of _testing_.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        '[_1] is not a possible subelement of this container.',
+        '[_1] cannot be a subelement of [_2].',
+        '_testing_',
         '_testing_',
     ], 'Should get the correct maketext array';
 

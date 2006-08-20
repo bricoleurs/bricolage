@@ -1006,16 +1006,18 @@ B<Notes:> NONE.
 sub add_container {
     my ($self, $atc) = @_;
     
-    my $elem_key_name = $atc->get_key_name; 
+    my $elem_key_name = $atc->get_key_name;
+    my $parent_key_name = $self->get_key_name;
     my @subets = $self->get_element_type->get_containers($elem_key_name);
     
     # Throw an error if $subets[0] doesn't exist
     if (!($subets[0])) {
     throw_invalid
-        error    => qq{$elem_key_name is not a possible subelement }
-                  . qq{of this container.},
-        maketext => [ '[_1] is not a possible subelement of this container.', 
+        error    => qq{$elem_key_name cannot be a subelement }
+                  . qq{of $parent_key_name.},
+        maketext => [ '[_1] cannot be a subelement of [_2].', 
             $elem_key_name,
+            $parent_key_name,
         ]
     ;
     }
@@ -2286,6 +2288,41 @@ sub _deserialize_pod {
                             element_type       => $elem_types{$kn},
                             parent_id          => $id,
                         });
+                        
+                # Check for element occurrence violation
+                my $subelem_key_name = $subelem->get_key_name;
+                my $elem_key_name = $self->get_key_name;
+                my $subelem_occur = $self->get_elem_occurrence($subelem_key_name);
+                my @subets = $self->get_element_type->get_containers($subelem_key_name);
+    
+                # Throw an error if $subets[0] doesn't exist
+                if (!($subets[0])) {
+                    throw_invalid
+                        error    => qq{$subelem_key_name cannot a subelement }
+                                  . qq{of $elem_key_name.},
+                        maketext => [ '[_1] cannot be a subelement of [_2].', 
+                            $subelem_key_name,
+                            $elem_key_name,
+                        ]
+                    ;
+                }
+                
+                my $subelem_max = $subets[0]->get_max_occurrence;
+                
+                if ($subelem_max && ($subelem_max >= $subelem_occur)) {
+                    # Throw an error
+                    throw_invalid
+                        error    => qq{Element "$elem_key_name" can not be added. There are already }
+                                  . qq{$subelem_occur elements of this type, with a max of $subelem_max.},
+                        maketext => [
+                          'Element "[_1]" can not be added. There are already '
+                        . '[_2] [quant,_2,element] of this type, with a max of [_3].',
+                            $elem_key_name,
+                            $subelem_occur,
+                            $subelem_max,
+                        ]
+                    ;
+                }
 
                 $subelem->set_place(scalar @elems);
                 $subelem->set_object_order(++$elem_ord{$kn});
@@ -2402,7 +2439,7 @@ sub _deserialize_pod {
                 # Make sure that it's okay if it's repeatable.
                 my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
-                if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
+                if ($field_ord{$kn} && $max_occur && $field_occurrence >= $max_occur) {
                     throw_invalid
                         error    => qq{Field "$kn" appears $field_occurrence }
                                   . qq{times around line $line_num.}
