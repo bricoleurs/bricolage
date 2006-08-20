@@ -103,6 +103,11 @@ Added even I<more> code to the C<inst/upgrade/1.8.9/fix_publish_status.pl>
 upgrade script to better cover the possible variations in publish status
 inaccuracies. [Alex Howarth, David]
 
+=item *
+
+The "Document Type/Output Channel" selection in the "Default Asset Sort" no
+longer breaks things. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
