@@ -603,13 +603,18 @@ sub load_asset {
         # the same document.
         $edata->{subelement_types} ||= {subelement_type => []};
         foreach my $subdata (@{$edata->{subelement_types}{subelement_type}}) {
-            # get key_name
-            my $kn = ref $subdata ? $subdata->{content} : $subdata;
-
+            # get key_name and other attributes
+            #my $kn = ref $subdata ? $subdata->{content} : $subdata;
+            my $kn = $subdata->{key_name};
+            my $elem_min = $subdata->{min_occur};
+            my $elem_max = $subdata->{max_occur};
+            my $place = $subdata->{place};
+            
             # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
               unless exists $fixup{$edata->{key_name}};
-            push @{$fixup{$edata->{key_name}}}, $kn;
+            push @{$fixup{$edata->{key_name}}}, 
+                [ $kn, $elem_min, $elem_max, $place ];
         }
 
         # build hash of existing fields.
@@ -747,18 +752,34 @@ sub load_asset {
     # run through fixup attaching subelement types
     foreach my $element_name (keys %fixup) {
         my ($element) = Bric::Biz::ElementType->list({key_name => $element_name});
-        my @sub_ids;
+        ## GRAVEYARD
+        # my @sub_ids;
 
-        foreach my $sub_name (@{$fixup{$element_name}}) {
+        foreach my $sub_elem_array (@{$fixup{$element_name}}) {
+            my ($sub_name, $sub_min, $sub_max, $sub_place) = @$sub_elem_array;
             my ($sub_id) = Bric::Biz::ElementType->list_ids({key_name => $sub_name});
             throw_ap(error => __PACKAGE__ . " : no subelement type found matching "
                        . "(subelement_type => \"$sub_name\") "
                        . "for element type \"$element_name\".")
               unless defined $sub_id;
-            push @sub_ids, $sub_id;
+              $element->add_container($sub_id);
+              $element->save;
+              
+              # Now set the subelement stuff
+              # Note: We need to get it so a subelement is returned
+              my ($sub_elem) = $element->get_containers($sub_id);
+              $sub_elem->set_min_occurrence($sub_min);
+              $sub_elem->set_max_occurrence($sub_max);
+              $sub_elem->set_place($sub_place);
+              $sub_elem->save;
+              $element->save; # This one actually needed?
+              
+            ## GRAVEYARD
+            #push @sub_ids, $sub_id;
         }
-        $element->add_containers(\@sub_ids);
-        $element->save;
+        ## GRAVEYARD
+        #$element->add_containers(\@sub_ids);
+        #$element->save;
     }
 
     return name(ids => [ map { name(element_type_id => $_) } @element_ids ]);
@@ -834,7 +855,12 @@ sub serialize_asset {
     # output subelements
     $writer->startTag("subelement_types");
     foreach ($element->get_containers) {
-        $writer->dataElement(subelement_type => $_->get_key_name);
+        $writer->startTag("subelement_type");
+        $writer->dataElement(key_name => $_->get_key_name);
+        $writer->dataElement(min_occur => $_->get_min_occurrence);
+        $writer->dataElement(max_occur => $_->get_max_occurrence);
+        $writer->dataElement(place => $_->get_place);
+        $writer->endTag("subelement_type");
     }
     $writer->endTag("subelement_types");
 
