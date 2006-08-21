@@ -114,7 +114,7 @@ use Getopt::Std;
 our ($opt_u, $opt_p, $opt_i, $opt_s);
 
 BEGIN{
-    getopts('u:p:i:s:');
+    getopts('u:p:i:s');
     # Set the db admin user and password to some reasonable defaults.
     $ENV{BRIC_DBI_PASS} ||= $opt_p ||= 'postgres';
     $ENV{BRIC_DBI_USER} ||= $opt_u ||= 'postgres';
@@ -128,7 +128,7 @@ BEGIN {
     # Always use the Bric::Config and Bric::Util::DBI from the sources.
     unshift @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib';
     require Bric::Config;
-    Bric::Config->import(qw(DBI_USER DBD_TYPE));
+    Bric::Config->import(qw(DBI_USER));
     require Bric::Util::DBI;
     Bric::Util::DBI->import(qw(:all));
     eval "require bric_upgrade_".DBD_TYPE;
