@@ -604,11 +604,12 @@ sub load_asset {
         $edata->{subelement_types} ||= {subelement_type => []};
         foreach my $subdata (@{$edata->{subelement_types}{subelement_type}}) {
             # get key_name and other attributes
-            #my $kn = ref $subdata ? $subdata->{content} : $subdata;
-            my $kn = $subdata->{key_name};
-            my $elem_min = $subdata->{min_occur};
-            my $elem_max = $subdata->{max_occur};
-            my $place = $subdata->{place};
+            # NOTE: The || of every clause is for backwards compatibility
+            my $kn = $subdata->{key_name} || 
+                (ref $subdata ? $subdata->{content} : $subdata);
+            my $elem_min = $subdata->{min_occur} || 0;
+            my $elem_max = $subdata->{max_occur} || 0;
+            my $place = $subdata->{place} || 0;
             
             # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
@@ -752,8 +753,6 @@ sub load_asset {
     # run through fixup attaching subelement types
     foreach my $element_name (keys %fixup) {
         my ($element) = Bric::Biz::ElementType->list({key_name => $element_name});
-        ## GRAVEYARD
-        # my @sub_ids;
 
         foreach my $sub_elem_array (@{$fixup{$element_name}}) {
             my ($sub_name, $sub_min, $sub_max, $sub_place) = @$sub_elem_array;
@@ -772,14 +771,9 @@ sub load_asset {
               $sub_elem->set_max_occurrence($sub_max);
               $sub_elem->set_place($sub_place);
               $sub_elem->save;
-              $element->save; # This one actually needed?
               
-            ## GRAVEYARD
-            #push @sub_ids, $sub_id;
         }
-        ## GRAVEYARD
-        #$element->add_containers(\@sub_ids);
-        #$element->save;
+        $element->save;
     }
 
     return name(ids => [ map { name(element_type_id => $_) } @element_ids ]);
