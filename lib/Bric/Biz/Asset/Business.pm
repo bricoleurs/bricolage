@@ -815,6 +815,7 @@ sub add_contributor {
 
     my $dirty = $self->_get__dirty();
     my $contribs = $self->_get_contributors() || {};
+    $role ||= 'DEFAULT';
 
     # get the contributor id
     my $c_id = ref $contrib ? $contrib->get_id() : $contrib;

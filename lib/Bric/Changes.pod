@@ -108,6 +108,12 @@ inaccuracies. [Alex Howarth, David]
 The "Document Type/Output Channel" selection in the "Default Asset Sort" no
 longer breaks things. [David]
 
+=item *
+
+Contributors with no more than the default role, "DEFAULT", who are associated
+with a story or media document, are once again correctly associated via the
+role. Reported by Chris Schults. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

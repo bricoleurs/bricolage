@@ -417,6 +417,8 @@ Friends who have spotted bugs include:
 
 =item * Andrei Arsu
 
+=item * Chris Schults
+
 =back
 
 Bricolage's translation team:
