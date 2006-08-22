@@ -604,12 +604,15 @@ sub load_asset {
         $edata->{subelement_types} ||= {subelement_type => []};
         foreach my $subdata (@{$edata->{subelement_types}{subelement_type}}) {
             # get key_name and other attributes
-            # NOTE: The || of every clause is for backwards compatibility
-            my $kn = $subdata->{key_name} || 
-                (ref $subdata ? $subdata->{content} : $subdata);
-            my $elem_min = $subdata->{min_occur} || 0;
-            my $elem_max = $subdata->{max_occur} || 0;
-            my $place = $subdata->{place} || 0;
+            my ($kn, $elem_min, $elem_max, $place);
+            if (ref $subdata && exists $subdata->{key_name}) {
+                ($kn, $elem_min, $elem_max, $place) = @{$subdata}
+                    {qw(key_name min_occur max_occur place)};
+            } else {
+                $kn = ref $subdata ? $subdata->{content} : $subdata;
+                # TODO Something smarter with the default place number
+                ($elem_min, $elem_max, $place) = (0, 0, 0);
+            }
             
             # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
