@@ -38,6 +38,10 @@ Technologies. [David]
 The left nav menu no longer uses an C<< <iframe> >>. Javascript and cookies
 are used instead, making the left nav faster. [Scott, Marshall, David]
 
+=item *
+
+Updated the Portuguese localizations. [Pedro Custodio]
+
 =back
 
 =head2 Bug Fixes
