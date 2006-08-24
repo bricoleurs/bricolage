@@ -750,7 +750,8 @@ To translate:
 	'Attributes' => 'Atributos',
 	'Logged in as' => 'Ligado como',
 	'Clone' => 'Clonar',
-	'Last Published' => 'Última Publicação',	
+	'Last Published' => 'Última Publicação',
+
 =end comment
 
 =cut
