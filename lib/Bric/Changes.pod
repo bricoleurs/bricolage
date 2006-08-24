@@ -43,6 +43,10 @@ tracking down the issue. Reported by Ashlee Caul. [David]
 
 Added start script for FreeBSD, F<contrib/start_scripts/freebsd>. [David]
 
+=item *
+
+Updated the Portuguese localizations. [Pedro Custodio]
+
 =back
 
 =head2 Bug Fixes
