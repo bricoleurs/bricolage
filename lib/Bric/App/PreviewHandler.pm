@@ -63,7 +63,7 @@ use Apache::Log;
 ################################################################################
 use constant ERROR_FILE =>
   Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
-			       Bric::Util::Trans::FS->split_uri(ERROR_URI));
+                   Bric::Util::Trans::FS->split_uri(ERROR_URI));
 
 ################################################################################
 # Fields
@@ -127,24 +127,24 @@ B<Notes:> NONE.
 sub uri_handler {
     my $r = shift;
     my $ret = eval {
-	# Decline the request unless it's coming from the preview directory.
-	{
-	    local $^W;
-	    return DECLINED unless $r->header_in('referer') =~ m{$prev_qr};
-	}
-	# Grab the URI and break it up into its constituent parts.
-	my $uri = $r->uri;
-	my @dirs = $fs->split_uri($uri);
-	# Let the request continue if the file exists.
-	return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
-	# Let the request continue (with a 404) if the file doesn't exist in the
-	# preview directory.
-	return DECLINED
-	  unless -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs);
-	# If we're here, it exists in the preview directory. Point the request to it.
+    # Decline the request unless it's coming from the preview directory.
+    {
+        local $^W;
+        return DECLINED unless $r->header_in('referer') =~ m{$prev_qr};
+    }
+    # Grab the URI and break it up into its constituent parts.
+    my $uri = $r->uri;
+    my @dirs = $fs->split_uri($uri);
+    # Let the request continue if the file exists.
+    return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
+    # Let the request continue (with a 404) if the file doesn't exist in the
+    # preview directory.
+    return DECLINED
+      unless -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs);
+    # If we're here, it exists in the preview directory. Point the request to it.
         $r->notes('burner.preview' => 1);
-	$r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
-	return DECLINED;
+    $r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
+    return DECLINED;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -170,15 +170,15 @@ B<Notes:> NONE.
 sub fixup_handler {
     my $r = shift;
     my $ret = eval {
-	# Start by disabling browser caching.
-	$r->no_cache(1);
-	# Just return if it's an httpd content type.
-	my $ctype = $r->content_type;
-	return OK if $ctype =~ /^httpd/;
-	# Set the default handler if its content type is known and it's not
-	# text/html.
-	$r->handler('default-handler') if $ctype && $ctype ne 'text/html';
-	return OK;
+        # Start by disabling browser caching.
+        $r->no_cache(1);
+        # Just return if it's an httpd content type.
+        my $ctype = $r->content_type;
+        return OK if $ctype =~ /^httpd/;
+        # Set the default handler if its content type is known and it's not
+        # text/html.
+        $r->handler('default-handler') if $ctype && $ctype ne 'text/html';
+        return OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
