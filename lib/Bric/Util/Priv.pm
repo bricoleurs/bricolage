@@ -477,9 +477,12 @@ sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
 =item my $acl = Bric::Util::Priv->get_acl($user)
 
-Returns an access control list of privilege settings for a given user. A
-description of the ACL's data structure will go here soon. Bric::Util::Priv will
-also handle caching that data structure.
+Returns an access control list of privilege settings for a given user. An ACL
+is simply a hash reference with all keys but one being object group IDs for
+groups B<to which> the user has been granted permission, where the value for
+each key is the relevant permission. One key is not a group ID, but "mtime",
+and it stands for that most recent time any of the permissions was modified.
+It is used for expiring an ACL.
 
 B<Throws:>
 
@@ -509,11 +512,12 @@ Unable to fetch row from statement handle.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Support for parent groups is not yet supported. Thus, if a user is in a
-group that does not have a permission set, and that group has a parent where the
-permission B<is> set, that permission will not be included in the ACL. This
-inheritance of permissions will be implemented in the future, and at that time
-the permissions of child groups will override the permissions of their parents.
+B<Notes:> Support for parent groups is not supported. Thus, if a user is in a
+group that does not have a permission set, and that group has a parent where
+the permission B<is> set, that permission will not be included in the ACL.
+This inheritance of permissions may be implemented in the future, and at that
+time the permissions of child groups will override the permissions of their
+parents.
 
 =cut
 
