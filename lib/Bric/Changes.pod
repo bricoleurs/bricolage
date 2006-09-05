@@ -54,14 +54,22 @@ to true I<before> it is published, instead of aftewards. This both prevents an
 exception when a template to save a story that has not been published before,
 and eliminates the need for templates to seet the C<publish_status> on a story
 before calling C<publish_another()> for a another story that will search for
-the current story in the database. Reported by Rod Taylor (Bug # 1230).
+the current story in the database. Reported by Rod Taylor (Ticket # 1230).
 [David]
 
 =item *
 
 Related stories and media can no longer be added to container elements not
 based on related story and/or media element types. Reported by Marshall Roch
-(Bug # 1231). [David]
+(Ticket # 1231). [David]
+
+=item *
+
+When the C<ALWAYS_USE_SSL> F<bricolage.conf> directive is enabled, Bricolage
+now sets up the non-SSL port to permanently redirect to the SSL port. This
+prevents users from removing the "s" from "https" and thus being able to use
+Bricolage insecurely when their administrators don't want them to. Reported by
+Joe Pletcher (Ticket # 1233). [David]
 
 =back
 

@@ -47,17 +47,23 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::Config qw(:ui);
+use Bric::Config qw(:ui :ssl);
 use constant DEBUGGING => 0;
 
 do {
     my $names = 'NameVirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT . "\n";
+    my $hostname = VHOST_SERVER_NAME;
+    if ($hostname eq '_default_') {
+        # Do our best to find the host name.
+        require Sys::Hostname;
+        $hostname = Sys::Hostname::hostname();
+    }
 
     # Set up the basic configuration. Default to UTF-8 (it can be overridden
     # on a per-request basis in Bric::App::Handler.
     my @config = (
         '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
-        '  ServerName             ' . VHOST_SERVER_NAME,
+        "  ServerName             $hostname",
         "  DefaultType            \"text/html; charset=utf-8\"",
         "  AddDefaultCharset      utf-8",
         '  SetHandler             perl-script',
@@ -236,10 +242,22 @@ do {
         }
     }
 
-    my $config = join "\n",
-      "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
-        @config, @locs,
-      '</VirtualHost>';
+    my $config;
+    if (SSL_ENABLE && ALWAYS_USE_SSL) {
+        my $ssl_url = "https://$hostname"
+            . (SSL_PORT == 443 ? '' : ':' . SSL_PORT). '/';
+        $config = join "\n",
+            "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
+            '  ServerName             ' . VHOST_SERVER_NAME,
+            "RedirectPermanent / $ssl_url",
+            '</VirtualHost>';
+    }
+    else {
+        $config = join "\n",
+            "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
+                @config, @locs,
+            '</VirtualHost>';
+    }
 
     if (SSL_ENABLE) {
         $names .=  'NameVirtualHost ' . NAME_VHOST . ':' . SSL_PORT . "\n";

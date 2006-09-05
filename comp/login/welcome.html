@@ -3,22 +3,21 @@
    no_toolbar => 0,
    context => "Welcome to " . get_pref('Bricolage Instance Name') . ".",
 &>
-
 <& /widgets/wrappers/sharky/table_top.mc &>
-<%perl>
-
+<%perl>;
 my $string   = $lang->maketext('Please click [_1]here[_2] to start.',
-               qq{<a href="#" style="font-weight: bold;" onclick="var newWin = window.open('$ARGS{referer}', 'Bricolage_} . SERVER_WINDOW_NAME .
+               qq{<a href="$url" style="font-weight: bold;" onclick="var newWin = window.open('$url', 'Bricolage_} . SERVER_WINDOW_NAME .
                qq{', 'menubar=0,location=0,toolbar=0,personalbar=0,status=1,scrollbars=1,resizable=1,width=780'); newWin.focus(true);">},
                '</a>'
                );
 </%perl>
-
 <div style="padding: 1em;">
 <% $string %>
 </div>
-
 <& /widgets/wrappers/sharky/table_bottom.mc &>
-
 <& /widgets/wrappers/sharky/footer.mc &>
-%#-- End HTML --#
+<%init>;
+my $url = SSL_ENABLE ? 'https://' . $r->hostname
+    . (SSL_PORT == 443 ? '' : ':' . SSL_PORT) . $ARGS{referer}
+    : $ARGS{referer};
+</%init>
