@@ -183,7 +183,6 @@ sub burn_one {
     my $self = shift;
     my ($ba, $oc, $cat) = @_;
     my ($outbuf, $retval);
-
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];
@@ -255,28 +254,28 @@ sub burn_one {
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
         # Allow template-defined inheritance to work.
-        return $self->inherit_start_path if exists $self->{flags}{inherit};
+        return $self->{inherit_start_path} if exists $self->{flags}{inherit};
 
         # Use the template path if executing our dhandler.
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
 
         # Otherwise, just fall back on Mason's default.
-        return $self->inherit_start_path;
+        return $self->{inherit_start_path};
     };
 
     while (1) {
         # Run the biz asset through the template
-        eval { $retval = $interp->exec($tmpl_path . '/') };
+        eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
             my $msg;
-	    if (HTML::Mason::Exceptions::isa_mason_exception(
-                  $err, 'TopLevelNotFound'
-              )) {
+            if (HTML::Mason::Exceptions::isa_mason_exception(
+                $err, 'TopLevelNotFound'
+            )) {
                 # We'll handle this exception ourselves to prevent it from
                 # percolating back up to the UI and returning a 404.
                 $err = "Mason error: ". $err->message;
                 $msg = "Template '$tmpl_name' not found in path '$tmpl_path' for output channel '" . $oc->get_name . "'";
-        } elsif (isa_exception($err)) {
+            } elsif (isa_exception($err)) {
                 # Just dump it.
                 rethrow_exception($err);
             } else {
