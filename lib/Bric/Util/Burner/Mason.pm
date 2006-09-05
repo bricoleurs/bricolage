@@ -366,8 +366,8 @@ sub chk_syntax {
 =item my $template = $burner->find_template($uri, $tmpl_name)
 
 Finds the first instance of the template with the name $tmpl_name in the URI
-directory hierarchy in $uri. Returns the template path, if it exists, and undef
-if it does not. For example:
+directory hierarchy in $uri. Returns the template path, if it exists, and
+undef if it does not. For example:
 
   my $uri = '/foo/bar/bletch';
   my $tmpl_name = 'story.mc';
@@ -383,15 +383,15 @@ B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Uses HTML::Mason::Interp->comp_exists() internally to determine if the
-template exists.
+B<Notes:> Uses HTML::Mason::Interp->comp_exists() internally to determine if
+the template exists.
 
 =cut
 
 sub find_template {
     my ($self, $uri, $name) = @_;
     my $interp = $self->_get('_interp');
-    my @dirs = grep { $_ || $_ ne '' } $fs->split_uri($uri);
+    my @dirs = ('', grep { $_ || $_ ne '' } $fs->split_uri($uri));
     while (@dirs) {
         my $tmpl = $fs->cat_uri(@dirs, $name);
         return $tmpl if $interp->comp_exists($tmpl);
