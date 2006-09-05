@@ -47,6 +47,15 @@ Added start script for FreeBSD, F<contrib/start_scripts/freebsd>. [David]
 
 Updated the Portuguese localizations. [Pedro Custodio]
 
+=item *
+
+A story being published for the first time now has its C<publish_status> set
+to true I<before> it is published, instead of aftewards. This both prevents an
+exception when a template to save a story that has not been published before,
+and eliminates the need for templates to seet the C<publish_status> on a story
+before calling C<publish_another()> for a another story that will search for
+the current story in the database. Reported by Rod Taylo (Bug # 1230). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -242,8 +251,8 @@ the list, rather than 20 or more items. [David]
 
 Added a CSS ID to the C<< <body> >> tag in the UI, of the form
 "bricolage_C<VHOST_SERVER_NAME>", where C<VHOST_SERVER_NAME> is the value
-defined in F<bricolage.conf>.  Use this ID when writing user stylesheets 
-to override the look of the Bricolage UI (see SkinningBricolage in the Wiki)
+defined in F<bricolage.conf>. Use this ID when writing user stylesheets to
+override the look of the Bricolage UI (see SkinningBricolage in the Wiki)
 [Marshall]
 
 =back

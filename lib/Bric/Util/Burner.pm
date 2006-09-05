@@ -1197,13 +1197,19 @@ sub publish {
     $self->_set(['mode'], [PUBLISH_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
-    my $published = 0;
+
     $publish_date ||= strfdate;
+    my $published   = 0;
+    my $baid        = $ba->get_id;
+    my $repub       = $ba->get_publish_status;
+
+    # Mark the story as published, so that other stories published by
+    # burn_another() can find it as published in the database.
     $ba->set_publish_date($publish_date);
-    my $baid = $ba->get_id;
+    $ba->set_publish_status(1) unless $repub;
+    $ba->save;
 
     # Determine if we've published before. Set the expire date if we haven't.
-    my $repub = $ba->get_publish_status;
     my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
 
     # Get a list of the relevant categories.
@@ -1265,10 +1271,18 @@ sub publish {
 
             # Burn, baby, burn!
             if ($key eq 'story') {
-                foreach my $cat (@cats) {
-                    $job->add_resources($self->burn_one($ba, $oc, $cat));
+                eval {
+                    foreach my $cat (@cats) {
+                        $job->add_resources($self->burn_one($ba, $oc, $cat));
+                    }
+                    $published = 1;
+                };
+                if (my $err = $@) {
+                    # Reset the publish status and date in case the story was
+                    # saved by a template.
+                    $self->_rollback_publish($ba);
+                    die $err;
                 }
-                $published = 1;
             } else {
                 my $path = $ba->get_path;
                 my $uri = $ba->get_uri($oc);
@@ -1331,7 +1345,6 @@ sub publish {
     }
 
     if ($published) {
-        $ba->set_publish_status(1);
         # Set published version if we've reverted
         # (i.e. unless we're republishing published_version)
         my $pubversion = $ba->get_published_version;
@@ -1354,6 +1367,9 @@ sub publish {
 
         # Save it!
         $ba->save;
+    } else {
+        # If the story hasn't been published before, rollback the publish status.
+        $self->_rollback_publish($ba) unless $repub;
     }
 
     $self->_set(['mode'], [undef]);
@@ -1438,8 +1454,8 @@ sub publish_another {
 
 =item @resources = $burner->burn_one($ba, $oc, $cat);
 
-Burn an asset in a given output channel and category, this is usually called by
-the preview or publish method. Returns a list of resources burned. 
+Burn an asset in a given output channel and category, this is usually called
+by the preview or publish method. Returns a list of resources burned.
 
 Parameters are:
 
@@ -2133,6 +2149,34 @@ sub _expire {
         $exp_job->save;
         log_event('job_new', $exp_job);
     }
+}
+
+##############################################################################
+
+=over 4
+
+=item $burner->_rollback_publish($ba)
+
+Sets a document's C<publish_status>> to false, and its C<publish_date>,
+C<first_publish_date>, and C<published_version> attributes to C<undef> and
+saves the document. This is necessary for after a publish failure when
+a document has never before been published.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _rollback_publish {
+    my ($self, $ba) = @_;
+    $ba->set_publish_status(0);
+    $ba->set_publish_date(undef);
+    $ba->set_first_publish_date(undef);
+    $ba->set_published_version(undef);
+    $ba->save;
 }
 
 #------------------------------------------------------------------------------#
