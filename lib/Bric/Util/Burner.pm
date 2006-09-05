@@ -2153,8 +2153,6 @@ sub _expire {
 
 ##############################################################################
 
-=over 4
-
 =item $burner->_rollback_publish($ba)
 
 Sets a document's C<publish_status>> to false, and its C<publish_date>,
