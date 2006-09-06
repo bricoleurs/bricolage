@@ -156,6 +156,13 @@ present in 1.10.x. Anyone who has yet to upgrade to 1.10.x will now have their
 default values properly copied to the new schema when they do decide to
 upgrade. Reported by Chris Schults (Ticket # 1239). [David]
 
+=item *
+
+Story and media subelements are once again proparly deleted from within their
+profiles when the "Delete this Profile" checkbox is checked and either the
+"Save" or the "Save and Stay" is pressed. Reported by Chris Schults (Ticket #
+1240). [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
