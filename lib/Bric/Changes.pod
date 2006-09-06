@@ -147,6 +147,15 @@ role. Reported by Chris Schults. [David]
 "Checkin and Shelve" works again in the story profile. Reported by Chris
 Heiland (Ticket # 1237). [David]
 
+=item *
+
+Fixed a script that upgrades to 1.9.1 to better copy over default values for
+field types from the 1.8 schema. Those who have already upgraded to check to
+make sure that any default values you had for custom fields in 1.8 are still
+present in 1.10.x. Anyone who has yet to upgrade to 1.10.x will now have their
+default values properly copied to the new schema when they do decide to
+upgrade. Reported by Chris Schults (Ticket # 1239). [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
