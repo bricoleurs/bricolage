@@ -163,6 +163,12 @@ profiles when the "Delete this Profile" checkbox is checked and either the
 "Save" or the "Save and Stay" is pressed. Reported by Chris Schults (Ticket #
 1240). [David]
 
+=item *
+
+Searches for media to relate to a document that search by URI now properly
+remember the search results the next time the related media search page is
+loaded. Reported by Chris Schults (Ticket # 1241). [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

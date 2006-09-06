@@ -13,7 +13,7 @@
    sortBy   => 'name',
    select   => undef,
    profile  => $related_profile,
-   constrain => ($args->{'search|uri'} ? {} : { uri => '/%' }), # Must have a file associated.
+   constrain => { location => '/%' }, # Must have a file associated.
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => $excl_sub,
    fields   => [(USE_THUMBNAILS ? 'thumb' : ()), qw(id name uri cover_date)],
