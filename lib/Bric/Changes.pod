@@ -142,6 +142,11 @@ Contributors with no more than the default role, "DEFAULT", who are associated
 with a story or media document, are once again correctly associated via the
 role. Reported by Chris Schults. [David]
 
+=item *
+
+"Checkin and Shelve" works again in the story profile. Reported by Chris
+Heiland (Ticket # 1237). [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

@@ -152,6 +152,9 @@ sub checkin : Callback(priority => 6) {
         log_event("story_rem_workflow", $story);
         add_msg('Story "[_1]" saved and shelved.',
                 '<span class="l10n">' . $story->get_title . '</span>');
+        # Clear the state out and set redirect.
+        $self->clear_my_state;
+        $self->set_redirect('/');
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
