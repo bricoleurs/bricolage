@@ -61,7 +61,7 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item * Organizations in the source profile
 
-=item * Add More sections in the User, Contributor, Media and Alert profiles
+=item * Add More sections in the User, Contributor, Media, and Alert Type profiles
 
 =item * Roles in the contributor profile
 
