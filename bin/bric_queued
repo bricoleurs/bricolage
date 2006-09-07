@@ -233,8 +233,8 @@ sub run_as_daemon {
         for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
-            failed     => 0,
-            executing  => 0,
+            failed     => '0',
+            executing  => '0',
         })) {
             print 'Executing ' . $job->get_name . "\n" if $Verbose;
             eval {
@@ -297,8 +297,8 @@ sub run_single_job {
     my ($job) = $pkg->list({
         sched_time => [undef, strfdate()],
         comp_time  => undef,
-        failed     => 0,
-        executing  => 0,
+        failed     => '0',
+        executing  => '0',
     });
     exit unless $job;
     print 'Executing ' . $job->get_name . "\n" if $Verbose;
