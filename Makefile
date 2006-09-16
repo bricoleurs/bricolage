@@ -277,7 +277,7 @@ rm_files	:
 dev_symlink :
 	$(PERL) inst/dev.pl
 
-dev			: inst/Pg.sql inst/My.sql install dev_symlink clean
+dev			: inst/dist_sql install dev_symlink clean
 	
 
 ##########################
