@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-dbload_mysql.pl - installation script to install MySql database
+dbload_mysql.pl - installation script to install MySQL database
 
 =head1 VERSION
 
@@ -36,7 +36,7 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
 
-print "\n\n==> Creating Bricolage MySql Database <==\n\n";
+print "\n\n==> Creating Bricolage MySQL Database <==\n\n";
 
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
@@ -57,7 +57,7 @@ create_user();
 # load data.
 load_db();
 
-print "\n\n==> Finished Creating Bricolage MySql Database <==\n\n";
+print "\n\n==> Finished Creating Bricolage MySQL Database <==\n\n";
 exit 0;
 
 sub exec_sql {
@@ -174,7 +174,7 @@ sub load_db {
         hard_fail($errmsg);
     }
 
-    print "Loading Bricolage MySql Database (this may take a few minutes).\n";
+    print "Loading Bricolage MySQL Database (this may take a few minutes).\n";
     my $err = exec_sql(0, $db_file, $DB->{db_name});
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;

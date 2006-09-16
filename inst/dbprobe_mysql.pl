@@ -110,13 +110,13 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    ask_password("MySql Root Password (leave empty for no password)",
+    ask_password("MySQL Root Password (leave empty for no password)",
         \$DB{root_pass}, $QUIET);
 
     unless ($DB{host_name}) {
         $DB{system_user} = $DB{root_user};
         while(1) {
-            ask_confirm("MySql System Username", \$DB{system_user}, $QUIET);
+            ask_confirm("MySQL System Username", \$DB{system_user}, $QUIET);
             $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
             last if defined $DB{system_user_uid};
             print "User \"$DB{system_user}\" not found!  This user must exist ".

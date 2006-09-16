@@ -1,5 +1,5 @@
 # Required programs.  PG_CONFIG_PATH is the location of PostgreSQL's pg_config 
-# script. MYSQL_CONFIG_PATH is the location of MySql's mysql_config. APACHE_PATH 
+# script. MYSQL_CONFIG_PATH is the location of MySQL's mysql_config. APACHE_PATH 
 # is the path to the Apache 1.3 executable.  APACHE_EXE is
 # the filename of the executable itself.  EXPAT_PATH is the path to the Expat 
 # library libexpat.so (also looks in library paths that Perl knows about), and
