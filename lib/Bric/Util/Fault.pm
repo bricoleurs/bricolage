@@ -44,13 +44,12 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This class does Exceptions for Bricolage. It replaces a
-home-grown implementation with one based on Exception::Class
-(which is what HTML::Mason uses). For now, we are merely
-emulating the previous functionality, so the above synopsis
-should still be valid, but this will change as we use more
-features of Exception::Class and try to clean exception usage
-throughout the Bricolage API code.
+This class does Exceptions for Bricolage. It replaces a home-grown
+implementation with one based on Exception::Class (which is what HTML::Mason
+uses). For now, we are merely emulating the previous functionality, so the
+above synopsis should still be valid, but this will change as we use more
+features of Exception::Class and try to clean exception usage throughout the
+Bricolage API code.
 
 There are currently two major classes of exceptions:
 Bric::Util::Fault::Exception and its subclasses represent fatal,
@@ -233,9 +232,8 @@ B<Side Effects:> NONE.
 B<Notes:>
 
 This method should only be used within a C<die> context, and one of its
-subclasses (GEN, MNI, etc..) should be thrown instead.
-We want to change this so that you generally use the C<throw> method
-instead.
+subclasses (GEN, MNI, etc..) should be thrown instead. We want to change this
+so that you generally use the C<throw> method instead.
 
 =cut
 
@@ -433,10 +431,9 @@ sub get_stack {
 
 =item $err->throw(error => 'This is some error we are throwing');
 
-This overrides the C<throw> method in Exception::Class so that
-if we create a new exception from a Bric or HTML::Mason exception,
-we will just use the short error message. Otherwise, exceptions
-can get stringified more than once.
+This overrides the C<throw> method in Exception::Class so that if we create a
+new exception from a Bric or HTML::Mason exception, we will just use the short
+error message. Otherwise, exceptions can get stringified more than once.
 
 B<Throws:> NONE.
 
@@ -559,9 +556,9 @@ sub _filtered_frames {
 
 =item isa_bric_exception($err, 'MNI');
 
-This function tests whether the $err argument is a Bricolage
-exception. The optional second argument can be used to test
-for a specific Bricolage exception.
+This function tests whether the $err argument is a Bricolage exception. The
+optional second argument can be used to test for a specific Bricolage
+exception.
 
 B<Throws:>
 
@@ -603,8 +600,8 @@ sub isa_bric_exception {
 
 =item isa_exception($err);
 
-This function tests whether the $err argument is an
-Exception::Class exception.
+This function tests whether the $err argument is an Exception::Class
+exception.
 
 B<Throws:>
 
@@ -633,8 +630,8 @@ sub isa_exception {
 
 =item rethrow_exception($err);
 
-This function rethrows the $err argument if it
-C<can> rethrow (i.e. it is a Bricolage or HTML::Mason exception).
+This function rethrows the $err argument if it C<can> rethrow (i.e. it is a
+Bricolage or HTML::Mason exception).
 
 B<Throws:> NONE.
 
@@ -682,9 +679,9 @@ __END__
 
 =head1 NOTES
 
-This was muchly copied from HTML::Mason::Exceptions.
-This replaces the home-grown exception handling
-written by matthew d. p. k. strelchun-lanier <matt@lanier.org>.
+This was muchly copied from HTML::Mason::Exceptions. This replaces the
+home-grown exception handling written by matthew d. p. k. strelchun-lanier
+<matt@lanier.org>.
 
 =head1 AUTHOR
 
