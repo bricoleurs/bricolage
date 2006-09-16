@@ -145,7 +145,7 @@ START MODULE LIST
 
 =item DBD::Pg 1.22
 
-=item DBD::mysql 3.0006
+=item DBD::mysql 3.0007
 
 =item DB_File
 
