@@ -175,6 +175,12 @@ loaded. Reported by Chris Schults (Ticket # 1241). [David]
 will wipe out all of F</usr/local/lib> and F</usr/local/bin>. Reported by
 Christian Muise (Ticket # 1246). [David]
 
+=item *
+
+The search interface for paginated searches no longer gets stuck when the
+alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
+[David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
