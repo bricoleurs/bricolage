@@ -1271,18 +1271,10 @@ sub publish {
 
             # Burn, baby, burn!
             if ($key eq 'story') {
-                eval {
-                    foreach my $cat (@cats) {
-                        $job->add_resources($self->burn_one($ba, $oc, $cat));
-                    }
-                    $published = 1;
-                };
-                if (my $err = $@) {
-                    # Reset the publish status and date in case the story was
-                    # saved by a template.
-                    $self->_rollback_publish($ba);
-                    die $err;
+                foreach my $cat (@cats) {
+                    $job->add_resources($self->burn_one($ba, $oc, $cat));
                 }
+                $published = 1;
             } else {
                 my $path = $ba->get_path;
                 my $uri = $ba->get_uri($oc);
@@ -1367,9 +1359,6 @@ sub publish {
 
         # Save it!
         $ba->save;
-    } else {
-        # If the story hasn't been published before, rollback the publish status.
-        $self->_rollback_publish($ba) unless $repub;
     }
 
     $self->_set(['mode'], [undef]);
@@ -2149,32 +2138,6 @@ sub _expire {
         $exp_job->save;
         log_event('job_new', $exp_job);
     }
-}
-
-##############################################################################
-
-=item $burner->_rollback_publish($ba)
-
-Sets a document's C<publish_status>> to false, and its C<publish_date>,
-C<first_publish_date>, and C<published_version> attributes to C<undef> and
-saves the document. This is necessary for after a publish failure when
-a document has never before been published.
-
-B<Throws:> NONE.
-
-B<Side Effects:> NONE.
-
-B<Notes:> NONE.
-
-=cut
-
-sub _rollback_publish {
-    my ($self, $ba) = @_;
-    $ba->set_publish_status(0);
-    $ba->set_publish_date(undef);
-    $ba->set_first_publish_date(undef);
-    $ba->set_published_version(undef);
-    $ba->save;
 }
 
 #------------------------------------------------------------------------------#
