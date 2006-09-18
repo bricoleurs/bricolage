@@ -169,6 +169,12 @@ Searches for media to relate to a document that search by URI now properly
 remember the search results the next time the related media search page is
 loaded. Reported by Chris Schults (Ticket # 1241). [David]
 
+=item *
+
+`make dev` no longer supports the "single" installation mode, since it has
+will wipe out all of F</usr/local/lib> and F</usr/local/bin>. Reported by
+Christian Muise (Ticket # 1246). [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
