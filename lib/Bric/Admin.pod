@@ -982,7 +982,7 @@ F<httpd.conf> file (an example is provided in F<conf/httpd.conf>):
 Bricolage will automatically pass the necessary configuration directives to
 the Apache daemon. As of mod_perl 1.27, Bricolage uses Apache::ReadConfig to
 configure the httpd daemon. There is no httpd include file. If you wish to
-have Bricolage generate and use an httpd include file, or if you with to
+have Bricolage generate and use an httpd include file, or if you wish to
 manually configure your httpd daemon, set the C<MANUAL_APACHE> directive in
 F<conf/bricolage.conf>. This directive will force the startup process to write
 out the Bricolage configuration directives to

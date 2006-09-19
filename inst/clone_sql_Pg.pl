@@ -39,12 +39,22 @@ use DBI;
 our $DB;
 do "./database.db" or die "Failed to read database.db: $!";
 
-# Switch to database system user
-if (my $sys_user = $DB->{system_user}) {
+# Make sure that we don't overwrite the existing Pg.sql.
+chdir 'dist';
+
+# Switch to postgres system user
+if (my $sys_user = $PG->{system_user}) {
     print "Becoming $sys_user...\n";
-    $> = $DB->{system_user_uid};
-    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
-        unless $> == $DB->{system_user_uid};
+
+    # Make sure that the user can write out inst/Pg.sql.
+    my $file = -e 'inst/Pg.sql' ? 'inst/Pg.sql' : 'inst';
+    chown $PG->{system_user_uid}, -1, $file
+        or die "Cannot chown $file to $PG->{system_user_uid} ($sys_user).\n";
+
+    # Become the user.
+    $> = $PG->{system_user_uid};
+    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
+        unless $> == $PG->{system_user_uid};
 }
 
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
@@ -52,7 +62,7 @@ $ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 
 # dump out postgres database
 system(catfile($DB->{bin_dir}, 'pg_dump') .
-       " -U$DB->{root_user} -O -x $DB->{db_name} > inst/Pg.sql");
+       " -U$DB->{root_user} -O -x $DB->{db_name} > Pg.sql");
 
 printf "\n\n==> Finished cloning Bricolage Database <==\n\n";
 

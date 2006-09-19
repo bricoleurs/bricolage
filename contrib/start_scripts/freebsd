@@ -1,0 +1,76 @@
+#! /bin/sh
+#
+# Created by David Wheeler, 2006.
+
+# This is an example of a start/stop script for FreeBSD. Copy this file to
+# /usr/local/etc/rc.d/bricolage. You should these variables:
+
+# Where to find Bricolage.
+BRICOLAGE_ROOT="/usr/local/bricolage"
+
+# Whether to use bric_queued. Set to non-null to make it so.
+USE_BRIC_QUEUED=
+
+# Username and password to use with bric_queued
+DIST_USERNAME=
+DIST_PASSWORD=
+
+# The interval between bric_queued runs.
+DIST_INTERVAL=30
+
+# Various file locations.
+BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
+BRIC_QUEUED="$BRICOLAGE_ROOT/bin/bric_queued"
+DIST_PIDFILE="$BRICOLAGE_ROOT/log/bric_queued.pid"
+DIST_LOG="$BRICOLAGE_ROOT/log/bric_queued.log"
+
+# See how we were called.
+case "$1" in
+  start)
+        echo -n "Starting Bricolage server: "
+        $BRIC_APACHECTL start
+        if [ $USE_BRIC_QUEUED ]; then
+            "$BRIC_QUEUED" --username "$DIST_USERNAME" \
+                --password "$DIST_PASSWORD" \
+                --log "$DIST_LOG" \
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+        fi
+        echo -n ' bricolage'
+        ;;
+  stop)
+        echo -n "Stopping Bricolage server: "
+        $BRIC_APACHECTL stop
+        if [ $USE_BRIC_QUEUED ]; then
+            if [ -f "$DIST_PIDFILE" ]; then
+                kill `cat "$DIST_PIDFILE"`
+            fi
+        fi
+        echo -n ' bricolage'
+        ;;
+  restart)
+        $BRIC_APACHECTL restart
+        if [ $USE_BRIC_QUEUED ]; then
+            if [ -f "$DIST_PIDFILE" ]; then
+                kill `cat "$DIST_PIDFILE"`
+            fi
+            "$BRIC_QUEUED" --username "$DIST_USERNAME" \
+                --password "$DIST_PASSWORD" \
+                --log "$DIST_LOG" \
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+        fi
+        echo -n ' bricolage'
+        ;;
+  single)
+        $BRIC_APACHECTL single
+        echo -n ' bricolage'
+        ;;
+  debug)
+        $BRIC_APACHECTL debug
+        echo -n ' bricolage'
+        ;;
+  *)
+        echo "Usage: `basename $0` { start | stop | restart | single | debug }"
+        exit 1
+esac
+
+exit 0

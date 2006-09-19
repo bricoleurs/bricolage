@@ -41,12 +41,15 @@ print "\n\n==> Cloning Bricolage Database <==\n\n";
 our $DB;
 do "./database.db" or die "Failed to read database.db: $!";
 
+# Make sure that we don't overwrite the existing Pg.sql.
+chdir 'dist';
+
 my $dbclone;
 $dbclone = catfile($DB->{bin_dir}, 'mysqldump');
 $dbclone = " -h $DB->{host_name} " if $DB->{host_name};
 $dbclone = " -P $DB->{host_port} " if $DB->{host_port};
 
 # dump out mysql database
-system($dbclone ." -u $DB->{root_user} -p$DB->{root_pass} -D $DB->{db_name} > inst/mysql.sql");
+system($dbclone ." -u $DB->{root_user} -p$DB->{root_pass} -D $DB->{db_name} > mysql.sql");
 }
 exit 0;

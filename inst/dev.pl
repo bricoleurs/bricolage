@@ -44,6 +44,10 @@ print "\n\n==> Setting Up Development Environment <==\n\n";
 our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
 
+die qq{The developer install is not supportd in "single" installation mode.\n},
+    qq{Please delete config.pm, run `make` again, and select "multi"\n},
+    qq{installation mode.\n\n} if $CONFIG->{set} ne 'm';
+
 # Delete bin/, comp/ and lib/ so we can replace them with SVN versions
 rmtree([$CONFIG->{BIN_DIR},
 		$CONFIG->{MASON_COMP_ROOT},

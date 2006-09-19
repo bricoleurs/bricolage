@@ -132,8 +132,7 @@ sub read_modules {
     while ($data =~ /^\s*(\w+)\.c\s*$/mg) {
         $AP{static_modules}{$1} = 1;
     }
-    hard_fail("Unable to extract static modules from ",
-              "`$REQ->{APACHE_EXE} -V`.")
+    hard_fail("Unable to extract static modules from `$REQ->{APACHE_EXE} -l`.")
         unless exists $AP{static_modules}{http_core};
 
     # set dso flag of mod_so.c is compiled in

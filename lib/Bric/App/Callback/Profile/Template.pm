@@ -237,15 +237,16 @@ sub notes : Callback {
 sub trail : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    
     my $action = $self->params->{$widget.'|trail_cb'};
-    
+
     # Save the metadata we've collected on this request.
     my $fa = get_state_data($widget, 'template');
     my $id = $fa->get_id;
-    
+
     &$save_meta($self->params, $widget, $fa) if $action eq 'edit';
-    
+
+    $save_meta->($self, $widget, $fa) if $action eq 'edit';
+
     # Set a redirection to the code page to be enacted later.
     $self->set_redirect("/workflow/trail/template/$id");
 }

@@ -455,7 +455,10 @@ sub delete : Callback {
                 $a->save;
 
                 if ($key eq 'template') {
+                    # Undeploy from publish burn root
                     $burn->undeploy($a);
+
+                    # Undeploy from user's sandbox
                     my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
                     $sb->undeploy($a);
                 }

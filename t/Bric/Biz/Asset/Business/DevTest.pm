@@ -78,7 +78,7 @@ sub test_atts : Test(9) {
      return "OCs tested only by subclass" if $key eq 'biz';
     ok( my $ba = $self->construct(name => 'Foo'), "Construct $key object" );
     my %args = $self->new_args;
-    like $ba->get_uuid,
+    like uc $ba->get_uuid,
       qr/[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}/,
       "The UUID should be a UUID string";
     is $ba->get_title, 'Foo', "The title should be set";

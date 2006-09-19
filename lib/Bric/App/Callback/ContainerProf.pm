@@ -28,8 +28,8 @@ my $MEDIA_URL  = '/workflow/profile/media';
 my $MEDIA_CONT = '/workflow/profile/media/container';
 
 my $regex = {
-    "\n" => qr/\s*\n\n|\r\r\s*/,
-    '<p>' => qr/\s*<p>\s*/,
+    "\n"   => qr/\s*\n\n|\r\r\s*/,
+    '<p>'  => qr/\s*<p>\s*/,
     '<br>' => qr/\s*<br>\s*/,
 };
 
@@ -364,7 +364,7 @@ sub save_and_up : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    if ($self->params->{$self->class_key . '|delete_element'}) {
+    if ($self->params->{$self->class_key . '|delete'}) {
         $self->_delete_element;
         return;
     }
@@ -387,7 +387,7 @@ sub save_and_stay : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    if ($self->params->{$self->class_key . '|delete_element'}) {
+    if ($self->params->{$self->class_key . '|delete'}) {
         $self->_delete_element;
         return;
     }

@@ -140,6 +140,7 @@ sub put_res {
         next unless $s->is_active;
 
         # Instantiate a Net::SFTP object and login.
+
         (my $hn = $s->get_host_name) =~ s/:\d+$//;
         my $sftp = eval {
             local $^W; # Silence Net::SFTP warnings.

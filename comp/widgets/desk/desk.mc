@@ -189,6 +189,10 @@ my $put_onto_desk = sub {
             $obj->get_name, $desk->get_name);
     return $desk;
 };
+my %desk_sort_for = (
+    cover_date   => 'deploy_date',
+    element_type => 'output_channel',
+);
 </%once>
 <%init>;
 my $pkg   = get_package_name($class);
@@ -217,13 +221,17 @@ set_state_data($widget, $order_key => $sort_by);
 
 #-- Output each desk item  --#
 my $highlight = $sort_by;
-unless ($highlight) {
+if ($highlight) {
+    if ($class eq 'template') {
+        $sort_by = $desk_sort_for{$sort_by} || $sort_by;
+        $highlight = 'name' if $highlight eq 'uri';
+    }
+} else {
     foreach my $f (keys %$meths) {
         # Break out of the loop if we find the searchable field.
         $highlight = $f and last if $meths->{$f}->{search};
     }
 }
-
 # Paging limit
 my $num_displayed = $r->pnotes('num_displayed') || 0;
 my $limit = $show_all ? 0 : get_pref('Search Results / Page');

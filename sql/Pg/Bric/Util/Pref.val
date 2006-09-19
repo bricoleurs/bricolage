@@ -1452,7 +1452,10 @@ INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('13', 'site_id', 'Site');
 
 INSERT INTO pref_opt (pref__id, value, description)
-VALUES ('13', 'element', 'Document Type/Output Channel');
+VALUES ('13', 'element_type', 'Document Type/Output Channel');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('13', 'uri', 'URI/File Name');
 
 -- Character Set
 

@@ -147,6 +147,11 @@ use Bric::Dist::Action::Mover;
 use Bric::Dist::Action::Email;
 use Bric::Dist::Action::DTDValidate;
 
+# Allow templates from before 1.10 to keep working.
+use Bric::Biz::Asset::Business::Parts::Tile::Container;
+use Bric::Biz::Asset::Formatting;
+use Bric::Biz::AssetType;
+
 ##############################################################################
 # Constants.
 ##############################################################################
@@ -224,12 +229,12 @@ sub run_as_daemon {
     # fork off a process for dist jobs
     my $pkg = fork_to_dist();
     login();
-    for (;;) {
+    while (1) {
         for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
-            failed     => 0,
-            executing  => 0,
+            failed     => '0',
+            executing  => '0',
         })) {
             print 'Executing ' . $job->get_name . "\n" if $Verbose;
             eval {
@@ -292,8 +297,8 @@ sub run_single_job {
     my ($job) = $pkg->list({
         sched_time => [undef, strfdate()],
         comp_time  => undef,
-        failed     => 0,
-        executing  => 0,
+        failed     => '0',
+        executing  => '0',
     });
     exit unless $job;
     print 'Executing ' . $job->get_name . "\n" if $Verbose;
@@ -318,9 +323,7 @@ Returns a package name from which we will get jobs to run.
 ##############################################################################
 
 sub fork_to_dist {
-    my $reaper;
-    $reaper = sub { wait; $SIG{CHLD} = $reaper; };
-    $SIG{CHLD} = $reaper;
+    $SIG{CHLD} = sub { wait; $SIG{CHLD} = $reaper; };
     defined ($DistPid = fork) or die "Can't fork: $!\n";
     if ($DistPid) {  # a non-zero pid means we are the parent
         return PUB_PKG;
@@ -418,7 +421,7 @@ delete the pidfile if any
 
 sub del_pid {
     return unless $Pidfile;
-    unlink $Pidfile or die "Cannot unlink PID file $Pidfile."
+    unlink $Pidfile or die "Cannot unlink PID file $Pidfile.\n"
 }
 
 ##############################################################################
@@ -435,17 +438,17 @@ sub daemonize {
     write_pid('');  # tests the writability of Pidfile
     del_pid();      # in case the process dies before forking
     $SIG{TERM} = \&handle_term;
-    chdir '/'                or die "Can't chdir to /: $!";
-    open STDIN, '/dev/null'  or die "Can't read from /dev/null: $!";
-    open STDOUT, ">>$Logfile" or die "Can't write to logfile: $!";
-    defined (my $pid = fork) or die "Can't fork: $!";
+    chdir '/'                 or die "Can't chdir to /: $!\n";
+    open STDIN, '/dev/null'   or die "Can't read from /dev/null: $!\n";
+    open STDOUT, ">>$Logfile" or die "Can't write to logfile: $!\n";
+    defined (my $pid = fork)  or die "Can't fork: $!\n";
     if ($pid) {
-        # only the original process gets the PID of the new running daemon
+        # only the parent process gets the PID of the new running daemon
         write_pid($pid);
         exit;
     }
-    setsid                   or die "Can't start a new session: $!";
-    open STDERR, '>&STDOUT'  or die "Can't dup stdout: $!";
+    setsid                   or die "Can't start a new session: $!\n";
+    open STDERR, '>&STDOUT'  or die "Can't dup stdout: $!\n";
 }
 
 ##############################################################################

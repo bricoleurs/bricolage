@@ -38,6 +38,10 @@ Technologies. [David]
 The left nav menu no longer uses an C<< <iframe> >>. Javascript and cookies
 are used instead, making the left nav faster. [Scott, Marshall, David]
 
+=item *
+
+Updated the Portuguese localizations. [Pedro Custodio]
+
 =back
 
 =head2 Bug Fixes
@@ -48,6 +52,179 @@ are used instead, making the left nav faster. [Scott, Marshall, David]
 
 Moved the templates in F<comp/widgets/wrappers/sharky/> to 
 F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
+
+=back
+
+=head1 VERSION 1.10.3 (2006-09?)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+If C<Term::ReadPassword> isn't found during installation, a better error
+message is displayed. [Scott]
+
+=item *
+
+Added output channel name to "Could not find template" error message in 
+the Mason Burner. [Paul Orrock]
+
+=item *
+
+The contributed Linux start script (F<contrib/start_scripts/linux>) now
+restarts the C<bric_queued> server when the C<restart> command is used and the
+C<bric_queued> server is enabled. It also now also passes a log file name to
+C<bric_queued> so that publishing errors can more easily be traced. [David]
+
+=item *
+
+Overriding Mason inheritance in story element templates by setting C<$inherit>
+in the C<< <%flags> >> block now works correctly. Thanks to Alexey Sheynuk for
+tracking down the issue. Reported by Ashlee Caul. [David]
+
+=item *
+
+Added start script for FreeBSD, F<contrib/start_scripts/freebsd>. [David]
+
+=item *
+
+Updated the Portuguese localizations. [Pedro Custodio]
+
+=item *
+
+A story being published for the first time now has its C<publish_status> set
+to true I<before> it is published, instead of aftewards. This both prevents an
+exception when a template tries to save a story that has not been published
+before, and eliminates the need for templates to set the C<publish_status> on
+a story before calling C<publish_another()> for a another story that will
+search for the current story in the database. Reported by Rod Taylor (Ticket #
+1230). [David]
+
+=item *
+
+Related stories and media can no longer be added to container elements not
+based on related story and/or media element types. Reported by Marshall Roch
+(Ticket # 1231). [David]
+
+=item *
+
+When the C<ALWAYS_USE_SSL> F<bricolage.conf> directive is enabled, Bricolage
+now sets up the non-SSL port to permanently redirect to the SSL port. This
+prevents users from removing the "s" from "https" and thus being able to use
+Bricolage insecurely when their administrators don't want them to. Reported by
+Joe Pletcher (Ticket # 1233). [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed bug that resulted in an SQL error when trying to create a new
+contributor group. Reported by Joe Pletcher. [David]
+
+=item *
+
+Fixed some foreign key constraints in the C<story_instance> and
+C<template_instance> tables that improperly has C<ON DELETE SET NULL> clauses
+on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
+
+=item *
+
+The "Trail" link in the template profile works again. Spotted by Marshall.
+[David]
+
+=item *
+
+If run as root, C<make clone> now C<chown>s the F<inst> directory to the
+PostgreSQL user before becoming the PostgreSQL user, so that the user has
+permission to create the F<inst/Pg.sql> file. [David]
+
+=item *
+
+C<make clone> no longer runs C<distclean>, and therefore no longer deletes
+F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
+directory, instead over replacing th existing F<Pg.sql>. [David]
+
+=item *
+
+Deleting categories via SOAP works again. Reported by Brad Harder. [David]
+
+=item *
+
+Fixed loading of deprecated classes so that older templates that still use
+them will continue to work. [David]
+
+=item *
+
+Removed "Teaser" field from the story search interface, since there is no such
+field, and so it did nothing, anyway. [David]
+
+=item *
+
+Publishing media documents that have had new files uploaded to them no longer
+causes a publish failure. Reported by Christian Niles and numerous others.
+[David]
+
+=item *
+
+Added even I<more> code to the C<inst/upgrade/1.8.9/fix_publish_status.pl>
+upgrade script to better cover the possible variations in publish status
+inaccuracies. [Alex Howarth, David]
+
+=item *
+
+The "Document Type/Output Channel" selection in the "Default Asset Sort" no
+longer breaks things. [David]
+
+=item *
+
+Contributors with no more than the default role, "DEFAULT", who are associated
+with a story or media document, are once again correctly associated via the
+role. Reported by Chris Schults. [David]
+
+=item *
+
+"Checkin and Shelve" works again in the story profile. Reported by Chris
+Heiland (Ticket # 1237). [David]
+
+=item *
+
+Fixed a script that upgrades to 1.9.1 to better copy over default values for
+field types from the 1.8 schema. Those who have already upgraded to check to
+make sure that any default values you had for custom fields in 1.8 are still
+present in 1.10.x. Anyone who has yet to upgrade to 1.10.x will now have their
+default values properly copied to the new schema when they do decide to
+upgrade. Reported by Chris Schults (Ticket # 1239). [David]
+
+=item *
+
+Story and media subelements are once again proparly deleted from within their
+profiles when the "Delete this Profile" checkbox is checked and either the
+"Save" or the "Save and Stay" is pressed. Reported by Chris Schults (Ticket #
+1240). [David]
+
+=item *
+
+Searches for media to relate to a document that search by URI now properly
+remember the search results the next time the related media search page is
+loaded. Reported by Chris Schults (Ticket # 1241). [David]
+
+=item *
+
+`make dev` no longer supports the "single" installation mode, since it has
+will wipe out all of F</usr/local/lib> and F</usr/local/bin>. Reported by
+Christian Muise (Ticket # 1246). [David]
+
+=item *
+
+The search interface for paginated searches no longer gets stuck when the
+alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
+[David]
 
 =back
 

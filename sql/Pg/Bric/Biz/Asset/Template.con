@@ -46,7 +46,7 @@ ALTER TABLE template_instance
 
 ALTER TABLE template_instance
     ADD CONSTRAINT fk_usr__template_instance FOREIGN KEY (usr__id)
-    REFERENCES usr(id) ON DELETE SET NULL;
+    REFERENCES usr(id) ON DELETE RESTRICT;
 
 -- -----------------------------------------------------------------------------
 -- Table: template_member
