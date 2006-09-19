@@ -152,62 +152,235 @@ VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('501','502','1','0', '/book_profile.mc','0',
-        '<!-- Start "Book Profile" -->\015\012<table>\015\012<tr>\015\012<td>Title</td>\015\012<td><% $element->get_value(''title'') %></td>\015\012</tr>\015\012<tr>\015\012<td>Author</td>\015\012<td><% $element->get_value(''author'') %></td>\015\012</tr>\015\012<tr>\015\012<td>Publisher</td>\015\012<td><% $element->get_value(''date'') %></td>\015\012</tr>\015\012</table>\015\012<!-- End "Book Profile" -->\015\012');
+        '<!-- Start "Book Profile" -->
+<table>
+<tr>
+<td>Title</td>
+<td><% $element->get_value(''title'') %></td>
+</tr>
+<tr>
+<td>Author</td>
+<td><% $element->get_value(''author'') %></td>
+</tr>
+<tr>
+<td>Publisher</td>
+<td><% $element->get_value(''date'') %></td>
+</tr>
+</table>
+<!-- End "Book Profile" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('502','503','1','0','/book_review.mc','0',
-        '<!-- Start "Book Review" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Book Review" -->\015\012');
+        '<!-- Start "Book Review" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Book Review" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('503','504','1','0','/column.mc', '0',
-        '<!-- Start "Column" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Column" -->\015\012');
+        '<!-- Start "Column" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Column" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('505','506','1','0','/inset.mc', '0',
-        '\015\012<!-- Start ''Inset'' -->\015\012<table>\015\012<tr><td>\015\012<% $element->get_value(''copy'') %>\015\012</td></tr>\015\012</table>\015\012<!-- End ''Inset'' -->\015\012');
+        '
+<!-- Start ''Inset'' -->
+<table>
+<tr><td>
+<% $element->get_value(''copy'') %>
+</td></tr>
+</table>
+<!-- End ''Inset'' -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('506','507','1','0','/page.mc', '0',
-        '<!-- Start "Page" -->\015\012<%perl>\015\012foreach my $e ($element->get_elements) {\015\012    if ($e->has_name(''paragraph'')) {\015\012        $m->out(''<p>''.$e->get_value.''</p>'');\015\012\015\012    } elsif ($e->has_name(''pull_quote'')) {\015\012        $burner->display_element($e);\015\012\015\012    } elsif ($e->has_name(''inset'')) {\015\012        $burner->display_element($e);\015\012\015\012    }\015\012}\015\012</%perl>\015\012\015\012<hr />\015\012\015\012%# $burner numbers pages from ''0'' not ''1''.\015\012% my $pnum = $burner->get_page + 1;\015\012\015\012%# Show ''previous'' link\015\012% my $prev = $element->get_value(''previous'');\015\012% if ($prev) {\015\012<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">\015\012&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>\015\012<% $prev %>\015\012% }\015\012\015\012&nbsp;&nbsp;&nbsp;\015\012\015\012%# Show ''next'' link\015\012% my $next = $element->get_value(''next'');\015\012% if ($next) {\015\012<% $next %>\015\012<a href="index<% $pnum %>.html">\015\012 : Page <% $pnum + 1 %> &gt;&gt;&gt;\015\012</a>\015\012% }\015\012\015\012<!-- End "Page" -->\015\012');
+        '<!-- Start "Page" -->
+<%perl>
+foreach my $e ($element->get_elements) {
+    if ($e->has_name(''paragraph'')) {
+        $m->out(''<p>''.$e->get_value.''</p>'');
+
+    } elsif ($e->has_name(''pull_quote'')) {
+        $burner->display_element($e);
+
+    } elsif ($e->has_name(''inset'')) {
+        $burner->display_element($e);
+
+    }
+}
+</%perl>
+
+<hr />
+
+%# $burner numbers pages from ''0'' not ''1''.
+% my $pnum = $burner->get_page + 1;
+
+%# Show ''previous'' link
+% my $prev = $element->get_value(''previous'');
+% if ($prev) {
+<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">
+&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>
+<% $prev %>
+% }
+
+&nbsp;&nbsp;&nbsp;
+
+%# Show ''next'' link
+% my $next = $element->get_value(''next'');
+% if ($next) {
+<% $next %>
+<a href="index<% $pnum %>.html">
+ : Page <% $pnum + 1 %> &gt;&gt;&gt;
+</a>
+% }
+
+<!-- End "Page" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('508','509','1','0','/pull_quote.mc', '0',
-        '<!-- Start "Pull Quote" -->\015\012&quot;<% $element->get_value(''quote'') %>&quot;\015\012<!-- End "Pull Quote" -->');
+        '<!-- Start "Pull Quote" -->
+&quot;<% $element->get_value(''quote'') %>&quot;
+<!-- End "Pull Quote" -->');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('509','510','1','0','/related_stories.mc', '0',
-        '<!-- Start "Related Stories" -->\015\012% my @rel = $element->get_elements;\015\012\015\012% if (@rel > 0) {\015\012<table>\015\012\015\012% foreach my $rs (@rel) {\015\012<tr><td>\015\012% $burner->display_element($rs);\015\012</td></tr>\015\012% }\015\012\015\012</table>\015\012% }\015\012<!-- End "Related Stories" -->\015\012');
+        '<!-- Start "Related Stories" -->
+% my @rel = $element->get_elements;
+
+% if (@rel > 0) {
+<table>
+
+% foreach my $rs (@rel) {
+<tr><td>
+% $burner->display_element($rs);
+</td></tr>
+% }
+
+</table>
+% }
+<!-- End "Related Stories" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('510','511','1','0','/related_story.mc', '0',
-        '<!-- Start "Related Story" -->\015\012% my $rel_story = $element->get_related_story;\015\012<b>Title:</b>&nbsp;\015\012<% $element->get_value(''alternate_title'') || $rel_story->get_title %><br />\015\012<b>Teaser:</b>&nbsp;\015\012<% $element->get_value(''alternate_teaser'') ||\015\012$rel_story->get_description %><br />\015\012<!-- End "Related Story" -->\015\012');
+        '<!-- Start "Related Story" -->
+% my $rel_story = $element->get_related_story;
+<b>Title:</b>&nbsp;
+<% $element->get_value(''alternate_title'') || $rel_story->get_title %><br />
+<b>Teaser:</b>&nbsp;
+<% $element->get_value(''alternate_teaser'') ||
+$rel_story->get_description %><br />
+<!-- End "Related Story" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('511','512','1','0','/story.mc', '0',
-        '<!-- Start "Story" -->\015\012\015\012%# Only show this if we are on the first page\015\012% unless ($burner->get_page     ) {\015\012<h1><% $story->get_title %></h1>\015\012<% $element->get_value(''deck'') %>\015\012<hr />\015\012% }\015\012\015\012%# Display all the pages of this story\015\012% $burner->display_pages(''page'');\015\012\015\012<br>\015\012Page <% $burner->get_page + 1 %>\015\012<!-- End "Story" -->\015\012');
+        '<!-- Start "Story" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page     ) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Story" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('512','513','1','0','/autohandler', '0',
-       '<!-- Start "autohandler" -->\015\012<html>\015\012    <head>\015\012        <title><% $story->get_title %></title>\015\012    </head>\015\012    <body>\015\012% $burner->chain_next;\015\012    </body>\015\012</html>\015\012<!-- End "autohandler" -->\015\012');
+       '<!-- Start "autohandler" -->
+<html>
+    <head>
+        <title><% $story->get_title %></title>
+    </head>
+    <body>
+% $burner->chain_next;
+    </body>
+</html>
+<!-- End "autohandler" -->
+');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('513','514','1','0','/related_media.mc', '0',
-        '<!-- Start "Related Media" -->\015\012% my $rel_media = $element->get_related_media;\015\012\015\012%# This template only handles images.\015\012% if (substr($rel_media->get_media_type->get_name, 0, 5) eq ''image'') {\015\012<img src="<% $rel_media->get_uri %>">\015\012% }\015\012<!-- End "Related Media" -->');
+        '<!-- Start "Related Media" -->
+% my $rel_media = $element->get_related_media;
+
+%# This template only handles images.
+% if (substr($rel_media->get_media_type->get_name, 0, 5) eq ''image'') {
+<img src="<% $rel_media->get_uri %>">
+% }
+<!-- End "Related Media" -->');
 
 INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
                                  checked_out, data)
 VALUES ('514','515','1','0','/cover.mc', '0',
-        '<!-- Start "Cover" -->\015\012%# Lets make this a 3 column cover.\015\012% my @elem = $element->get_elements;\015\012%# Find the elements per column\015\012% my $per_col = int((scalar @elem)/3)+1;\015\012\015\012<table>\015\012<tr>\015\012<%perl>\015\012# Lay these elements out over three columns.\015\012while (scalar @elem) {\015\012    foreach (1..$per_col) {\015\012        my $e = shift @elem || last;\015\012        $burner->display_element($e);\015\012        $m->out(''<br />'');\015\012    }\015\012}\015\012</%perl>\015\012</tr>\015\012</table>\015\012<!-- End "Cover" -->\015\012');
+        '<!-- Start "Cover" -->
+%# Lets make this a 3 column cover.
+% my @elem = $element->get_elements;
+%# Find the elements per column
+% my $per_col = int((scalar @elem)/3)+1;
+
+<table>
+<tr>
+<%perl>
+# Lay these elements out over three columns.
+while (scalar @elem) {
+    foreach (1..$per_col) {
+        my $e = shift @elem || last;
+        $burner->display_element($e);
+        $m->out(''<br />'');
+    }
+}
+</%perl>
+</tr>
+</table>
+<!-- End "Cover" -->
+');
 
 
 --
