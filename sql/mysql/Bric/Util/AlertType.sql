@@ -74,3 +74,10 @@ CREATE INDEX fkx_contact__at_usr__contact  ON alert_type__usr__contact(contact__
 CREATE INDEX fkx_usr__at_usr__contact ON alert_type__usr__contact(usr__id);
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE alert_type AUTO_INCREMENT 1024;

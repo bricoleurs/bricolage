@@ -55,3 +55,11 @@ CREATE INDEX fkx_desk__desk_member ON desk_member(object_id);
 CREATE INDEX fkx_member__desk_member ON desk_member(member__id);
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE desk AUTO_INCREMENT 1024;
+ALTER TABLE desk_member AUTO_INCREMENT 1024;

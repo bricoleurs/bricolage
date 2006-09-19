@@ -27,3 +27,10 @@ CREATE INDEX fkx_source__source_member ON source_member(object_id);
 CREATE INDEX fkx_member__source_member ON source_member(member__id);
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE source_member AUTO_INCREMENT 1024;

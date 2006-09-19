@@ -46,3 +46,10 @@ CREATE UNIQUE INDEX udx_site__name ON site(name(254));
 CREATE UNIQUE INDEX udx_site__domain_name ON site(domain_name(254));
 CREATE INDEX fkx_site__site_member ON site_member(object_id);
 CREATE INDEX fkx_member__site_member ON site_member(member__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE site_member AUTO_INCREMENT 1024;

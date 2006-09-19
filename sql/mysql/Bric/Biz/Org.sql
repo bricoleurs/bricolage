@@ -28,3 +28,10 @@ CREATE TABLE org (
 -- INDEXES.
 --
 CREATE INDEX idx_org__name ON org (name(64));
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE org AUTO_INCREMENT 1024;

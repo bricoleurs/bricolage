@@ -211,3 +211,17 @@ CREATE INDEX fkx_attr_et__attr_et_meta ON attr_element_type_meta(attr__id);
 CREATE INDEX fkx_et__et__site__element_type__id ON element_type__site(element_type__id);
 CREATE INDEX fkx_site__et__site__site__id ON element_type__site(site__id);
 CREATE INDEX fkx_output_channel__et__site ON element_type__site(primary_oc__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE element_type AUTO_INCREMENT 1024;
+--ALTER TABLE subelement_type AUTO_INCREMENT 1024;
+ALTER TABLE element_type__site AUTO_INCREMENT 1024;
+ALTER TABLE element_type__output_channel AUTO_INCREMENT 1024;
+ALTER TABLE element_type_member AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type_meta AUTO_INCREMENT 1024;

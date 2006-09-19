@@ -157,3 +157,10 @@ CREATE TABLE usr_priv__grp_member(
 */
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp_priv AUTO_INCREMENT 1024;

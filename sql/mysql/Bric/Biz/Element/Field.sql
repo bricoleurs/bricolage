@@ -73,3 +73,11 @@ CREATE INDEX fkx_story_field__story_field ON story_field(parent_id);
 CREATE INDEX fkx_media_instance__media_field ON media_field(object_instance_id);
 CREATE INDEX fkx_field_type__media_field ON media_field(field_type__id);
 CREATE INDEX fkx_media_field__media_field ON media_field(parent_id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story_field AUTO_INCREMENT 1024;
+ALTER TABLE media_field AUTO_INCREMENT 1024;

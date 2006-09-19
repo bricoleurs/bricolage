@@ -59,3 +59,11 @@ CREATE INDEX fkx_contact__contact_value on contact_value(contact__id);
 
 CREATE INDEX fkx_person__p_c_val ON person__contact_value(person__id);
 CREATE INDEX fkx_contact_value__p_c_val ON person__contact_value(contact_value__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE contact AUTO_INCREMENT 1024;
+ALTER TABLE contact_value AUTO_INCREMENT 1024;

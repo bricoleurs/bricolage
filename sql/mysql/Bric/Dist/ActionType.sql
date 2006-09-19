@@ -44,3 +44,10 @@ CREATE INDEX fkx_action_type__at_mt ON action_type__media_type(action_type__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE action_type AUTO_INCREMENT 1024;

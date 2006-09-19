@@ -149,3 +149,14 @@ CREATE INDEX idx_attr_cat_meta__name ON attr_category_meta(name);
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_cat__attr_cat_meta ON attr_category_meta(attr__id);
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE category AUTO_INCREMENT 1024;
+ALTER TABLE category_member AUTO_INCREMENT 1024;
+ALTER TABLE attr_category AUTO_INCREMENT 1024;
+ALTER TABLE attr_category_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_category_meta AUTO_INCREMENT 1024;

@@ -76,3 +76,12 @@ CREATE INDEX fkx_addr__addr_part ON addr_part(addr__id);
 CREATE INDEX fkx_addr_part_type__addr_part ON addr_part(addr_part_type__id);
 CREATE INDEX fkx_addr__person_org_addr ON person_org__addr(addr__id);
 CREATE INDEX fk_person_org__pers_org_addr ON person_org__addr(person_org__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE addr AUTO_INCREMENT 1024;
+ALTER TABLE addr_part_type AUTO_INCREMENT 1024;
+ALTER TABLE addr_part AUTO_INCREMENT 1024;

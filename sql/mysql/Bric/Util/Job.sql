@@ -93,3 +93,11 @@ CREATE INDEX fkx_srvr_type__job__srvr_type ON job__server_type(server_type__id);
 CREATE INDEX fkx_job__job_member ON job_member(object_id);
 CREATE INDEX fkx_member__job_member ON job_member(member__id);
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE job AUTO_INCREMENT 1024;
+ALTER TABLE job_member AUTO_INCREMENT 1024;

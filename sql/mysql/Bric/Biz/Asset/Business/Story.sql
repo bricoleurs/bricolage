@@ -177,3 +177,14 @@ CREATE INDEX fkx_member__story__contributor ON story__contributor(member__id);
 
 CREATE INDEX fkx_story__desk__id ON story(desk__id);
 CREATE INDEX fkx_story__workflow__id ON story(workflow__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story AUTO_INCREMENT 1024;
+ALTER TABLE story_instance AUTO_INCREMENT 1024;
+ALTER TABLE story_uri AUTO_INCREMENT 1024;
+ALTER TABLE story__category AUTO_INCREMENT 1024;
+ALTER TABLE story__contributor AUTO_INCREMENT 1024;

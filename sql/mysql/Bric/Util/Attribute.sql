@@ -102,6 +102,13 @@ CREATE INDEX idx_attr_person_meta__name ON attr_person_meta(name(254));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_person__attr_person_meta ON attr_person_meta(attr__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE attr_person AUTO_INCREMENT 1024;
+ALTER TABLE attr_person_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_person_meta AUTO_INCREMENT 1024;
+
 */
-
-

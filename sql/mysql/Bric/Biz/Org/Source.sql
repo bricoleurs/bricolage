@@ -34,3 +34,10 @@ CREATE INDEX fkx_source__org on source(org__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE source AUTO_INCREMENT 1024;

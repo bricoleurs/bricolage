@@ -69,3 +69,11 @@ CREATE INDEX fkx_media__media_element ON media_element(object_instance_id);
 CREATE INDEX fkx_media_element__related_story ON media_element(related_story__id);
 CREATE INDEX fkx_media_element__related_media ON media_element(related_media__id);
 CREATE INDEX fkx_media_element__element_type ON media_element(element_type__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story_element AUTO_INCREMENT 1024;
+ALTER TABLE media_element AUTO_INCREMENT 1024;

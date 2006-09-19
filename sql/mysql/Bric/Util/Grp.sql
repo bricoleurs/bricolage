@@ -37,3 +37,10 @@ CREATE INDEX fkx_class__grp ON grp(class__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp AUTO_INCREMENT 1024;

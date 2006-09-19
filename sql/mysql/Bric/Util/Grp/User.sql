@@ -27,3 +27,10 @@ CREATE INDEX fkx_member__user_member ON user_member(member__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE user_member AUTO_INCREMENT 1024;

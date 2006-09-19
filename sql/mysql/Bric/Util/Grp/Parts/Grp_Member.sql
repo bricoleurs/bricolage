@@ -46,3 +46,10 @@ CREATE INDEX fkx_member__grp_member ON grp_member(member__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp_member AUTO_INCREMENT 1024;

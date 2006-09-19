@@ -51,3 +51,11 @@ CREATE INDEX idx_person__mname ON person(mname(64));
 
 CREATE INDEX fkx_person__person_member ON person_member(object_id);
 CREATE INDEX fkx_member__person_member ON person_member(member__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE person AUTO_INCREMENT 1024;
+ALTER TABLE person_member AUTO_INCREMENT 1024;

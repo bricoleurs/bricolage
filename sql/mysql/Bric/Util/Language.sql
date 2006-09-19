@@ -26,6 +26,11 @@ CREATE TABLE language (
 
 CREATE UNIQUE INDEX udx_language__name ON language(name(64));
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE language AUTO_INCREMENT 1024;
+
 */
-
-

@@ -98,3 +98,11 @@ CREATE INDEX fkx_media__media_keyword ON media_keyword(media_id);
 
 CREATE INDEX fkx_keyword__category_keyword ON category_keyword(keyword_id);
 CREATE INDEX fkx_category__category_keyword ON category_keyword(category_id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE keyword AUTO_INCREMENT 1024;
+ALTER TABLE keyword_member AUTO_INCREMENT 1024;

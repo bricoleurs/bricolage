@@ -37,7 +37,7 @@ mod_alias. For SSL also install mod_ssl or apache-ssl.
 
 =item 3
 
-Install PostgreSQL 7.3 or greater. Be sure to use UNICODE for data encoding.
+Install PostgreSQL 7.3 or greater or MySQL 5.0.3 or greater.
 
 =item 4
 
@@ -259,7 +259,7 @@ mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 
-PostgreSQL 7.3.0
+PostgreSQL 7.3.0 or MySQL 5.0.3
 
 =item *
 

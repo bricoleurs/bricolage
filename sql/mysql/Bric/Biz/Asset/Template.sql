@@ -102,3 +102,12 @@ CREATE INDEX idx_template_instance__note ON template_instance(note(254)) ;
 -- template_member.
 CREATE INDEX fkx_template__template_member ON template_member(object_id);
 CREATE INDEX fkx_member__template_member ON template_member(member__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE template AUTO_INCREMENT 1024;
+ALTER TABLE template_instance AUTO_INCREMENT 1024;
+ALTER TABLE template_member AUTO_INCREMENT 1024;

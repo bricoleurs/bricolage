@@ -51,5 +51,10 @@ CREATE INDEX fkx_event_type__event_type_attr ON event_type_attr(event_type__id);
 
 CREATE INDEX fkx_class__event_type ON event_type(class__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE event_type AUTO_INCREMENT 1024;
+ALTER TABLE event_type_attr AUTO_INCREMENT 1024;

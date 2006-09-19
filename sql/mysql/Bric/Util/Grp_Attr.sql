@@ -98,3 +98,12 @@ CREATE INDEX idx_attr_grp_meta__name ON attr_grp_meta(name(254));
 CREATE INDEX fkx_attr_grp__attr_grp_meta ON attr_grp_meta(attr__id);
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE attr_grp AUTO_INCREMENT 1024;
+ALTER TABLE attr_grp_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_grp_meta AUTO_INCREMENT 1024;

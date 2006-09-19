@@ -14,7 +14,7 @@ sub test_fetch_objects: Test(4) {
     eval {
     my $sth = prepare(q{
         INSERT INTO story (
-            site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id, primary_uri,published_version 
+            site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id, primary_uri,published_version
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
@@ -46,7 +46,7 @@ sub test_fetch_objects: Test(4) {
                  FROM story
                  GROUP BY site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id
                  ORDER BY site__id, workflow__id ASC ';
-    my $sqltemp=$sql;                 
+    my $sqltemp=$sql;
     my $fields = [ qw( site__id uuid source__id desk__id element_type__id current_version workflow__id alias_id ) ];
     my $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 2, undef, undef , undef);
 #    print ('//'.$stories->[0]{priority}.'//');
@@ -186,7 +186,7 @@ sub test_fetch_objects: Test(4) {
                       workflow__id   => 0,
                       alias_id    => [ ],
                       _dirty  => 0,
-                    }, 'Bric::Biz::Asset' ),    
+                    }, 'Bric::Biz::Asset' ),
            ];
     is_deeply($stories, $expect, 'can use limit and offset together to return middle 2 objects');
     };

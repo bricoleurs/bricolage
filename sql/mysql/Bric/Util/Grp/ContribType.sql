@@ -25,3 +25,10 @@ CREATE INDEX fkx_contrib_type__ctype_member ON contrib_type_member(object_id);
 CREATE INDEX fkx_member__ctype_member ON contrib_type_member(member__id);
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE contrib_type_member AUTO_INCREMENT 1024;

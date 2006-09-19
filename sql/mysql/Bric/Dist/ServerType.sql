@@ -70,3 +70,10 @@ CREATE INDEX fkx_member__dest_member ON dest_member(member__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE dest_member AUTO_INCREMENT 1024;

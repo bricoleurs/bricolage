@@ -103,3 +103,13 @@ CREATE INDEX fkx_attr_action__attr_action_meta ON attr_action_meta(attr__id);
 
 
 
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_meta AUTO_INCREMENT 1024;
