@@ -181,13 +181,13 @@ sub save {
 
     # Save the existing objects.
     foreach my $oce (values %$objs) {
-	$oce->save;
+        $oce->save;
     }
 
     # Save the new objects.
     foreach my $oce (@$new_objs) {
         $oce->set_element_id($id);
-	$oce->save;
+        $oce->save;
     }
 
     # Add the new objects to the main list of objects.

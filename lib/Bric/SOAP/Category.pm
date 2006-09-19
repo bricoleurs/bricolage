@@ -342,7 +342,7 @@ sub delete {
                 if DEBUG;
 
         # lookup category
-        my $category = Bric::Biz::Category->lookup({ id => $category_id, site_id => $args->{site_id} });
+        my $category = Bric::Biz::Category->lookup({ id => $category_id });
         throw_ap(error => __PACKAGE__
                    . "::delete : no category found for id \"$category_id\"")
           unless $category;
@@ -503,7 +503,6 @@ sub load_asset {
                 $category->set_directory('');
             } else {
                 # get directory and parent
-
                 my ($parent_path, $directory) = $path =~ m!(.*/)([^/]+)\/?$!;
                 $parent_path = '' unless defined $parent_path;
                 (my $esc_parent_path = $parent_path) =~ s/([_%\\])/\\$1/g;

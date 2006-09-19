@@ -26,11 +26,11 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-This module is a simple Apache/mod_perl handler for executing Bricolage distribution
-jobs. It responds to a request with the headers "execute" and/or "expire", where
-the values are a comma-separated list of Bric::Util::Job IDs. Bric::Dist::Handler
-will instantiate and execute and/or expire each of those jobs in turn. See
-Bric::Dist::Client for an interface to send those headers.
+This module is a simple Apache/mod_perl handler for executing Bricolage
+distribution jobs. It responds to a request with the headers "execute" and/or
+"expire", where the values are a comma-separated list of Bric::Util::Job IDs.
+Bric::Dist::Handler will instantiate and execute and/or expire each of those
+jobs in turn. See Bric::Dist::Client for an interface to send those headers.
 
 =cut
 
@@ -152,7 +152,7 @@ sub handler {
         # Set up the language object and handle the request.
         Bric::Util::Language->get_handle(get_pref('Language'));
 
-	# Execute all the jobs.
+        # Execute all the jobs.
         for my $job (Bric::Util::Job->list({
             sched_time  => [undef, strfdate()],
             comp_time   => undef,
@@ -174,8 +174,8 @@ sub handler {
 
 =item my $bool = log_err($r, $err, $msg)
 
-Logs an error to the Apache error log. Will handle both standard error messages
-as well as Bric::Util::Fault objects.
+Logs an error to the Apache error log. Will handle both standard error
+messages as well as Bric::Util::Fault objects.
 
 B<Throws:> NONE.
 

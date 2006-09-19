@@ -30,8 +30,7 @@ my $context = "Workflow | Profile | $mdisp | $disp |";
 </%args>
 <%init>;
 </%init>
-
-<& /widgets/wrappers/header.mc, 
+<& /widgets/wrappers/header.mc,
     title => "Select Related $mdisp",
     context => $context . get_state_data('container_prof', 'crumb') .
                    " | Related $mdisp"

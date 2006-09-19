@@ -152,6 +152,9 @@ sub checkin : Callback(priority => 6) {
         log_event("story_rem_workflow", $story);
         add_msg('Story "[_1]" saved and shelved.',
                 '<span class="l10n">' . $story->get_title . '</span>');
+        # Clear the state out and set redirect.
+        $self->clear_my_state;
+        $self->set_redirect('/');
     } elsif ($desk_id eq 'publish') {
         # Publish the story and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -527,13 +530,13 @@ sub add_category : Callback {
     chk_authz($story, EDIT);
     my $cat_id = $self->params->{"$widget|new_category_id"};
     if (defined $cat_id) {
-        $story->add_categories([ $cat_id ]);
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        $story->add_categories([ $cat ]);
         eval { $story->save; };
         if (my $err = $@) {
-            $story->delete_categories([ $cat_id ]);
+            $story->delete_categories([ $cat ]);
             die $err;
         }
-        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         log_event('story_add_category', $story, { Category => $cat->get_name });
         add_msg('Category "[_1]" added.',
                 '<span class="l10n">' . $cat->get_name . '</span>');

@@ -1810,12 +1810,16 @@ $get_em = sub {
             $extra_wheres = "AND p.id = c2.object_id AND " .
               "m2.active = '1' AND c2.member__id = m2.id";
             push @wheres, any_where $v, "m2.grp__id = ?", \@params;
+        } elsif ($k eq 'active') {
+            push @wheres, 'p.active = ?';
+            push @params, $v ? '1' : '0';
         } else {
             push @wheres, any_where $v, "LOWER(p.$k) LIKE LOWER(?)", \@params;
         }
     }
 
-    my $where = defined $params->{id} ? '' : "p.active = '1'";
+    my $where = defined $params->{id} ? '' : "p.active = '1'"
+        unless exists $params->{active};
     $where .= ($where ? ' AND ' : '') . join(' AND ', @wheres) if @wheres;
 
     local $" = ', ';

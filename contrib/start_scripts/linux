@@ -8,14 +8,24 @@
 # This is an example of a start/stop script for SysV-style init, such as is
 # used on Linux systems. You should these variables:
 
+# Where to find Bricolage.
 BRICOLAGE_ROOT="/usr/local/bricolage"
-BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
-USE_BRIC_QUEUED=0
+
+# Whether to use bric_queued. Set to non-null to make it so.
+USE_BRIC_QUEUED=
+
+# Username and password to use with bric_queued
 DIST_USERNAME=
 DIST_PASSWORD=
+
+# The interval between bric_queued runs.
 DIST_INTERVAL=30
-BRIC_QUEUED=$BRICOLAGE_ROOT/bin/bric_queued
-DIST_PIDFILE=$BRICOLAGE_ROOT/log/bric_queued.pid
+
+# Various file locations.
+BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
+BRIC_QUEUED="$BRICOLAGE_ROOT/bin/bric_queued"
+DIST_PIDFILE="$BRICOLAGE_ROOT/log/bric_queued.pid"
+DIST_LOG="$BRICOLAGE_ROOT/log/bric_queued.log"
 
 # Then just copy it to your start scripts directory (usually /etc/init.d) and
 # add it to the startup process:
@@ -45,6 +55,7 @@ if [ $USE_BRIC_QUEUED ]; then
         start)
             "$BRIC_QUEUED" --username "$DIST_USERNAME" \
                 --password "$DIST_PASSWORD" \
+                --log "$DIST_LOG" \
                 --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
             echo bric_queued: started
             ;;
@@ -53,6 +64,16 @@ if [ $USE_BRIC_QUEUED ]; then
                 kill `cat "$DIST_PIDFILE"`
                 echo bric_queued: stopped
             fi
+            ;;
+        restart)
+            if [ -f "$DIST_PIDFILE" ]; then
+                kill `cat "$DIST_PIDFILE"`
+            fi
+            "$BRIC_QUEUED" --username "$DIST_USERNAME" \
+                --password "$DIST_PASSWORD" \
+                --log "$DIST_LOG" \
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+            echo bric_queued: restarted
             ;;
     esac;
 fi

@@ -17,7 +17,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
         '1', '1', '11',
         '1', '/book_profile.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21-07', NULL,
+        '1', '1', '2001-07-30 13:34:21', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -28,7 +28,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
         '1', '1', '3',
         '1', '/book_review.mc', '1', '0', '0',
-        '1', '1','2001-07-30 13:34:22-07',NULL,
+        '1', '1','2001-07-30 13:34:22',NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -39,7 +39,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('504', 'Column', 'A default column', '3', NULL,
         '1', '1', '2',
         '1', '/column.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22-07', NULL,
+        '1', '1', '2001-07-30 13:34:22', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -50,7 +50,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
         '1', '1', '6',
         '1', '/inset.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:23-07', NULL,
+        '1', '1', '2001-07-30 13:34:23', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -61,7 +61,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ( '507', 'Page', 'A generic page', '3', NULL,
        '1', '1', '10',
        '1', '/page.mc', '1', '0', '0',
-       '1', '1', '2001-07-30 13:34:20-07', NULL,
+       '1', '1', '2001-07-30 13:34:20', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -72,7 +72,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
        '1', '1', '7',
        '1', '/pull_quote.mc', '1', '0', '0',
-       '1', '1', '2001-07-30 13:34:20-07', NULL,
+       '1', '1', '2001-07-30 13:34:20', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -83,7 +83,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NULL,
         '1', '1', '8',
         '1', '/related_stories.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21-07', NULL,
+        '1', '1', '2001-07-30 13:34:21', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -94,7 +94,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
         '1', '1', '9',
         '1', '/related_story.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21-07', NULL,
+        '1', '1', '2001-07-30 13:34:21', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -105,7 +105,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('512', 'Story', 'A generic story template', '3', NULL,
         '1', '1', '1',
         '1', '/story.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22-07', NULL,
+        '1', '1', '2001-07-30 13:34:22', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -116,7 +116,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('513', 'autohandler', 'A generic root level category template', '3', NULL,
         '1', '2', NULL,
         '1', '/autohandler', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22-07', NULL,
+        '1', '1', '2001-07-30 13:34:22', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -127,7 +127,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
         '1', '1', '12',
         '1', '/related_media.mc', '1', '0', '0',
-        '1', '1', '2001-08-01 14:51:34-07', NULL,
+        '1', '1', '2001-08-01 14:51:34', NULL,
         '1', '100');
 
 INSERT INTO template (id, name, description, priority, usr__id,
@@ -138,7 +138,7 @@ INSERT INTO template (id, name, description, priority, usr__id,
 VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
         '1', '1', '13',
         '1', '/cover.mc', '1', '0', '0',
-        '1', '1', '2001-08-01 14:51:34-07', NULL,
+        '1', '1', '2001-08-01 14:51:34', NULL,
         '1', '100');
 
 --

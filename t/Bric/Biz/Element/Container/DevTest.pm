@@ -71,7 +71,7 @@ sub test_new : Test(11) {
 
 ##############################################################################
 # Test lookup.
-sub test_lookup : Test(36) {
+sub test_lookup : Test(39) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -107,6 +107,11 @@ sub test_lookup : Test(36) {
         id          => $elem_id,
     }), 'Look up by ID';
     is $elem->get_id, $elem_id, 'It should have the same id';
+
+    # Now check some attributes from its element type.
+    is $elem->get_key_name, '_testing_', 'Its key_name should be "_testing_"';
+    ok $elem->can_relate_story, 'It can relate to a story';
+    ok $elem->can_relate_media, 'It can relate to a media';
 }
 
 ##############################################################################

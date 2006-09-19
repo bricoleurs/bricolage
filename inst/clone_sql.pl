@@ -27,7 +27,6 @@ L<Bric::Admin>
 
 =cut
 
-
 use strict;
 use FindBin;
 use lib "$FindBin::Bin/lib";
@@ -41,9 +40,19 @@ print "\n\n==> Cloning Bricolage Database <==\n\n";
 our $PG;
 do "./postgres.db" or die "Failed to read postgres.db: $!";
 
+# Make sure that we don't overwrite the existing Pg.sql.
+chdir 'dist';
+
 # Switch to postgres system user
 if (my $sys_user = $PG->{system_user}) {
     print "Becoming $sys_user...\n";
+
+    # Make sure that the user can write out inst/Pg.sql.
+    my $file = -e 'inst/Pg.sql' ? 'inst/Pg.sql' : 'inst';
+    chown $PG->{system_user_uid}, -1, $file
+        or die "Cannot chown $file to $PG->{system_user_uid} ($sys_user).\n";
+
+    # Become the user.
     $> = $PG->{system_user_uid};
     die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
         unless $> == $PG->{system_user_uid};
