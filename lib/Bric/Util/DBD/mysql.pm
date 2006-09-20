@@ -104,7 +104,7 @@ sub next_key_sql {
 ##############################################################################
 sub group_concat_sql {
     my $col = shift;
-    return "COALESCE(group_concat(CASE WHEN $col <> 0 THEN $col END SEPARATOR ' '))";
+    return "COALESCE(group_concat(DISTINCT CASE WHEN $col <> 0 THEN $col END SEPARATOR ' '))";
 } # group_concat_sql()
 
 ##############################################################################

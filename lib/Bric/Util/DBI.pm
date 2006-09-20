@@ -744,7 +744,9 @@ sub fetch_objects {
     while (fetch($select)) {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
-        $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
+        $grp_ids = $d[-$grp_col_cnt] = [
+            map { split } grep { defined } @d[-$grp_col_cnt..-1]
+        ];
         $obj->_set($fields, \@d);
         $obj->_set__dirty(0);
         # Cache the object before reblessing it.

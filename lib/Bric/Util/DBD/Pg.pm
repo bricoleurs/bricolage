@@ -116,7 +116,7 @@ sub next_key_sql {
 
 ##############################################################################
 sub group_concat_sql {
-    return 'group_concat(' . shift . ')';
+    return 'group_concat( DISTINCT ' . shift . ' )';
 } # group_concat_sql()
 
 ##############################################################################
