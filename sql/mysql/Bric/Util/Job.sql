@@ -19,7 +19,7 @@ CREATE TABLE job (
     priority           INT2              NOT NULL 
                                          DEFAULT 3
                                            CHECK (priority BETWEEN 1 AND 5),
-    comp_time          TIMESTAMP,
+    comp_time          TIMESTAMP         NULL DEFAULT NULL,
     expire             BOOLEAN           NOT NULL DEFAULT FALSE,
     failed             BOOLEAN           NOT NULL DEFAULT FALSE,
     tries              INT2              NOT NULL DEFAULT 0

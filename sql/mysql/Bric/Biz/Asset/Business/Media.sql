@@ -15,24 +15,24 @@
 --
 
 CREATE TABLE media (
-    id                INTEGER   NOT NULL AUTO_INCREMENT,
+    id                INTEGER    NOT NULL AUTO_INCREMENT,
     uuid              TEXT            NOT NULL,
-    element_type__id  INTEGER   NOT NULL,
-    priority          INT2      NOT NULL
+    element_type__id  INTEGER    NOT NULL,
+    priority          INT2       NOT NULL
                                       DEFAULT 3
                                         CHECK (priority BETWEEN 1 AND 5),
-    source__id        INTEGER   NOT NULL,
+    source__id        INTEGER    NOT NULL,
     current_version   INTEGER,
     published_version INTEGER,
     usr__id           INTEGER,
-    first_publish_date TIMESTAMP,
-    publish_date      TIMESTAMP,
-    expire_date       TIMESTAMP,
-    workflow__id      INTEGER   NOT NULL,
-    desk__id          INTEGER   NOT NULL,
+    first_publish_date TIMESTAMP NULL DEFAULT NULL,
+    publish_date      TIMESTAMP  NULL DEFAULT NULL,
+    expire_date       TIMESTAMP  NULL DEFAULT NULL,
+    workflow__id      INTEGER    NOT NULL,
+    desk__id          INTEGER    NOT NULL,
     publish_status    BOOLEAN    NOT NULL DEFAULT FALSE,
     active            BOOLEAN    NOT NULL DEFAULT TRUE,
-    site__id          INTEGER   NOT NULL,
+    site__id          INTEGER    NOT NULL,
     alias_id          INTEGER   
                                         CHECK (alias_id != id),  
     CONSTRAINT pk_media__id PRIMARY KEY (id)
@@ -61,7 +61,7 @@ CREATE TABLE media_instance (
     file_name           VARCHAR(256),
     location            VARCHAR(256),
     uri                 VARCHAR(256),
-    cover_date          TIMESTAMP,
+    cover_date          TIMESTAMP NULL DEFAULT NULL,
     note                TEXT,
     checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)

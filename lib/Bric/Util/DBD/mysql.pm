@@ -71,12 +71,6 @@ use constant DSN_STRING => 'database=' . DB_NAME
 # This is to set up driver-specific database handle attributes.
 use constant DBH_ATTR => ( );
 
-# This is to set the group_concat separator
-use constant GROUP_SEP => " SEPARATOR ' ' ";
-use constant MGROUP_SEP => " CASE WHEN m.grp__id<>0 THEN m.grp__id END SEPARATOR ' ' ";
-use constant CGROUP_SEP => " CASE WHEN c.asset_grp_id<>0 THEN c.asset_grp_id END SEPARATOR ' ' ";
-use constant WGROUP_SEP => " CASE WHEN w.asset_grp_id<>0 THEN w.asset_grp_id END SEPARATOR ' ' ";
-
 # This is the maximum for LIMIT rowcount in MySQL
 use constant LIMIT_DEFAULT => " 18446744073709551615 ";
 
@@ -84,9 +78,8 @@ use constant LIMIT_DEFAULT => " 18446744073709551615 ";
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
-our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING 
-		    db_datetime DBH_ATTR TRANSACTIONAL GROUP_SEP MGROUP_SEP
-		    CGROUP_SEP WGROUP_SEP LIMIT_DEFAULT);
+our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
+		    db_datetime DBH_ATTR TRANSACTIONAL group_concat_sql LIMIT_DEFAULT);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
@@ -107,6 +100,12 @@ sub next_key_sql {
 #    my ($table_name, $db_name) = @_;
     return 'NULL';
 } # next_key()
+
+##############################################################################
+sub group_concat_sql {
+    my $col = shift;
+    return "COALESCE(group_concat(CASE WHEN $col <> 0 THEN $col END SEPARATOR ' '))";
+} # group_concat_sql()
 
 ##############################################################################
 

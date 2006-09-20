@@ -10,11 +10,15 @@
 -- TABLE: alerted 
 --
 
-CREATE TABLE alerted(
+-- Note: The "NULL" specification for timestamp fields is Required to prevent
+-- MySQL from helpfully adding "DEFAULT CURRENT_TIMESTAMP" or "DEFAULT
+-- '0000-00-00 00:00:00'".
+
+CREATE TABLE alerted (
     id           INTEGER           NOT NULL AUTO_INCREMENT,
     usr__id      INTEGER           NOT NULL,
     alert__id    INTEGER           NOT NULL,
-    ack_time     TIMESTAMP,
+    ack_time     TIMESTAMP         NULL DEFAULT NULL,
     CONSTRAINT pk_alerted__id PRIMARY KEY (id)
 )
     ENGINE       InnoDB
@@ -29,7 +33,7 @@ CREATE TABLE alerted__contact_value(
     alerted__id	            INTEGER         NOT NULL,
     contact__id             INTEGER         NOT NULL,
     contact_value__value    VARCHAR(256)    NOT NULL,
-    sent_time               TIMESTAMP,
+    sent_time               TIMESTAMP       NULL DEFAULT NULL,
     CONSTRAINT pk_alerted__contact_value PRIMARY KEY (alerted__id, contact__id, contact_value__value(254))
 )
     ENGINE       InnoDB;

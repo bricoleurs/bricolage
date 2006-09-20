@@ -33,8 +33,8 @@ CREATE TABLE template (
     desk__id            INTEGER        NOT NULL,
     published_version   INTEGER,
     deploy_status       BOOLEAN        NOT NULL DEFAULT FALSE,
-    deploy_date         TIMESTAMP,
-    expire_date         TIMESTAMP,
+    deploy_date         TIMESTAMP      NULL DEFAULT NULL,
+    expire_date         TIMESTAMP      NULL DEFAULT NULL,
     active              BOOLEAN        NOT NULL DEFAULT TRUE,
     site__id            INTEGER        NOT NULL,
     CONSTRAINT pk_template__id PRIMARY KEY (id)

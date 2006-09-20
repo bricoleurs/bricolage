@@ -14,37 +14,40 @@ sub test_fetch_objects: Test(4) {
     eval {
     my $sth = prepare(q{
         INSERT INTO story (
-            site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id, primary_uri,published_version
+            site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id, primary_uri, published_version
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
     });
 
-    for my $row ([100, 1, 1, 0, 1, 1, 0, 1, undef],
-                 [100, 1, 1, 0, 1, 1, 0, undef, 4],
-                 [100, 1, 1, 0, 1, 1, 0, 3, 5],
+    for my $row (
+        [100, 1, 1, 0, 1, 1, 0, 1, undef],
+        [100, 1, 1, 0, 1, 1, 0, undef, 4],
+        [100, 1, 1, 0, 1, 1, 0, 3, 5],
 
-                 [100, 2, 1, 0, 2, 2, 0, 1, 4],
-                 [100, 2, 1, 0, 2, 2, 0, 2, 5],
-                 [100, 2, 1, 0, 2, 2, 0, 3, 6],
+        [100, 2, 1, 0, 2, 2, 0, 1, 4],
+        [100, 2, 1, 0, 2, 2, 0, 2, 5],
+        [100, 2, 1, 0, 2, 2, 0, 3, 6],
 
-                 [100, 3, 1, 0, 3, 3, 0, 3, undef],
-                 [100, 3, 1, 0, 3, 3, 0, 6, 0],
-                 [100, 3, 1, 0, 3, 3, 0, 4, 0],
+        [100, 3, 1, 0, 3, 3, 0, 3, undef],
+        [100, 3, 1, 0, 3, 3, 0, 6, 0],
+        [100, 3, 1, 0, 3, 3, 0, 4, 0],
 
-                 [100, 4, 1, 0, 4, 4, 0, 4, 0],
-                 [100, 4, 1, 0, 4, 4, 0, 0, 8],
-                 [100, 4, 1, 0, 4, 4, 0, 0, 0],
-             ) {
-                     execute($sth, @$row);
+        [100, 4, 1, 0, 4, 4, 0, 4, 0],
+        [100, 4, 1, 0, 4, 4, 0, 0, 8],
+        [100, 4, 1, 0, 4, 4, 0, 0, 0],
+    ) {
+        execute($sth, @$row);
     }
 
     # check that _fetch_objects produces the right objs
-    my $sql = ' SELECT site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id,
-                 group_concat(DISTINCT alias_id '.GROUP_SEP.'),
-                 group_concat(DISTINCT published_version '.GROUP_SEP.')
+    my $sql = ' SELECT site__id, uuid, source__id, desk__id, element_type__id, '
+            . 'current_version, workflow__id, '
+            . group_concat_sql('alias_id') . ', '
+            . group_concat_sql('published_version') . '
                  FROM story
-                 GROUP BY site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id
+                 GROUP BY site__id, uuid, source__id, desk__id,
+                          element_type__id, current_version, workflow__id
                  ORDER BY site__id, workflow__id ASC ';
     my $sqltemp=$sql;
     my $fields = [ qw( site__id uuid source__id desk__id element_type__id current_version workflow__id alias_id ) ];

@@ -130,7 +130,8 @@ my $mem_table = 'member';
 my $map_table = $table . "_$mem_table";
 
 my $sel_cols = 'a.id, a.site__id, a.directory, a.asset_grp_id, a.active, '.
-               'a.uri, a.parent_id, a.name, a.description, group_concat(DISTINCT '.MGROUP_SEP.')';
+               'a.uri, a.parent_id, a.name, a.description, ' .
+               group_concat_sql('m.grp__id');
 my $grp_cols = 'a.id, a.site__id, a.directory, a.asset_grp_id, a.active, '.
                'a.uri, a.parent_id, a.name, a.description';
 my @sel_props = qw(id site_id directory asset_grp_id _active uri parent_id name
