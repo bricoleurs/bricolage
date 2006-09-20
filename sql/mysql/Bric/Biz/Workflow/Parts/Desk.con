@@ -31,3 +31,10 @@ ALTER TABLE    desk_member
 ADD CONSTRAINT fk_member__desk_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE desk AUTO_INCREMENT 1024;
+ALTER TABLE desk_member AUTO_INCREMENT 1024;

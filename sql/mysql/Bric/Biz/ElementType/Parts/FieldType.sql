@@ -128,8 +128,6 @@ CREATE INDEX idx_attr_field_type_meta__name ON attr_field_type_meta(name(254));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_field_type__attr_field_type_meta ON attr_field_type_meta(attr__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

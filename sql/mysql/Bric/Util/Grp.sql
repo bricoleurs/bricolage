@@ -35,9 +35,6 @@ CREATE INDEX idx_grp__description ON grp(description(254));
 CREATE INDEX fkx_grp__grp ON grp(parent_id);
 CREATE INDEX fkx_class__grp ON grp(class__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

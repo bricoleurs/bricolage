@@ -25,3 +25,13 @@ REFERENCES     media_type(id) ON DELETE CASCADE;
 ALTER TABLE    media_type_member
 ADD CONSTRAINT fk_member__media_type_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE media_type AUTO_INCREMENT 1024;
+ALTER TABLE media_type_ext AUTO_INCREMENT 1024;
+ALTER TABLE media_type_member AUTO_INCREMENT 1024;
+

@@ -29,5 +29,9 @@ CREATE INDEX idx_alert_type_rule__attr ON alert_type_rule(attr(64));
 CREATE INDEX idx_alert_type_rule__value ON alert_type_rule(value(254));
 CREATE INDEX fkx_alert_type__at_rule ON alert_type_rule(alert_type__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE alert_type_rule AUTO_INCREMENT 1024;

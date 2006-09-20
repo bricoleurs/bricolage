@@ -68,12 +68,10 @@ CREATE INDEX fk_output_channel__st_oc ON server_type__output_channel(output_chan
 CREATE INDEX fkx_dest__dest_member ON dest_member(object_id);
 CREATE INDEX fkx_member__dest_member ON dest_member(member__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404
 --
 
+ALTER TABLE server_type AUTO_INCREMENT 1024;
 ALTER TABLE dest_member AUTO_INCREMENT 1024;

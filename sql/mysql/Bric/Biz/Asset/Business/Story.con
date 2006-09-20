@@ -128,3 +128,14 @@ CREATE TRIGGER ck_priority_alias_id_update_story BEFORE UPDATE ON story
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story AUTO_INCREMENT 1024;
+ALTER TABLE story_instance AUTO_INCREMENT 1024;
+ALTER TABLE story_uri AUTO_INCREMENT 1024;
+ALTER TABLE story__category AUTO_INCREMENT 1024;
+ALTER TABLE story__contributor AUTO_INCREMENT 1024;

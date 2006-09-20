@@ -17,5 +17,9 @@ ALTER TABLE action_type__media_type ADD CONSTRAINT fk_media_type__at_mt
     FOREIGN KEY (media_type__id)
     REFERENCES media_type(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE action_type AUTO_INCREMENT 1024;

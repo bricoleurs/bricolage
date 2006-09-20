@@ -73,8 +73,6 @@ CREATE INDEX fkx_alert_type__at_user__cont ON alert_type__usr__contact(alert_typ
 CREATE INDEX fkx_contact__at_usr__contact  ON alert_type__usr__contact(contact__id);
 CREATE INDEX fkx_usr__at_usr__contact ON alert_type__usr__contact(usr__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

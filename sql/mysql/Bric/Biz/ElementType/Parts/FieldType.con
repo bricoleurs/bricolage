@@ -35,3 +35,13 @@ ALTER TABLE attr_field_type_val ADD
 ALTER TABLE attr_field_type_meta ADD 
     CONSTRAINT fk_attr_field_type__attr_field_type_meta FOREIGN KEY (attr__id)
     REFERENCES attr_field_type(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE field_type AUTO_INCREMENT 1024;
+ALTER TABLE attr_field_type AUTO_INCREMENT 1024;
+ALTER TABLE attr_field_type_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_field_type_meta AUTO_INCREMENT 1024;

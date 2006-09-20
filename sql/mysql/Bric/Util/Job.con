@@ -101,3 +101,11 @@ CREATE TRIGGER ck_priority_tries_update_job BEFORE UPDATE ON job
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE job AUTO_INCREMENT 1024;
+ALTER TABLE job_member AUTO_INCREMENT 1024;

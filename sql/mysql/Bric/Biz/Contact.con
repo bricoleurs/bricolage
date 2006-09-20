@@ -19,4 +19,10 @@ ALTER TABLE    person__contact_value
 ADD CONSTRAINT fk_contact_value__p_c_val FOREIGN KEY (contact_value__id)
 REFERENCES     contact_value(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE contact AUTO_INCREMENT 1024;
+ALTER TABLE contact_value AUTO_INCREMENT 1024;

@@ -66,4 +66,9 @@ CREATE INDEX fkx_media__media__resource ON media__resource(media__id);
 CREATE INDEX fkx_story__story__resource ON story__resource(story__id);
 CREATE INDEX fkx_resource__story__resource ON story__resource(resource__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE resource AUTO_INCREMENT 1024;

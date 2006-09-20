@@ -26,3 +26,11 @@ ADD CONSTRAINT fk_person_org__pers_org_addr FOREIGN KEY (person_org__id)
 REFERENCES     person_org(id) ON DELETE CASCADE;
 
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE addr AUTO_INCREMENT 1024;
+ALTER TABLE addr_part_type AUTO_INCREMENT 1024;
+ALTER TABLE addr_part AUTO_INCREMENT 1024;

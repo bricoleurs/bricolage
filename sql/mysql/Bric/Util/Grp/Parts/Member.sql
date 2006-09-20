@@ -68,9 +68,6 @@ CREATE TABLE story_member (
 CREATE INDEX fkx_story__story_member ON story_member(object_id);
 CREATE INDEX fkx_member__story_member ON story_member(member__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

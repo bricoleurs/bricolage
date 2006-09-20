@@ -49,8 +49,6 @@ CREATE INDEX idx_event__obj_id ON event(obj_id);
 CREATE INDEX fkx_event__event_attr ON event_attr(event__id);
 CREATE INDEX fkx_event_type_attr__event_attr ON event_attr(event_type_attr__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

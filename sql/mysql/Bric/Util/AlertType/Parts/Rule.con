@@ -14,4 +14,9 @@ ALTER TABLE    alert_type_rule
 ADD CONSTRAINT fk_alert_type__at_rule FOREIGN KEY (alert_type__id)
 REFERENCES     alert_type(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE alert_type_rule AUTO_INCREMENT 1024;

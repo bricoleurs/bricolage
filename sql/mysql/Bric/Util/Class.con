@@ -33,3 +33,10 @@ CREATE TRIGGER ck_key_name_update_class BEFORE UPDATE ON class
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE class AUTO_INCREMENT 1024;

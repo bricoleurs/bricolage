@@ -31,3 +31,10 @@ CREATE UNIQUE INDEX udx_person_org__person__org ON person_org(person__id, org__i
 CREATE INDEX idx_person_org__department ON person_org(department(64));
 CREATE INDEX fkx_person__person_org ON person_org(person__id);
 CREATE INDEX fkx_org__person_org ON person_org(org__id);
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE person_org AUTO_INCREMENT 1024;

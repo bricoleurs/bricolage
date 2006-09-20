@@ -31,4 +31,9 @@ CREATE INDEX idx_alert__timestamp ON alert(timestamp);
 CREATE INDEX fkx_alert_type__alert ON alert(alert_type__id);
 CREATE INDEX fkx_event__alert ON alert(event__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE alert AUTO_INCREMENT 1024;

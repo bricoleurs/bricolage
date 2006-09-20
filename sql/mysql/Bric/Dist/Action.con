@@ -38,5 +38,12 @@ ALTER TABLE action ADD CONSTRAINT fk_server_type__action
     FOREIGN KEY (server_type__id)
     REFERENCES server_type(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_meta AUTO_INCREMENT 1024;

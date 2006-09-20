@@ -144,3 +144,15 @@ CREATE TRIGGER ck_priority_alias_id_update_media BEFORE UPDATE ON media
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE media AUTO_INCREMENT 1024;
+ALTER TABLE media_instance AUTO_INCREMENT 1024;
+ALTER TABLE media_uri AUTO_INCREMENT 1024;
+ALTER TABLE media_fields AUTO_INCREMENT 1024;
+ALTER TABLE media__contributor AUTO_INCREMENT 1024;
+ALTER TABLE media_member AUTO_INCREMENT 1024;

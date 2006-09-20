@@ -91,3 +91,12 @@ CREATE TRIGGER ck_priority_tplate_type_update_template BEFORE UPDATE ON template
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE template AUTO_INCREMENT 1024;
+ALTER TABLE template_instance AUTO_INCREMENT 1024;
+ALTER TABLE template_member AUTO_INCREMENT 1024;

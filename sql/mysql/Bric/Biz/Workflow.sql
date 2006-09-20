@@ -59,8 +59,6 @@ CREATE INDEX fkx_grp__workflow__asset_grp_id ON workflow(asset_grp_id);
 CREATE INDEX fkx_workflow__workflow_member ON workflow_member(object_id);
 CREATE INDEX fkx_member__workflow_member ON workflow_member(member__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

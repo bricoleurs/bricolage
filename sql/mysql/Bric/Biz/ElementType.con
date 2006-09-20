@@ -166,3 +166,17 @@ while (fetch($sel)) {
 }
 
 */
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE element_type AUTO_INCREMENT 1024;
+--ALTER TABLE subelement_type AUTO_INCREMENT 1024;
+ALTER TABLE element_type__site AUTO_INCREMENT 1024;
+ALTER TABLE element_type__output_channel AUTO_INCREMENT 1024;
+ALTER TABLE element_type_member AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_element_type_meta AUTO_INCREMENT 1024;

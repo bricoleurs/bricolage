@@ -25,9 +25,6 @@ CREATE TABLE alert_type_member (
 CREATE INDEX fkx_alert_type__alert_type_member ON alert_type_member(object_id);
 CREATE INDEX fkx_member__alert_type_member ON alert_type_member(member__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

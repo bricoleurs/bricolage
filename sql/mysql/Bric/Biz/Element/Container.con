@@ -50,3 +50,11 @@ REFERENCES media(id) ON DELETE CASCADE;
 ALTER TABLE media_element
 ADD CONSTRAINT fk_media_element__element_type FOREIGN KEY (element_type__id)
 REFERENCES element_type(id) ON DELETE RESTRICT;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story_element AUTO_INCREMENT 1024;
+ALTER TABLE media_element AUTO_INCREMENT 1024;

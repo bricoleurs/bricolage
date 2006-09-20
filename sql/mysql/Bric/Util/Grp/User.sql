@@ -25,9 +25,6 @@ CREATE TABLE user_member (
 CREATE INDEX fkx_user__user_member ON user_member(object_id);
 CREATE INDEX fkx_member__user_member ON user_member(member__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

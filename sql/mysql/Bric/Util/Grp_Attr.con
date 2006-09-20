@@ -28,4 +28,11 @@ ALTER TABLE attr_grp_meta ADD
     CONSTRAINT fk_attr_grp__attr_grp_meta FOREIGN KEY (attr__id)
     REFERENCES attr_grp(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE attr_grp AUTO_INCREMENT 1024;
+ALTER TABLE attr_grp_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_grp_meta AUTO_INCREMENT 1024;

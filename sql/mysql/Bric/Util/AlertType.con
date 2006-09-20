@@ -53,5 +53,9 @@ ALTER TABLE    alert_type__usr__contact
 ADD CONSTRAINT fk_usr__at_usr__contact FOREIGN KEY (usr__id)
 REFERENCES     usr(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE alert_type AUTO_INCREMENT 1024;

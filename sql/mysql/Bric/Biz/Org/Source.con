@@ -10,5 +10,9 @@ ALTER TABLE    source
 ADD CONSTRAINT fk_org__source FOREIGN KEY (org__id)
 REFERENCES     org(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE source AUTO_INCREMENT 1024;

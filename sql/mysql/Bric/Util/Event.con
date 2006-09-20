@@ -23,5 +23,10 @@ ALTER TABLE    event_attr
 ADD CONSTRAINT fk_event_type_attr__event_attr FOREIGN KEY (event_type_attr__id)
 REFERENCES     event_type_attr(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE event AUTO_INCREMENT 1024;
+ALTER TABLE event_attr AUTO_INCREMENT 1024;

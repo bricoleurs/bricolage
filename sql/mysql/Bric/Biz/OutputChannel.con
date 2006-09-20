@@ -73,3 +73,12 @@ CREATE TRIGGER ck_include_oc_id_update_output_channel_include BEFORE UPDATE ON o
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE output_channel AUTO_INCREMENT 1024;
+ALTER TABLE output_channel_include AUTO_INCREMENT 1024;
+ALTER TABLE output_channel_member AUTO_INCREMENT 1024;

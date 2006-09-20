@@ -34,3 +34,9 @@ CREATE UNIQUE INDEX udx_class__key_name ON class(key_name(32));
 CREATE UNIQUE INDEX udx_class__pkg_name ON class(pkg_name(128));
 CREATE UNIQUE INDEX udx_class__disp__name ON class(disp_name(128));
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE class AUTO_INCREMENT 1024;

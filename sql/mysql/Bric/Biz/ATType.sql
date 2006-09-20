@@ -60,8 +60,6 @@ CREATE INDEX fkx_class__at_type ON at_type(biz_class__id);
 CREATE INDEX fkx_at_type__at_type_member ON at_type_member(object_id);
 CREATE INDEX fkx_member__at_type_member ON at_type_member(member__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

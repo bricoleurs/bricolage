@@ -12,4 +12,9 @@ ALTER TABLE    source_member
 ADD CONSTRAINT fk_member__source_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE source_member AUTO_INCREMENT 1024;

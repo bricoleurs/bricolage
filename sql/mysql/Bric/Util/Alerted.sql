@@ -53,4 +53,9 @@ CREATE INDEX idx_ac_value__cv__value ON alerted__contact_value(contact_value__va
 CREATE INDEX fkx_alerted__alerted__contact ON alerted__contact_value(alerted__id);
 CREATE INDEX fkx_contact__alerted__cont ON alerted__contact_value(contact__id);
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE alerted AUTO_INCREMENT 1024;

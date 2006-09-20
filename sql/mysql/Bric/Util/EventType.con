@@ -29,4 +29,11 @@ REFERENCES     member(id) ON DELETE CASCADE;
 
 */
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE event_type AUTO_INCREMENT 1024;
+ALTER TABLE event_type_attr AUTO_INCREMENT 1024;
 

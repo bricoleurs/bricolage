@@ -68,3 +68,11 @@ CREATE TRIGGER ck_type_update_workflow BEFORE UPDATE ON workflow
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE workflow AUTO_INCREMENT 1024;
+ALTER TABLE workflow_member AUTO_INCREMENT 1024;

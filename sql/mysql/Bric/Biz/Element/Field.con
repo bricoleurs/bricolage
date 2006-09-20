@@ -32,3 +32,11 @@ REFERENCES media_element(id) ON DELETE CASCADE;
 ALTER TABLE media_field
 ADD CONSTRAINT fk_field_type__media_field FOREIGN KEY (field_type__id)
 REFERENCES field_type(id) ON DELETE RESTRICT;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE story_field AUTO_INCREMENT 1024;
+ALTER TABLE media_field AUTO_INCREMENT 1024;

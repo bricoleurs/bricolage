@@ -46,3 +46,9 @@ ALTER TABLE story__resource ADD CONSTRAINT fk_story__story__resource
 
 
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE resource AUTO_INCREMENT 1024;

@@ -42,9 +42,6 @@ CREATE UNIQUE INDEX udx_action_type__name ON action_type(name(64));
 CREATE INDEX fkx_media_type__at_mt ON action_type__media_type(media_type__id);
 CREATE INDEX fkx_action_type__at_mt ON action_type__media_type(action_type__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

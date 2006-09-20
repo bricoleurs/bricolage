@@ -59,8 +59,6 @@ CREATE INDEX fkx_media_type__media_type_ext ON media_type_ext(media_type__id);
 CREATE INDEX fkx_media_type__media_type_member ON media_type_member(object_id);
 CREATE INDEX fkx_member__media_type_member ON media_type_member(member__id);
 
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404
@@ -69,3 +67,4 @@ CREATE INDEX fkx_member__media_type_member ON media_type_member(member__id);
 ALTER TABLE media_type AUTO_INCREMENT 1024;
 ALTER TABLE media_type_ext AUTO_INCREMENT 1024;
 ALTER TABLE media_type_member AUTO_INCREMENT 1024;
+

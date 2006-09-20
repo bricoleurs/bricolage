@@ -19,12 +19,12 @@ CREATE TABLE contrib_type_member (
     AUTO_INCREMENT 1024;
 
 
-
+--
+-- INDEXES.
+--
 
 CREATE INDEX fkx_contrib_type__ctype_member ON contrib_type_member(object_id);
 CREATE INDEX fkx_member__ctype_member ON contrib_type_member(member__id);
-
-
 
 --
 -- AUTO_INCREMENT;

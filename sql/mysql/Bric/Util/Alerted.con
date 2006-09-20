@@ -35,5 +35,9 @@ ALTER TABLE alerted__contact_value ADD CONSTRAINT fk_contact__alerted__cont
     REFERENCES contact(id) ON DELETE CASCADE
 ;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE alerted AUTO_INCREMENT 1024;

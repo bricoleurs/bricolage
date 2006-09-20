@@ -14,5 +14,9 @@ ALTER TABLE server ADD CONSTRAINT fk_server_type__server
     FOREIGN KEY (server_type__id)
     REFERENCES server_type(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
-
+ALTER TABLE server AUTO_INCREMENT 1024;

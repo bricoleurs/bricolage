@@ -87,5 +87,3 @@ CREATE INDEX idx_attr_member_meta__name ON attr_member_meta(name(254));
 
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_member__attr_member_meta ON attr_member_meta(attr__id);
-
-

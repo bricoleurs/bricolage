@@ -31,10 +31,6 @@ CREATE TABLE source (
 CREATE UNIQUE INDEX udx_source_name ON source(name(64));
 CREATE INDEX fkx_source__org on source(org__id);
 
-
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

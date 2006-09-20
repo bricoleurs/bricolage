@@ -101,9 +101,6 @@ CREATE INDEX idx_attr_action_meta__name ON attr_action_meta(name(254));
 -- FK index on attr__id.
 CREATE INDEX fkx_attr_action__attr_action_meta ON attr_action_meta(attr__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

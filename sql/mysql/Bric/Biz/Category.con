@@ -52,3 +52,13 @@ ALTER TABLE attr_category_meta ADD
     REFERENCES attr_category(id) ON DELETE CASCADE;
 
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE category AUTO_INCREMENT 1024;
+ALTER TABLE category_member AUTO_INCREMENT 1024;
+ALTER TABLE attr_category AUTO_INCREMENT 1024;
+ALTER TABLE attr_category_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_category_meta AUTO_INCREMENT 1024;

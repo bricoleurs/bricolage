@@ -38,4 +38,11 @@ ALTER TABLE    pref_member
 ADD CONSTRAINT fk_member__pref_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE pref AUTO_INCREMENT 1024;
+ALTER TABLE usr_pref AUTO_INCREMENT 1024;
+ALTER TABLE pref_member AUTO_INCREMENT 1024;

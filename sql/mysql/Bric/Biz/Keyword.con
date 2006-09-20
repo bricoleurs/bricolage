@@ -35,3 +35,11 @@ REFERENCES     category(id) ON DELETE CASCADE;
 ALTER TABLE    category_keyword
 ADD CONSTRAINT fk_keyword__category_keyword FOREIGN KEY (keyword_id)
 REFERENCES     keyword(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE keyword AUTO_INCREMENT 1024;
+ALTER TABLE keyword_member AUTO_INCREMENT 1024;

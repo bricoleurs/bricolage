@@ -14,4 +14,9 @@ ALTER TABLE    person_org
 ADD CONSTRAINT fk_person__person_org FOREIGN KEY (person__id)
 REFERENCES     person(id) ON DELETE CASCADE;
 
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
 
+ALTER TABLE person_org AUTO_INCREMENT 1024;

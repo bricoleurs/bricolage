@@ -83,7 +83,6 @@ CREATE UNIQUE INDEX udx_output_channel_include ON output_channel_include(output_
 CREATE INDEX fkx_output_channel__oc_member ON output_channel_member(object_id);
 CREATE INDEX fkx_member__oc_member ON output_channel_member(member__id);
 
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

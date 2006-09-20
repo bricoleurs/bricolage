@@ -40,3 +40,10 @@ CREATE TRIGGER ck_parent_id_update_grp BEFORE UPDATE ON grp
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp AUTO_INCREMENT 1024;

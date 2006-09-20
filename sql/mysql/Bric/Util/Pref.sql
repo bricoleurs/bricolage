@@ -77,9 +77,6 @@ CREATE INDEX fkx_pref__pref__opt ON pref_opt(pref__id);
 CREATE INDEX fkx_pref__pref_member ON pref_member(object_id);
 CREATE INDEX fkx_member__pref_member ON pref_member(member__id);
 
-
-
-
 --
 -- AUTO_INCREMENT;
 -- http://bugs.mysql.com/bug.php?id=21404

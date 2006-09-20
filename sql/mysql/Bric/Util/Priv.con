@@ -51,3 +51,10 @@ CREATE TRIGGER ck_value_update_grp_priv BEFORE UPDATE ON grp_priv
 |
 
 DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp_priv AUTO_INCREMENT 1024;
