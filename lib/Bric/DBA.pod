@@ -416,16 +416,16 @@ do this:
            FROM   job_member, job
            WHERE  job.id = job_member.object_id
                   AND (
-                     executing = 1
+                     executing = true
                      OR comp_time IS NULL
                   )
            );
 
   DELETE FROM job
-  WHERE  executing = 0
+  WHERE  executing = false
          AND (
            comp_time IS NOT NULL
-           OR failed = 1
+           OR failed = true
          );
 
 This can result in significant boosts in preview and publish performance,

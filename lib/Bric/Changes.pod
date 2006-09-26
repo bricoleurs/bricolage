@@ -192,6 +192,11 @@ Bricolage now assumes that template files uploaded in the template profile are
 encoded in UTF-8, since the same is assumed for templates pasted into the form
 field. [David]
 
+=item *
+
+Fixed resource deletion code in L<Bric::DBA|Bric::DBA> to properly use
+booleans for boolean columns. Reported by John Greene. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
