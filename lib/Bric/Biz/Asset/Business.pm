@@ -2508,7 +2508,7 @@ sub _construct_uri {
     my ($slug, $slash) = $self->key_name eq 'story' ? ($self->get_slug, '/')
                                                     : ('', '')
                                                     ;
-
+    $slug = '' unless defined $slug;
     $fmt =~ s{/%{categories}/?}{$category_uri}g;
     $fmt =~ s/%{slug}/$slug/g;
     unless ($fmt =~ s/%{uuid}/$self->get_uuid/ge) {

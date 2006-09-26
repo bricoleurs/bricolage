@@ -197,6 +197,12 @@ field. [David]
 Fixed resource deletion code in L<Bric::DBA|Bric::DBA> to properly use
 booleans for boolean columns. Reported by John Greene. [David]
 
+=item *
+
+Eliminated "Use of uninitialized value in substitution (s///)" warning for
+stories with no slug and a URI format with "%{slug}" in it. Reported by Wayne
+Slavin. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
