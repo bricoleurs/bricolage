@@ -181,6 +181,11 @@ The search interface for paginated searches no longer gets stuck when the
 alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
 [David]
 
+=item *
+
+Fixed F<contrib/bric_media_upload> so that it works with 1.10 categories and
+XML elements. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

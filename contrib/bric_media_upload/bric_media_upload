@@ -269,11 +269,11 @@ sub build_image_list {
     my $temp;
     print "Found Media: $full_path \n" if $VERBOSE;
 
-    $path = "/" if (!$path);
+    $path .= '/' unless $path =~ m{/$};
 
     $temp->{name} = $file;
     $temp->{category} = $path;
-    $temp->{category} =  "/$temp->{category}" unless $temp->{category} =~ m,^/,;
+    $temp->{category} =  "/$temp->{category}/" unless $temp->{category} =~ m,^/,;
     $temp->{full_path} = $full_path;
 
     push @$media_list, $temp;
@@ -441,9 +441,9 @@ sub get_media_info {
     my $xml = "\n   ";
     my $order = 2;
     foreach my $key ( qw/ width color_type height compression resolution / ) {
-        $xml .= qq/<data order="$order" element="$key">/;
+        $xml .= qq/<field order="$order" type="$key">/;
         $xml .= (defined $info->{$key}) ? $info->{$key} : 'Undefined';
-        $xml .= "</data>\n   ";
+        $xml .= "</field>\n   ";
         $order++;
     }
     return $xml;
