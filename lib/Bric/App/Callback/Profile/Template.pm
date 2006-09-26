@@ -13,6 +13,7 @@ use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
+use Bric::Config qw(ENCODE_OK);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Burner;
 use Bric::Util::Fault qw(rethrow_exception);
@@ -704,7 +705,8 @@ $handle_upload = sub {
     my $widget = $self->class_key;
     my $upload = $self->apache_req->upload("$widget|upload_file");
     my $fh = $upload->fh;
-    $fa->set_data(do { local $/; <$fh>});
+    binmode $fh, ':utf8' if ENCODE_OK;
+    $fa->set_data(do { local $/; <$fh> });
     return $self;
 };
 

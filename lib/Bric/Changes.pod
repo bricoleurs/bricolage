@@ -186,6 +186,12 @@ alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
 Fixed F<contrib/bric_media_upload> so that it works with 1.10 categories and
 XML elements. [David]
 
+=item *
+
+Bricolage now assumes that template files uploaded in the template profile are
+encoded in UTF-8, since the same is assumed for templates pasted into the form
+field. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
