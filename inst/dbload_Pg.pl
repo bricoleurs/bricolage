@@ -43,6 +43,7 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to database system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    $< = $DB->{system_user_uid};
     $> = $DB->{system_user_uid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
