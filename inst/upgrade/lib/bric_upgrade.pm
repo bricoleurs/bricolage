@@ -160,8 +160,7 @@ END
 ##############################################################################
 # Switch to the PostgreSQL systsem user.
 if ($opt_i) {
-    $< = $opt_i;
-    $> = $opt_i;    
+    $> = $opt_i;
     die "Failed to switch EUID to $opt_i ($opt_s).\n" unless $> == $opt_i;
 }
 
