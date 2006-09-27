@@ -1,0 +1,32 @@
+--
+-- ER/Studio 4.0 SQL Code Generation
+-- Project:      Bricolage Business API
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS : Oracle 8
+-- Author: David Wheeler <david@justatheory.com>
+
+ALTER TABLE    event
+ADD CONSTRAINT fk_event_type__event FOREIGN KEY (event_type__id)
+REFERENCES     event_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    event
+ADD CONSTRAINT fk_usr__event FOREIGN KEY (usr__id)
+REFERENCES     usr(id) ON DELETE CASCADE;
+
+ALTER TABLE    event_attr
+ADD CONSTRAINT fk_event__event_attr FOREIGN KEY (event__id)
+REFERENCES     event(id) ON DELETE CASCADE;
+
+ALTER TABLE    event_attr
+ADD CONSTRAINT fk_event_type_attr__event_attr FOREIGN KEY (event_type_attr__id)
+REFERENCES     event_type_attr(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE event AUTO_INCREMENT 1024;
+ALTER TABLE event_attr AUTO_INCREMENT 1024;

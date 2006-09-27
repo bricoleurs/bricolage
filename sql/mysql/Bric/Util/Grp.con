@@ -1,0 +1,49 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+
+
+ALTER TABLE grp
+ADD CONSTRAINT fk_grp__grp FOREIGN KEY (parent_id)
+REFERENCES grp(id) ON DELETE CASCADE;
+
+ALTER TABLE grp
+ADD CONSTRAINT fk_class__grp FOREIGN KEY (class__id)
+REFERENCES class(id) ON DELETE CASCADE;
+
+--------------------------------------------------------------------------------
+-- Trigger creation to replace the check constraints until MySQL supports them
+
+DELIMITER |
+
+CREATE TRIGGER ck_parent_id_insert_grp BEFORE INSERT ON grp
+    FOR EACH ROW 
+	BEGIN
+	    IF (NEW.parent_id = NEW.id)
+	        THEN SET NEW.id=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_parent_id_update_grp BEFORE UPDATE ON grp
+    FOR EACH ROW 
+	BEGIN
+	    IF (NEW.parent_id = NEW.id)
+	        THEN SET NEW.id=NULL;
+		END IF;        
+    
+        END;
+|
+
+DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp AUTO_INCREMENT 1024;

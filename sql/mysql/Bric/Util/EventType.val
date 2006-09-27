@@ -1,0 +1,940 @@
+-- Project:      Bricolage Business API
+-- File:    EventType.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+-- ********** 'template_deploy' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'template_deploy', 'Template Deployed', 'Template was deployed.', '19', '1');
+
+-- ********** 'template_redeploy' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'template_redeploy', 'Template Redeployed', 'Template was Redeployed.', '19', '1');
+
+-- ********** 'story_publish' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_publish', 'Story Published', 'Story was published.', '10', '1');
+
+-- ********** 'story_republish' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_republish', 'Story Republished', 'Story was republished.', '10', '1');
+
+-- ********** 'story_expire' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_expire', 'Story Expired', 'Story was expired.', 10, '1');
+
+-- ********** 'story_clone' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_clone', 'Story Cloned', 'Story was cloned.', '10', '1');
+
+-- ********** 'story_clone_create' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_clone_create', 'Story Created as Clone', 'Story was created by cloning.', '10', '1');
+
+-- ********** 'media_publish' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'media_publish', 'Media Published', 'Media was published.', '46', '1');
+
+-- ********** 'media_republish' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'media_republish', 'Media Republished', 'Media was republished.', '46', '1');
+
+-- ********** 'media_expire' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'media_expire', 'Media Expired', 'Media was expired.', 46, '1');
+
+-- ********** 'template_checkin' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'template_checkin', 'Template Checked In', 'Template was checked in.', '19', '1');
+
+    INSERT INTO event_type_attr (event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Version');
+
+-- ********** 'story_checkin' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES ( 'story_checkin', 'Story Checked In', 'Story was checked in.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id,  name)
+    VALUES ((SELECT max(id) FROM event_type), 'Version');
+
+-- ********** 'media_checkin' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_checkin', 'Media Checked In', 'Media was checked in.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Version');
+
+-- ********** 'story_add_contrib' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_add_contrib', 'Contributor Added to Story', 'A contributor was associated with the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'story_del_contrib' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_del_contrib', 'Contributor Removed from Story', 'A contributor was dissociated from the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'media_add_contrib' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_add_contrib', 'Contributor Added to Media', 'A contributor was associated with the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'media_del_contrib' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_del_contrib', 'Contributor Removed from Media', 'A contributor was dissociated from the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'media_upload' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_upload', 'Media File Uploaded', 'Media file was uploaded.', '46', '1');
+
+-- ********** 'media_del_file' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_del_file', 'Media File Removed from Media', 'The media file was dissociated from the media.', '46', '1');
+    
+-- ********** 'story_add_category' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_add_category', 'Category Added to Story', 'A category was associated with the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Category');
+
+-- ********** 'story_del_category' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_del_category', 'Category Removed from Story', 'A category was dissociated from the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Category');
+
+-- ********** 'story_add_oc' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_add_oc', 'Output Channel Added to Story',
+                    'An output channel was associated with the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Output Channel');
+
+-- ********** 'story_del_oc' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_del_oc', 'Output Channel Removed from Story',
+            'An output channel was dissociated from the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Output Channel');
+
+-- ********** 'media_add_oc' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_add_oc', 'Output Channel Added to Media',
+                    'An output channel was associated with the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Output Channel');
+
+-- ********** 'media_del_oc' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_del_oc', 'Output Channel Removed from Media',
+            'An output channel was dissociated from the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Output Channel');
+
+-- ********** 'story_moved' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_moved', 'Story Moved to Desk', 'Story moved onto a desk.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Desk');
+
+-- ********** 'media_moved' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_moved', 'Media Moved to Desk', 'Media moved onto a desk.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Desk');
+
+-- ********** 'template_moved' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_moved', 'Template Moved to Desk', 'Template moved onto a desk.', '19', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Desk');
+
+-- ********** 'story_add_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_add_workflow', 'Story Moved into Workflow', 'Story moved into a workflow.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Workflow');
+
+-- ********** 'media_add_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_add_workflow', 'Media Moved into Workflow', 'Media moved into a workflow.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Workflow');
+
+-- ********** 'template_add_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_add_workflow', 'Template Moved into Workflow', 'Template moved into a workflow.', '19', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Workflow');
+
+-- ********** 'story_rem_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_rem_workflow', 'Story Removed from Workflow', 'Story removed from a workflow.', '10', '1');
+
+-- ********** 'media_rem_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_rem_workflow', 'Media Removed from Workflow', 'Media removed from a workflow.', '46', '1');
+
+-- ********** 'template_rem_workflow' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_rem_workflow', 'Template Removed from Workflow', 'Template removed from a workflow.', '19', '1');
+
+-- ********** 'story_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_checkout', 'Story Checked Out', 'Story was checked out.', '10', '1');
+
+-- ********** 'media_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_checkout', 'Media Checked Out', 'Media was checked out.', '46', '1');
+
+-- ********** 'template_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_checkout', 'Template Checked Out', 'Template was checked out.', '19', '1');
+
+-- ********** 'story_cancel_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_cancel_checkout', 'Story Check Out Canceled', 'Story check out was canceled.', '10', '1');
+
+-- ********** 'media_cancel_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_cancel_checkout', 'Media Check Out Canceled', 'Media check out was canceled.', '46', '1');
+
+-- ********** 'template_cancel_checkout' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_cancel_checkout', 'Template Check Out Canceled', 'Template check out was caneled.', '19', '1');
+
+-- ********** 'story_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_new', 'Story Created', 'Story profile was created.', '10', '1');
+
+-- ********** 'story_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_save', 'Story Changes Saved', 'Story profile changes were saved.', '10', '1');
+
+-- ********** 'story_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_deact', 'Story Deactivated', 'Story profile was deactivated.', '10', '1');
+
+-- ********** 'media_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_new', 'Media Created', 'Media profile was created.', '46', '1');
+
+-- ********** 'media_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_save', 'Media Changes Saved', 'Media profile changes were saved.', '46', '1');
+
+-- ********** 'media_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_deact', 'Media Deactivated', 'Media profile was deactivated.', '46', '1');
+
+-- ********** 'template_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_new', 'Template Created', 'Template profile was created.', '19', '1');
+
+-- ********** 'template_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_save', 'Template Changes Saved', 'Template profile changes were saved.', '19', '1');
+
+-- ********** 'template_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_deact', 'Template Deactivated', 'Template profile was deactivated.', '19', '1');
+
+-- ********** 'template_edit_code' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'template_edit_code', 'Template Code Edited', 'Template profile code was edited.', '19', '1');
+
+-- ********** 'story_add_element' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_add_element', 'Element Added to Story', 'An element was added to the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Element');
+
+-- ********** 'media_add_element' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_add_element', 'Element Added to Media', 'An element was added to the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Element');
+
+-- ********** 'story_del_element' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_del_element', 'Element Deleted from Story', 'An element was deleted from the story.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Element');
+
+-- ********** 'media_del_element' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_del_element', 'Element Deleted from Media', 'An element was deleted from the media.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Element');
+
+-- ********** 'pref_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'pref_save', 'Preference Changes Saved', 'Preference profile changes were saved.', '48', '1');
+
+-- ********** 'user_pref_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_pref_save', 'User Preference Changes Saved', 'User preference profile changes were saved.', '78', '1');
+
+-- ********** 'user_pref_reset' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_pref_reset', 'User Preference Reset', 'User preference was reset to default.', '78', '1');
+
+-- ********** 'user_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_new', 'User Created', 'User profile was created.', '2', '1');
+
+-- ********** 'user_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_save', 'User Changes Saved', 'User profile changes were saved.', '2', '1');
+
+-- ********** 'user_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_deact', 'User Deactivated', 'User profile was deactivated.', '2', '1');
+
+-- ********** 'passwd_chg' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'passwd_chg', 'User Password Changed', 'The password was changed.', '2', '1');
+
+-- ********** 'user_overriden' ************ --
+    
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'user_overridden', 'User Overridden', 'Trigger user masqueraded as user', '2', '1');
+    
+-- ********** 'grp_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'grp_new', 'Group Created', 'Group profile was created.', '6', '1');
+
+-- ********** 'grp_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'grp_save', 'Group Saved', 'Group profile changes were saved.', '6', '1');
+
+-- ********** 'grp_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'grp_deact', 'Group Deactivated', 'Group profile was deactivated.', '6', '1');
+
+-- ********** 'grp_perm_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'grp_perm_save', 'Group Permissions Changed', 'The permissions associated with the group were changed.', '6', '1');
+
+-- ********** 'dest_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'dest_new', 'Destination Created', 'Destination profile was created.', '52', '1');
+
+-- ********** 'dest_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'dest_save', 'Destination Saved', 'Destination profile changes were saved.', '52', '1');
+
+-- ********** 'dest_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'dest_deact', 'Destination Deactivated', 'Destination profile was deactivated.', '52', '1');
+
+-- ********** 'server_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'server_new', 'Server Created', 'Server profile was created.', '53', '1');
+
+-- ********** 'server_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'server_save', 'Server Saved', 'Server profile changes were saved.', '53', '1');
+
+-- ********** 'server_act' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'server_act', 'Server Activated', 'Server profile was activated.', '53', '1');
+
+-- ********** 'server_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'server_deact', 'Server Deactivated', 'Server profile was deactivated.', '53', '1');
+
+-- ********** 'server_del' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'server_del', 'Server Deleted', 'Server profile was deleted.', '53', '1');
+
+-- ********** 'action_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'action_new', 'Action Created', 'Action profile was created.', '14', '1');
+
+-- ********** 'action_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'action_save', 'Action Saved', 'Action profile changes were saved.', '14', '1');
+
+-- ********** 'action_act' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'action_act', 'Action Activated', 'Action profile was activated.', '14', '1');
+
+-- ********** 'action_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'action_deact', 'Action Deactivated', 'Action profile was deactivated.', '14', '1');
+
+-- ********** 'action_del' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'action_del', 'Action Deleted', 'Action profile was deleted.', '14', '1');
+
+-- ********** 'output_channel_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'output_channel_new', 'Output Channel Created', 'Output Channel profile was created.', '21', '1');
+
+-- ********** 'output_channel_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'output_channel_save', 'Output Channel Changes Saved', 'Output Channel profile changes were saved.', '21', '1');
+
+-- ********** 'output_channel_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'output_channel_deact', 'Output Channel Deactivated', 'Output Channel profile was deactivated.', '21', '1');
+
+-- ********** 'contrib_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_new', 'Contributor Created', 'Contributor profile was created.', '39', '1');
+
+-- ********** 'contrib_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_save', 'Contributor Changes Saved', 'Contributor profile changes were saved.', '39', '1');
+
+-- ********** 'contrib_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_deact', 'Contributor Deactivated', 'Contributor profile was deactivated.', '39', '1');
+
+-- ********** 'contrib_ext' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_ext', 'Contributor Forked', 'Contributor profile was forked to become a new contributor profile.', '39', '1');
+
+-- ********** 'contrib_type_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_type_new', 'Contributor Type Created', 'Contributor Type profile was created.', '9', '1');
+
+-- ********** 'contrib_type_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_type_save', 'Contributor Type Changes Saved', 'Contributor Type profile changes were saved.', '9', '1');
+
+-- ********** 'contrib_type_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_type_deact', 'Contributor Type Deactivated', 'Contributor Type profile was deactivated.', '9', '1');
+
+-- ********** 'contrib_type_ext' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_type_ext', 'Contributor Type Field Added', 'A new field was added to the Contributor Type profile.', '9', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'contrib_type_unext' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'contrib_type_unext', 'Contributor Type Field Deleted', 'A field was deleted from the Contributor Type profile.', '9', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'workflow_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'workflow_new', 'Workflow Created', 'Workflow profile was created.', '44', '1');
+
+-- ********** 'workflow_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'workflow_save', 'Workflow Changes Saved', 'Workflow profile changes were saved.', '44', '1');
+
+-- ********** 'workflow_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'workflow_deact', 'Workflow Deactivated', 'Workflow profile was deactivated.', '44', '1');
+
+-- ********** 'workflow_add_desk' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'workflow_add_desk', 'Desk Added to Workflow', 'A desk was added to the workflow profile.', '44', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Desk');
+
+-- ********** 'workflow_del_desk' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'workflow_del_desk', 'Desk Removed from Workflow', 'A desk was removed from the workflow profile.', '44', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Desk');
+
+-- ********** 'desk_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'desk_new', 'Desk Created', 'Desk profile was created.', '45', '1');
+
+-- ********** 'desk_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'desk_save', 'Desk Changes Saved', 'Desk profile changes were saved.', '45', '1');
+
+-- ********** 'desk_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'desk_deact', 'Desk Deactivated', 'Desk profile was deactivated.', '45', '1');
+
+-- ********** 'category_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'category_new', 'Category Created', 'Category profile was created.', '20', '1');
+
+-- ********** 'category_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'category_save', 'Category Changes Saved', 'Category profile changes were saved.', '20', '1');
+
+-- ********** 'category_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'category_deact', 'Category Deactivated', 'Category profile was deactivated.', '20', '1');
+
+-- ********** 'category_deact_cascade' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'category_deact_cascade', 'Category and Subcategories Deactivated', 'Category profile and all its subcategory profiles were deactivated.', '20', '1');
+
+-- ********** 'source_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'source_new', 'Source Created', 'Source profile was created.', '35', '1');
+
+-- ********** 'source_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'source_save', 'Source Changes Saved', 'Source profile changes were saved.', '35', '1');
+
+-- ********** 'source_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'source_deact', 'Source Deactivated', 'Source profile was deactivated.', '35', '1');
+
+-- ********** 'org_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'org_new', 'Organization Created', 'Organization profile was created.', '3', '1');
+
+-- ********** 'org_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'org_save', 'Organization Changes Saved', 'Organization profile changes were saved.', '3', '1');
+
+-- ********** 'org_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'org_deact', 'Organization Deactivated', 'Organization profile was deactivated.', '3', '1');
+
+-- ********** 'element_type_new' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_new', 'Element Type Created', 'Element type profile was created.', '22', '1');
+
+-- ********** 'element_type_save' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_save', 'Element Type Changes Saved', 'Element type profile changes were saved.', '22', '1');
+
+-- ********** 'element_type_deact' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_deact', 'Element Type Deactivated', 'Element type profile was deactivated.', '22', '1');
+
+-- ********** 'field_type_add' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'field_type_add', 'Field Type Added to Element Type', 'A field type was added to the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'field_type_rem' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'field_type_rem', 'Field Type Removed from Element Type', 'A field type was removed from the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'element_type_add' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_add', 'Element Type Subelement Added to Element Type', 'An element type subelement was added to the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'element_type_rem' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_rem', 'Element Type Subelement Removed from Element Type', 'An element type subelement was removed from the element type profile.', '22', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Name');
+
+-- ********** 'field_type_new' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'field_type_new', 'Field Type Created', 'Field Type was created.', 29, '1');
+
+-- ********** 'field_type_save' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'field_type_save', 'Field Type Saved', 'Field Type was saved.', 29, '1');
+
+-- ********** 'field_type_deact' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'field_type_deact', 'Field Type Deactivated', 'Field Type was deactivated.', 29, '1');
+
+-- ********** 'element_type_set_new' ************ --
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_set_new', 'Element Type Set Created', 'Element Type Set profile was created.', '37', '1');
+
+-- ********** 'element_type_set_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_set_save', 'Element Type Set Changes Saved', 'Element Type Set profile changes were saved.', '37', '1');
+
+-- ********** 'element_type_set_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'element_type_set_deact', 'Element Type Set Deactivated', 'Element Type Set profile was deactivated.', '37', '1');
+
+-- ********** 'job_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'job_new', 'Job Created', 'Job was created.', '54', '1');
+
+-- ********** 'job_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'job_save', 'Job Changes Saved', 'Job changes were saved.', '54', '1');
+
+-- ********** 'job_cancel' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'job_cancel', 'Job Cancelled', 'Job was cancelled.', '54', '1');
+
+-- ********** 'job_exec' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'job_exec', 'Job Executed', 'Job was executed.', '54', '1');
+
+-- ********** 'job_reset' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'job_reset', 'Job Reset', 'Job was reset.', '54', '1');
+
+-- ********** 'resource_action' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_action', 'Action Applied to Resource', 'An action was applied to the resource.', '55', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Action');
+
+-- ********** 'resource_undo_action' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_undo_action', 'Action Undone on Resource', 'An action was undone on the resource.', '55', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Action');
+
+-- ********** 'resource_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_new', 'Resource Created', 'Resource profile was created.', '55', '1');
+
+-- ********** 'resource_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_save', 'Resource Changes Saved', 'Resource profile changes were saved.', '55', '1');
+
+-- ********** 'resource_move' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_move', 'Resource Distributed', 'Resource was distributed.', '55', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Via');
+
+-- ********** 'resource_remove' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'resource_remove', 'Resource Removed', 'Resource was removed.', '55', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'Via');
+
+-- ********** 'alert_type_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'alert_type_new', 'Alert Type Created', 'Alert Type was created.', '30', '1');
+
+-- ********** 'alert_type_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'alert_type_save', 'Alert Type Saved', 'Alert Type profile changes were saved.', '30', '1');
+
+-- ********** 'alert_type_act' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'alert_type_act', 'Alert Type Activated', 'Alert Type profile was activated.', '30', '1');
+
+-- ********** 'alert_type_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'alert_type_deact', 'Alert Type Deactivated', 'Alert Type profile was deactivated.', '30', '1');
+
+-- ********** 'alert_type_del' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'alert_type_del', 'Alert Type Deleted', 'Alert Type profile was deleted.', '30', '1');
+
+-- ********** 'media_type_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_type_new', 'Media Type Created', 'Media Type was created.', '72', '1');
+ 
+-- ********** 'media_type_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_type_save', 'Media Type Saved', 'Media Type profile changes were saved.', '72', '1');
+
+-- ********** 'media_type_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_type_deact', 'Media Type Deactivated', 'Media Type profile was deactivated.', '72', '1');
+
+-- ********** 'keyword_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'keyword_new', 'Keyword Created', 'Keyword was created.', '41', '1');
+
+-- ********** 'keyword_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'keyword_save', 'Keyword Saved', 'Keyword profile changes were saved.', '41', '1');
+
+-- ********** 'keyword_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'keyword_deact', 'Keyword Deactivated', 'Keyword was deactivated.', '41', '1');
+
+-- ********** 'site_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'site_new', 'Site Created', 'Site was created.', '75', '1');
+
+-- ********** 'site_save' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'site_save', 'Site Saved', 'Site profile changes were saved.', '75', '1');
+
+-- ********** 'site_deact' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'site_deact', 'Site Deactivated', 'Site was deactivated.', '75', '1');
+
+-- ********** 'story_aliased' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_aliased', 'Story Aliased', 'Story was aliased.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'To Site');
+
+-- ********** 'story_alias_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'story_alias_new', 'Story Created as Alias', 'Story was created as an alias.', '10', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'From Site');
+
+-- ********** 'media_aliased' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_aliased', 'Media Aliased', 'Media was aliased.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'To Site');
+
+-- ********** 'media_alias_new' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'media_alias_new', 'Media Created as Alias', 'Media was created as an alias.', '46', '1');
+
+    INSERT INTO event_type_attr ( event_type__id, name)
+    VALUES ((SELECT max(id) FROM event_type), 'From Site');
+
+-- ********** 'dist_job_failed' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'dist_job_failed', 'Distribution job failed', 'Distribution job failed due to error.', '79', '1');
+
+-- ********** 'pub_job_failed' ************ --
+
+    INSERT INTO event_type ( key_name, name, description, class__id, active)
+    VALUES (  'pub_job_failed', 'Publish job failed', 'Publish job failed due to error.', '80', '1');
+
+
+/*****************************************************************************
+ * All default events must be here, since they depend on the above being
+ * run first.
+ ****************************************************************************/
+
+-- Create creation events for all default templates.
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('502', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '502', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('503', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '503', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('504', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '504', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('506', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '506', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('507', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '507', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('509', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '509', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('510', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '510', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('511', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '511', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('512', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '512', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('513', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '513', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('514', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '514', CURRENT_TIMESTAMP);
+
+INSERT INTO event (id, event_type__id, usr__id, obj_id, timestamp)
+VALUES ('515', (SELECT id FROM event_type WHERE key_name = 'template_new'),
+        '0', '515', CURRENT_TIMESTAMP);
+
+

@@ -1,0 +1,22 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+
+ALTER TABLE    person_org
+ADD CONSTRAINT fk_org__person_org FOREIGN KEY (org__id)
+REFERENCES     org(id) ON DELETE CASCADE;
+
+ALTER TABLE    person_org
+ADD CONSTRAINT fk_person__person_org FOREIGN KEY (person__id)
+REFERENCES     person(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE person_org AUTO_INCREMENT 1024;

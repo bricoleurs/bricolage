@@ -1,0 +1,50 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+-- 
+-- TABLE: server_type 
+--
+
+ALTER TABLE server_type ADD CONSTRAINT fk_class__server_type
+    FOREIGN KEY (class__id)
+    REFERENCES class(id) ON DELETE CASCADE;
+
+ALTER TABLE server_type ADD CONSTRAINT fk_site__server_type
+    FOREIGN KEY (site__id)
+    REFERENCES site(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: server_type__output_channel
+--
+
+ALTER TABLE server_type__output_channel ADD CONSTRAINT fk_server_type__st_oc
+    FOREIGN KEY (server_type__id)
+    REFERENCES server_type(id) ON DELETE CASCADE;
+
+ALTER TABLE server_type__output_channel ADD CONSTRAINT fk_output_channel__st_oc
+    FOREIGN KEY (output_channel__id)
+    REFERENCES output_channel(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: dest_member
+--
+
+ALTER TABLE    dest_member
+ADD CONSTRAINT fk_dest__dest_member FOREIGN KEY (object_id)
+REFERENCES     server_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    dest_member
+ADD CONSTRAINT fk_member__dest_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE server_type AUTO_INCREMENT 1024;
+ALTER TABLE dest_member AUTO_INCREMENT 1024;

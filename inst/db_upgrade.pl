@@ -41,8 +41,8 @@ our $UPGRADE;
 do "./upgrade.db" or die "Failed to read upgrade.db : $!";
 our $CONFIG;
 do "./config.db" or die "Failed to read config.db : $!";
-our $PG;
-do './postgres.db' or die "Failed to read postgres.db : $!";
+our $DB;
+do './database.db' or die "Failed to read database.db : $!";
 
 # Create a directory that the PG user can, uh, use.
 my $tmpdir = catdir 'inst', 'db_tmp';
@@ -50,14 +50,14 @@ eval { mkpath $tmpdir };
 if (my $err = $@) {
     die "Cannot create '$tmpdir': $err\n";
 }
-chown $PG->{system_user_uid}, -1, $tmpdir
-  or die "Cannot chown '$tmpdir' to $PG->{ROOT_USER}: $!\n";
+chown $DB->{system_user_uid}, -1, $tmpdir
+  or die "Cannot chown '$tmpdir' to $DB->{ROOT_USER}: $!\n";
 
 # Set environment variables for psql.
-$ENV{PGUSER} = $PG->{root_user};
-$ENV{PGPASSWORD} = $PG->{root_pass};
-$ENV{PGHOST} = $PG->{host_name} if ( $PG->{host_name} ne "localhost" );
-$ENV{PGPORT} = $PG->{host_port} if ( $PG->{host_port} ne "" );
+$ENV{PGUSER} = $DB->{root_user};
+$ENV{PGPASSWORD} = $DB->{root_pass};
+$ENV{PGHOST} = $DB->{host_name} if ( $DB->{host_name} ne "localhost" );
+$ENV{PGPORT} = $DB->{host_port} if ( $DB->{host_port} ne "" );
 
 print "\n\n==> Starting Database Upgrade <==\n\n";
 
@@ -66,25 +66,40 @@ $ENV{BRICOLAGE_ROOT} = $UPGRADE->{BRICOLAGE_ROOT};
 my $perl = $ENV{PERL} || $^X;
 $ENV{PERL5LIB} = $CONFIG->{MODULE_DIR};
 
+# setup database type in order to use apropriate upgrade scripts
+# the database type has to be in the script name (Pg, mysql)
+my ($x,$y,$z);
+my $req_db=$DB->{db_type};
+
 # run the upgrade scripts
 foreach my $v (@{$UPGRADE->{TODO}}) {
     my $dir = catdir("inst", "upgrade", $v);
+    ($x, $y, $z) = $v =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     print "Looking for scripts for $v in $dir\n";
     next unless -d $dir;
 
     opendir(DIR, $dir) or die "can't opendir $dir: $!";
-    my @scripts = grep { -f $_ and $_ =~ /\.pl$/ }
+    
+# check for different database types starting with version 1.10.2
+    my @scripts;
+    if (($x > 1) or ($x == 1 and $y > 10) or ($x == 1 and $y== 10 and $z > 2)) {
+        @scripts = grep { -f $_ and $_ =~ /\.pl$/ and $_ =~ /$req_db/ }
+        map { catfile($dir, $_) } sort readdir(DIR); 
+    }
+    else {
+        @scripts = grep { -f $_ and $_ =~ /\.pl$/}
         map { catfile($dir, $_) } sort readdir(DIR);
+    }
     closedir DIR;
 
     foreach my $script (@scripts) {
         print "Running '$perl $script'.\n";
         my $ret = system(
             $perl, $script,
-            '-u', $PG->{root_user},
-            '-p', $PG->{root_pass},
-            '-i', $PG->{system_user_uid},
-            '-s', $PG->{system_user},
+            '-u', $DB->{root_user},
+            '-p', $DB->{root_pass},
+            '-i', $DB->{system_user_uid},
+            '-s', $DB->{system_user},
         );
 
         # Pass through abnormal exits so that `make` will be halted.

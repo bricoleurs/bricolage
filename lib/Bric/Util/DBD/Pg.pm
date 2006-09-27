@@ -73,12 +73,15 @@ use constant DSN_STRING => 'dbname=' . DB_NAME
 # http://bugs.bricolage.cc/show_bug.cgi?id=802
 use constant DBH_ATTR => ( pg_enable_utf8 => 1 );
 
+# This is the a compatibility measure for MySQL for LIMIT-OFFSET
+use constant LIMIT_DEFAULT => "";
+
 ##############################################################################
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
-		    db_datetime DBH_ATTR TRANSACTIONAL);
+		    db_datetime DBH_ATTR TRANSACTIONAL group_concat_sql LIMIT_DEFAULT);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
@@ -109,7 +112,12 @@ sub next_key_sql {
     my ($table_name, $db_name) = @_;
     $db_name .= $db_name ? '.' : '';
     return $db_name . "NEXTVAL('${db_name}seq_$table_name')";
-} # next_key()
+} # next_key_sql()
+
+##############################################################################
+sub group_concat_sql {
+    return 'group_concat( DISTINCT ' . shift . ' )';
+} # group_concat_sql()
 
 ##############################################################################
 

@@ -64,18 +64,22 @@ use constant TRANSACTIONAL => 1;
 
 # This is the DSN that Bric::Util::DBI will use to connect to the database.
 use constant DSN_STRING => 'database=' . DB_NAME
+  . ';mysql_client_found_rows=1'
   . (DB_HOST ? eval "';host=' . DB_HOST" : '')
   . (DB_PORT ? eval "';port=' . DB_PORT" : '');
 
 # This is to set up driver-specific database handle attributes.
 use constant DBH_ATTR => ( );
 
+# This is the maximum for LIMIT rowcount in MySQL
+use constant LIMIT_DEFAULT => " 18446744073709551615 ";
+
 ##############################################################################
 # Inheritance
 ##############################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw(last_key_sql next_key_sql db_date_parts DSN_STRING
-		    DBH_ATTR TRANSACTIONAL);
+		    db_datetime DBH_ATTR TRANSACTIONAL group_concat_sql LIMIT_DEFAULT);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ##############################################################################
@@ -96,6 +100,32 @@ sub next_key_sql {
 #    my ($table_name, $db_name) = @_;
     return 'NULL';
 } # next_key()
+
+##############################################################################
+sub group_concat_sql {
+    my $col = shift;
+    return "COALESCE(group_concat(DISTINCT CASE WHEN $col <> 0 THEN $col END SEPARATOR ' '))";
+} # group_concat_sql()
+
+##############################################################################
+
+sub db_datetime {
+    my $date = shift;
+    my $dt = eval {
+        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?$/;
+        DateTime->new( year      => $1,
+                       month     => $2,
+                       day       => $3,
+                       hour      => $4,
+                       minute    => $5,
+                       second    => $6,
+                       time_zone => 'UTC',
+                       nanosecond => $7 ? $7 * 1.0E9 : 0
+                   );
+    };
+    throw_dp "Unable to parse date: $@" if $@;
+    return $dt;
+}
 
 ##############################################################################
 sub db_date_parts {

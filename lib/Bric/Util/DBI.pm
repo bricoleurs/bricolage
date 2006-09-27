@@ -80,7 +80,13 @@ use strict;
 # DBI Error Handling.
 ##############################################################################
 use Bric::Config qw(:dbi);
-use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
+
+BEGIN {
+    eval "require Bric::Util::DBD::".DBD_TYPE;
+    die $@ if $@;
+    ('Bric::Util::DBD::'.DBD_TYPE)->import(qw(:all));
+}
+
 use Bric::Util::Fault qw(throw_da);
 use DBI qw(looks_like_number);
 use Time::HiRes qw(gettimeofday);
@@ -126,13 +132,15 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    DB_DATE_FORMAT clean_params bind_columns bind_col
 		    bind_param begin commit rollback finish is_num row_array
 		    all_aref fetch_objects order_by group_by build_query
-		    build_simple_query where_clause tables ANY any_where);
+		    build_simple_query where_clause tables ANY any_where DBD_TYPE
+		    group_concat_sql LIMIT_DEFAULT);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
 our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
                                     execute next_key last_key bind_columns
-                                    finish any_where)],
+                                    finish any_where DBD_TYPE
+                                    group_concat_sql)],
 		    trans => [qw(begin commit rollback)],
                     junction => [qw(ANY)],
 		    all => \@EXPORT_OK);
@@ -736,7 +744,9 @@ sub fetch_objects {
     while (fetch($select)) {
         my $obj = bless {}, $pkg;
         # The group IDs are in the last four columns.
-        $grp_ids = $d[-$grp_col_cnt] = [map { split } @d[-$grp_col_cnt..-1]];
+        $grp_ids = $d[-$grp_col_cnt] = [
+            map { split } grep { defined } @d[-$grp_col_cnt..-1]
+        ];
         $obj->_set($fields, \@d);
         $obj->_set__dirty(0);
         # Cache the object before reblessing it.
@@ -781,6 +791,8 @@ sub build_query {
       $grp_by
       $order\n};
 
+    # LIMIT OFFSET compatibility measure for MySQL
+    $limit = LIMIT_DEFAULT if ($offset and !$limit);
     $sql .= qq{      LIMIT $limit\n} if $limit;
     $sql .= qq{      OFFSET $offset\n} if $offset;
     return \$sql;

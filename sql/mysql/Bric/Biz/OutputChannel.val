@@ -1,0 +1,22 @@
+-- -----------------------------------------------------------------------------
+-- OutputChannel.val
+--
+-- VERSION: $LastChangedRevision$
+--
+-- Create Output Channels.
+--
+
+INSERT INTO output_channel (id, name, description,
+	                    filename, file_ext, uri_format, fixed_uri_format,
+                            uri_case, use_slug, burner, primary_ce, site__id)
+VALUES ('1', 'Web', 'Output to the web', 'index', 'html',
+        '/%{categories}/%Y/%m/%d/%{slug}/', '/%{categories}/', '1', '0', '1', '1', '100');
+
+
+-- Add 'em to the 'All Output Channels' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('436', '23', '21', '1');
+
+INSERT INTO output_channel_member (id, object_id, member__id)
+VALUES ('1', '1', '436');
+

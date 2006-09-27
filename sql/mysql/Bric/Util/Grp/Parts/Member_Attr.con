@@ -1,0 +1,32 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_member
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_member_val
+
+
+ALTER TABLE attr_member_val ADD 
+    CONSTRAINT fk_attr_member__attr_member_val FOREIGN KEY (attr__id)
+    REFERENCES attr_member(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_member_val ADD
+    CONSTRAINT fk_member__attr_member_val FOREIGN KEY (object__id)
+    REFERENCES member(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: attr_member_meta
+
+ALTER TABLE attr_member_meta ADD 
+    CONSTRAINT fk_attr_member__attr_member_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_member(id) ON DELETE CASCADE;
+
+
+

@@ -1,0 +1,35 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+ALTER TABLE member
+ADD CONSTRAINT fk_grp__member FOREIGN KEY (grp__id)
+REFERENCES grp(id) ON DELETE CASCADE;
+
+ALTER TABLE member
+ADD CONSTRAINT fk_class__member FOREIGN KEY (class__id)
+REFERENCES class(id) ON DELETE CASCADE;
+
+--
+-- Use these alter table statements as examples when creating new member tables
+-- for other objects.
+
+ALTER TABLE    story_member
+ADD CONSTRAINT fk_story__story_member FOREIGN KEY (object_id)
+REFERENCES     story(id) ON DELETE CASCADE;
+
+ALTER TABLE    story_member
+ADD CONSTRAINT fk_member__story_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE member AUTO_INCREMENT 1024;
+ALTER TABLE story_member AUTO_INCREMENT 1024;

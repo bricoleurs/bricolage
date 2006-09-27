@@ -1,0 +1,10 @@
+-- Project: Bricolage Business API
+-- File:    Server.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author:  David Wheeler <david@justatheory.com>
+
+-- No default values for Server.
+
+

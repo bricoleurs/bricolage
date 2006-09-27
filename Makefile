@@ -32,11 +32,17 @@ BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib
 # build rules           #
 #########################
 
-all 		: required.db modules.db apache.db postgres.db config.db \
+all 		: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf build_done
 
+# This scans for dbprobe_*.pl files and passes them to required.pl to let
+# the user choose the database he wants (database names should conform to
+# DBD:: package name, ex: dbprobe_Pg for PostgresSQL)
+
+DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
+
 required.db	: inst/required.pl
-	$(PERL) inst/required.pl $(INSTALL_VERBOSITY)
+	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES)
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 	$(PERL) inst/modules.pl $(INSTALL_VERBOSITY)
@@ -44,21 +50,16 @@ modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 apache.db	: inst/apache.pl required.db
 	$(PERL) inst/apache.pl $(INSTALL_VERBOSITY)
 
-# This should be updated to something more database-independent. In fact,
-# what should happen is that a script should present a list of supported
-# databases, the user picks which one (each with a key name for the DBD
-# driver, e.g., "Pg", "mysql", "Oracle", etc.), and then the rest of the
-# work should just assume that database and do the work for that database.
-postgres.db 	: inst/postgres.pl required.db
-	$(PERL) inst/postgres.pl $(INSTALL_VERBOSITY)
+database.db 	: inst/database.pl  required.db $(DATABASE_PROBES)
+	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
 
-config.db	: inst/config.pl required.db apache.db postgres.db
+config.db	: inst/config.pl required.db apache.db database.db
 	$(PERL) inst/config.pl $(INSTALL_VERBOSITY)
 
 bconf/bricolage.conf	:  required.db inst/conf.pl
 	$(PERL) inst/conf.pl INSTALL $(BRIC_VERSION)
 
-build_done	: required.db modules.db apache.db postgres.db config.db \
+build_done	: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf
 	@echo
 	@echo ===========================================================
@@ -82,7 +83,7 @@ build_done	: required.db modules.db apache.db postgres.db config.db \
 # dist rules              #
 ###########################
 
-dist            : check_dist distclean inst/Pg.sql dist_dir \
+dist            : check_dist distclean inst/dist_sql dist_dir \
                   rm_svn rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
@@ -118,14 +119,15 @@ dist_tar	:
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
 SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
+SQL_DIRS  := $(shell find sql -maxdepth 1 -regex 'sql/.*' -a \! -regex 'sql/\.svn')
 
-# Update this later to be database-independent.
-inst/Pg.sql : $(SQL_FILES)
-	grep -vh '^--' `find sql/Pg -name '*.sql' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >  $@;
-	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
-	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
+# This creates the apropriate sql initialization scripts for the databases with
+# directories in sql (directory names should conform to DBD:: package name, 
+# ex: Pg for PostgresSQL).
+inst/dist_sql : $(SQL_FILES) inst/dist_sql.pl
+	$(PERL) inst/dist_sql.pl $(SQL_DIRS)
 
-.PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
+.PHONY 		: distclean inst/dist_sql dist_dir rm_svn dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -159,7 +161,9 @@ clone_files     :
 clone_lightweight     :
 	$(PERL) inst/clone_lightweight.pl
 
-clone_sql       : 
+CLONE_SQL_FILES := $(shell find inst -name 'clone_sql_*.pl')
+
+clone_sql       : $(CLONE_SQL_FILES)
 	$(PERL) inst/clone_sql.pl
 
 clone_tar	:
@@ -175,12 +179,12 @@ install 	: install_files install_db done
 
 install_files	: all is_root cpan lib bin files
 
-install_db		: db db_grant
+install_db	: db db_grant
 
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
 
-cpan 		: modules.db postgres.db inst/cpan.pl
+cpan 		: modules.db database.db inst/cpan.pl
 	$(PERL) inst/cpan.pl
 
 lib 		: 
@@ -194,11 +198,14 @@ bin 		:
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
-db    		: inst/db.pl postgres.db
+DBLOAD_FILES := $(shell find inst -name 'dbload_*.sql')
+
+db    		: inst/db.pl database.db $(DBLOAD_FILES)
 	$(PERL) inst/db.pl
 
-db_grant	: inst/db.pl postgres.db
-	$(PERL) inst/db_grant.pl
+DBGRANT_FILES := $(shell find inst -name 'dbgrant_*.sql')
+db_grant	: inst/dbgrant.pl database.db $(DBGRANT_FILES)
+	$(PERL) inst/dbgrant.pl 
 
 done		: bconf/bricolage.conf db files bin lib cpan
 	$(PERL) inst/done.pl
@@ -211,7 +218,7 @@ done		: bconf/bricolage.conf db files bin lib cpan
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db postgres.db bconf/bricolage.conf \
+upgrade		: upgrade.db required.db modules.db database.db bconf/bricolage.conf \
 	          is_root cpan stop db_upgrade lib bin  \
 	          upgrade_files upgrade_conf upgrade_done
 
@@ -254,7 +261,8 @@ uninstall 	: is_root prep_uninstall stop db_uninstall rm_files clean
 prep_uninstall	:
 	$(PERL) inst/uninstall.pl
 
-db_uninstall	:
+DB_UNINST_FILES := $(shell find inst -name 'db_uninst_*.pl')
+db_uninstall	:$(DB_UNINST_FILES)
 	$(PERL) inst/db_uninstall.pl
 
 rm_files	:
@@ -270,7 +278,7 @@ rm_files	:
 dev_symlink :
 	$(PERL) inst/dev.pl
 
-dev			: inst/Pg.sql install dev_symlink clean
+dev			: inst/dist_sql install dev_symlink clean
 
 ##########################
 # test rules             #

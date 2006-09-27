@@ -1,0 +1,18 @@
+--
+-- Project: Bricolage Business API
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+
+ALTER TABLE    source
+ADD CONSTRAINT fk_org__source FOREIGN KEY (org__id)
+REFERENCES     org(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE source AUTO_INCREMENT 1024;

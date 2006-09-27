@@ -174,10 +174,11 @@ sub confirm_paths {
 sub output_dbs {
     # fake up the .dbs from %INSTALL
     my %dbs = (
-        PG     => 'postgres.db',
-		CONFIG => 'config.db',
-		AP     => 'apache.db',
+        DB     => "database.db",
+		CONFIG => "config.db",
+		AP     => "apache.db",
     );
+
     while ( my ($key, $file) = each %dbs) {
         open(FILE, ">$file") or die "Unable to open $file : $!";
         print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);

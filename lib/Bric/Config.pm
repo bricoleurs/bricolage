@@ -549,7 +549,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant LOGIN_MARKER            => 'BRIC_LOGIN_MARKER';
 
     # DBI Settings.
-    use constant DBD_TYPE                => $config->{DBD_TYPE} || 'Pg';
+    use constant DBD_TYPE                => $config->{DB_TYPE} || 'Pg';
     use constant DBD_PACKAGE             => 'Bric::Util::DBD::' . DBD_TYPE;
     use constant DB_NAME                 => $config->{DB_NAME} || 'sharky';
     use constant DB_HOST                 => $config->{DB_HOST};

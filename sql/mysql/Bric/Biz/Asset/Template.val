@@ -1,0 +1,428 @@
+
+--
+-- Data for TOC Entry ID 10 (OID '391692')
+--
+-- Name: template Type: TABLE DATA Owner: castellan
+--
+
+/***************************************************************************
+* Don't forget to update the event log in Bric/Util/EventType.val!
+***************************************************************************/
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
+        '1', '1', '11',
+        '1', '/book_profile.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:21', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
+        '1', '1', '3',
+        '1', '/book_review.mc', '1', '0', '0',
+        '1', '1','2001-07-30 13:34:22',NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('504', 'Column', 'A default column', '3', NULL,
+        '1', '1', '2',
+        '1', '/column.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:22', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
+        '1', '1', '6',
+        '1', '/inset.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:23', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ( '507', 'Page', 'A generic page', '3', NULL,
+       '1', '1', '10',
+       '1', '/page.mc', '1', '0', '0',
+       '1', '1', '2001-07-30 13:34:20', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
+       '1', '1', '7',
+       '1', '/pull_quote.mc', '1', '0', '0',
+       '1', '1', '2001-07-30 13:34:20', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NULL,
+        '1', '1', '8',
+        '1', '/related_stories.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:21', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
+        '1', '1', '9',
+        '1', '/related_story.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:21', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('512', 'Story', 'A generic story template', '3', NULL,
+        '1', '1', '1',
+        '1', '/story.mc', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:22', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('513', 'autohandler', 'A generic root level category template', '3', NULL,
+        '1', '2', NULL,
+        '1', '/autohandler', '1', '0', '0',
+        '1', '1', '2001-07-30 13:34:22', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
+        '1', '1', '12',
+        '1', '/related_media.mc', '1', '0', '0',
+        '1', '1', '2001-08-01 14:51:34', NULL,
+        '1', '100');
+
+INSERT INTO template (id, name, description, priority, usr__id,
+                        output_channel__id, tplate_type, element_type__id,
+                        category__id, file_name, current_version, workflow__id, desk__id,
+                        published_version, deploy_status, deploy_date, expire_date,
+                        active, site__id)
+VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
+        '1', '1', '13',
+        '1', '/cover.mc', '1', '0', '0',
+        '1', '1', '2001-08-01 14:51:34', NULL,
+        '1', '100');
+
+--
+-- Data for TOC Entry ID 5 (OID '391725')
+--
+-- Name: template_instance Type: TABLE DATA Owner: castellan
+--
+-- id,template__id,version,usr__id,data,checked_out
+--
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('501','502','1','0', '/book_profile.mc','0',
+        '<!-- Start "Book Profile" -->
+<table>
+<tr>
+<td>Title</td>
+<td><% $element->get_value(''title'') %></td>
+</tr>
+<tr>
+<td>Author</td>
+<td><% $element->get_value(''author'') %></td>
+</tr>
+<tr>
+<td>Publisher</td>
+<td><% $element->get_value(''date'') %></td>
+</tr>
+</table>
+<!-- End "Book Profile" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('502','503','1','0','/book_review.mc','0',
+        '<!-- Start "Book Review" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Book Review" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('503','504','1','0','/column.mc', '0',
+        '<!-- Start "Column" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Column" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('505','506','1','0','/inset.mc', '0',
+        '
+<!-- Start ''Inset'' -->
+<table>
+<tr><td>
+<% $element->get_value(''copy'') %>
+</td></tr>
+</table>
+<!-- End ''Inset'' -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('506','507','1','0','/page.mc', '0',
+        '<!-- Start "Page" -->
+<%perl>
+foreach my $e ($element->get_elements) {
+    if ($e->has_name(''paragraph'')) {
+        $m->out(''<p>''.$e->get_value.''</p>'');
+
+    } elsif ($e->has_name(''pull_quote'')) {
+        $burner->display_element($e);
+
+    } elsif ($e->has_name(''inset'')) {
+        $burner->display_element($e);
+
+    }
+}
+</%perl>
+
+<hr />
+
+%# $burner numbers pages from ''0'' not ''1''.
+% my $pnum = $burner->get_page + 1;
+
+%# Show ''previous'' link
+% my $prev = $element->get_value(''previous'');
+% if ($prev) {
+<a href="index<% $pnum-2 != 0 ? $pnum-2 : '''' %>.html">
+&lt;&lt;&lt; Page <% $pnum - 1 %> : </a>
+<% $prev %>
+% }
+
+&nbsp;&nbsp;&nbsp;
+
+%# Show ''next'' link
+% my $next = $element->get_value(''next'');
+% if ($next) {
+<% $next %>
+<a href="index<% $pnum %>.html">
+ : Page <% $pnum + 1 %> &gt;&gt;&gt;
+</a>
+% }
+
+<!-- End "Page" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('508','509','1','0','/pull_quote.mc', '0',
+        '<!-- Start "Pull Quote" -->
+&quot;<% $element->get_value(''quote'') %>&quot;
+<!-- End "Pull Quote" -->');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('509','510','1','0','/related_stories.mc', '0',
+        '<!-- Start "Related Stories" -->
+% my @rel = $element->get_elements;
+
+% if (@rel > 0) {
+<table>
+
+% foreach my $rs (@rel) {
+<tr><td>
+% $burner->display_element($rs);
+</td></tr>
+% }
+
+</table>
+% }
+<!-- End "Related Stories" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('510','511','1','0','/related_story.mc', '0',
+        '<!-- Start "Related Story" -->
+% my $rel_story = $element->get_related_story;
+<b>Title:</b>&nbsp;
+<% $element->get_value(''alternate_title'') || $rel_story->get_title %><br />
+<b>Teaser:</b>&nbsp;
+<% $element->get_value(''alternate_teaser'') ||
+$rel_story->get_description %><br />
+<!-- End "Related Story" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('511','512','1','0','/story.mc', '0',
+        '<!-- Start "Story" -->
+
+%# Only show this if we are on the first page
+% unless ($burner->get_page     ) {
+<h1><% $story->get_title %></h1>
+<% $element->get_value(''deck'') %>
+<hr />
+% }
+
+%# Display all the pages of this story
+% $burner->display_pages(''page'');
+
+<br>
+Page <% $burner->get_page + 1 %>
+<!-- End "Story" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('512','513','1','0','/autohandler', '0',
+       '<!-- Start "autohandler" -->
+<html>
+    <head>
+        <title><% $story->get_title %></title>
+    </head>
+    <body>
+% $burner->chain_next;
+    </body>
+</html>
+<!-- End "autohandler" -->
+');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('513','514','1','0','/related_media.mc', '0',
+        '<!-- Start "Related Media" -->
+% my $rel_media = $element->get_related_media;
+
+%# This template only handles images.
+% if (substr($rel_media->get_media_type->get_name, 0, 5) eq ''image'') {
+<img src="<% $rel_media->get_uri %>">
+% }
+<!-- End "Related Media" -->');
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
+                                 checked_out, data)
+VALUES ('514','515','1','0','/cover.mc', '0',
+        '<!-- Start "Cover" -->
+%# Lets make this a 3 column cover.
+% my @elem = $element->get_elements;
+%# Find the elements per column
+% my $per_col = int((scalar @elem)/3)+1;
+
+<table>
+<tr>
+<%perl>
+# Lay these elements out over three columns.
+while (scalar @elem) {
+    foreach (1..$per_col) {
+        my $e = shift @elem || last;
+        $burner->display_element($e);
+        $m->out(''<br />'');
+    }
+}
+</%perl>
+</tr>
+</table>
+<!-- End "Cover" -->
+');
+
+
+--
+-- Data for TOC Entry ID 5 (OID '387829')
+--
+-- Name: member Type: TABLE DATA Owner: castellan
+--
+-- id,grp__id,class__id,active
+--
+
+INSERT INTO member VALUES ('515','33','19','1');
+INSERT INTO member VALUES ('519','33','19','1');
+INSERT INTO member VALUES ('521','33','19','1');
+INSERT INTO member VALUES ('525','33','19','1');
+INSERT INTO member VALUES ('528','33','19','1');
+INSERT INTO member VALUES ('532','33','19','1');
+INSERT INTO member VALUES ('535','33','19','1');
+INSERT INTO member VALUES ('537','33','19','1');
+INSERT INTO member VALUES ('540','33','19','1');
+INSERT INTO member VALUES ('542','33','19','1');
+INSERT INTO member VALUES ('544','33','19','1');
+INSERT INTO member VALUES ('546','33','19','1');
+
+
+
+--
+-- Data for TOC Entry ID 5 (OID '391761')
+--
+-- Name: template_member Type: TABLE DATA Owner: castellan
+--
+-- id,object_id,member__id
+--
+
+INSERT INTO template_member VALUES ('501','502','515');
+INSERT INTO template_member VALUES ('503','503','519');
+INSERT INTO template_member VALUES ('505','504','521');
+INSERT INTO template_member VALUES ('509','506','525');
+INSERT INTO template_member VALUES ('511','507','528');
+INSERT INTO template_member VALUES ('515','509','532');
+INSERT INTO template_member VALUES ('517','510','535');
+INSERT INTO template_member VALUES ('519','511','537');
+INSERT INTO template_member VALUES ('521','512','540');
+INSERT INTO template_member VALUES ('523','513','542');
+INSERT INTO template_member VALUES ('525','514','544');
+INSERT INTO template_member VALUES ('526','515','546');

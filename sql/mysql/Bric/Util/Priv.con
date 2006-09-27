@@ -1,0 +1,60 @@
+--
+-- Project: Bricolage API
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- 
+-- TABLE: grp_priv 
+--
+
+ALTER TABLE    grp_priv
+ADD CONSTRAINT fk_grp__grp_priv FOREIGN KEY (grp__id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+
+-- TABLE: grp_priv__grp_member 
+--
+
+ALTER TABLE    grp_priv__grp_member
+ADD CONSTRAINT fk_grp_priv__grp_priv__grp_mem FOREIGN KEY (grp_priv__id)
+REFERENCES     grp_priv(id) ON DELETE CASCADE;
+
+ALTER TABLE    grp_priv__grp_member
+ADD CONSTRAINT fk_grp__grp_priv__grp_member FOREIGN KEY (grp__id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+--------------------------------------------------------------------------------
+-- Trigger creation to replace check constraints until MySQL supports them
+
+DELIMITER |
+
+CREATE TRIGGER ck_value_insert_grp_priv BEFORE INSERT ON grp_priv
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.value < 1) OR (NEW.value > 255))
+	        THEN SET NEW.value=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_value_update_grp_priv BEFORE UPDATE ON grp_priv
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.value < 1) OR (NEW.value > 255))
+	        THEN SET NEW.value=NULL;
+		END IF;        
+    
+        END;
+|
+
+DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp_priv AUTO_INCREMENT 1024;
