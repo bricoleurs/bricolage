@@ -332,7 +332,7 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
 =head2 Autovacuum
 
-The C<autovacuum> directive turns on the autvacuum daemon that is included in
+The C<autovacuum> directive turns on the autovacuum daemon that is included in
 PostgreSQL 8.1 and later. We strongly recommend that you take advantage of the
 autovacuum feature in order to keep database performance optimal. See
 L<http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
