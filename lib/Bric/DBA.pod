@@ -160,17 +160,22 @@ optimizer. PostgreSQL uses a non-overwriting storage manager, which means that
 C<DELETE> commands don't actually remove data, they just mark it invalid;
 similarly, C<UPDATE> commands and rolled-back transactions will create more
 "old versions" of rows. These should be cleaned up on a periodic basis by
-running C<VACUUM>. Running C<ANALYZE> (known prior to PostgreSQL 7.3 as
-C<VACUUM ANALYZE>) also collects statistics representing the dispersion of the
-data in each column. The statistics maintained include the number of tuples
-and number of pages stored in all transactions. This information is valuable
-when several query execution paths are possible. Running C<ANALYZE>
-periodically will increase the speed of the database in processing user
-queries.
+running C<VACUUM>.
 
-We recommend that you C<VACUUM> and C<ANALYZE> on your Bricolage database
-regularly, in order to remove expired rows and keep the database running
-efficiently.
+Running C<ANALYZE> (known prior to PostgreSQL 7.3 as C<VACUUM ANALYZE>) also
+collects statistics representing the dispersion of the data in each column.
+The statistics include the number of tuples and number of pages stored in all
+transactions. This information is valuable when several query execution paths
+are possible. Running C<ANALYZE> periodically will increase the speed of the
+database in processing user queries.
+
+If you're running PostgreSQL 8.1 or later, we recommend that you use the
+integated support for autovacuuming the database. Skip ahead to the
+L<Autovacuum|"Autovacuum"> section for details.
+
+For older versions of PostreSQL, we recommend that you C<VACUUM> and
+C<ANALYZE> on your Bricolage database regularly, in order to remove expired
+rows and keep the database running efficiently.
 
 There are three ways to C<VACUUM> and B<ANALYZE> a database. The first is
 through an interactive shell such as C<psql>. Another approach is to schedule
@@ -324,6 +329,35 @@ with 2 GB available RAM where you want to allocate 75% for the effective cache
 size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
   effective_cache_size = 196608
+
+=head2 Autovacuum
+
+The C<autovacuum> directive turns on the autvacuum daemon that is included in
+PostgreSQL 8.1 and later. We strongly recommend that you take advantage of the
+autovacuum feature in order to keep database performance optimal. See
+L<http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
+for details. To enable autovacuum, you I<must> set these direcives:
+
+  stats_start_collector = on
+  stats_row_level       = on
+  autovacuum            = on
+
+If you enable C<autovacuum> but forget to enable C<stats_start_collector>
+and/or C<stats_row_level>, autovacuum will not actually work. But it's not
+fatal; you'll just happen to see this warning if you're watching your
+PostgreSQL log:
+
+  WARNING: autovacuum not started because of misconfiguration
+  HINT: Enable options "stats_start_collector" and stats_row_level".
+
+So be sure to enable them!
+
+Beyond these required settings, our current recommendation for running
+autovacuum on a Bricolage database are to set the following directives:
+
+  autovacuum_vacuum_threshold    = 300
+  autovacuum_analyze_threshold   = 500
+  autovacuum_vacuum_scale_factor = 0.5
 
 =head2 Maintenance Work Memory
 

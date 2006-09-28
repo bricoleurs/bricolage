@@ -71,6 +71,11 @@ prevents users from removing the "s" from "https" and thus being able to use
 Bricolage insecurely when their administrators don't want them to. Reported by
 Joe Pletcher (Ticket # 1233). [David]
 
+=item *
+
+Added "Autovacuum" section to Bric::DBA. The C<autovacuum> settings in
+F<postgresql.conf> are available in PostgreSQL 8.1 and later. [David]
+
 =back
 
 =head2 Bug Fixes
