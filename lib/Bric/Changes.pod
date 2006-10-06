@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.3 (2006-09?)
+=head1 VERSION 1.10.3 (2006-10-?)
 
 =head2 Improvements
 
@@ -207,6 +207,11 @@ booleans for boolean columns. Reported by John Greene. [David]
 Eliminated "Use of uninitialized value in substitution (s///)" warning for
 stories with no slug and a URI format with "%{slug}" in it. Reported by Wayne
 Slavin. [David]
+
+=item *
+
+F<bric_soap> no longer prompts for a password if you use C<--use-cookie-file>.
+Reported by Paul Orrock. [Scott]
 
 =back
 
