@@ -1,6 +1,6 @@
-#!/usr/local/bin/perl -w
+#!/usr/bin/perl -w
 
-eval 'exec /usr/local/bin/perl -w -S $0 ${1+"$@"}'
+eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 use strict;
 
@@ -273,7 +273,8 @@ sub build_image_list {
 
     $temp->{name} = $file;
     $temp->{category} = $path;
-    $temp->{category} =  "/$temp->{category}/" unless $temp->{category} =~ m,^/,;
+    $temp->{category} =  "/$temp->{category}" unless $temp->{category} =~ m,^/,;
+    $temp->{category} =  "$temp->{category}/" unless $temp->{category} =~ m,/$,;
     $temp->{full_path} = $full_path;
 
     push @$media_list, $temp;
@@ -349,6 +350,7 @@ sub check_media_exist {
     my ($media,$targ_url) = @_;
     my $exec_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media list_ids --search file_name='".$media->{name}."' --search category='".$media->{category}."' --search element='".$media_type."' ";
 
+    print "Executing $exec_code\n" if $VERBOSE;
     my $exec_result = `$exec_code 2>&1`;
 
     if ( ($exec_result =~ /media_\d*/) ) {
@@ -421,7 +423,7 @@ EOS
 
     print "Uploading $media_name...\n" if $VERBOSE;
     my $execute_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media $operation $temp_dir/media_xml_temp.xml";
-
+    print "Executing $execute_code\n" if $VERBOSE;
     # code to execute
     my $exec_result = `$execute_code 2>&1`;
 
@@ -457,6 +459,7 @@ sub check_connect_soap {
     my $command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password '$target_password' category list_ids --search path=/";
     print "Caching cookie in $temp_dir/logincookie\n" if $VERBOSE;
 
+    print "Executing $command\n" if $VERBOSE;
     my $exec_result = `$command 2>&1`;
     if ( ($exec_result =~ /category_\d*/) ) {
         print "\nConnected to $targ_url\n" if $VERBOSE;
@@ -472,6 +475,7 @@ sub find_or_create_category {
     my $write_to_root = 0;
     my $command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$category;
     $command .= " --search site='$site'" if $site;
+    print "Executing $command\n" if $VERBOSE;
 
     my $exec_result = `$command 2>&1`;
     if ( ($exec_result =~ /category_\d*/) ) {

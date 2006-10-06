@@ -76,6 +76,12 @@ Joe Pletcher (Ticket # 1233). [David]
 Added "Autovacuum" section to Bric::DBA. The C<autovacuum> settings in
 F<postgresql.conf> are available in PostgreSQL 8.1 and later. [David]
 
+=item *
+
+Improved verbose output in F<contrib/bric_media_upload> to include bric_soap 
+commands in output. Also now uses /usr/bin/perl instead of /usr/local/bin/perl
+to be consistent with other scripts and bricolage core. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
@@ -108,7 +114,7 @@ permission to create the F<inst/Pg.sql> file. [David]
 
 C<make clone> no longer runs C<distclean>, and therefore no longer deletes
 F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
-directory, instead over replacing th existing F<Pg.sql>. [David]
+directory, instead over replacing the existing F<Pg.sql>. [David]
 
 =item *
 
@@ -212,6 +218,11 @@ Slavin. [David]
 
 F<bric_soap> no longer prompts for a password if you use C<--use-cookie-file>.
 Reported by Paul Orrock. [Scott]
+
+=item *
+
+Fixed F<contrib/bric_media_upload> so that it only appends a / to the end of 
+the category string if there isn't one already there. [Paul Orrock]
 
 =back
 
