@@ -195,7 +195,7 @@ alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
 =item *
 
 Fixed F<contrib/bric_media_upload> so that it works with 1.10 categories and
-XML elements. [David]
+XML elements. [David and Paul Orrock]
 
 =item *
 
@@ -218,11 +218,6 @@ Slavin. [David]
 
 F<bric_soap> no longer prompts for a password if you use C<--use-cookie-file>.
 Reported by Paul Orrock. [Scott]
-
-=item *
-
-Fixed F<contrib/bric_media_upload> so that it only appends a / to the end of 
-the category string if there isn't one already there. [Paul Orrock]
 
 =back
 
