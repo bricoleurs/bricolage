@@ -274,7 +274,7 @@ sub build_image_list {
     $temp->{name} = $file;
     $temp->{category} = $path;
     $temp->{category} =  "/$temp->{category}" unless $temp->{category} =~ m,^/,;
-    $temp->{category} =  "$temp->{category}/" unless $temp->{category} =~ m,/$,;
+    $temp->{category} .= '/' unless $temp->{category} =~ m,/$,;
     $temp->{full_path} = $full_path;
 
     push @$media_list, $temp;
