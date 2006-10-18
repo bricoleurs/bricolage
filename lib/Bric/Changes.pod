@@ -64,6 +64,11 @@ Added support for the the C<oc_id> parameter to
 L<Bric::Dist::Resource|Bric::Dist::Resource> to simplify looking up stale
 story and media files for expiration. [David]
 
+=item *
+
+Fixed an error message during F<inst/clone.pl> where the wrong version was
+being displayed. [Scott]
+
 =back
 
 =head2 Bug Fixes

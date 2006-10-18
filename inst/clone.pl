@@ -120,8 +120,9 @@ sub check_version {
     # make sure we're not cloning a different version
     if ($INSTALL->{VERSION} ne $VERSION) {
         print <<END;
-The installed version ("$VERSION") is not same as this version!  "make
-clone" is only designed to work with like versions.
+The installed version ("$INSTALL->{VERSION}") is not same as this
+version ("$VERSION")!  "make clone" is only designed to work with
+like versions.
 END
         exit 1 unless ask_yesno("Continue with clone? [no] ", 0);
         @todo = ($VERSION);
