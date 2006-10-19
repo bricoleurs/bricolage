@@ -224,6 +224,11 @@ Slavin. [David]
 F<bric_soap> no longer prompts for a password if you use C<--use-cookie-file>.
 Reported by Paul Orrock. [Scott]
 
+=item *
+
+F<bin> files should no longer be put under the default site script directory
+(compensates for an ExtUtils::MakeMaker change). [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

@@ -38,6 +38,7 @@ WriteMakefile(NAME           => 'bric_bin',
 		()),
 	      ( exists $CONFIG->{BIN_DIR} ? 
 		( INSTALLSCRIPT => $CONFIG->{BIN_DIR},
+                  INSTALLSITESCRIPT => $CONFIG->{BIN_DIR},
                   INSTALLSITEBIN => $CONFIG->{BIN_DIR} ) :
 		()),
 	      ( exists $CONFIG->{MAN_DIR} ? 
