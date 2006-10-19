@@ -82,6 +82,11 @@ Improved verbose output in F<contrib/bric_media_upload> to include bric_soap
 commands in output. Also now uses /usr/bin/perl instead of /usr/local/bin/perl
 to be consistent with other scripts and bricolage core. [Paul Orrock]
 
+=item *
+
+Fixed an error message during F<inst/clone.pl> where the wrong version was
+being displayed. [Scott]
+
 =back
 
 =head2 Bug Fixes
