@@ -27,6 +27,10 @@ Added support for the FCKeditor WYSIWYG editor. See
 L<http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
 Technologies. [David]
 
+=item *
+
+Added support for MySQL, from Andrei Arsu's Google Summer of Code project.
+
 =back
 
 =head2 Improvements
