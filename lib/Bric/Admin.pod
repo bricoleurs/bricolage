@@ -143,9 +143,9 @@ START MODULE LIST
 
 =item HTML::Mason 1.23
 
-=item DBD::Pg 1.22
+=item DBD::Pg 1.22 (optional)
 
-=item DBD::mysql 3.0007
+=item DBD::mysql 3.0007 (optional)
 
 =item DB_File
 
