@@ -31,6 +31,12 @@ Technologies. [David]
 
 Added support for MySQL, from Andrei Arsu's Google Summer of Code project.
 
+=item *
+
+Added a C<NONE> function to Bric::Util::DBI. For any C<list> parameter where
+you could've used C<ANY> before, you can now use C<NONE> to return only
+objects that don't match. [Scott]
+
 =back
 
 =head2 Improvements
@@ -44,6 +50,11 @@ are used instead, making the left nav faster. [Scott, Marshall, David]
 
 =item *
 
+Moved the templates in F<comp/widgets/wrappers/sharky/> to
+F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
+
+=item *
+
 Updated the Portuguese localizations. [Pedro Custodio]
 
 =back
@@ -54,8 +65,7 @@ Updated the Portuguese localizations. [Pedro Custodio]
 
 =item *
 
-Moved the templates in F<comp/widgets/wrappers/sharky/> to 
-F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
+
 
 =back
 

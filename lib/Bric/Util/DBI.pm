@@ -132,8 +132,8 @@ our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
 		    DB_DATE_FORMAT clean_params bind_columns bind_col
 		    bind_param begin commit rollback finish is_num row_array
 		    all_aref fetch_objects order_by group_by build_query
-		    build_simple_query where_clause tables ANY any_where DBD_TYPE
-		    group_concat_sql LIMIT_DEFAULT);
+		    build_simple_query where_clause tables ANY NONE any_where
+                    DBD_TYPE group_concat_sql LIMIT_DEFAULT);
 
 # But you'll generally just want to import a few standard ones or all of them
 # at once.
@@ -142,7 +142,7 @@ our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
                                     finish any_where DBD_TYPE
                                     group_concat_sql)],
 		    trans => [qw(begin commit rollback)],
-                    junction => [qw(ANY)],
+                    junction => [qw(ANY NONE)],
 		    all => \@EXPORT_OK);
 
 # Disconnect! Will be ignored by Apache::DBI.
@@ -330,6 +330,33 @@ B<Notes:> NONE.
 sub ANY {
     throw_da "No parameters passed to ANY()" unless @_;
     bless \@_, 'Bric::Util::DBI::ANY';
+}
+
+=item NONE
+
+  my @p = Bric::Biz::Person->list({ lname => NONE( 'wall', 'conway') });
+
+Use this function when you want to perform a query comparing more than one
+value, and you want objects returned that don't match any of the values passed
+(c.f. L</ANY>; C<NONE> can be used anywhere that C<ANY> can be)
+
+B<Throws:>
+
+=over 4
+
+=item No parameters passed to NONE()"
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub NONE {
+    throw_da "No parameters passed to NONE()" unless @_;
+    bless \@_, 'Bric::Util::DBI::NONE';
 }
 
 =item my $bool = is_num(@values)
@@ -913,20 +940,30 @@ B<Notes:> NONE.
 sub where_clause {
     my ($pkg, $param) = @_;
     my (@args, $where, $and);
+
     $where = $pkg->WHERE;
+
+    # This is so that if there are both ANY and NOT (or multiple
+    # of either, for that matter) of the same param,
+    # it only gets added once (e.g. for 'site', we only need
+    # to add 's.site__id = site.id' (in PARAM_ANYWHERE_MAP) once).
+    my %seen;
+
     while (my ($k, $v) = each %$param) {
         next unless defined $v;
         my $sql = $pkg->PARAM_WHERE_MAP->{$k} or next;
-        if (UNIVERSAL::isa($v, 'Bric::Util::DBI::ANY')) {
+
+        # XXX: this duplicates any_where
+        my $not = UNIVERSAL::isa($v, 'Bric::Util::DBI::NONE') ? 'NOT' : '';
+        if ($not or UNIVERSAL::isa($v, 'Bric::Util::DBI::ANY')) {
             # The WHERE clause may be in two parts.
             if (my $any = $pkg->PARAM_ANYWHERE_MAP->{$k}) {
-                $where .= " AND $any->[0]";
+                $where .= " AND $any->[0]" unless exists $seen{$k};
                 $sql = $any->[1];
             }
-            $where .= ' AND (' . join(' OR ', ($sql) x @$v) . ')';
+            $where .= " AND $not(" . join(' OR ', ($sql) x @$v) . ')';
             my $count = $sql =~ s/\?//g;
             push @args, ($_) x $count for @$v;
-
         } else {
             $where .= " AND $sql";
             push @args, ($v) x $sql =~ s/\?//g;
@@ -941,12 +978,14 @@ sub where_clause {
 
   my $where = any_where($value, $where_expression, \@params);
 
-Examines $value to determine whether it is a single value or an C<ANY> value.
-If it is an C<ANY> value, then each of those value is pushed on to the end of
-the C<$params> array reference and the where expression is grouped together in
-parenetheses and C<OR>ed together the same number of times as there are
-values. Otherwise, a single value is pushed onto the C<$params> array
-reference and the where expression simply returned.
+Examines $value to determine whether it is a single value or an C<ANY> or
+a C<NONE> value. If it is an C<ANY> or a C<NONE> value, then each of those
+values is pushed on to the end of the C<$params> array reference and the
+C<where> expression is grouped together in parentheses and C<OR>ed together
+the same number of times as there are values (and in the case of C<NONE>,
+the word "NOT" comes before the parentheses). Otherwise, a single value
+is pushed onto the C<$params> array reference and the C<where> expression
+simply returned.
 
 For example, if called like so:
 
@@ -954,9 +993,11 @@ For example, if called like so:
   my $where = any_where(ANY(1, 2, 3), "f.name = ?", \@params);
 
 Then C<@params> will contain C<(1, 2, 3)> and the string "(f.name = ? OR
-f.name = ? OR f.name = ?)" will be assigned to C<$where>.
+f.name = ? OR f.name = ?)" will be assigned to C<$where>. If called with
+C<NONE> instead of C<ANY>, the string would be "NOT(f.name = ? OR
+f.name = ? OR f.name = ?)".
 
-However, if the value is not an C<ANY> value:
+However, if the value is not an C<ANY> or a C<NONE> value:
 
   my @params;
   my $where = any_where(1, "f.name = ?", \@params);
@@ -964,16 +1005,17 @@ However, if the value is not an C<ANY> value:
 Then C<@params> will of course contain only C<(1)> and the string "f.name = ?"
 will be assigned to C<$where>.
 
-This function is useful in classes that wisht to add C<ANY> support to
+This function is useful in classes that wish to add C<ANY>/C<NONE> support to
 specific C<list()> method parameters.
 
 =cut
 
 sub any_where {
     my ($value, $sql, $params) = @_;
-    if (UNIVERSAL::isa($value, 'Bric::Util::DBI::ANY')) {
+    my $not = UNIVERSAL::isa($value, 'Bric::Util::DBI::NONE') ? 'NOT' : '';
+    if ($not or UNIVERSAL::isa($value, 'Bric::Util::DBI::ANY')) {
         push @$params, @$value;
-        return '(' . join(' OR ', ($sql) x @$value) . ')';
+        return "$not(" . join(' OR ', ($sql) x @$value) . ')';
     }
     push @$params, $value;
     return $sql;
