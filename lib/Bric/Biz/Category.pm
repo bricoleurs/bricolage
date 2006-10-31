@@ -336,7 +336,7 @@ NONE
 
 B<Notes:>
 
-This is the default list constructor which should be overrided in all derived
+This is the default list constructor which should be overridden in all derived
 classes even if it just calls 'die'.
 
 =cut
