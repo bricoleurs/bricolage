@@ -229,6 +229,13 @@ Reported by Paul Orrock. [Scott]
 F<bin> files should no longer be put under the default site script directory
 (compensates for an ExtUtils::MakeMaker change). [Scott]
 
+=item *
+
+When a media document gets a new file uploaded with the same name as the
+previously published file in that same media document, Bricolage will no
+longer expire the new file right after publishing it. Reported by Chris
+Schults and others. [David]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

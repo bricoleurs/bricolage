@@ -1315,7 +1315,7 @@ sub publish {
                 not_job_id => $job->get_id,
                 $key eq 'story'
                     ? (path  => "$base_path/%")
-                    : (oc_id => $oc->get_id ),
+                    : (oc_id => $oc->get_id, not_uri => $ba->get_uri($oc) ),
             })) {
                 # Yep, there are old resources to expire.
                 my $expname = 'Expire stale "' . $ba->get_name .
