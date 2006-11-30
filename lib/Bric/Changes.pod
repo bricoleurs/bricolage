@@ -236,6 +236,12 @@ previously published file in that same media document, Bricolage will no
 longer expire the new file right after publishing it. Reported by Chris
 Schults and others. [David]
 
+=item *
+
+The delete checkbox and menu to move an asset to another desk no longer appear
+for assets listed on a desk that are checked out do a different user. [David
+Beaudet]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

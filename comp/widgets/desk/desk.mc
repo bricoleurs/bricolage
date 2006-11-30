@@ -294,6 +294,8 @@ if (defined $objs && @$objs > $obj_offset) {
                     $action = 'checkin_cb';
                     $vlabel = 'Edit' if $can_edit;
                 } else {
+                    # It's checked out to someone else.
+                    $can_edit  = 0;
                     $desk_opts = undef;
                     my $uid = $obj->get_user__id;
                     $user = $users{$uid} ||= Bric::Biz::Person::User->lookup
