@@ -642,7 +642,7 @@ know to merge only from that revision on.
 
 By following this methodology we should be able to minimize the number of
 conflicts we get between merges. See book "Version Control with Subversion,"
-chapter 4 at L<https://svnbook.red-bean.com/svnbook/ch04.html> for a more
+chapter 4 at L<http://svnbook.red-bean.com/svnbook/ch04.html> for a more
 detailed explanation of the whys and wheres of this approach to merging
 Subversion branches.
 
