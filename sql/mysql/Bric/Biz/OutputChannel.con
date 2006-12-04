@@ -1,0 +1,84 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+-- 
+-- TABLE: output_channel_member
+--
+
+ALTER TABLE    output_channel
+ADD CONSTRAINT fk_site__output_channel FOREIGN KEY (site__id)
+REFERENCES     site(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_include
+ADD CONSTRAINT fk_output_channel__oc_include FOREIGN KEY (output_channel__id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_include
+ADD CONSTRAINT fk_oc__oc_include_inc FOREIGN KEY (include_oc_id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_member
+ADD CONSTRAINT fk_output_channel__oc_member FOREIGN KEY (object_id)
+REFERENCES     output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE    output_channel_member
+ADD CONSTRAINT fk_member__oc_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--------------------------------------------------------------------------------
+-- Trigger creation to replace MySQL check constraints until MySQL supports them
+
+DELIMITER |
+
+CREATE TRIGGER ck_uri_case_insert_output_channel BEFORE INSERT ON output_channel
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.uri_case <> 1) AND (NEW.uri_case <> 2) AND (NEW.uri_case <> 3))
+	        THEN SET NEW.uri_case=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_uri_case_update_output_channel BEFORE UPDATE ON output_channel
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.uri_case <> 1) AND (NEW.uri_case <> 2) AND (NEW.uri_case <> 3))
+	        THEN SET NEW.uri_case=NULL;
+		END IF;        
+    
+        END;
+|
+
+CREATE TRIGGER ck_include_oc_id_insert_output_channel_include BEFORE INSERT ON output_channel_include
+    FOR EACH ROW 
+	BEGIN
+	    IF (NEW.include_oc_id = NEW.output_channel__id)
+		THEN SET NEW.include_oc_id=NULL;
+	    END IF;        
+        END;
+|
+
+CREATE TRIGGER ck_include_oc_id_update_output_channel_include BEFORE UPDATE ON output_channel_include
+    FOR EACH ROW 
+	BEGIN
+	    IF (NEW.include_oc_id = NEW.output_channel__id)
+		THEN SET NEW.include_oc_id=NULL;
+	    END IF;        
+        END;
+|
+
+DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE output_channel AUTO_INCREMENT 1024;
+ALTER TABLE output_channel_include AUTO_INCREMENT 1024;
+ALTER TABLE output_channel_member AUTO_INCREMENT 1024;

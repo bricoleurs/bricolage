@@ -1,10 +1,12 @@
 # Required programs.  PG_CONFIG_PATH is the location of PostgreSQL's pg_config 
-# script.  APACHE_PATH is the path to the Apache 1.3 executable.  APACHE_EXE is
+# script. MYSQL_CONFIG_PATH is the location of MySQL's mysql_config. APACHE_PATH 
+# is the path to the Apache 1.3 executable.  APACHE_EXE is
 # the filename of the executable itself.  EXPAT_PATH is the path to the Expat 
 # library libexpat.so (also looks in library paths that Perl knows about), and
 # EXPAT_FILE is the filename of the library.
 
 PG_CONFIG_PATH = /usr/local/pgsql/bin, /usr/local/postgres/bin, /usr/lib/postgresql/bin, /opt/pgsql/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
+MYSQL_CONFIG_PATH = /usr/local/mysql/bin, /usr/lib/mysql/bin, /opt/mysql/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
 APACHE_PATH = /usr/local/apache/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
 APACHE_EXE  = httpd, httpsd, apache-perl, apache
 EXPAT_PATH  = /sw/lib
@@ -46,6 +48,35 @@ APACHE_SSL_PORT = 443
 POSTGRES_SUPERUSER   = postgres
 POSTGRES_BRICUSER     = bric
 POSTGRES_DB          = bric
+
+# MySQL settings.  MYSQL_SUPERUSER is the username of the Mysql
+# superuser (typically "root").  MYSQL_BRICUSER is the username that 
+# Bricolage will use when connecting to the database.  This can be anything 
+# you want, but "bric" is typical. MYSQL_DB is the name of the database 
+# Bricolage will use.
+#
+# In most installations, Postgres allows local users to access the
+# server without a username.  If your server requires a password, pass the
+# MYSQL_SUPERPASS environment variable during "make," e.g.:
+#
+#    make MYSQL_SUPERPASS=abcdef
+#
+# The Bricolage Mysql Password (the password used by Bricolage to
+# connect to the database) is randomly generated during a silent install.  If
+# you need it, it'll be in bricolage.conf after installation.
+#
+# If MySQL is running on a separate box, you must pass a host name or 
+# IP address to "make" through the MYSQL_HOSTNAME environment variable.
+# If it's running on a port other than the default port (3792), pass the 
+# appropriate port number with MYSQL_HOSTPORT.
+
+MYSQL_SUPERUSER   = root
+MYSQL_BRICUSER    = bric
+MYSQL_DB          = bric
+
+# Default database to use
+
+DB_TYPE          = Pg
 
 # Installation locations.
 

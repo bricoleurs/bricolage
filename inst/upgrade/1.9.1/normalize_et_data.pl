@@ -42,9 +42,10 @@ if (db_version() ge '8.0') {
 }
 
 my $sel = prepare(q{
-    SELECT attr.id, meta.name, meta.value
-    FROM   attr_at_data attr, attr_at_data_meta meta
-    WHERE  attr.id = meta.attr__id
+    SELECT attr.id, coalesce(val.short_val, val.blob_val, val.date_val::text),
+           meta.name, meta.value
+    FROM   attr_at_data attr, attr_at_data_val val, attr_at_data_meta meta
+    WHERE  attr.id = val.attr__id AND attr.id = meta.attr__id
            AND attr.name = 'html_info'
            AND attr.active = '1'
            AND meta.active = '1'
@@ -70,17 +71,19 @@ my $update = prepare(q{
 my @attr_names = qw(disp cols rows length vals multiple def precision type);
 
 execute($sel);
-bind_columns($sel, \my ($aid, $attr_name, $val));
+bind_columns($sel, \my ($aid, $default, $attr_name, $val));
 my $last = -1;
 my %attrs;
 my %ints = map { $_ => 1 } qw(cols rows length precision);
 while (fetch($sel)) {
+    $attr_name = 'def' if $attr_name eq 'value';
     $val = $val ? '1' : '0' if $attr_name eq 'multiple';
     $val ||= '0' if $ints{$attr_name};
     if ($aid == $last) {
         $attrs{$attr_name} = $val;
         next;
     }
+    $attrs{def} = $default unless exists $attrs{def};
     execute($update, @attrs{@attr_names}, $last) unless $last == -1;
     %attrs = ($attr_name => $val);
     $last  = $aid;

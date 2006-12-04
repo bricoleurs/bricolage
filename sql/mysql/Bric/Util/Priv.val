@@ -1,0 +1,439 @@
+-- Project: Bricolage Business API
+-- File:    Priv.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author:  David Wheeler <david@justatheory.com>
+
+/*
+
+-- Give Contributor Administrators CREATE rights to All Contributors.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('1', '15', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('1', '1');
+
+-- Give User Administrators CREATE rights to All Users.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('2', '11', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('2', '2');
+
+-- Give Source Administrators CREATE rights to All Organizations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('3', '18', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('3', '3');
+
+-- Give Source Administrators CREATE rights to All Sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('4', '18', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('4', '5');
+
+-- Give Alert Type Administrators CREATE rights to All Alert Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('5', '36', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('5', '4');
+
+*/
+
+-- Give Story Editors PUBLISH rights to All Stories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('6', '7', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('6', '31');
+
+-- Give Story Editors READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('43', '7', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('43', '26');
+
+-- Give Story Editors READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('44', '7', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('44', '27');
+
+-- Give Story Editors READ rights to all sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('59', '7', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('59', '5');
+
+-- Give Story Editors READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('54', '7', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('54', '47');
+
+-- Give Story Editors EDIT rights to the Story workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('31', '7', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('31', '49');
+
+-- Give Story Editors CREATE rights to the Edit desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('32', '7', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('32', '61');
+
+-- Give Story Editors EDIT rights to the Copy desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('33', '7', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('33', '62');
+
+-- Give Story Editors EDIT rights to the Legal desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('34', '7', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('34', '63');
+
+-- Give Story Editors PUBLISH rights to the Publish desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('35', '7', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('35', '64');
+
+-- Give Media Producers PUBLISH rights to All Media.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('7', '8', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('7', '32');
+
+-- Give Media Producers READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('45', '8', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('45', '26');
+
+-- Give Media Producers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('46', '8', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('46', '27');
+
+-- Give Media Producers READ rights to all sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('60', '8', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('60', '5');
+
+-- Give Media Producers READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('55', '8', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('55', '47');
+
+-- Give Media Producers EDIT rights to the Media workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('36', '8', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('36', '51');
+
+-- Give Media Producers CREATE rights to the Art desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('37', '8', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('37', '65');
+
+-- Give Media Producers EDIT rights to the Legal desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('38', '8', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('38', '63');
+
+-- Give Media Producers PUBLISH rights to the Publish desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('39', '8', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('39', '64');
+
+-- Give Template Developers PUBLISH rights to All Templates.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('8', '9', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('8', '33');
+
+-- Give Template Developers READ rights to all categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('47', '9', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('47', '26');
+
+-- Give Template Developers READ rights to all elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('48', '9', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('48', '27');
+
+-- Give Template Developers READ rights to all sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('56', '9', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('56', '47');
+
+-- Give Template Developers EDIT rights to the Template workflow.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('40', '9', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('40', '52');
+
+-- Give Template Developers CREATE rights to the Development desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('41', '9', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('41', '66');
+
+-- Give Template Developers PUBLISH rights to the Deploy desk.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('42', '9', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('42', '67');
+
+/*
+
+-- Give Element Administrators CREATE rights to All Elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('9', '10', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('9', '27');
+
+-- Give Preference Administrators CREATE rights to All Preference.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('10', '12', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('10', '22');
+
+-- Give Group Administrators CREATE rights to All Groups.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('11', '13', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('11', '35');
+
+-- Give Output Channel Administrators CREATE rights to All .
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('12', '14', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('12', '23');
+
+-- Give Workflow Administrators CREATE rights to All Workflows.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('13', '16', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('13', '25');
+
+-- Give Category Administrators CREATE rights to All Categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('14', '17', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('14', '26');
+
+*/
+
+-- Give Distribution Administrators CREATE rights to All Destinations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('15', '19', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('15', '29');
+
+-- Give Distribution Administrators CREATE rights to All Jobs.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('16', '19', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('16', '30');
+
+-- Give Publishing Administrators CREATE rights to All Output Channels.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('17', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('17', '23');
+
+-- Give Publishing Administrators CREATE rights to All Contributors.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('18', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('18', '1');
+
+-- Give Publishing Administrators CREATE rights to All Contributor Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('19', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('19', '24');
+
+-- Give Publishing Administrators CREATE rights to All Workflows.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('20', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('20', '25');
+
+-- Give Publishing Administrators CREATE rights to All Categories.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('21', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('21', '26');
+
+-- Give Publishing Administrators CREATE rights to All Elements.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('22', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('22', '27');
+
+-- Give Publishing Administrators CREATE rights to All Element Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('23', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('23', '28');
+
+-- Give Publishing Administrators CREATE rights to All Organizations.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('24', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('24', '4');
+
+-- Give Publishing Administrators CREATE rights to All Sources.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('25', '20', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('25', '5');
+
+-- Give System Administrators CREATE rights to All Preferences.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('26', '21', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('26', '22');
+
+-- Give System Administrators CREATE rights to All Users.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('27', '21', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('27', '2');
+
+-- Give System Administrators CREATE rights to All Groups.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('28', '21', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('28', '35');
+
+-- Give System Administrators CREATE rights to All Sites.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('49', '21', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('49', '47');
+
+/*
+
+-- Give Contributor Type Administrators CREATE rights to All Contributor Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('29', '37', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('29', '24');
+
+-- Give Element Type Administrators CREATE rights to All Element Types.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('30', '38', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('30', '28');
+
+*/
+
+-- Give "Default Site READ Users" READ rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('50', '200', '1');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('50', '100');
+
+-- Give "Default Site EDIT Users" EDIT rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('51', '201', '2');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('51', '100');
+
+-- Give "Default Site CREATE Users" CREATE rights to the default Site's asset
+-- group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('52', '202', '4');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('52', '100');
+
+-- Give "Default Site DENY Users" DENY rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('53', '203', '255');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('53', '100');
+
+-- Give "Default Site RECALL Users" RECALL rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('57', '204', '3');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('57', '100');
+
+-- Give "Default Site PUBLISH Users" PUBLISH rights to the default Site's asset group.
+INSERT INTO grp_priv (id, grp__id, value)
+VALUES('58', '205', '5');
+
+INSERT INTO grp_priv__grp_member (grp_priv__id, grp__id)
+VALUES('58', '100');

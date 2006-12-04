@@ -1,0 +1,605 @@
+-- Project: Bricolage Business API
+-- File:    Grp.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2005-09-21 03:48:20 +0300 (Wed, 21 Sep 2005) $
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('0', NULL, '6', 'Root Group', 'The mother of all groups.', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('112', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('1', '0', '112'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('1', '0', '9', 'All Contributors', 'All contributors in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('113', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('2', '1', '113'); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('406', '24', '9', '1');
+
+INSERT INTO contrib_type_member (id, object_id, member__id)
+VALUES ('1', '1', '406'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('2', '0', '8', 'All Users', 'All users of the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('114', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('3', '2', '114'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('3', '0', '17', 'All Organizations', 'All organizations in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('115', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('4', '3', '115'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('4', '0', '18', 'All Alert Types', 'All alert types in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('116', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('5', '4', '116'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('5', '0', '36', 'All Sources', 'All sources in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('117', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('6', '5', '117'); 
+
+-- Hack. Ideally, the 'Global Admins' groups should be permanent, but
+-- there are so many special conditions for this group, that it's simpler at
+-- this point to just check for it's ID to keep it permanent.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('6', NULL, '8', 'Global Admins', 'Users who can do anything.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('118', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('7', '6', '118'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('7', NULL, '8', 'Story Editors', 'Users who edit stories.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('119', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('8', '7', '119'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('8', NULL, '8', 'Media Producers', 'Users who produce and edit media.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('120', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('9', '8', '120'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('9', NULL, '8', 'Template Developers', 'Users who develop templates', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('121', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('10', '9', '121'); 
+
+/*
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('10', NULL, '8', 'Element Type Admins', 'Users who administer element types and element type sets.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('122', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('11', '10', '122'); 
+
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('11', NULL, '8', 'User Admins', 'Users who administer users.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('123', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('12', '11', '123'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('12', NULL, '8', 'Preference Admins', 'Users who administer preferences.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('124', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('13', '12', '124'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('13', NULL, '8', 'Group Admins', 'Users who administer groups.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('125', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('14', '13', '125'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('14', NULL, '8', 'Output Channel Admins', 'Users who administer output channels.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('126', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('15', '14', '126'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('15', NULL, '8', 'Contributor Admins', 'Users who administer contributors and contributor types.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('127', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('16', '15', '127'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('16', NULL, '8', 'Workflow Admins', 'Users who administer workflows.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('128', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('17', '16', '128'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('17', NULL, '8', 'Category Admins', 'Users who administer categories.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('129', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('18', '17', '129'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('18', NULL, '8', 'Source Admins', 'Users who administer sources.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('130', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('19', '18', '130'); 
+
+*/
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('19', NULL, '8', 'Distribution Admins', 'Users who administer distribution jobs.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('131', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('20', '19', '131'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('20', NULL, '8', 'Publishing Admins', 'Users who can use the publishing administration tools.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('132', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('21', '20', '131'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('21', NULL, '8', 'System Admins', 'Users who administer system administration tools.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('133', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('22', '21', '133'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+
+VALUES ('22', '0', '58', 'All Preferences', 'All preferences in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('134', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('23', '22', '134'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('23', NULL, '59', 'All Output Channels', 'All output channels in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('135', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('24', '23', '135'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('24', NULL, '60', 'All Contributor Types', 'All contributor types in the system.', '0', '1');
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('136', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('25', '24', '136'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('25', NULL, '61', 'All Workflows', 'All workflows in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('137', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('26', '25', '137'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('26', NULL, '47', 'All Categories', 'All categories in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('138', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('27', '26', '138'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('27', NULL, '70', 'All Element Types', 'All element types in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('139', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('28', '27', '139'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('28', NULL, '64', 'All Element Type Sets', 'All element type sets in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('140', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('29', '28', '140'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('29', NULL, '62', 'All Destinations', 'All destinations in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('141', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('30', '29', '141'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('30', NULL, '63', 'All Jobs', 'All distribution jobs in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('142', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('31', '30', '142'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('31', NULL, '65', 'All Stories', 'All stories in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('143', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('32', '31', '143'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('32', NULL, '66', 'All Media', 'All media in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('144', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('33', '32', '144'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('33', NULL, '67', 'All Templates', 'All templates in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('145', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('34', '33', '145'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('34', NULL, '40', 'All Desks', 'All desks in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('146', '34', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('35', '34', '146'); 
+
+/*
+
+Unfortunately, there's not good way to include all assets in one group. Perhaps
+we'll be able to add this functionality later, but for now, to give someone
+access to all assets, give them access to 'All Stories', 'All Media', and 'All
+Templates' instead.
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('34', NULL, '43', 'All Asssets', 'All assets in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('146', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('35', '34', '146');
+
+*/
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('35', NULL, '68', 'All Groups', 'All groups in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('147', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('36', '35', '147');
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('48', '0', '77', 'All Media Types', 'All media types in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('200', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('200', '48', '200');
+
+/*
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('36', NULL, '8', 'Alert Type Admins', 'Users who administer alert types.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('148', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('37', '36', '148'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('37', NULL, '8', 'Contributor Type Admins', 'Users who administer contributor types.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('149', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('38', '37', '149'); 
+
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('38', NULL, '8', 'Contributor Type Admins', 'Users who administer contributor types.', '0', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('150', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('39', '38', '150'); 
+
+*/
+
+-- Writers.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('39', NULL, '9', 'Writers', 'People who contribute writing.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('151', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('40', '39', '151'); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('152', '24', '9', '1');
+
+INSERT INTO contrib_type_member (id, object_id, member__id)
+VALUES ('2', '39', '152');
+
+-- All Keywords.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('50', NULL, '28', 'All Keywords', 'All keywords in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('190', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('60', '50', '190');
+
+-- All Sites.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('47', NULL, '76', 'All Sites', 'All sites in the system.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('165', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('56', '47', '165');
+
+-- Create the Default site permanent group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('100', NULL, '43', 'Secret Site Asset Group', NULL, '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('166', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('57', '100', '166');
+
+-- Create the Default site READ secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('200', '0', '8', 'Default Site READ Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('700', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('700', '200', '700');
+
+-- Create the Default site EDIT secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('201', '0', '8', 'Default Site EDIT Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('701', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('701', '201', '701');
+
+-- Create the Default site CREATE secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('202', '0', '8', 'Default Site CREATE Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('702', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('702', '202', '702');
+
+-- Create the Default site DENY secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('203', '0', '8', 'Default Site DENY Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('703', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('703', '203', '703');
+
+-- Create the Default site RECALL secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('204', '0', '8', 'Default Site RECALL Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('704', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('704', '204', '704');
+
+-- Create the Default site PUBLISH secret user group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('205', '0', '8', 'Default Site PUBLISH Users', '__Site 100 Users__', '1', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('705', '3', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('705', '205', '705');
+
+-- Illustrators.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('40', NULL, '9', 'Illustrators', 'People who provide original artwork.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('153', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('41', '40', '153'); 
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('154', '24', '9', '1');
+
+INSERT INTO contrib_type_member (id, object_id, member__id)
+VALUES ('3', '40', '154');
+
+
+-- Edit Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('61', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('157', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('42', '61', '157'); 
+
+-- Copy Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('62', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('158', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('43', '62', '158'); 
+
+-- Legal Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('63', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('159', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('44', '63', '159'); 
+
+-- Publish Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('64', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('160', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('45', '64', '160'); 
+
+-- Art Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('65', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('161', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('46', '65', '161'); 
+
+-- Development Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('66', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('162', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('47', '66', '162'); 
+
+-- Development Desk.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('67', NULL, '43', 'Desk Assets', 'A group for holding assets for Desk objects.', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('163', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('48', '67', '163'); 
+
+-- Root category asset group.
+INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
+VALUES ('68', NULL, '43', 'Site 100 Category Assets', '/', '1', '0');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('164', '35', '6', '1');
+
+INSERT INTO grp_member (id, object_id, member__id)
+VALUES ('49', '68', '164');
+

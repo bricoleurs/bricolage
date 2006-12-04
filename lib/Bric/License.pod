@@ -252,13 +252,7 @@ Folks who have submitted patches include:
 
 =item * Alexey Sheynuk
 
-=item * Christian Niles
-
-=item * Brad Harder
-
-=item * Brad Fox
-
-=item * Alexey Dvoychenkov
+=item * Christian Muise
 
 =item * Christian Niles
 
@@ -423,6 +417,12 @@ Friends who have spotted bugs include:
 =item * Chris Heiland
 
 =item * Michael Glaesemann
+
+=item * Joe Pletcher
+
+=item * Andrei Arsu
+
+=item * Chris Schults
 
 =back
 

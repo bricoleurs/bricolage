@@ -50,7 +50,10 @@ use Data::Dumper;
 use POSIX 'strftime';
 
 # determine if clone should run in quiet mode
-my $quiet_mode = (defined $ENV{INSTALL_VERBOSITY} and $ENV{INSTALL_VERBOSITY} eq 'QUIET') ? 1 : 0;
+my $quiet_mode
+    = defined $ENV{INSTALL_VERBOSITY} and $ENV{INSTALL_VERBOSITY} eq 'QUIET'
+      ? 1
+      : 0;
 
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
@@ -96,7 +99,7 @@ sub find_version {
 sub get_clone_name {
     print "\n";
     $CLONE{NAME} = $ENV{CLONE_NAME} || strftime '%Y%m%d%H%M%S', localtime;
-    
+
     ask_confirm("What would you like to name your clone ".
                 "(used to name the archive)? ", \$CLONE{NAME},
                 $quiet_mode);
@@ -108,9 +111,9 @@ sub get_bricolage_root {
 		\$CLONE{BRICOLAGE_ROOT},
                 $quiet_mode);
 
-    $CLONE{CONFIG_DIR} = $ENV{CONFIG_DIR} || 
+    $CLONE{CONFIG_DIR} = $ENV{CONFIG_DIR} ||
         catdir $CLONE{BRICOLAGE_ROOT}, 'conf';
-        
+
     ask_confirm("Bricolage Config Directory",
 		\$CLONE{CONFIG_DIR},
                 $quiet_mode);
@@ -170,13 +173,16 @@ sub confirm_paths {
 # output .db files used by installation steps
 sub output_dbs {
     # fake up the .dbs from %INSTALL
-    my %dbs = ( PG     => "postgres.db",
+    my %dbs = (
+        DB     => "database.db",
 		CONFIG => "config.db",
-		AP     => "apache.db"  );
+		AP     => "apache.db",
+    );
+
     while ( my ($key, $file) = each %dbs) {
-	open(FILE, ">$file") or die "Unable to open $file : $!";
-	print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
-	close(FILE);
+        open(FILE, ">$file") or die "Unable to open $file : $!";
+        print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
+        close(FILE);
     }
 
     # output upgrade.db

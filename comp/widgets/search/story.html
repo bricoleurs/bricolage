@@ -101,11 +101,6 @@ $m->comp("/widgets/wrappers/table_top.mc",
         name    => $widget.'|category_uri',
         value   => $state->{category_uri} || '' &>
         
-    <& /widgets/profile/text.mc,
-        disp    => $lang->maketext('Teaser'),
-        name    => $widget.'|teaser',
-        value   => $state->{teaser} || '' &>
-            
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Type'),
         name    => $widget.'|element_type_id',

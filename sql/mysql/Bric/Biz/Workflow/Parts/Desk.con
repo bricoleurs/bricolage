@@ -1,0 +1,40 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Garth Webb <garth@perijove.com>
+
+-- -----------------------------------------------------------------------------
+-- Table: desk
+
+ALTER TABLE desk ADD
+	CONSTRAINT fk_pre_grp__desk FOREIGN KEY (pre_chk_rules)
+	REFERENCES grp(id) ON DELETE CASCADE;
+     
+ALTER TABLE desk ADD
+	CONSTRAINT fk_post_grp__desk FOREIGN KEY (post_chk_rules)
+     	REFERENCES grp(id) ON DELETE CASCADE;  
+     
+ALTER TABLE desk ADD
+	CONSTRAINT fk_asset_grp__desk FOREIGN KEY (asset_grp)
+     	REFERENCES grp(id) ON DELETE CASCADE;
+
+-- -----------------------------------------------------------------------------
+-- Table: desk_member
+
+ALTER TABLE    desk_member
+ADD CONSTRAINT fk_desk__desk_member FOREIGN KEY (object_id)
+REFERENCES     desk(id) ON DELETE CASCADE;
+
+ALTER TABLE    desk_member
+ADD CONSTRAINT fk_member__desk_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE desk AUTO_INCREMENT 1024;
+ALTER TABLE desk_member AUTO_INCREMENT 1024;

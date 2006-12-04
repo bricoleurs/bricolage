@@ -46,9 +46,6 @@ if ($class eq 'story') {
 } else {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
     ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
-    $sort_by_val = $sort_by_val eq 'cover_date' ? 'deploy_date'
-                 : $sort_by_val eq 'element_type' ? 'output_channel'
-                                                : $sort_by_val;
 }
 
 my $sites = $c->get('__SITES__');

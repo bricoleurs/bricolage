@@ -36,6 +36,14 @@ unless (test_foreign_key 'job', 'fk_job__media') {
 
 unless (test_foreign_key 'job__resource', 'fk_job__job__resource') {
     do_sql "
+         DELETE FROM job__resource
+         WHERE job__id IN (
+             SELECT jr.job__id
+             FROM  job__resource jr LEFT JOIN job j ON (jr.job__id = j.id)
+             WHERE j.id IS NULL
+         )",
+
+        "
       ALTER TABLE job__resource ADD CONSTRAINT fk_job__job__resource
       FOREIGN KEY (job__id)
       REFERENCES job(id) ON DELETE CASCADE";
@@ -43,6 +51,13 @@ unless (test_foreign_key 'job__resource', 'fk_job__job__resource') {
 
 unless (test_foreign_key 'job__resource', 'fk_resource__job__resource') {
     do_sql "
+      DELETE FROM job__resource
+      WHERE job__id IN (
+             SELECT jr.job__id
+             FROM  job__resource jr LEFT JOIN resource j ON (jr.resource__id = j.id)
+             WHERE j.id IS NULL
+      )",
+      "
       ALTER TABLE job__resource ADD CONSTRAINT fk_resource__job__resource
       FOREIGN KEY (resource__id)
       REFERENCES resource(id) ON DELETE CASCADE";
@@ -50,6 +65,14 @@ unless (test_foreign_key 'job__resource', 'fk_resource__job__resource') {
 
 unless (test_foreign_key 'job__server_type', 'fk_job__job__server_type') {
     do_sql "
+      DELETE FROM job__server_type
+      WHERE job__id IN (
+             SELECT jr.job__id
+             FROM  job__server_type jr LEFT JOIN job j ON (jr.job__id = j.id)
+             WHERE j.id IS NULL
+      )",
+
+      "
       ALTER TABLE job__server_type ADD CONSTRAINT fk_job__job__server_type
       FOREIGN KEY (job__id)
       REFERENCES job(id) ON DELETE CASCADE";
@@ -64,6 +87,13 @@ unless (test_foreign_key 'job__server_type', 'fk_srvr_type__job__srvr_type') {
 
 unless (test_foreign_key 'job_member', 'fk_job__job_member') {
     do_sql "
+      DELETE FROM job_member
+      WHERE object_id IN (
+             SELECT jr.object_id
+             FROM  job_member jr LEFT JOIN job j ON (jr.object_id = j.id)
+             WHERE j.id IS NULL
+      )",
+      "
       ALTER TABLE    job_member
       ADD CONSTRAINT fk_job__job_member FOREIGN KEY (object_id)
       REFERENCES     job(id) ON DELETE CASCADE";

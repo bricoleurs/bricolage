@@ -1,0 +1,36 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+ALTER TABLE    addr
+ADD CONSTRAINT fk_org__addr FOREIGN KEY (org__id)
+REFERENCES     org(id) ON DELETE CASCADE;
+
+ALTER TABLE    addr_part
+ADD CONSTRAINT fk_addr__addr_part FOREIGN KEY (addr__id)
+REFERENCES     addr(id) ON DELETE CASCADE;
+
+ALTER TABLE    addr_part
+ADD CONSTRAINT fk_addr_part_type__addr_part FOREIGN KEY (addr_part_type__id)
+REFERENCES     addr_part_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    person_org__addr
+ADD CONSTRAINT fk_addr__person_org_addr FOREIGN KEY (addr__id)
+REFERENCES     addr(id) ON DELETE CASCADE;
+
+ALTER TABLE    person_org__addr
+ADD CONSTRAINT fk_person_org__pers_org_addr FOREIGN KEY (person_org__id)
+REFERENCES     person_org(id) ON DELETE CASCADE;
+
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE addr AUTO_INCREMENT 1024;
+ALTER TABLE addr_part_type AUTO_INCREMENT 1024;
+ALTER TABLE addr_part AUTO_INCREMENT 1024;

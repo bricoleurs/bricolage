@@ -1,0 +1,49 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+-- 
+-- TABLE: attr_action_val
+--
+ALTER TABLE attr_action_val ADD 
+    CONSTRAINT fk_attr_action__attr_action_val FOREIGN KEY (attr__id)
+    REFERENCES attr_action(id) ON DELETE CASCADE;
+
+ALTER TABLE attr_action_val ADD
+    CONSTRAINT fk_action__attr_action_val FOREIGN KEY (object__id)
+    REFERENCES action(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: attr_action_meta
+--
+ALTER TABLE attr_action_meta ADD 
+    CONSTRAINT fk_attr_action__attr_action_meta FOREIGN KEY (attr__id)
+    REFERENCES attr_action(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: action 
+--
+
+ALTER TABLE action ADD CONSTRAINT fk_action_type__action 
+    FOREIGN KEY (action_type__id)
+    REFERENCES action_type(id) ON DELETE CASCADE;
+
+ALTER TABLE action ADD CONSTRAINT fk_server_type__action 
+    FOREIGN KEY (server_type__id)
+    REFERENCES server_type(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_val AUTO_INCREMENT 1024;
+ALTER TABLE attr_action_meta AUTO_INCREMENT 1024;

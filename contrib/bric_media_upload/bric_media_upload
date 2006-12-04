@@ -476,7 +476,7 @@ sub find_or_create_category {
     my $exec_result = `$command 2>&1`;
     if ( ($exec_result =~ /category_\d*/) ) {
         print "\nCategory ".$category." found.\n" if $VERBOSE;
-    }elsif (not $exec_result) {
+    } elsif (not $exec_result) {
         # if cat does not exist create it
         if ($make_categories) {
             print "\nCategory ".$category." needs to be created.\n" if $VERBOSE;

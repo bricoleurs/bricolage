@@ -1,0 +1,17 @@
+-- Values for the media autopopulating fields
+
+INSERT INTO media_fields (id, biz_pkg, name, function_name, active)
+VALUES ('0', '50', 'Width', 'get_width', '1');
+
+INSERT INTO media_fields (id,  biz_pkg, name, function_name, active)
+VALUES ('1', '50', 'Height', 'get_height', '1');
+
+INSERT INTO media_fields (id, biz_pkg, name, function_name, active)
+VALUES ('2', '50', 'Color Type', 'get_color_type', '1');
+
+INSERT INTO media_fields (id, biz_pkg, name, function_name, active)
+VALUES ('3', '50', 'Resolution', 'get_resolution', '1');
+
+INSERT INTO media_fields (id, biz_pkg, name, function_name, active)
+VALUES ('4', '50', 'Compression', 'get_compression', '1');
+

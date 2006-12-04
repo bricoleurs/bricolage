@@ -17,7 +17,7 @@ ALTER TABLE alerted ADD CONSTRAINT fk_alert__alerted
 
 ALTER TABLE alerted ADD CONSTRAINT fk_usr__alerted 
     FOREIGN KEY (usr__id)
-    REFERENCES USR(ID) ON DELETE CASCADE
+    REFERENCES usr(id) ON DELETE CASCADE
 ;
 
 

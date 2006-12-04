@@ -58,7 +58,7 @@ use Bric::Biz::Element::Field;
 use Bric::Biz::ElementType;
 use Bric::App::Util;
 use Bric::Config qw(:pod);
-use Bric::Util::Fault qw(throw_gen throw_invalid throw_da);
+use Bric::Util::Fault qw(throw_gen throw_invalid throw_da throw_dp);
 use URI;
 use List::Util qw(reduce first);
 use Text::LevenshteinXS;
@@ -113,6 +113,8 @@ my @SEL_COLS = qw(
     et.name
     et.key_name
     et.description
+    et.related_story
+    et.related_media
     e.object_instance_id
     e.parent_id
     e.place
@@ -128,6 +130,8 @@ my @SEL_FIELDS = qw(
     name
     key_name
     description
+    relate_story
+    relate_media
     object_instance_id
     parent_id
     place
@@ -281,9 +285,11 @@ sub new {
     }
 
     # Alias element type attributes and make it so..
-    $init->{name}        = $init->{_element_type_obj}->get_name;
-    $init->{key_name}    = $init->{_element_type_obj}->get_key_name;
-    $init->{description} = $init->{_element_type_obj}->get_description;
+    @{$init}{qw(name key_name description relate_story relate_media)}
+        = $init->{_element_type_obj}->_get(
+            qw(name key_name description related_story related_media)
+        );
+
     my $self = $class->SUPER::new($init);
 
     # Prepopulate from the element type object
@@ -529,6 +535,28 @@ sub set_element_id {
     return shift->set_element_type_id(@_);
 }
 
+##############################################################################
+
+=item my $bool = $container->can_relate_story
+
+Returns a true value if the container is allowed to have a related story, and
+false if it is not.
+
+=cut
+
+sub can_relate_story { $_[0]->{relate_story} ? shift : undef }
+
+=item my $bool = $container->can_relate_media
+
+Returns a true value if the container is allowed to have a related media
+document, and false if it is not.
+
+=cut
+
+sub can_relate_media { $_[0]->{relate_media} ? shift : undef }
+
+##############################################################################
+
 =item my $object_order = $container->get_object_order
 
 Returns the order number for this object relative to other container elements
@@ -573,7 +601,13 @@ Sets the ID of a story related to this container element.
 C<set_related_instance_id()> is provided for backwards compatability with
 versions of Bricolage prior to 1.9.1.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over
+
+=item Element cannot have a related story
+
+=back
 
 B<Side Effects:> NONE.
 
@@ -581,8 +615,18 @@ B<Notes:> NONE.
 
 =cut
 
+sub set_related_story_id {
+    my ($self, $rel_id) = @_;
+    return $self unless defined $rel_id;
+    throw_dp 'Element "' . $self->get_name . '" cannot have a related story'
+        unless $self->can_relate_story;
+    return $self->_set(['related_story_id'] => [$rel_id]);
+}
+
 sub get_related_instance_id { shift->get_related_story_id }
 sub set_related_instance_id { shift->set_related_story_id(@_) }
+
+##############################################################################
 
 =item my $media_id = $container->get_related_media_id
 
@@ -598,13 +642,27 @@ B<Notes:> NONE.
 
 Sets the ID of a media document related to this container element.
 
-B<Throws:> NONE.
+B<Throws:>
+
+=over
+
+=item Element cannot have a related media
+
+=back
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
 =cut
+
+sub set_related_media_id {
+    my ($self, $rel_id) = @_;
+    return $self unless defined $rel_id;
+    throw_dp 'Element "' . $self->get_name . '" cannot have a related media'
+        unless $self->can_relate_media;
+    return $self->_set(['related_media_id'] => [$rel_id]);
+}
 
 ################################################################################
 

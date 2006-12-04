@@ -1,0 +1,25 @@
+-- Project:      Bricolage Business API
+-- File:    Address.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- Default address part types.
+
+DELETE FROM addr_part_type;
+
+INSERT INTO addr_part_type (id, name, active)
+VALUES ('1', 'Line', '1');
+
+INSERT INTO addr_part_type (id, name, active)
+VALUES ('2', 'City', '1');
+
+INSERT INTO addr_part_type (id, name, active)
+VALUES ('3', 'State', '1');
+
+INSERT INTO addr_part_type (id, name, active)
+VALUES ('4', 'Code', '1');
+
+INSERT INTO addr_part_type (id, name, active)
+VALUES ('5', 'Country', '1');

@@ -40,6 +40,9 @@ use Data::Dumper;
 our $QUIET;
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 
+our $REQ;
+do './required.db' or die "Failed to read required.db : $!";
+
 print "\n\n==> Probing Required Perl Modules <==\n\n";
 
 our @MOD;
@@ -52,9 +55,13 @@ extract_module_list();
 foreach my $rec (@MOD) {
     $rec->{found} = check_module($rec);
     unless ($rec->{found}) {
-        if ($rec->{optional} and 
-            not ask_yesno("Do you want to install the optional module " .
-                          "$rec->{name}?", 0, $QUIET)) {
+        # If the module is optional, ask if they want to install it;
+        # if not, but it's required for their type of installation
+        # (i.e. Pg or mysql), treat it as missing anyway.
+        if ($rec->{optional} and
+            (not ask_yesno("Do you want to install the optional module " .
+                           "$rec->{name}?", 0, $QUIET)
+               or $rec->{name} ne 'DBD::'.$REQ->{DB_TYPE})) {
             $rec->{found} = 1;
         } else {
             $MISSING = 1;

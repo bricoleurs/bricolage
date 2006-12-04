@@ -51,6 +51,7 @@ sub alpha : Callback {
     # Clear the substr search box and set the letter selector
     $state->{crit_letter} = $self->value;
     $state->{crit_field}  = '';
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
