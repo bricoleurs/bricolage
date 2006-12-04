@@ -8,7 +8,7 @@ function contribJump(obj) {
 % # WYSIWYG code here, only used if textarea is in the page with wysiwyg on.
 <& /widgets/wysiwyg/load.mc &>
 % }
-<form method="post" action="<% $r->uri %>" name="contrib_profile" onsubmit="if(uniqueRole(this.subsys)) { return confirmChanges(this) } else { return false }">
+<form method="post" action="<% $r->uri %>" name="contrib_profile" onsubmit="return confirmChanges(this)">
 
 <%perl>;
 $m->comp('/widgets/profile/hidden.mc',
@@ -16,8 +16,22 @@ $m->comp('/widgets/profile/hidden.mc',
      name => 'contrib_id'
 ) if defined $id;
 
-# display person object fields
-&$defaultFields($contrib, $no_edit);
+# Display the referential fields.
+$m->comp("/widgets/wrappers/table_top.mc",
+     caption => "Properties",
+     number  => 1
+);
+
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
+    objref => $contrib, 
+    readOnly => $no_edit,
+    fieldsUsed => {
+        name   => 1,
+        active => 1
+    }
+);
+
+$m->comp("/widgets/wrappers/table_bottom.mc");
 
 # have the user select a group and role
 if ($mode eq "new") {
@@ -27,76 +41,140 @@ if ($mode eq "new") {
     );
 
     # choose group
-    &$showGroups($no_edit);
+    my $groups = Bric::Util::Grp::Person->list({ all => 1 });
+    my $options;
+    my $instanceGrpId = Bric::Biz::Person->INSTANCE_GROUP_ID;
+    foreach my $group (@$groups) {
+        $options->{$group->get_id} = $group->get_name
+          if ($group->get_id != $instanceGrpId);
+    }
+    
+    $m->comp("/widgets/wrappers/table_top.mc",
+         caption => "Contributor Type",
+         number  => 2
+    );
+    
+    $m->comp("/widgets/profile/select.mc",
+         value     => 'group',
+         disp      => 'Contributor Type',
+         options   => $options,
+         name      => 'group',
+         readOnly  => $no_edit
+    );
+    
+    $m->comp("/widgets/wrappers/table_bottom.mc");
+    
     &$stepOneOfTwo($type, $section);
 
 } elsif ( $mode eq "edit" ) {
-    if ($curSubsys || scalar(@subsys) <= 1) {
-        # show full edit screen if role is well defined.
-        $m->comp('/widgets/profile/hidden.mc',
-            value => $mode,
-            name => 'mode'
-        );
-
-        &$showAttrs($contrib, $id, $curSubsys, $extending, $no_edit, \%ARGS);
-
-        # show drop down of other subsys, if any
-        if (scalar(@subsys)) {
-            $m->comp("/widgets/wrappers/table_top.mc",
-                caption => "Switch Roles",
-                number  => 4);
-
-            my $opts;
-            foreach my $s (@subsys) {
-                $opts->{$s} = ($s eq "_MEMBER_SUBSYS") ? "Default" : $s;
+    # show full edit screen if role is well defined.
+    $m->comp('/widgets/profile/hidden.mc',
+        value => $mode,
+        name => 'mode'
+    );
+    
+    my $contacts = $contrib->get_obj->get_contacts;
+    
+    # Display the Contact info.
+    $m->comp("/widgets/wrappers/table_top.mc",
+         caption => "Contacts",
+         number  => 2
+    );
+    
+    $m->out(qq{<div style="padding: 10px;">});
+    $m->comp('/widgets/add_more/add_more.mc',
+         type      => 'contact',
+         fields    => [qw(type value)],
+         name      => 'contact',
+         objs      => $contacts,
+         read_only => $no_edit,
+         param     => \%ARGS,
+         no_labels => 1
+    );
+    $m->out(qq{</div>});
+    
+    $m->comp("/widgets/wrappers/table_bottom.mc");
+    # end contact info
+    
+    # display attrs
+    $m->comp("/widgets/wrappers/table_top.mc",
+         caption => "Custom Fields",
+         number  => 3
+    );
+    
+    my $subs_to_display = [];
+    for my $sub (sort { $a cmp $b } @subsys) {
+        
+        # if this is a new extension, get the meta data from the default instance
+        my $default = $contrib->all_for_subsys;
+        my $all = ($ARGS{subsys} && $sub eq $ARGS{subsys}) ? $default : $contrib->all_for_subsys($sub);
+        
+        # sort the attrs and build an array
+        my $attr = [];
+        my @sortedAttrs = sort { 
+            $default->{$a}{meta}{pos}{value} <=> $default->{$b}{meta}{pos}{value} 
+        } keys %$default;
+        
+        foreach my $key (@sortedAttrs ) {
+            $default->{$key}{name} = $sub . "|" . $key;
+            $default->{$key}{value} = $all->{$key}{value};
+            push @$attr, $default->{$key};
+        }
+        
+        if (@$attr) {
+            # Build an array of subsys to display, with Default always first
+            if ($sub eq '_MEMBER_SUBSYS') {
+                unshift @$subs_to_display, [$sub, $attr];
+            } else {
+                push @$subs_to_display, [$sub, $attr];
             }
-
-            $m->comp("/widgets/profile/select.mc",
-                options => $opts,
-                disp   => "Contributor Roles",
-                name   => "cont_roles",
-                value  => $curSubsys,
-                js     => " onChange='contribJump(this)'"
-            );
-
-            $m->comp("/widgets/wrappers/table_bottom.mc");
-
         }
-
-        # Display the form buttons.
-        $m->comp('/widgets/profile/formButtons.mc',
-            type    => $type,
-            widget  => $type,
-            section => $section,
-            no_del  => $no_del,
-            no_save => $no_edit,
-            return  => '/admin/manager/contrib'
-        );
-
-    } else {
-        # show all roles for this member so the user can choose one
-        $m->comp('/widgets/profile/hidden.mc', value => 'preEdit', name => 'mode');
-
-        $m->comp("/widgets/wrappers/table_top.mc",
-            caption => "Roles",
-            number  => 2
-        );
-
-        my $roleOpts;
-        foreach my $sys (@subsys) {
-            $roleOpts->{$sys} =($sys ne '_MEMBER_SUBSYS') ?  $sys : "Default";
-        }
-
-        $m->comp("/widgets/profile/select.mc",
-            disp    => 'Select Role',
-            options => $roleOpts,
-            name    => 'subsys'
-        );
-
-        $m->comp("/widgets/wrappers/table_bottom.mc");
-        &$stepOneOfTwo($type, $section);
     }
+</%perl>
+    
+    <div id="subsys_tabs" class="tabs clearboth">
+%   foreach my $sub (@$subs_to_display) {
+%       my ($name, $attr) = @$sub;
+%       my $selected = ($ARGS{subsys} && $name eq $ARGS{subsys}) || (!$ARGS{subsys} && $name eq '_MEMBER_SUBSYS');
+%       (my $safe_sub = $name) =~ s/\s|\|/_/g;   # Replace spaces and pipes with _
+        <div id="subsys_<% $safe_sub %>" class="tab<% $selected ? ' selected' : '' %>">
+        <a href="#" onclick="subsysTabs.switchTab(this.parentNode); return false"><% $name eq '_MEMBER_SUBSYS' ? 'Default' : $name %></a>
+        </div>
+%   }
+    </div>
+    
+    <div id="subsys_tab_pages" class="tabPages clearboth">
+%   foreach my $sub (@$subs_to_display) {
+%       my ($name, $attr) = @$sub;
+%       (my $safe_sub = $name) =~ s/\s|\|/_/g;   # Replace spaces and pipes with _
+        <div id="subsys_<% $safe_sub %>_page" class="page" style="display: none">
+        <& "/widgets/profile/displayAttrs.mc",
+             attr        => $attr,
+             form_name   => 'contrib_profile',
+             readOnly    => $no_edit,
+             usePosition => 0,
+             useDelete   => 0
+        &>
+        </div>
+%   }
+    </div>
+    
+    <script type="text/javascript">
+        var subsysTabs = new Tabs('subsys_tabs', 'subsys_tab_pages');
+    </script>
+    
+    <& "/widgets/wrappers/table_bottom.mc" &>
+    
+    <& '/widgets/profile/formButtons.mc',
+        type    => $type,
+        widget  => $type,
+        section => $section,
+        no_del  => $no_del,
+        no_save => $no_edit,
+        return  => '/admin/manager/contrib'
+    &>
 
+<%perl>
 } elsif ( $mode eq "extend" ) {
 
     $m->comp('/widgets/profile/hidden.mc',
@@ -111,26 +189,17 @@ if ($mode eq "new") {
 
     # Display a read-only list of existing roles, if more than one.
     if (@subsys > 1) {
-        $m->out("<table width=570><tr><td width=130 align=right>");
-        $m->out("<span class=label>".$lang->maketext('Existing roles').":</span></td><td width=440>\n");
-        foreach my $ss (@subsys) {
-            $m->out ( "$ss<br />\n") if $ss ne '_MEMBER_SUBSYS';
-        }
-        $m->out("</ul>\n");
-        $m->out("</td></tr></table>");
+        $m->out(qq{<div class="row">});
+        $m->out(qq{<div class="label">} . $lang->maketext('Existing roles') . qq{:</div>});
+        $m->out(qq{<div class="input">} . join(", ", grep { $_ ne '_MEMBER_SUBSYS' } @subsys) . qq{</div>});
+        $m->out(qq{</div>});
     }
 
     # Send the roles to javascript so we can check before submitting
-    $m->out('<script language="javascript">' . "\n");
-    $m->out("var checkUnique = true\n");
+    $m->out(qq{\n<script type="text/javascript">\n});
     $m->out("var roles = new Array(");
-
-    my $var = '';
-    foreach my $ss (@subsys) {
-        $var .= "'$ss', " if $ss ne '_MEMBER_SUBSYS';
-    }
-
-    $m->out(substr($var, 0, -2) . ");\n</script>\n");
+    $m->out(join(", ", map { qq{'$_'} } grep { $_ ne '_MEMBER_SUBSYS' } @subsys));
+    $m->out(");\n</script>\n");
 
     # text box for new role name
     $m->comp("/widgets/profile/text.mc",
@@ -152,13 +221,12 @@ if ($mode eq "new") {
 do_queued_redirect();
 
 # split uri. expected url is in this format:
-# /admin/profile/contrib/mode/id/subsys
+# /admin/profile/contrib/mode/id
 my @tmp = split /\//, $r->uri;
 my $mode = $ARGS{mode} || $tmp[4] || 'new';
 
 my $id = $ARGS{contrib_id} || $tmp[5];
 
-my $curSubsys = $tmp[6] ||  undef;
 my $state     = get_state_data("contrib_profile");
 my $extending = $state->{extending};
 
@@ -175,10 +243,9 @@ if (!$id) {
 
 # gather all subsys names
 my @subsys = $mode eq "new" ? () : $contrib->subsys_names;
-# if there's just one, it must be the current one
-$curSubsys ||= $subsys[0] if @subsys == 1;
 # if there's none (ie, new contrib), assign the default
-$curSubsys ||= "_MEMBER_SUBSYS" if !@subsys;
+push @subsys, "_MEMBER_SUBSYS" if !@subsys;
+push @subsys, $ARGS{subsys} if $ARGS{subsys};
 
 # Check authorization.
 chk_authz($contrib, $id ? READ : CREATE);
@@ -214,122 +281,6 @@ my $class = 'Bric::Util::Grp::Parts::Member::Contrib';
 my $type = 'contrib';
 my $section = 'admin';
 my $disp = get_disp_name($type);
-
-my $showAttrs = sub {
-    my ($contrib, $id, $subsys, $extending, $ro, $param) = @_;
-    my $preCaption = '&quot;' . ($subsys eq '_MEMBER_SUBSYS' ? 'Default'
-                 : $subsys) . '&quot; Role';
-    my $contacts = $contrib->get_obj->get_contacts;
-
-    # Display the Contact info.
-    $m->comp("/widgets/wrappers/table_top.mc",
-         caption => "Contacts",
-         number  => 2
-    );
-
-    $m->comp('/widgets/add_more/add_more.mc',
-         type      => 'contact',
-         fields    => [qw(type value)],
-         name      => 'contact',
-         formName  => 'contrib_profile',
-         reset_key => $id,
-         objs      => $contacts,
-         incr      => 2,
-         readOnly  => $ro,
-         useTable  => 0,
-         param     => $param,
-         deleteLabelOnly =>1
-    );
-
-    $m->comp("/widgets/wrappers/table_bottom.mc");
-    # end contact info
-
-    # display attrs
-    $m->comp('/widgets/profile/hidden.mc', value => $subsys, name => 'subsys')
-      unless $ro;
-
-    # if this is a new extension, get the meta data from the default instance
-    my $default = $contrib->all_for_subsys;
-    my $all = ($extending) ?  $default: $contrib->all_for_subsys($subsys);
-
-    # sort the attrs and build an array
-    my $attr = [];
-    my @sortedAttrs = sort { $default->{$a}{meta}{pos}{value} <=>
-                 $default->{$b}{meta}{pos}{value} } keys %$default;
-
-    foreach my $key (@sortedAttrs ) {
-        $default->{$key}{name} = $key;
-        $default->{$key}{value} = $all->{$key}{value};
-        push @$attr, $default->{$key};
-    }
-
-    my $num_fields = @$attr;
-    if ($num_fields) {
-        # display attrs
-        $m->comp("/widgets/wrappers/table_top.mc",
-             caption => $preCaption . " Custom Fields",
-             number  => 3
-        );
-        $m->comp("/widgets/profile/displayAttrs.mc",
-             attr        => $attr,
-             form_name   => 'contrib_profile',
-             readOnly    => $ro,
-             usePosition => 0,
-             useDelete   => 0
-        );
-
-        # Close the table.
-        $m->comp("/widgets/wrappers/table_bottom.mc");
-    }
-};
-
-my $defaultFields = sub {
-
-    my ($contrib, $ro) = @_;
-    # Display the referential fields.
-    $m->comp("/widgets/wrappers/table_top.mc",
-         caption => "Properties",
-         number  => 1
-    );
-
-    $m->comp('/widgets/profile/dumpRemainingFields.mc',
-        objref => $contrib, readOnly => $ro,
-        fieldsUsed => {
-            name   => 1,
-            active => 1
-        }
-    );
-
-    $m->comp("/widgets/wrappers/table_bottom.mc");
-
-};
-
-my $showGroups = sub {
-    my $ro = shift;
-    my $groups = Bric::Util::Grp::Person->list({ all => 1 });
-    my $options;
-    my $instanceGrpId = Bric::Biz::Person->INSTANCE_GROUP_ID;
-    foreach my $group (@$groups) {
-        $options->{$group->get_id} = $group->get_name
-          if ($group->get_id != $instanceGrpId);
-    }
-
-    $m->comp("/widgets/wrappers/table_top.mc",
-         caption => "Contributor Type",
-         number  => 2
-    );
-
-    $m->comp("/widgets/profile/select.mc",
-         value     => 'group',
-         disp      => 'Contributor Type',
-         options   => $options,
-         name      => 'group',
-         readOnly => $ro
-    );
-
-
-    $m->comp("/widgets/wrappers/table_bottom.mc");
-};
 
 my $stepOneOfTwo = sub {
     my ($type, $section) = @_;

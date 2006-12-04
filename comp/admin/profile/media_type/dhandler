@@ -48,11 +48,18 @@ if (defined $id) {
 		     };
     }
 }
-$m->comp('/widgets/add_more/add_more.mc', type => 'media_type_ext',
-	 fields => [qw(extension)], name => 'media_type_ext', read_only => $no_edit,
-	 use_vals => 1, reset_key => $id, objs => $objs, meths => $meths,
-	 formName => 'mt_profile', param => \%ARGS,
+$m->out(qq{<div style="padding: 10px;">});
+$m->comp('/widgets/add_more/add_more.mc', 
+    type => 'media_type_ext',
+	fields => [qw(extension)], 
+	name => 'media_type_ext', 
+	read_only => $no_edit,
+	use_vals => 1, 
+	objs => $objs, 
+	meths => $meths,
+    param => \%ARGS,
 );
+$m->out(qq{</div>});
 
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
@@ -67,6 +74,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'mt_profile',
          widget   => $type,
          no_edit => $no_edit,
+         num => 3
 );
 
 

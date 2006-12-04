@@ -16,30 +16,31 @@
    constrain => { location => '/%' }, # Must have a file associated.
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => $excl_sub,
-   fields   => [(USE_THUMBNAILS ? 'thumb' : ()), qw(id name uri cover_date)],
+   fields   => [(USE_THUMBNAILS ? 'thumb' : ()), qw(id name uri cover_date action)],
    addition => '',
    behavior  => 'expand',
-   field_values => $thumburi,
-   field_titles => {  thumb => $lang->maketext('Thumb')},
+   field_values => $field_values,
+   field_titles => {  thumb => $lang->maketext('Thumb'), action => ''},
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 
 <& '/widgets/buttons/submit.mc',
     disp    => 'Return',
-    widget  => $widget,
-    cb      => 'related_up_cb',
+    name    => 'return',
     button  => 'return_dgreen',
     value   => 'Return',
+    js      => qq{onclick="window.close()"},
     useTable    => 0,
 &>
 
 <%args>
 $widget
+$element => undef
 $args
 </%args>
 <%init>;
 # The element object.
-my $element = get_state_data($widget, 'element');
+$element ||= get_state_data($widget, 'element');
 my $relate_id = $element->get_related_media_id;
 
 my $excl_sub;
@@ -52,26 +53,26 @@ if ($element->get_object_type eq 'media') {
 } else {
     $excl_sub = sub { return !chk_authz($_[0], READ, 1) };
 }
-</%init>
-<%once>;
-my $related_profile = sub {
-    my ($o,$flags) = @_;
-    unless ($flags->{featured}) {
-        return ['Relate', $r->uri, "container_prof|relate_media_cb=".$o->get_id];
-    } else {
-        return ['Un-relate', $r->uri, "container_prof|unrelate_media_cb=".$o->get_id];
+
+my $field_values = sub {
+    my ($o, $field) = @_;
+    
+    if ($field eq 'thumb') {
+        
+        # If we get a thumbnail URI, we have an image. Otherwise, simply return
+        # a space to fill the column properly because we aren't an image object
+        # but USE_THUMBNAILS is on.
+        my $thumb_uri = $o->thumbnail_uri or return '&nbsp;';
+        return qq{ <img src="$thumb_uri" />};
+        
+    } elsif ($field eq 'action') {
+        
+        if ($relate_id == $o->get_id) {
+            return qq{<a href="#" class="redLink" onclick="Container.unrelate('media', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Un-relate</a>};            
+        } else {
+            return qq{<a href="#" class="redLink" onclick="Container.relate('media', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Relate</a>};
+        }
+        
     }
 };
-
-my $thumburi = sub {
-    my ($selfobj, $fieldname) = @_;
-    return unless $fieldname eq 'thumb';
-
-    # If we get a thumbnail URI, we have an image. Otherwise, simply return
-    # a space to fill the column properly because we aren't an image object
-    # but USE_THUMBNAILS is on.
-    my $thumb_uri = $selfobj->thumbnail_uri or return '&nbsp;';
-    return qq{ <img src="$thumb_uri" />};
-};
-
-</%once>
+</%init>

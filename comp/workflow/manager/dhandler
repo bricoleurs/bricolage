@@ -40,7 +40,7 @@ my $profile = sub {
     } else {
         $ret = [['View', "/workflow/profile/$alt/$id?return=search", '']];
     }
-    push @$ret, [ 'Log', "/admin/events/$type/$id", ''];
+    push @$ret, [ 'Log', "/workflow/events/$type/$id", ''];
     return $ret;
 };
 

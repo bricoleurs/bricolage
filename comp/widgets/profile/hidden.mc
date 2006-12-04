@@ -31,6 +31,7 @@ Easier to use wrapper for displayFormElement.mc
 <%args>
 $value => ''
 $name  => ''
+$id    => undef
 $length => undef
 $maxlength => undef
 $js    => undef
@@ -39,6 +40,7 @@ $js    => undef
 <%perl>;
 $m->comp("/widgets/profile/displayFormElement.mc",
           key  => $name,
+          id   => $id,
           vals => { value => $value,
                     js    => $js,
                     props => { type => 'hidden',

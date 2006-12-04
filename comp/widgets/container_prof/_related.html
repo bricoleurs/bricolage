@@ -1,0 +1,82 @@
+<%args>
+$widget
+$asset        => undef # Parent story or media
+$container    => undef
+$container_id => undef
+$type         => 'story'
+</%args>
+
+<%once>
+my $find_subelement;
+$find_subelement = sub {
+    my ($element, $id) = @_;
+
+    return $element if $element->get_id == $id;
+
+    foreach my $container ($element->get_containers) {
+        my $subelement = $find_subelement->($container, $id);
+        return $subelement if $subelement;
+    }
+};
+</%once>
+
+<%init>
+$container ||= $find_subelement->(get_state_data('container_prof', 'element'), $container_id);
+
+$asset ||= get_state_data($container->get_object_type . '_prof', $container->get_object_type);
+
+my $rel = $type eq 'story' ? $container->get_related_story
+                           : $container->get_related_media;
+
+my $button = $m->scomp(
+    '/widgets/profile/button.mc',
+    name     => "pick_related_".$type,
+    button   => "edit_lgreen",
+    js       => qq{onclick="openWindow('/workflow/profile/} . $container->get_object_type . qq{/container/edit_related_$type.html?id=} . $container->get_id . qq{', undefined, { closeOnUnload: true }); return false"},
+    useTable => 0
+);
+
+if ($rel) {
+    add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
+          $type, $rel->get_title)
+      unless $rel->is_active;
+    
+    my $thumb = '';
+    if (USE_THUMBNAILS && $type ne 'story') {
+        if ($thumb =  $rel->thumbnail_uri) {
+            $thumb = $m->comp(
+                '/widgets/profile/preview_link.mc',
+                doc   => $rel,
+                value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                type  => $type,
+            );
+        }
+    }
+    # The summary info
+    $m->comp('/widgets/summary/summary.mc',
+              asset  => $rel,
+              type   => $type,
+              header => 'Currently Related '.ucfirst($type),
+              frame  => 0,
+              button => $thumb . $button 
+    );
+} else {
+    $m->out('<div class="noneFound">',
+        $lang->maketext('No related [_1]', ucfirst($type)),
+        qq{<div class="button">$button</div>},
+        '</div>'
+    );
+    
+    if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
+        # Give 'em an upload form.
+        if (my $uploader = $m->scomp('/widgets/profile/media_upload.mc',
+            widget      => $widget,
+            file_widget => 'container_prof',
+            formName    => "theForm",
+            site_id     => $asset->get_site_id,
+        )) {
+          $m->out(qq{<div class="uploader">$uploader</div>\n});
+        }
+    }
+}
+</%init>

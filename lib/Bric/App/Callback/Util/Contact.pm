@@ -11,21 +11,26 @@ our %EXPORT_TAGS = (all => \@EXPORT_OK);
 sub update_contacts {
     my ($param, $obj) = @_;
 
-    my $cids = mk_aref($param->{contact_id});
-    for (my $i = 0; $i < @{$param->{value}}; $i++) {
-	if (my $id = $cids->[$i]) {
-	    my ($c) = $obj->get_contacts($id);
-	    $c->set_value($param->{value}[$i]);
-	    $c->set_type($param->{type}[$i])
-	} else {
-	    next unless $param->{value}[$i];
-	    my $c = $obj->new_contact($param->{type}[$i],
-				       $param->{value}[$i]);
-	}
+    my ($cids, $values, $types) = 
+        map { mk_aref($param->{$_}) } qw(contact_id value type);
+    my %cids_seen = {};
+    for (my $i = 0; $i < scalar @$values; $i++) {
+    	if (my $id = $cids->[$i]) {
+    	    my ($c) = $obj->get_contacts($id);
+    	    $c->set_value($values->[$i]);
+    	    $c->set_type($types->[$i]);
+    	    $cids_seen{$c} = 1;
+    	} else {
+    	    next unless $values->[$i];
+    	    my $c = $obj->new_contact($types->[$i], $values->[$i]);
+    	}
     }
 
-    $obj->del_contacts(@{ mk_aref($param->{del_contact}) })
-      if $param->{del_contact};
+    my @del;
+    for my $contact ($obj->get_contacts()) {
+        push @del, $contact unless $cids_seen{$contact};
+    }
+    $obj->del_contacts(@del) if @del;
 }
 
 1;

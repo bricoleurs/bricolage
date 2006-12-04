@@ -888,15 +888,15 @@ sub get_contributors {
     }
 
     my $contribs = $self->_get_contributors;
-
-    my @ret;
-    foreach my $id (sort { $contribs->{$a}->{place} <=>
-                           $contribs->{$b}->{place} }
-                    keys %$contribs) {
-        $contribs->{$id}->{obj} ||=
-          Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
-        push @ret, $contribs->{$id}->{obj};
+    if (my @objs_needed = grep { !$contribs->{$_}->{obj} } keys %$contribs) {
+        $contribs->{$_->get_id}->{obj} = $_ for Bric::Util::Grp::Parts::Member::Contrib->list({ id => ANY(@objs_needed) });
     }
+    
+    my @ret;
+    push @ret, $contribs->{$_}->{obj} for 
+        sort { $contribs->{$a}->{place} <=> $contribs->{$b}->{place} }
+        keys %$contribs;
+        
     return wantarray ? @ret : \@ret;
 }
 
@@ -1011,7 +1011,7 @@ sub reorder_contributors {
     my $existing = $self->_get_contributors();
 
     if ((scalar @new_order) != (scalar (keys %$existing))) {
-        throw_gen 'Improper Args to reorder contributors';
+        throw_gen 'Improper args to reorder contributors: expected ' . scalar (keys %$existing) . ' but got ' . scalar @new_order;
     }
 
     my $i = 0;
@@ -1024,7 +1024,7 @@ sub reorder_contributors {
             }
                         $i++;
         } else {
-            throw_gen 'Improper Args to reorder contributors';
+            throw_gen 'Improper args to reorder contributors';
         }
     }
 

@@ -998,6 +998,31 @@ NONE
 
 ################################################################################
 
+=item $user = $asset->get_user()
+
+Returns the Person object of the person to whom the asset is checked out to
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_user {
+    my $self = shift;
+    return Bric::Biz::Person::User->lookup({ id => $self->_get('user__id') });
+}
+
+################################################################################
+
 =item $version_id = $asset->get_version_id()
 
 Returns the database id of the version of this asset.

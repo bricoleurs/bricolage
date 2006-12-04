@@ -63,7 +63,6 @@ use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 
-use Bric::App::Callback::AddMore;
 use Bric::App::Callback::Alert;
 use Bric::App::Callback::Alias;
 use Bric::App::Callback::AssetMeta;
@@ -83,7 +82,6 @@ use Bric::App::Callback::Search;
 use Bric::App::Callback::SelectObject;
 use Bric::App::Callback::SelectTime;
 use Bric::App::Callback::SiteContext;
-use Bric::App::Callback::Workspace;
 
 use Bric::App::Callback::Profile::Action;
 use Bric::App::Callback::Profile::AlertType;

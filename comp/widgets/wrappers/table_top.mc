@@ -42,7 +42,8 @@ $caption =~ s/\%n/$lang->maketext($name)/e if $object;
 
 my ($section, $mode, $type) = parse_uri($r->uri);
 
-if ($border) { $class .= ($class) ? " border" : "border"; }
+$class .= ($class) ? " clearboth" : "clearboth";
+$class .= " border" if ($border);
 
 # If it's a search box, it doesn't matter what section we're in.
 $section = "search" if $search;
@@ -59,7 +60,7 @@ $attrs .= qq{ class="$class"};
 
 <a name="section<% $number %>"></a>
 % }
-<div class="<% $section %>Box">
+<div class="<% $section %>Box clearboth">
   <div class="<% $headerClass %>">
     <div class="number"><% ($number) ? $number : "&nbsp;" %></div>
     <div class="caption"><% $caption %></div>

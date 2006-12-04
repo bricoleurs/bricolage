@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'story_prof';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Callback::Desk;
+use Bric::App::Callback::Util::OutputChannel qw(update_output_channels);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history :aref);
@@ -27,15 +28,17 @@ my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
 my $DESK_URL   = '/workflow/profile/desk/';
 
-my ($save_contrib, $save_category, $unique_msgs, $save_data, $handle_delete);
+my ($save_category, $unique_msgs);
 
 sub view : Callback {
     my $self = shift;
-    my $widget = $self->class_key;
     my $params = $self->params;
+
+    # Abort this save if there were any errors in the update callback.
+    return if delete $params->{__data_errors__};
+
+    my $widget = $self->class_key;
     my $story  = get_state_data($widget => 'story');
-    # Abort this save if there were any errors.
-    return unless $save_data->($self, $params, $widget, $story);
     my $version = $params->{"$widget|version"};
     my $id = $story->get_id;
     $self->set_redirect("/workflow/profile/story/$id/?version=$version");
@@ -85,7 +88,7 @@ sub save : Callback(priority => 6) {
     my $workflow_id = $story->get_workflow_id;
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
     } else {
         # Save the story.
         $story->save;
@@ -120,7 +123,7 @@ sub checkin : Callback(priority => 6) {
     my $story = get_state_data($widget, 'story');
     my $param = $self->params;
     # Abort this save if there were any errors.
-    return unless &$save_data($self, $param, $widget, $story);
+    return unless $self->_save_data($param, $widget, $story);
 
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
@@ -165,8 +168,7 @@ sub checkin : Callback(priority => 6) {
             $no_log = 1;
         } else {
             # Find one in this workflow.
-            $wf ||= Bric::Biz::Workflow->lookup
-              ({ id => $story->get_workflow_id });
+            $wf ||= $story->get_workflow_object;
             foreach my $d ($wf->allowed_desks) {
                 $pub_desk = $d and last if $d->can_publish;
             }
@@ -252,7 +254,7 @@ sub save_and_stay : Callback(priority => 6) {
 
     if ($param->{"$widget|delete"}) {
         # Delete the story.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
         # Get out of here, since we've blow it away!
         $self->set_redirect("/");
         $self->clear_my_state;
@@ -273,7 +275,7 @@ sub cancel : Callback(priority => 6) {
     if ($story->get_version == 0) {
         # If the version number is 0, the story was never checked in. So just
         # delete it.
-        return unless $handle_delete->($story, $self);
+        return unless $self->_handle_delete($story);
     } else {
         # Cancel the checkout.
         $story->cancel_checkout;
@@ -415,9 +417,9 @@ sub create : Callback {
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
     # Set the primary category
-    $story->add_categories([$cid]);
-    $story->set_primary_category($cid);
     my $cat = Bric::Biz::Category->lookup({ id => $cid });
+    $story->add_categories([$cat]);
+    $story->set_primary_category($cat);
 
     # Set the workflow this story should be in.
     $story->set_workflow_id($work_id);
@@ -438,11 +440,11 @@ sub create : Callback {
     $story->save;
 
     # Save everything else unless there were data errors
-    unless ($save_data->($self, $param, $widget, $story)) {
+    unless ($self->_save_data($param, $widget, $story)) {
         # Oops, there were data errors. Delete it and return.
         # XXX. Ideally, we wouldn't have to do this, but this is the only
         # way to remove it from workflow, at the moment.
-        $handle_delete->($story);
+        $self->_handle_delete($story);
         return;
     }
 
@@ -474,212 +476,28 @@ sub notes : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $param = $self->params;
-    # Return if there were data errors.
-    return unless &$save_data($self, $param, $widget);
-
     my $story = get_state_data($widget, 'story');
+    # Return if there were data errors.
+    return unless $self->_save_data($param, $widget, $story);
+
     my $id    = $story->get_id();
     my $action = $param->{$widget.'|notes_cb'};
     $self->set_redirect("/workflow/profile/story/${action}_notes.html?id=$id");
-}
-
-sub delete_cat : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
-    my $story = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-
-    my (@to_delete, @to_log);
-    my $primary = $self->params->{"$widget|primary_cat"}
-      ||  $story->get_primary_category->get_id;
-    foreach my $cid (@$cat_ids) {
-        my $cat = Bric::Biz::Category->lookup({ id => $cid });
-        if ($cid == $primary) {
-            add_msg('Category "[_1]" cannot be dissociated because it is the'
-                    . 'primary category', $cat->get_name);
-            next;
-        }
-        push @to_delete, $cid;
-        push @to_log, ['story_del_category', $story, { Category => $cat->get_name }];
-        add_msg('Category "[_1]" disassociated.',
-                '<span class="l10n">' . $cat->get_name . '</span>');
-    }
-
-    $story->delete_categories(\@to_delete);
-    $story->save;
-    log_event(@$_) for @to_log;
-    set_state_data($widget, 'story', $story);
-}
-
-sub update_primary : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $story   = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-    my $primary = $self->params->{"$widget|primary_cat"};
-    $story->set_primary_category($primary);
-    $story->save;
-    set_state_data($widget, 'story', $story);
-}
-
-sub add_category : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $story = get_state_data($widget, 'story');
-    chk_authz($story, EDIT);
-    my $cat_id = $self->params->{"$widget|new_category_id"};
-    if (defined $cat_id) {
-        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-        $story->add_categories([ $cat ]);
-        eval { $story->save; };
-        if (my $err = $@) {
-            $story->delete_categories([ $cat ]);
-            die $err;
-        }
-        log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" added.',
-                '<span class="l10n">' . $cat->get_name . '</span>');
-    }
-    set_state_data($widget, 'story', $story);
-}
-
-sub add_oc : Callback {
-    my $self = shift;
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $oc = Bric::Biz::OutputChannel->lookup({ id => $self->value });
-    $story->add_output_channels($oc);
-    log_event('story_add_oc', $story, { 'Output Channel' => $oc->get_name });
-    $story->save;
-    set_state_data($self->class_key, 'story', $story);
-}
-
-sub view_notes : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/profile/story/comments.html?id=$id");
 }
 
 sub trail : Callback {
     my $self = shift;
 
     # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
+    return unless $self->_save_data();
 
     my $story = get_state_data($self->class_key, 'story');
     my $id = $story->get_id();
-    $self->set_redirect("/workflow/trail/story/$id");
-}
-
-sub view_trail : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/trail/story/$id");
+    $self->set_redirect("/workflow/events/story/$id?filter_by=story_moved");
 }
 
 sub update : Callback(priority => 1) {
-    my $self = shift;
-    &$save_data($self, $self->params, $self->class_key);
-}
-
-sub keywords : Callback {
-    my $self = shift;
-
-    # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
-
-    my $story = get_state_data($self->class_key, 'story');
-    my $id = $story->get_id();
-    $self->set_redirect("/workflow/profile/story/keywords.html");
-}
-
-sub contributors : Callback {
-    my $self = shift;
-    # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
-    $self->set_redirect("/workflow/profile/story/contributors.html");
-}
-
-sub assoc_contrib : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $contrib_id = $self->value;
-    my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $contrib_id});
-    my $roles = $contrib->get_roles;
-    if (@$roles > 1) {
-        set_state_data($self->class_key, 'contrib', $contrib);
-        $self->set_redirect("/workflow/profile/story/contributor_role.html");
-    } else {
-        $story->add_contributor($contrib);
-        log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-    }
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-}
-
-sub assoc_contrib_role : Callback {
-    my $self = shift;
-
-    my $story   = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $contrib = get_state_data($self->class_key, 'contrib');
-    my $role    = $self->params->{$self->class_key.'|role'};
-
-    # Add the contributor
-    $story->add_contributor($contrib, $role);
-    log_event('story_add_contrib', $story, { Name => $contrib->get_name });
-
-    # Go back to the main contributor pick screen.
-    $self->set_redirect(last_page());
-
-    # Remove this page from the stack.
-    pop_page();
-}
-
-sub unassoc_contrib : Callback {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-    my $cids = mk_aref($self->value);
-    $story->delete_contributors($cids);
-
-    # Log the dissociations.
-    foreach my $cid (@$cids) {
-        my $c = Bric::Util::Grp::Parts::Member::Contrib->lookup({'id' => $cid });
-        log_event('story_del_contrib', $story, { Name => $c->get_name });
-    }
-}
-
-sub save_contrib : Callback {
-    my $self = shift;
-
-    $save_contrib->($self->class_key, $self->params, $self);
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page());
-    # Pop this page off the stack.
-    pop_page();
-}
-
-sub save_and_stay_contrib : Callback {
-    my $self = shift;
-    $save_contrib->($self->class_key, $self->params, $self);
-}
-
-sub leave_contrib : Callback {
-    my $self = shift;
-
-    # Set a redirect for the previous page.
-    $self->set_redirect(last_page());
-    # Pop this page off the stack.
-    pop_page();
+    shift->_save_data();
 }
 
 sub exit : Callback {
@@ -689,39 +507,6 @@ sub exit : Callback {
     # Set the redirect to the page we were at before here.
     $self->set_redirect(last_page() || "/workflow/search/story/");
     # Remove this page from history.
-    pop_page();
-}
-
-sub add_kw : Callback {
-    my $self = shift;
-    my $param = $self->params;
-
-    # Grab the story.
-    my $story = get_state_data($self->class_key, 'story');
-    chk_authz($story, EDIT);
-
-    # Add new keywords.
-    my $new;
-    foreach my $kw_name (@{ mk_aref($param->{keyword}) }) {
-        next unless $kw_name;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $kw_name });
-        unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $kw_name})->save;
-            log_event('keyword_new', $kw);
-        }
-        push @$new, $kw;
-    }
-    $story->add_keywords($new) if $new;
-
-    # Delete old keywords.
-    $story->del_keywords(mk_aref($param->{del_keyword}))
-      if defined $param->{del_keyword};
-
-    # Save the changes.
-    set_state_data($self->class_key, 'story', $story);
-    $self->set_redirect(last_page());
-    add_msg("Keywords saved.");
-    # Take this page off the stack.
     pop_page();
 }
 
@@ -819,7 +604,7 @@ sub recall : Callback {
 sub categories : Callback {
     my $self = shift;
     # Return if there were data errors
-    return unless &$save_data($self, $self->params, $self->class_key);
+    return unless $self->_save_data();
     $self->set_redirect("/workflow/profile/story/categories.html");
 }
 
@@ -876,51 +661,6 @@ sub clear_my_state {
 
 ##############################################################################
 
-$save_contrib = sub {
-    my ($widget, $param, $self) = @_;
-
-    # get the contribs to delete
-    my $story = get_state_data($widget, 'story');
-
-    my $existing = { map { $_->get_id => 1 } $story->get_contributors };
-
-    chk_authz($story, EDIT);
-    my $contrib_id = $param->{$widget.'|delete_id'};
-    my $msg;
-    if ($contrib_id) {
-        if (ref $contrib_id) {
-            $story->delete_contributors($contrib_id);
-            foreach my $id (@$contrib_id) {
-                my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup({ id => $id });
-                delete $existing->{$id};
-                log_event('story_del_contrib', $story,
-                          { Name => $contrib->get_name });
-            }
-            add_msg('Contributors disassociated.');
-        } else {
-            $story->delete_contributors([$contrib_id]);
-            my $contrib = Bric::Util::Grp::Parts::Member::Contrib->lookup(
-                { id => $contrib_id });
-            delete $existing->{$contrib_id};
-            log_event('story_del_contrib', $story,
-                      { Name => $contrib->get_name });
-            add_msg('Contributor "[_1]" disassociated.', $contrib->get_name);
-        }
-    }
-
-    # get the remaining and reorder
-    foreach my $id (keys %$existing) {
-        my $key = $widget . '|reorder_' . $id;
-        my $place = $param->{$key};
-        $existing->{$id} = $place;
-    }
-    my @no = sort { $existing->{$a} <=> $existing->{$b} } keys %$existing;
-    $story->reorder_contributors(@no);
-
-    # Avoid unnecessary empty searches.
-    Bric::App::Callback::Search->no_new_search;
-};
-
 $save_category = sub {
     my ($widget, $param, $self) = @_;
 
@@ -970,11 +710,13 @@ $unique_msgs = sub {
     add_msg($_) for @msgs;
 };
 
-$save_data = sub {
+sub _save_data {
     my ($self, $param, $widget, $story) = @_;
     my $data_errors = 0;
 
-    $story ||= get_state_data($widget, 'story');
+    $param  ||= $self->params;
+    $widget ||= $self->class_key;
+    $story  ||= get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
     # Make sure the story is active.
@@ -1010,27 +752,6 @@ $save_data = sub {
     $story->set_priority($param->{priority})
       if exists $param->{priority};
 
-    # Delete output channels.
-    if ($param->{rem_oc}) {
-        my $del_oc_ids = mk_aref($param->{rem_oc});
-        foreach my $delid (@$del_oc_ids) {
-            if ($delid == $param->{primary_oc_id}) {
-                add_msg("Cannot both delete and make primary a single output channel.");
-                $param->{__data_errors__} = 1;
-            } else {
-                my $oc = Bric::Biz::OutputChannel->lookup({ id => $delid });
-                $story->del_output_channels($delid);
-                log_event('story_del_oc', $story,
-                          { 'Output Channel' => $oc->get_name });
-            }
-        }
-    }
-
-    # Set primary output channel.
-    $story->set_primary_oc_id($param->{primary_oc_id})
-      if exists $param->{primary_oc_id};
-
-
     if ($param->{'cover_date-partial'}) {
         add_msg('Cover Date incomplete.');
         $data_errors = 1;
@@ -1045,10 +766,15 @@ $save_data = sub {
         $story->set_expire_date($param->{expire_date});
     }
 
-    $story->set_primary_category($param->{"$widget|primary_cat"})
-      if defined $param->{"$widget|primary_cat"};
+    update_output_channels($story, $param);
 
-    # avoid repeated messages from repeated calls to &$save_data
+    $self->_handle_categories($story, $param, $widget);
+
+    $self->_handle_keywords($story, $param);
+    
+    $self->_handle_contributors($story, $param, $widget);
+    
+    # avoid repeated messages from repeated calls to _save_data
     &$unique_msgs if $data_errors;
 
     set_state_data($widget, 'story', $story);
@@ -1057,8 +783,132 @@ $save_data = sub {
     return not $data_errors;
 };
 
-$handle_delete = sub {
-    my ($story, $self, $param) = @_;
+sub _handle_categories {
+    my ($self, $story, $param, $widget) = @_;
+
+    my ($cat_ids, @to_add, @to_delete, %checked_cats);
+    my %existing_cats = map { $_->get_id => $_ } $story->get_categories;
+    
+    $cat_ids = mk_aref($param->{"category_id"});
+    
+    # Bail unless there are categories submitted via the UI. Otherwise we end
+    # up deleting categories added during create().  This should also prevent
+    # us from ever somehow deleting all categories on a story, which really
+    # screws things up (the error is not (currently) fixable through the UI!)
+    return unless @$cat_ids;
+    
+    foreach my $cat_id (@$cat_ids) {
+        # Mark this category as seen so we don't delete it later
+        $checked_cats{$cat_id} = 1;
+
+        # If the category already exists, don't add it again
+        if (defined $existing_cats{$cat_id}) {
+            next;
+        }
+    
+        # Since the category doesn't exist, we need to add it
+        my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+        push @to_add, $cat;
+        log_event('story_add_category', $story, { Category => $cat->get_name });
+        add_msg('Category "[_1]" added.',
+                '<span class="l10n">' . $cat->get_name . '</span>');
+    }
+    
+    $story->add_categories(\@to_add);
+    
+    $story->set_primary_category($param->{"primary_category_id"})
+        if defined $param->{"primary_category_id"};
+
+    my $primary = $param->{"primary_category_id"} || $story->get_primary_category->get_id;
+    for my $cat_id (keys %existing_cats) {
+        my $cat = $existing_cats{$cat_id};
+        # If the category isn't still in the list of categories, delete it
+        if (!(defined $checked_cats{$cat_id})) {
+            if ($cat_id == $primary) {
+                add_msg('Category "[_1]" cannot be dissociated because it is the '
+                        . 'primary category', $cat->get_name);
+                next;
+            }
+
+            push @to_delete, $cat;
+            log_event('story_del_category', $story, { Category => $cat->get_name });
+            add_msg('Category "[_1]" disassociated.',
+                    '<span class="l10n">' . $cat->get_name . '</span>');
+        }
+    }
+
+    $story->delete_categories(\@to_delete);
+        
+    set_state_data($widget, 'story', $story);  
+};
+
+sub _handle_keywords {
+    my ($self, $story, $param) = @_;
+    
+    # Delete old keywords.
+    my $old;
+    my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
+    foreach ($story->get_keywords) {
+        push @$old, $_ unless $keywords->{$_->get_id};
+    }
+    $story->del_keywords(@$old) if $old;
+
+    # Add new keywords.
+    my $new;
+    foreach (@{ mk_aref($param->{new_keyword}) }) {
+        next unless $_;
+        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+        unless ($kw) {
+            $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+            log_event('keyword_new', $kw);
+        }
+        push @$new, $kw;
+    }
+    $story->add_keywords(@$new) if $new;
+};
+
+sub _handle_contributors {
+    my ($self, $story, $param, $widget) = @_;
+    
+    my $existing = { map { $_->get_id => $_ } $story->get_contributors };
+    
+    my $order = {};
+    foreach my $contrib_id (@{ mk_aref($param->{'contrib_id'}) }) {
+        if (defined $existing->{$contrib_id}) {
+            if ($existing->{$contrib_id}->{role} ne $param->{"$widget|contrib_role_$contrib_id"}) {
+                # Update role (add_contributor updates if $contrib_id already exists)
+                $story->add_contributor($contrib_id, $param->{"$widget|contrib_role_$contrib_id"});
+            }
+            delete $existing->{$contrib_id};
+        } else {
+            # Contributor did not previously exist, so add it
+            $story->add_contributor($contrib_id, $param->{"$widget|role_$contrib_id"});
+        }
+        $order->{$contrib_id} = $param->{$widget . '|contrib_order_' . $contrib_id};
+    }
+    
+    if (my @to_delete = keys %$existing) {
+        $story->delete_contributors(\@to_delete);
+        
+        my $contrib;
+        foreach my $id (@to_delete) {
+            $contrib = $existing->{$id}->{obj};
+            delete $existing->{$id};
+            log_event('story_del_contrib', $story,
+                      { Name => $contrib->get_name });
+        }
+        if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
+        else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
+    }
+    
+    $story->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
+    
+    # Avoid unnecessary empty searches.
+    Bric::App::Callback::Search->no_new_search;
+}
+
+sub _handle_delete {
+    my ($self, $story) = @_;
     my $desk = $story->get_current_desk();
     $desk->checkin($story) if $story->get_checked_out;
     $desk->remove_asset($story);

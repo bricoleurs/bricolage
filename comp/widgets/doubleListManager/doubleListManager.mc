@@ -110,6 +110,7 @@ $m->out(qq{<script type="text/javascript">\n},
 </%init>
 % # begin html ---------------
 <table width=578 border=0 cellpadding=0 cellspacing=0>
+  <tr>
 <%perl>;
 if ($showLeftList) {
     $m->out(qq{  <td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>

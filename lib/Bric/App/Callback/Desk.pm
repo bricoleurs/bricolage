@@ -12,7 +12,6 @@ use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:msg :pkg :aref);
 use Bric::App::Callback::Publish;
-use Bric::App::Callback::Workspace;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Template;
@@ -29,132 +28,154 @@ my $pkgs = {
     story    => 'Bric::Biz::Asset::Business::Story',
     media    => 'Bric::Biz::Asset::Business::Media',
     template => 'Bric::Biz::Asset::Template',
+    desk     => 'Bric::Biz::Workflow::Parts::Desk'
 };
-my $keys = [ keys %$pkgs ];
-
-my $type      = 'template';
 
 sub checkin : Callback {
     my $self = shift;
 
-    my $a_id    = $self->value;
-    my $a_class = $self->params->{$self->class_key.'|asset_class'};
-    my $pkg     = get_package_name($a_class);
-    my $a_obj   = $pkg->lookup({'id' => $a_id, checkout => 1});
-    my $d       = $a_obj->get_current_desk;
+    my ($class, $id) = split /_/, $self->value;
+    my $obj  = $pkgs->{$class}->lookup({'id' => $id, checkout => 1});
+    my $desk = $obj->get_current_desk;
 
-    $d->checkin($a_obj);
-    $d->save;
+    $desk->checkin($obj);
+    log_event("${class}_checkin", $obj, { Version => $obj->get_version });
 
-    if ($a_class eq 'template') {
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-           $sb->undeploy($a_obj);
+    my ($next_desk_id, $next_workflow_id) = 
+        split /-/, $self->params->{"desk_asset|next_desk"};
+    
+    if ($next_desk_id eq 'shelve') {
+        $desk->remove_asset($obj)->save;
+        $obj->set_workflow_id(undef);
+        $obj->save;
+        log_event("${class}_rem_workflow", $obj);
+    } elsif ($next_desk_id eq 'publish') {
+        $self->_move_to_publish_desk($obj);
+        $self->params->{"${class}_pub"} = { $obj->get_version_id => $obj };
+        $self->publish;
+    } elsif ($next_desk_id eq 'deploy') {
+        if ($class eq 'template') {
+            $self->_move_to_publish_desk($obj);
+            $self->params->{"desk_asset|template_pub_ids"} = [ $obj->get_version_id ];
+            $self->deploy;
+        }
+    } elsif ($next_desk_id) {
+        if ($desk->get_id != $next_desk_id) {
+            my $next = $pkgs->{desk}->lookup({ id => $next_desk_id });
+            $desk->transfer({
+                to    => $next,
+                asset => $obj
+            });
+            log_event("${class}_moved", $obj, { Desk => $next->get_name });
+            $next->save;
+        }
+        $desk->save;
+    } else {
+        $desk->save;
     }
 
-    log_event("${a_class}_checkin", $a_obj, { Version => $a_obj->get_version });
+    if ($class eq 'template') {
+        my $sandbox = Bric::Util::Burner->new({user_id => get_user_id()});
+        $sandbox->undeploy($obj);
+    }
 }
 
 sub checkout : Callback {
     my $self = shift;
 
-    my $a_id    = $self->value;
-    my $a_class = $self->params->{$self->class_key.'|asset_class'};
-    my $pkg     = get_package_name($a_class);
-    my $a_obj   = $pkg->lookup({'id' => $a_id});
-    my $d       = $a_obj->get_current_desk;
-
-    $d->checkout($a_obj, get_user_id());
-    $d->save;
-    $a_obj->save;
-    log_event("${a_class}_checkout", $a_obj);
-
-    $a_id = $a_obj->get_id;
-
-    my $profile;
-    if ($a_class eq 'template') {
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
-        $sb->deploy($a_obj);
-
-        $profile = '/workflow/profile/template';
-    } elsif ($a_class eq 'media') {
-        $profile = '/workflow/profile/media';
-    } else {
-        $profile = '/workflow/profile/story';
+    my ($class, $id) = split(/_/, $self->value);
+    my $pkg  = get_package_name($class);
+    my $obj  = $pkg->lookup({'id' => $id});
+    
+    unless ($obj->get_checked_out) {
+        my $desk = $obj->get_current_desk;
+        $desk->checkout($obj, get_user_id());
+        $desk->save;
+        $obj->save;
+        log_event("${class}_checkout", $obj);
+    
+        $id = $obj->get_id;
+    
+        if ($class eq 'template') {
+            my $sandbox = Bric::Util::Burner->new({user_id => get_user_id() });
+            $sandbox->deploy($obj);
+        }
     }
-
-    $self->set_redirect("$profile/$a_id/?checkout=1");
+    
+    $self->set_redirect("/workflow/profile/$class/$id/?checkout=1");
 }
 
 sub move : Callback {
     my $self = shift;
 
-    # Accept one or more assets to be moved to another desk.
-    my $next_desk = $self->params->{$self->class_key.'|next_desk'};
-    my $assets    = ref $next_desk ? $next_desk : [$next_desk];
+    my ($class, $id) = split /_/, $self->value;
+    my $obj  = $pkgs->{$class}->lookup({ 'id' => $id });
+    my $desk = $obj->get_current_desk;
+    my $curr_desk_id = $desk->get_id;
 
-    my ($a_id, $a_class, $d_id, $pkg, %wfs);
-    foreach my $a (@$assets) {
-        my ($a_id, $from_id, $to_id, $a_class, $wfid) = split('-', $a);
+    my ($next_desk_id, $next_workflow_id) = 
+        split /-/, $self->params->{"desk_asset|next_desk"};
 
-        # Do not move assets where the user has not chosen a next desk.
-        # And where the desk ID is the same.
-        next unless ($to_id and $to_id != $from_id) || $from_id eq 'shelve';
+    # Do not move assets where the user has not chosen a next desk,
+    # or the desk ID is the same.
+    return unless $next_desk_id and $next_desk_id != $curr_desk_id;
 
-        my $pkg   = get_package_name($a_class);
-        my $a_obj = $pkg->lookup({'id' => $a_id});
-
-        unless ($a_obj->is_current) {
-            add_msg('Cannot move [_1] asset "[_2]" while it is checked out.',
-                    $a_class, $a_obj->get_name);
-            next;
-        }
-
-        if ($to_id eq 'shelve') {
-            # Remove from the current desk and from the workflow.
-            log_event("$a_class\_save", $a_obj);
-            my $cur_desk = $a_obj->get_current_desk;
-            if ($a_obj->get_checked_out) {
-                $cur_desk->checkin($a_obj);
-                log_event("$a_class\_checkin", $a_obj, {
-                    Version => $a_obj->get_version
-                });
-            }
-            $cur_desk->remove_asset($a_obj)->save;
-            $a_obj->set_workflow_id(undef);
-            $a_obj->save;
-            log_event("$a_class\_rem_workflow", $a_obj);
-            next;
-        }
-
-        my $dpkg = 'Bric::Biz::Workflow::Parts::Desk';
-
-        # Get the current desk and the next desk.
-        my $d    = $dpkg->lookup({'id' => $from_id});
-        my $next = $dpkg->lookup({'id' => $to_id});
-
-        # Transfer from the current to the next.
-        $d->transfer({'to'    => $next,
-                      'asset' => $a_obj});
-
-        # Save both desks.
-        $d->save;
-        $next->save;
-
-        if (ALLOW_WORKFLOW_TRANSFER) {
-            if ($wfid != $a_obj->get_workflow_id) {
-                # Transfer workflows.
-                $a_obj->set_workflow_id($wfid);
-                $a_obj->save;
-                my $wf = $wfs{$wfid} ||=
-                  Bric::Biz::Workflow->lookup({ id => $wfid });
-                log_event("${a_class}_add_workflow", $a_obj,
-                          { Workflow => $wf->get_name });
-            }
-        }
-
-        # Log an event
-        log_event("${a_class}_moved", $a_obj, { Desk => $next->get_name });
+    unless ($obj->is_current) {
+        add_msg('Cannot move [_1] asset "[_2]" while it is checked out.',
+            $class, $obj->get_name);
+        return;
     }
+
+    if ($next_desk_id eq 'shelve') {
+        if ($obj->get_checked_out) {
+            $desk->checkin($obj);
+            log_event("${class}_checkin", $obj, {
+                Version => $obj->get_version
+            });
+        }
+        $desk->remove_asset($obj)->save;
+        $obj->set_workflow_id(undef);
+        $obj->save;
+        log_event("${class}_rem_workflow", $obj);
+        return;
+    } elsif ($next_desk_id eq 'publish') {
+        $self->_move_to_publish_desk($obj);
+        $self->params->{"${class}_pub"} = { $obj->get_version_id => $obj };
+        $self->publish;
+        return;
+    } elsif ($next_desk_id eq 'deploy') {
+        if ($class eq 'template') {
+            $self->_move_to_publish_desk($obj);
+            $self->params->{"desk_asset|template_pub_ids"} = [ $obj->get_version_id ];
+            $self->deploy;
+        }
+        return;
+    }
+
+    # Get the next desk.
+    my $next = $pkgs->{desk}->lookup({'id' => $next_desk_id});
+
+    # Transfer from the current to the next.
+    $desk->transfer({'to'    => $next,
+                     'asset' => $obj});
+
+    # Save both desks.
+    $desk->save;
+    $next->save;
+
+    if (ALLOW_WORKFLOW_TRANSFER) {
+        if ($next_workflow_id != $obj->get_workflow_id) {
+            # Transfer workflows.
+            $obj->set_workflow_id($next_workflow_id);
+            $obj->save;
+            my $wf = Bric::Biz::Workflow->lookup({ id => $next_workflow_id });
+            log_event("${class}_add_workflow", $obj,
+                      { Workflow => $wf->get_name });
+        }
+    }
+
+    # Log an event
+    log_event("${class}_moved", $obj, { Desk => $next->get_name });
 }
 
 sub publish : Callback {
@@ -162,8 +183,16 @@ sub publish : Callback {
     my $param = $self->params;
     my $story_pub = $param->{story_pub} || {};
     my $media_pub = $param->{media_pub} || {};
-    my $mpkg = 'Bric::Biz::Asset::Business::Media';
-    my $spkg = 'Bric::Biz::Asset::Business::Story';
+    
+    # If we were passed a string instead of an object, find the object
+    for my $pub (\$story_pub, \$media_pub) {
+        next if ref $$pub;
+        
+        my ($class, $version_id) = split /_/, $$pub;
+        my $obj = $pkgs->{$class}->lookup({ version_id => $version_id });
+        $$pub = { $obj->get_version_id => $obj };
+    }
+    
     my $story = mk_aref($param->{$self->class_key.'|story_pub_ids'});
     my $media = mk_aref($param->{$self->class_key.'|media_pub_ids'});
     my (@rel_story, @rel_media);
@@ -171,8 +200,8 @@ sub publish : Callback {
     # start with the objects checked for publish
     my @stories = values %$story_pub;
     my @media   = values %$media_pub;
-    push @stories, $spkg->list({ version_id => ANY(@$story) }) if @$story;
-    push @media,   $mpkg->list({ version_id => ANY(@$media) }) if @$media;
+    push @stories, $pkgs->{story}->list({ version_id => ANY(@$story) }) if @$story;
+    push @media,   $pkgs->{media}->list({ version_id => ANY(@$media) }) if @$media;
 
     my %selected = (
         story => { map { $_->get_id => undef } @stories },
@@ -352,34 +381,35 @@ sub publish : Callback {
 sub deploy : Callback {
     my $self = shift;
     my $widget = $self->class_key;
-    if (my $a_ids = $self->params->{"$widget|template_pub_ids"}) {
-        my $b = Bric::Util::Burner->new;
 
-        $a_ids = ref $a_ids ? $a_ids : [$a_ids];
-
-        if (my $count = @$a_ids) {
-            for my $fa (Bric::Biz::Asset::Template->list({
-                version_id => ANY(@$a_ids)
+    if (my $ids = $self->params->{"$widget|template_pub_ids"}) {
+        my $burner = Bric::Util::Burner->new;
+        
+        $ids = mk_aref($ids);
+        
+        if (my $count = @$ids) {
+            for my $template (Bric::Biz::Asset::Template->list({
+                version_id => ANY(@$ids)
             })) {
-                my $action = $fa->get_deploy_status ? 'template_redeploy'
+                my $action = $template->get_deploy_status ? 'template_redeploy'
                     : 'template_deploy';
-                $b->deploy($fa);
-                $fa->set_deploy_date(strfdate());
-                $fa->set_deploy_status(1);
-                $fa->set_published_version($fa->get_current_version);
-                $fa->save;
-                log_event($action, $fa);
+                $burner->deploy($template);
+                $template->set_deploy_date(strfdate());
+                $template->set_deploy_status(1);
+                $template->set_published_version($template->get_current_version);
+                $template->save;
+                log_event($action, $template);
 
                 # Get the current desk and remove the asset from it.
-                my $d = $fa->get_current_desk;
-                $d->remove_asset($fa);
-                $d->save;
+                my $desk = $template->get_current_desk;
+                $desk->remove_asset($template);
+                $desk->save;
 
                 # Clear the workflow ID.
-                $fa->set_workflow_id(undef);
-                $fa->save;
-                log_event("template_rem_workflow", $fa);
-                add_msg('Template "[_1]" deployed.', $fa->get_uri)
+                $template->set_workflow_id(undef);
+                $template->save;
+                log_event("template_rem_workflow", $template);
+                add_msg('Template "[_1]" deployed.', $template->get_uri)
                     if $count == 1;
             }
             # Sum it up for them
@@ -388,13 +418,12 @@ sub deploy : Callback {
             }
         }
     }
-
+    
     # If there are stories or media to be published, publish them!
     if ($self->params->{"$widget|story_pub_ids"}
           || $self->params->{"$widget|media_pub_ids"}) {
         $self->publish;
     }
-
 }
 
 sub clone : Callback {
@@ -436,37 +465,29 @@ sub clone : Callback {
                         . '/?checkout=1');
 }
 
-# This is quite similar to Workspace::delete
 sub delete : Callback {
     my $self = shift;
-    my $burn = Bric::Util::Burner->new;
-
-    # Deleting assets.
-    foreach my $key (@$keys) {
-        foreach my $aid (@{ mk_aref($self->params->{"${key}_delete_ids"}) }) {
-            my $a = $pkgs->{$key}->lookup({ id => $aid });
-            if (chk_authz($a, EDIT, 1)) {
-                my $d = $a->get_current_desk;
-                $d->remove_asset($a);
-                $d->save;
-                log_event("${key}_rem_workflow", $a);
-                $a->set_workflow_id(undef);
-                $a->deactivate;
-                $a->save;
-
-                if ($key eq 'template') {
-                    # Undeploy from publish burn root
-                    $burn->undeploy($a);
-
-                    # Undeploy from user's sandbox
-                    my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-                    $sb->undeploy($a);
-                }
-                log_event("${key}_deact", $a);
-            } else {
-                add_msg('Permission to delete "[_1]" denied.', $a->get_name);
-            }
+    my ($class, $id) = split /_/, $self->value;
+    my $obj  = $pkgs->{$class}->lookup({ 'id' => $id });
+    
+    if (chk_authz($obj, EDIT, 1)) {
+        my $desk = $obj->get_current_desk;
+        $desk->remove_asset($obj);
+        $desk->save;
+        log_event("${class}_rem_workflow", $obj);
+        $obj->set_workflow_id(undef);
+        $obj->deactivate;
+        $obj->save;
+        
+        if ($class eq 'template') {
+            my $burn = Bric::Util::Burner->new;
+            $burn->undeploy($obj);
+            my $sandbox = Bric::Util::Burner->new({user_id => get_user_id()});
+            $sandbox->undeploy($obj);
         }
+        log_event("${class}_deact", $obj);
+    } else {
+        add_msg('Permission to delete "[_1]" denied.', $obj->get_name);
     }
 }
 
@@ -585,6 +606,37 @@ sub _merge_properties {
 
     return 1 unless $err;
     return;
+}
+
+sub _move_to_publish_desk {
+    my ($self, $obj) = @_;
+    
+    my $class = $obj->key_name;
+    my $cur_desk = $obj->get_current_desk;
+    
+    # Publish the template and remove it from workflow.
+    my ($pub_desk, $no_log);
+    # Find a publish desk.
+    if ($cur_desk->can_publish) {
+        # We've already got one.
+        $pub_desk = $cur_desk;
+        $no_log = 1;
+    } else {
+        # Find one in this workflow.
+        my $workflow = $obj->get_workflow_object;
+        foreach my $d ($workflow->allowed_desks) {
+            $pub_desk = $d and last if $d->can_publish;
+        }
+        # Transfer the template to the publish desk.
+        $cur_desk->transfer({ to    => $pub_desk,
+                              asset => $obj });
+        $cur_desk->save;
+        $pub_desk->save;
+    }
+    
+    $obj->save;
+    
+    log_event("${class}_moved", $obj, { Desk => $pub_desk->get_name }) unless $no_log;
 }
 
 1;

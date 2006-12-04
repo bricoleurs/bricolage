@@ -1,0 +1,74 @@
+<& '/widgets/listManager/listManager.mc',
+    object         => 'contrib',
+    userSort       => 0,
+    state_key      => 'story_contrib',
+    def_sort_field => 'order',
+    objs           => $contribs,
+    profile        => undef,
+    fields         => [qw(lname fname type role order delete)],
+    field_titles   => { order => 'Order', role => 'Role', delete => '' },
+    field_values   => $value_sub,
+    select         => undef,
+    addition       => ''
+&>
+<script type="text/javascript">
+var selectOrderNames = new Array(<% join ', ', @sort_array %>);
+</script>
+
+<%args>
+$asset      => undef
+$asset_type => 'story'
+$widget     => 'story_prof'
+$contribs
+</%args>
+
+<%init>
+$asset ||= get_state_data($widget, $asset_type);
+
+my $order_vals = [ map { [ $_ => $_ ] } 1..@$contribs ];
+my ($i, @sort_array);
+
+my $value_sub = sub {
+    if ($_[1] eq 'role') {
+        my $role_opt = [];
+        foreach my $r ($_[0]->get_roles) {
+            $r eq '_MEMBER_SUBSYS' ? unshift @$role_opt, ['DEFAULT', 'Default']
+              : push @$role_opt, [$r, $r];
+        }
+        
+        $m->scomp('/widgets/profile/select.mc',
+            name => "$widget|contrib_role_" . $_[0]->get_id,
+            disp => '',
+            value => $asset->get_contributor_role($_[0]) || 'DEFAULT',
+            options => $role_opt,
+            useTable => 0
+        )
+    } elsif ($_[1] eq 'order') {
+        my $id = $_[0]->get_id;
+        push @sort_array, qq{"$widget|contrib_order_$id"};
+        $m->scomp('/widgets/profile/select.mc',
+                  id => "contrib_order_$id",
+                  name => "$widget|contrib_order_$id",
+                  disp => '',
+                  value => ++$i,
+                  options => $order_vals,
+                  useTable => 0,
+                  js => qq{class="reorder" onchange="reorder(this, 'contribs')"}
+        )
+    } elsif ($_[1] eq 'delete') {
+        $m->scomp('/widgets/profile/hidden.mc',
+            id      => "contrib_id_" . $_[0]->get_id,
+            name    => "contrib_id",
+            value   => $_[0]->get_id,
+        ) .
+        $m->scomp('/widgets/profile/button.mc',
+            disp      => $lang->maketext("Delete Contributor"),
+            name      => 'delete_contrib',
+            value     => $_[0]->get_id,
+            button    => 'delete_red',
+            useTable  => 0,
+            js        => qq{onclick="deleteContrib(this); return false"} 
+        );
+    }
+};
+</%init>

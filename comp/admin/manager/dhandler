@@ -344,7 +344,7 @@ my $owner_sub = sub {
 my $job_name_sub = sub {
     my ($name, $job) = @_;
     if ($job->has_failed) {
-        return qq{<span class="redLabel"><image src="/media/images/bang_red.gif" /> $name</span>};
+        return qq{<span class="label required"><image src="/media/images/bang_red.gif" /> $name</span>};
     } else {
         return $name;
     }

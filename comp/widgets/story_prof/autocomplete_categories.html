@@ -1,0 +1,29 @@
+<ul>
+% for my $cat (@$cats) {
+  <li><% $cat->get_uri %></li>
+% }
+</ul>
+<%args>
+$new_category_autocomplete => "/"
+</%args>
+<%init>
+my $story = get_state_data('story_prof', 'story');
+
+(my $parent_cat_uri = $new_category_autocomplete) =~ s|/[^/]*$|/|; # strip off the incomplete directory on the end
+my $parent_cat = Bric::Biz::Category->lookup({ uri => $parent_cat_uri });
+
+my @categories = Bric::Biz::Category->list({ 
+    uri => $new_category_autocomplete . "%",
+    site_id => $story->get_site_id,
+    parent_id => (defined $parent_cat ? $parent_cat->get_id : 0)
+});
+
+# Show the parent if that's exactly what was typed
+unshift @categories, $parent_cat if defined $parent_cat && $parent_cat_uri eq $new_category_autocomplete;
+
+# Strip out those categories we don't have permission to
+my $cats = [
+    grep { chk_authz($_, READ, 1) }
+    @categories
+];
+</%init>

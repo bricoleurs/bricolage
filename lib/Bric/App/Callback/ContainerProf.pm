@@ -23,7 +23,7 @@ eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
 my $STORY_URL  = '/workflow/profile/story';
-my $CONT_URL   = '/workflow/profile/story/container';
+my $STORY_CONT = '/workflow/profile/story/container';
 my $MEDIA_URL  = '/workflow/profile/media';
 my $MEDIA_CONT = '/workflow/profile/media/container';
 
@@ -38,34 +38,6 @@ my %pkgs = (
     media => 'Bric::Biz::Asset::Business::Media',
 );
 
-sub edit : Callback {
-    my $self = shift;
-    $self->_drift_correction;
-    my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
-
-    my $r = $self->apache_req;
-
-    my $element = get_state_data($self->class_key, 'element');
-
-    # Update the existing fields and get the child element matching ID
-    my $edit_element = $self->_update_parts($param);
-
-    # Push this child element on top of the stack
-    $self->_push_element_stack($edit_element);
-
-    # Don't redirect if we're already on the right page.
-    if ($element->get_object_type eq 'media') {
-        unless ($r->uri eq "$MEDIA_CONT/edit.html") {
-            $self->set_redirect("$MEDIA_CONT/edit.html");
-        }
-    } else {
-        unless ($r->uri eq "$CONT_URL/edit.html") {
-            $self->set_redirect("$CONT_URL/edit.html");
-        }
-    }
-}
-
 sub bulk_edit : Callback {
     my $self = shift;
     $self->_drift_correction;
@@ -75,13 +47,13 @@ sub bulk_edit : Callback {
     my $r = $self->apache_req;
 
     my $element = get_state_data($self->class_key, 'element');
-    my $edit_element = $self->_update_parts($param);
+    my $edit_element = $self->_locate_subelement($element, $self->value);
 
     # Push the current element onto the stack.
     $self->_push_element_stack($edit_element);
     set_state_data($self->class_key, 'view_flip', 0);
 
-    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri  = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_bulk.html");
 }
 
@@ -104,7 +76,7 @@ sub view : Callback {
     if ($element->get_object_type eq 'media') {
         $self->set_redirect("$MEDIA_CONT/") unless $r->uri eq "$MEDIA_CONT/";
     } else {
-        $self->set_redirect("$CONT_URL/") unless $r->uri eq "$CONT_URL/";
+        $self->set_redirect("$STORY_CONT/") unless $r->uri eq "$STORY_CONT/";
     }
 }
 
@@ -130,46 +102,41 @@ sub add_element : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $r = $self->apache_req;
-
+    
+    my $widget = $self->class_key;
+    
     # get the element
-    my $element = get_state_data($self->class_key, 'element');
+    my $element = get_state_data($widget, 'element');
     my $key = $element->get_object_type();
+    
+    # Get the container to which we will add the new subelement
+    my $container_id = $param->{"$widget|add_element_cb"};
+    my $field = $param->{"$widget|add_element_to_$container_id"};
+    
+    # Find the right subelement to add the new element to
+    $element = $self->_locate_subelement($element, $container_id) if $container_id;
+    # Bail if we can't find the right subelement
+    return unless $element;
+    
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
     if ($element->get_element_type()->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
-    my $fields = mk_aref($self->params->{$self->class_key . '|add_element'});
-
-    foreach my $f (@$fields) {
-        my ($type,$id) = unpack('A5 A*', $f);
-        my $at;
-        if ($type eq 'cont_') {
-            $at = Bric::Biz::ElementType->lookup({id=>$id});
-            my $cont = $element->add_container($at);
-            $element->save();
-            $self->_push_element_stack($cont);
-
-            if ($key eq 'story') {
-                # Don't redirect if we're already at the edit page.
-                $self->set_redirect("$CONT_URL/edit.html")
-                  unless $r->uri eq "$CONT_URL/edit.html";
-            } else {
-                $self->set_redirect("$MEDIA_CONT/edit.html")
-                  unless $r->uri eq "$MEDIA_CONT/edit.html";
-            }
-
-        } elsif ($type eq 'data_') {
-            $at = Bric::Biz::ElementType::Parts::FieldType->lookup({id=>$id});
-            $element->add_field($at);
-            $element->save();
-            set_state_data($self->class_key, 'element', $element);
-        }
-        log_event($key.'_add_element', $a_obj, {Element => $at->get_key_name})
-          if $a_obj;
+    
+    my ($type, $id) = unpack('A5 A*', $field);
+    
+    my $element_type;
+    if ($type eq 'cont_') {
+        $element_type = Bric::Biz::ElementType->lookup({ id => $id });
+        $element->add_container($element_type);
+    } else {
+        $element_type = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id });
+        $element->add_field($element_type);
     }
+    $element->save();
+    log_event($key.'_add_element', $a_obj, { Element => $element_type->get_key_name }) 
+        if $a_obj;
 }
 
 sub update : Callback(priority => 1) {
@@ -195,8 +162,7 @@ sub pick_related_media : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
-    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_related_media.html");
 }
 
@@ -274,10 +240,9 @@ sub relate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_media($self->value);
-    $self->_handle_related_up;
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    $element->set_related_media_id($self->value);
 }
 
 sub unrelate_media : Callback {
@@ -285,10 +250,9 @@ sub unrelate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_media(undef);
-    $self->_handle_related_up;
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    $element->set_related_media_id(undef);
 }
 
 sub pick_related_story : Callback {
@@ -298,8 +262,7 @@ sub pick_related_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
-    my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri = $self->_get_container_url($element);
     $self->set_redirect("$uri/edit_related_story.html");
 }
 
@@ -308,10 +271,9 @@ sub relate_story : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-
-    my $element = get_state_data($self->class_key, 'element');
+    
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_story_id($self->value);
-    $self->_handle_related_up;
 }
 
 sub unrelate_story : Callback {
@@ -320,9 +282,8 @@ sub unrelate_story : Callback {
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
 
-    my $element = get_state_data($self->class_key, 'element');
+    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_story_id(undef);
-    $self->_handle_related_up;
 }
 
 sub related_up : Callback {
@@ -443,7 +404,7 @@ sub bulk_edit_this : Callback {
     set_state_name($self->class_key, 'edit_bulk');
 
     my $element = get_state_data($self->class_key, 'element');
-    my $uri  = $element->get_object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+    my $uri  = $self->_get_container_url($element);
 
     $self->set_redirect("$uri/edit_bulk.html");
 }
@@ -524,11 +485,9 @@ sub _pop_and_redirect {
     my $element = $flip ? get_state_data($widget, 'element')
                         : _pop_element_stack($widget);
 
-    my $object_type = $element->get_object_type;
-
     # If our element has parents, show the regular edit screen.
     if ($element->get_parent_id) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($element);
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -536,7 +495,7 @@ sub _pop_and_redirect {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($element);
         $self->set_redirect($uri);
     }
 }
@@ -550,11 +509,10 @@ sub _delete_element {
     my $parent = _pop_element_stack($widget);
     $parent->delete_elements( [ $element ]);
     $parent->save();
-    my $object_type = $parent->get_object_type;
 
     # if our element has parents, show the regular edit screen.
     if ($parent->get_parent_id) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($parent);
         my $page = get_state_name($widget) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -562,7 +520,7 @@ sub _delete_element {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($parent);
         $self->set_redirect($uri);
     }
 
@@ -570,16 +528,44 @@ sub _delete_element {
     return;
 }
 
+sub _locate_subelement {
+    my ($self, $element, $locate_id) = @_;
+    $locate_id ||= $self->value;
+    
+    {
+        no warnings 'uninitialized';
+        return $element if $element->get_id == $locate_id;
+    }
+    
+    foreach my $t ($element->get_elements) {
+        next unless $t->is_container;
+            
+        my $locate_element = $self->_locate_subelement($t, $locate_id);
+        return $locate_element if $locate_element;
+    }
+}
 
 sub _update_parts {
     my ($self, $param) = @_;
-    my (@curr_elements, @delete, $locate_element);
-
-    my $widget = $self->class_key;
-    my $locate_id = $self->value;
+    
+    my $widget = $self->class_key;    
     my $element = get_state_data($widget, 'element');
-    my $object_type = $element->get_object_type;
+    
+    $self->_update_subelements($element, $param);
+    
+    set_state_data($widget, 'element', $element);
+}
 
+sub _update_subelements {
+    my ($self, $element, $param) = @_;
+    
+    # Bail out if we get to a container that doesn't exist
+    return unless exists $param->{"container_prof|element_" . $element->get_id};
+    
+    my (@curr_elements, @delete, $locate_element);
+    my $widget = $self->class_key;
+    my $object_type = $element->get_object_type;
+    
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
     # in the element profile or the document profile.
     my $do_delete = $param->{$widget.'|delete_cb'} ||
@@ -587,71 +573,76 @@ sub _update_parts {
                     $param->{$widget.'|save_and_stay_cb'} ||
                     $param->{$object_type .'_prof|save_cb'} ||
                     $param->{$object_type .'_prof|save_and_stay_cb'};
-
+    
+    # Build a map from element names to their order, making sure we don't include
+    # deleted elements
+    my $i = 1;
+    my %elements = map  { $_ => $i++ } 
+                   grep { $_ ne $param->{$widget . '|delete_cb'} }
+                   split ",", $param->{"container_prof|element_" . $element->get_id};
+    
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
         my $id      = $t->get_id;
         my $is_cont = $t->is_container;
-
-        # Grab the element we're looking for
-        {
-            local $^W = undef;
-            $locate_element = $t if $id == $locate_id and $is_cont;
-        }
-        if ($do_delete
-            && (($is_cont && $param->{$widget . "|delete_cont$id"})
-                || (!$is_cont && $param->{$widget . "|delete_data$id"}))
-        ) {
-            add_msg('Element "[_1]" deleted.', $t->get_name);
+        my $name    = ($is_cont ? 'con' : 'dat') . $id;
+        my $deleted = ($param->{$widget.'|delete_cb'} eq $name);
+            
+        # If the element isn't found, it was removed from the DOM and 
+        # should be deleted.
+        if ($do_delete && $deleted) {
             push @delete, $t;
             next;
         }
-
-        my ($order, $redir);
-        if ($t->is_container) {
-            $order = $param->{$widget . "|reorder_con$id"};
-        } else {
-            $order = $param->{$widget . "|reorder_dat$id"};
-            if (! $t->is_autopopulated or exists
-                $param->{$widget . "|lock_val_$id"}) {
-                my $val = $param->{$widget . "|$id"};
-                $val = '' unless defined $val;
-                if ( $param->{$widget . "|${id}-partial"} ) {
-                    # The date is only partial. Send them back to to it again.
-                    add_msg('Invalid date value for "[_1]" field.', $t->get_name);
-                    set_state_data($widget, '__NO_SAVE__', 1);
-                } else {
-                    # Truncate the value, if necessary, then set it.
-                    my $max = $t->get_max_length;
-                    eval {
-                        if (ref $val && $t->is_multiple) {
-                            if ($max) {
-                                $_ = substr($_, 0, $max)
-                                    for grep { length $_ > $max } @$val;
-                            }
-                            $t->set_values(@$val);
-                        } else {
-                            $val = substr($val, 0, $max)
-                                if $max && length $val > $max;
-                            $t->set_value($val);
+        
+        if (!$deleted) {
+            my $order = $elements{$name};
+            $curr_elements[$order]  = $t;
+        }
+        
+        if ($is_cont) {
+            # Recursively update this container's subelements
+            $self->_update_subelements($t, $param);
+        }
+        
+        if (!$is_cont && 
+             (!$t->is_autopopulated or exists
+              $param->{$widget . "|lock_val_$id"})) {
+            my $val = $param->{$widget . "|$id"};
+            $val = '' unless defined $val;
+            if ( $param->{$widget . "|${id}-partial"} ) {
+                # The date is only partial. Send them back to to it again.
+                add_msg('Invalid date value for "[_1]" field.', $t->get_name);
+                set_state_data($widget, '__NO_SAVE__', 1);
+            } else {
+                # Truncate the value, if necessary, then set it.
+                my $max = $t->get_max_length;
+                eval {
+                    if (ref $val && $t->is_multiple) {
+                        if ($max) {
+                            $_ = substr($_, 0, $max)
+                                for grep { length $_ > $max } @$val;
                         }
-                    };
-                    if (my $err = $@) {
-                        if (isa_bric_exception($err, 'Error')) {
-                            $err->rethrow;
-                        }
-                        elsif (ref $err) {
-                            throw_invalid $err->error;
-                        }
-                        else {
-                            throw_invalid $err
-                        }
+                        $t->set_values(@$val);
+                    } else {
+                        $val = substr($val, 0, $max)
+                            if $max && length $val > $max;
+                        $t->set_value($val);
+                    }
+                };
+                if (my $err = $@) {
+                    if (isa_bric_exception($err, 'Error')) {
+                        $err->rethrow;
+                    }
+                    elsif (ref $err) {
+                        throw_invalid $err->error;
+                    }
+                    else {
+                        throw_invalid $err
                     }
                 }
             }
         }
-
-        $curr_elements[$order] = $t;
     }
 
     # Delete elements as necessary.
@@ -663,12 +654,8 @@ sub _update_parts {
             add_msg("Warning! State inconsistent: Please use the buttons "
                     . "provided by the application rather than the 'Back'/"
                     . "'Forward' buttons.");
-            return $locate_element;
         }
     }
-
-    set_state_data($widget, 'element', $element);
-    return $locate_element;
 }
 
 sub _handle_related_up {
@@ -676,11 +663,10 @@ sub _handle_related_up {
     my $r = $self->apache_req;
 
     my $element = get_state_data($self->class_key, 'element');
-    my $object_type = $element->get_object_type();
 
     # If our element has parents, show the regular edit screen.
     if ($element->get_parent_id()) {
-        my $uri = $object_type eq 'media' ? $MEDIA_CONT : $CONT_URL;
+        my $uri = $self->_get_container_url($element);
         my $page = get_state_name($self->class_key) eq 'view' ? '' : 'edit.html';
 
         #  Don't redirect if we're already at the right URI
@@ -688,7 +674,7 @@ sub _handle_related_up {
     }
     # If our element doesn't have parents go to the main story edit screen.
     else {
-        my $uri = $object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+        my $uri = $self->_get_root_url($element);
         $self->set_redirect($uri);
     }
     pop_page();
@@ -794,5 +780,14 @@ sub _drift_correction {
     $param->{'_drift_corrected_'} = 1;
 }
 
+sub _get_root_url {
+    my ($self, $element) = @_;
+    return $element->get_object_type eq 'media' ? $MEDIA_URL : $STORY_URL;
+}
+
+sub _get_container_url {
+    my ($self, $element) = @_;
+    return $element->get_object_type eq 'media' ? $MEDIA_CONT : $STORY_CONT;
+}
 
 1;

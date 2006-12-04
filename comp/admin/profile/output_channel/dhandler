@@ -4,6 +4,8 @@ my $oc = $ARGS{obj} ? $ARGS{obj} : defined $id ? $class->lookup({ id => $id})
   : $class->new;
 $id ||= $oc->get_id;
 
+my $num = 1;
+
 # Check authorization.
 chk_authz($oc, $id ? READ : CREATE);
 my $no_edit = !chk_authz($oc, ($id ? EDIT : CREATE), 1);
@@ -30,7 +32,7 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'output_channel_id'
 
 $m->comp("/widgets/wrappers/table_top.mc",
   	 caption => "Properties",
-	 number  => 1);
+	 number  => $num++);
 
 # Dump out the fields for display.
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
@@ -79,13 +81,8 @@ if ($id || $no_edit) {
 
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
-# Add pre/post fields to the specialCharacters array
 if (defined $id) {
     $button = undef;
-    $m->out('<script type="text/javascript">
-var selectOrderNames = new Array("include_pos")
-</script>
-    ');
     my $inc = $oc->get_includes;
     my $opts = [ map { [ $_ => $_ + 1 ] } (0..$#$inc) ];
     my %exclude = ( map { $_->get_id => 1 } @$inc, $oc );
@@ -112,7 +109,7 @@ var selectOrderNames = new Array("include_pos")
                 value => $i++,
                 options => $opts,
                 useTable => 0,
-                js => qq{onChange="reorder(this, 'oc_profile')"}
+                js => qq{class="reorder" onchange="reorder(this, 'includes')"}
             );
         };
 
@@ -120,8 +117,9 @@ var selectOrderNames = new Array("include_pos")
         $m->comp(
             '/widgets/wrappers/table_top.mc',
             caption => 'Template Includes',
-            number => 2,
+            number => $num++,
         );
+        $m->print(qq{<div id="includes">});
         $m->comp('/widgets/listManager/listManager.mc',
                  object         => 'output_channel',
                  userSort       => 0,
@@ -137,6 +135,7 @@ var selectOrderNames = new Array("include_pos")
                      'name', (@sites > 1 ? ('site') : ()), qw(description order)
                  ],
              );
+        $m->print(qq{</div>});
         if (@avail_ocs) {
             $m->print(qq{<div class="actions">\n});
             $m->comp(
@@ -163,7 +162,7 @@ $m->comp("/widgets/grp_membership/grp_membership.mc",
          formName => 'oc_profile',
          no_edit => $no_edit,
          widget  => $type,
-         num => 3
+         num => $num++
 );
 
 # Add the form buttons and other necessities.

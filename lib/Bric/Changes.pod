@@ -45,6 +45,80 @@ objects that don't match. [Scott]
 
 =item *
 
+JavaScript is now being used more extensively throughout the UI to improve
+performance and usability:
+
+=over
+
+=item *
+
+The following items can now be edited on-the-fly (i.e. without reloading):
+
+=over
+
+=item * Fields and subelements in the story, media and category profiles
+
+=item * Keywords in the story, media and category profiles
+
+=item * Categories in the story profile
+
+=item * Output Channels in the story and media profiles
+
+=item * Organizations in the source profile
+
+=item * Add More sections in the User, Contributor, Media, and Alert Type profiles
+
+=item * Roles in the contributor profile
+
+=back
+
+=item *
+
+Fields and subelements in the story and media profiles are displayed 
+recursively, so a story's entire contents can be edited from one screen, as 
+opposed to one screen per subelement as it was previously.
+
+=item *
+
+The right side of desk items has been redesigned.  Icons are used because they
+save space, which finally allows assets to be moved between desks from the
+Workspace, and assets to be checked in to any desk from the Desk view.  The
+"and Publish" and "and Shelve" options have also been added.  Additionally, you
+have the option to publish assets on PUBLISH desks immediately, or schedule
+them for later.
+
+=item *
+
+Desks now use Javascript to execute actions immediately. Where you previously
+had to choose an action from a select list and scroll all the way to the bottom
+to execute it, you can now check in, move, check out or delete an asset in
+one click, without a full page refresh.
+
+=item *
+
+The event log and trail have been merged and improved. The trail was a subset
+of the event log that only showed desk moves. You can now filter the log by 
+any event type, and there's a dedicated link to choose the right event types
+to recreate the trail.
+
+=item *
+
+Error details (including oft-requested stack traces) are now viewable directly
+from the 500 error page, instead of having to check the error_log or view the
+error page's source.  To avoid scaring lay people, the details are only shown
+(via Javascript) when the new "View Error Details" link is clicked.
+
+=item *
+
+When more than 3 error messages need to be displayed, the first three are 
+shown, along with a (more) link, which expands to show the remaining messages.
+
+=back
+
+[Marshall, part of the Google Summer of Code 2006]
+
+=item *
+
 The left nav menu no longer uses an C<< <iframe> >>. Javascript and cookies
 are used instead, making the left nav faster. [Scott, Marshall, David]
 

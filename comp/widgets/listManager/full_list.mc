@@ -55,7 +55,10 @@
   my $remainingCols = $cols;
   for my $class_idx (0..$#{$data->[$row]}) {
       my $val   = $data->[$row]->[$class_idx];
-      my $class = qq{ class="selected"} if $class_idx == $sort_col;
+      my @classes;
+      push @classes, "selected" if $class_idx == $sort_col;
+      push @classes, $fields->[$class_idx];
+      my $class = qq{ class="} . join(" ", @classes) . qq{"} if @classes; 
       $m->out(qq{    <td$class>$val</td>\n});
       $remainingCols--;
   }
@@ -118,6 +121,7 @@ my $url       = $r->uri;
 my $sortBy    = $state->{sort_by} || $state->{default_sort};
 my $sortOrder = $state->{sort_order};
 my $sort_col  = 0;
+my $type      = get_class_info($object)->get_key_name;
 
 # Get the real values if these are code refs.  Handle profile and select
 # on a row by row basis.
@@ -130,8 +134,6 @@ $cols
 </%args>
 <%init>;
 my $url = $r->uri;
-my $align = QA_MODE ? "left" : "center";
-my $style = qq{style="border-style:solid; border-color:#cccc99;"};
 $m->out(qq{<div class="paginate">\n});
 unless ($pagination->{pagination}) {
     $m->out(qq{<div class="all">} .

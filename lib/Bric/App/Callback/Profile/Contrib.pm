@@ -57,8 +57,7 @@ sub save : Callback {
 
             # Log that we've created a new contributor.
             log_event("${type}_new", $member);
-            $self->set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id}
-                           . '/' . '_MEMBER_SUBSYS' );
+            $self->set_redirect('/admin/profile/contrib/edit/' . $param->{contrib_id});
             $param->{'obj'} = $member;
             return;
         } elsif ($param->{mode} eq "edit") {
@@ -80,8 +79,10 @@ sub save : Callback {
             });
 
             foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
+                my ($subsys, $name) = split /\|/, $aname;
+                
                 # Grab the SQL type.
-                my $sqltype = $mem_attr->get_sqltype({ name => $aname,
+                my $sqltype = $mem_attr->get_sqltype({ name => $name,
                                                        subsys => '_MEMBER_SUBSYS' });
                 # Truncate the value, if necessary.
                 my $max = $all->{$aname}{meta}{maxlength}{value};
@@ -92,8 +93,8 @@ sub save : Callback {
                 $value = substr($value, 0, $max) if $max && length $value > $max;
 
                 # Set the attribute.
-                $contrib->set_attr({ subsys   => $param->{subsys},
-                                     name     => $aname,
+                $contrib->set_attr({ subsys   => $subsys,
+                                     name     => $name,
                                      value    => $value,
                                      sql_type => $sqltype });
             }
@@ -114,16 +115,12 @@ sub save : Callback {
             # Change the mode for the next screen.
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 1 } );
-            $self->set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
-                           . escape_uri($param->{subsys}) );
             log_event("${type}_ext", $contrib);
             $param->{'obj'} = $contrib;
             return;
         } elsif ($param->{mode} eq 'preEdit') {
             $param->{mode} = 'edit';
             set_state_data("contrib_profile", { extending => 0 } );
-            $self->set_redirect('/admin/profile/contrib/edit/' . $contrib->get_id . '/'
-                           . escape_uri($param->{subsys}) );
             $param->{'obj'} = $contrib;
             return;
         }

@@ -18,68 +18,41 @@
 <pre><% escape_html($pay) %></pre>
 % }
 
-% if (QA_MODE or (TEMPLATE_QA_MODE and $is_burner_error)) {
 <div class="debug">
+<h3 class="show"><a href="#" onclick="Element.addClassName(this.parentNode.parentNode, 'expanded'); return false">View Error Details</a></h3>
+<h3 class="hide">Error Details <a href="#" onclick="Element.removeClassName(this.parentNode.parentNode, 'expanded'); return false">(hide)</a></h3>
+
+<div class="content">
 <dl>
-%     if ($is_burner_error) {
+% if ($is_burner_error) {
   <dt>Output Channel</dt> <dd><% $fault->oc || '&nbsp;' %></dd>
   <dt>Category</dt>       <dd><% $fault->cat || '&nbsp;' %></dd>
   <dt>Element</dt>        <dd><% $fault->elem || '&nbsp;' %></dd>
-%     }
+% }
+% if (isa_exception($fault)) {
   <dt>Fault Class</dt>    <dd><% ref $fault %></dd>
   <dt>Description</dt>    <dd><% $fault->description || '&nbsp;' %></dd>
   <dt>Timestamp</dt>      <dd><% strfdate($fault->time) %></dd>
   <dt>Package</dt>        <dd><% $fault->package || '&nbsp;' %></dd>
   <dt>Filename</dt>       <dd><% $fault->file || '&nbsp;' %></dd>
   <dt>Line</dt>           <dd><% $fault->line || '&nbsp;' %></dd>
+% }
 </dl>
 
 <p><b>Stack:</b></p>
 <pre><% HTML::Mason::Exceptions::isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %></pre>
 
-%     if (QA_MODE) {
+% if (QA_MODE) {
 <p><b>Request args:</b></p>
 <dl>
-%         while (my ($arg, $value) = each %req_args) {
+% while (my ($arg, $value) = each %req_args) {
   <dt><% $arg %></dt> <dd><% escape_html($value) %></dd>
-%         }
+% }
 </dl>
 <& '/widgets/debug/debug.mc' &>
-%     }
-</div>
-% } else {
-
-<!-- DEBUGGING INFORMATION.
-
-%     if (isa_exception($fault)) {
-Error: <% escape_html($fault->error) %>
-%     }
-
-%     if ($is_burner_error) {
-  Output Channel: <% $fault->oc || '' %>
-  Category:       <% $fault->cat || '' %>
-  Element:        <% $fault->elem || '' %>
-%     }
-%     if (isa_exception($fault)) {
-  Fault Class:    <% ref $fault %>
-  Description:    <% $fault->description || '' %>
-  Timestamp:      <% strfdate($fault->time) %>
-  Package:        <% $fault->package || '' %>
-  Filename:       <% $fault->file || '' %>
-  Line:           <% $fault->line || '' %>
-%     }
-%     if (isa_bric_exception($fault)) {
-  Payload:        <% $fault->payload || '' %>
-%     }
-
-STACK:
-
-%     if (isa_exception($fault)) {
-<% HTML::Mason::Exceptions::isa_mason_exception($fault) ? $fault->as_text : $fault->trace->as_string %>
-%     }  
-END DEBUGGING INFORMATION -->
-
 % }
+</div>
+</div>
 
 % if ($prev && $is_burner_error) {
 %     my $element = $fault->element;
@@ -92,7 +65,7 @@ END DEBUGGING INFORMATION -->
 % }
 
 % unless (isa_bric_exception($fault, 'Exception::Burner::User')) {
-<p>Please report this error to your administrator.</p>
+<p>Please report this error to your administrator.  It may be helpful to include the error details in your report.</p>
 % }
 
 <& '/widgets/wrappers/footer.mc' &>

@@ -1,3 +1,35 @@
+<& '/widgets/wrappers/header.mc',
+    title   => ['Workspace for [_1]', get_user_object->format_name],
+    context => 'My Workspace'
+&>
+
+<form method="post" action="<% $r->uri %>" name="desk">
+
+% foreach my $class (qw(story media template)) {
+
+    <& '/widgets/desk/desk.mc',
+        user_id  => $id,
+        class    => $class,
+        sort_by  => $ARGS{"$class\_sort_by"},
+        offset   => $ARGS{offset} || 0,
+        show_all => $ARGS{show_all},
+    &>
+    
+% }
+
+<& '/widgets/desk/desk_bottom.html',
+    offset   => $ARGS{offset} || 0,
+    show_all => $ARGS{show_all},
+&>
+
+</form>
+
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
+
+<%init>
+my $id = get_user_id();
+</%init>
+
 <%doc>
 ###############################################################################
 
@@ -19,45 +51,3 @@ Use workspace dhandler.
 
 =cut
 </%doc>
-
-%#-- Once Section --#
-<%once>
-my $widget = 'workspace';
-</%once>
-
-%#-- Init Section --#
-<%init>
-my $id = get_user_id();
-</%init>
-
-%#-- Begin HTML --#
-<%perl>;
-$m->comp('/widgets/wrappers/header.mc',
-         'title' => ['Workspace for [_1]', get_user_object->format_name],
-          context => 'My Workspace');
-
-# Change confirmation required for delete checkbox.
-$m->out(qq{<form method="post" action="} . $r->uri .
- qq {" name="desk" onsubmit="return confirmChanges(this)">});
-
-foreach my $class (qw(story media template)) {
-    $m->comp('/widgets/desk/desk.mc',
-             user_id => $id,
-             class   => $class,
-             sort_by => $ARGS{"$class\_sort_by"},
-             offset   => $ARGS{offset} || 0,
-             show_all => $ARGS{show_all},
-    );
-}
-
-$m->comp('/widgets/desk/desk_bottom.html',
-         widget => $widget,
-         offset   => $ARGS{offset} || 0,
-         show_all => $ARGS{show_all},
-);
-$m->out("</form>\n");
-$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
-</%perl>
-%#-- End HTML --#
-
-

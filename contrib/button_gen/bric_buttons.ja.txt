@@ -43,7 +43,6 @@ media_dgreen;MEDIA;
 move_assets_lgreen;Move Asset
 my_alerts_orange;My Alters;Meine Alarme
 new_desk_red;New Desk;Neuer Schreibtisch
-new_organization_lgreen;New Organization;Neue Organisation
 next_dgreen;Next;Weiter
 permissions_dgreen;Permissions;Zugriffsrechte
 preview_lgreen;Preview;Vorschau
