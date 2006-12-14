@@ -11,6 +11,9 @@
 #   dist      - prepare a distrubution from a Subversion checkout
 #   clone     - create a distribution based on an existing system
 #   devclone  - As clone above, only no pre-previewed / compiled files
+#   hot_copy  - install a clone, using hardlinks to media and data directories 
+#               to save space.  Requires `cp` from GNU coreutils, so won't work
+#               out of the box on BSD/OS X.
 #   test      - run non-database changing test suite
 #   devtest   - run all tests, including those that change the database
 #   dev       - installs directly from a Subversion checkout (for development)
@@ -146,6 +149,14 @@ cloneclean	: clean
 	-rm -rf bricolage-*
 	-rm -rf dist
 
+hot_copy  : cloneclean clone.db clone_dist_dir clone_sql clone_files_with_hot_copy \
+            rm_svn rm_tmp dist/INSTALL dist/Changes dist/License \
+            hot_copy_install distclean
+
+hot_copy_install :
+	cd dist
+	make install_with_hot_copy
+
 clone.db	:
 	$(PERL) inst/clone.pl
 
@@ -155,6 +166,9 @@ clone_dist_dir  :
 
 clone_files     :
 	$(PERL) inst/clone_files.pl
+
+clone_files_with_hot_copy :
+	$(PERL) inst/clone_files.pl HOT_COPY
 
 clone_lightweight     :
 	$(PERL) inst/clone_lightweight.pl
@@ -177,6 +191,10 @@ install_files	: all is_root cpan lib bin files
 
 install_db		: db db_grant
 
+install_with_hot_copy : install_files_with_hot_copy install_db done_with_hot_copy
+
+install_files_with_hot_copy : all is_root cpan lib bin files_with_hot_copy
+
 is_root         : inst/is_root.pl
 	$(PERL) inst/is_root.pl
 
@@ -194,6 +212,9 @@ bin 		:
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
+files_with_hot_copy : config.db bconf/bricolage.conf
+	$(PERL) inst/files.pl INSTALL HOT_COPY
+
 db    		: inst/db.pl postgres.db
 	$(PERL) inst/db.pl
 
@@ -201,6 +222,9 @@ db_grant	: inst/db.pl postgres.db
 	$(PERL) inst/db_grant.pl
 
 done		: bconf/bricolage.conf db files bin lib cpan
+	$(PERL) inst/done.pl
+
+done_with_hot_copy : bconf/bricolage.conf db files_with_hot_copy bin lib cpan
 	$(PERL) inst/done.pl
 
 .PHONY 		: install is_root lib bin files db done

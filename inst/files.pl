@@ -55,22 +55,25 @@ do "./apache.db" or die "Failed to read apache.db : $!";
 our $UPGRADE;
 $UPGRADE = 1 if $ARGV[0] and $ARGV[0] eq 'UPGRADE';
 
+our $HOT_COPY;
+$HOT_COPY = 1 if $ARGV[1] and $ARGV[1] eq 'HOT_COPY';
+
 create_paths();
 
 # Remove old object files if this is an upgrade.
 rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
-find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}) },
+find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}, $HOT_COPY) },
        no_chdir => 1 }, './comp');
 
 # Copy the contents of the bconf directory.
-find({ wanted   => sub { copy_files(catdir $CONFIG->{BRICOLAGE_ROOT}, "conf") },
+find({ wanted   => sub { copy_files(catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
        no_chdir => 1 }, './bconf');
 
 unless ($UPGRADE) {
     # Copy the contents of the data directory.
-    find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}) },
+    find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}, $HOT_COPY) },
            no_chdir => 1 }, './data');
 }
 
@@ -95,6 +98,7 @@ sub create_paths {
 # copy files - should be called by a find() with no_chdir set
 sub copy_files {
     my $root = shift;
+    my $link = shift;
     return if /\.$/;
     return if /.svn/;
     return if $UPGRADE and m!/data/!; # Don't upgrade data files.
@@ -109,10 +113,14 @@ sub copy_files {
     if (-d) {
 	mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
-	copy($_, $targ)
-	    or die "Unable to copy $_ to $targ : $!";
-	chmod((stat($_))[2], $targ)
-	    or die "Unable to copy mode from $_ to $targ : $!";
+      if ($link) {
+        link($_, $targ) or die "Unable to link $_ to $targ : $!";
+      } else {
+        copy($_, $targ)
+          or die "Unable to copy $_ to $targ : $!";
+        chmod((stat($_))[2], $targ)
+          or die "Unable to copy mode from $_ to $targ : $!";
+      }
     }
 }
 

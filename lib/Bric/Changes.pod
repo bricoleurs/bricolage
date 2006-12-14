@@ -87,6 +87,14 @@ to be consistent with other scripts and bricolage core. [Paul Orrock]
 Fixed an error message during F<inst/clone.pl> where the wrong version was
 being displayed. [Scott]
 
+=item *
+
+Added `make hot_copy`, which will install a clone that uses hardlinks to the
+original installation for MASON_DATA_ROOT and MASON_COMP_ROOT.  This is
+useful for forking a production install into a development install (on the
+same box) without duplicating all of your media files.  Requires `cp` from
+GNU coreutils, so it will not work out of the box on BSD or OS X. [Marshall]
+
 =back
 
 =head2 Bug Fixes
