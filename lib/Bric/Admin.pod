@@ -1069,13 +1069,13 @@ something other than the default (F</usr/local/bricolage>), e.g.:
 
 Next, stop the server:
 
-  bin/bric_apachectl stop
+  $BRICOLAGE_ROOT/bin/bric_apachectl stop
 
 Save copies of your F<bricolage.conf> and F<httpd.conf> files, so that you
 don't overwrite them:
 
-  cp conf/bricolage.conf conf/bricolage.conf.old
-  cp conf/httpd.conf conf/httpd.conf.old
+  cp $BRICOLAGE_ROOT/conf/bricolage.conf $BRICOLAGE_ROOT/conf/bricolage.conf.old
+  cp $BRICOLAGE_ROOT/conf/httpd.conf $BRICOLAGE_ROOT/conf/httpd.conf.old
 
 Install the latest Bundle::Bricolage from CPAN to make sure that you have all
 the needed modules (or read through the list of required modules above and do it
@@ -1083,7 +1083,7 @@ yourself).
 
 Delete all existing Mason object files and temporary files:
 
-  rm -rf data/obj/bric_ui/*
+  rm -rf $BRICOLAGE_ROOT/data/obj/bric_ui/*
   rm -rf /tmp/bricolage/*
 
 Run the upgrade scripts needed for upgrading to the new version. The upgrade
@@ -1093,13 +1093,13 @@ For example, to upgrade from 1.6.13 to 1.8.1, run each of the scripts in
 F<1.6.13/>, F<1.7.5/>, F<1.6.14/>, F<1.8.0/>, and F<1.8.1/> -- B<in that order>.
 Furthermore, the scripts within each directory are run in alphabetical order.
 
-Next, copy in the new sources from the distribution into your bricolage
+Next, copy in the new sources from the distribution into your Bricolage
 directory. Be sure B<not> to copy example templates, as they may overwrite
 your own templates. You're best off moving the contents of F<data/> out
 of the way.
 
   mv data /tmp/bric_data_tmp
-  cp -r /path/to/new/bricolage/* .
+  cp -r /path/to/new/bricolage/* $BRICOLAGE_ROOT/
   mv /tmp/bric_data_tmp data
 
 Now edit the new F<bricolage.conf> file to match your old settings using the
@@ -1110,7 +1110,7 @@ version. See the L<"CONFIGURATION"> section below for details.
 
 Now, start up Bricolage and enjoy the new features!
 
-  bin/bric_apachectl start
+  $BRICOLAGE_ROOT/bin/bric_apachectl start
 
 =head1 CONFIGURATION
 
