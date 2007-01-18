@@ -254,6 +254,10 @@ Folks who have submitted patches include:
 
 =item * Alex Howarth
 
+=item * David Beaudet
+
+=item * Steffen Schwigon
+
 =back
 
 Friends who have spotted bugs include:
@@ -413,6 +417,8 @@ Friends who have spotted bugs include:
 =item * Andrei Arsu
 
 =item * Chris Schults
+
+=item * Dan McGarry
 
 =back
 
