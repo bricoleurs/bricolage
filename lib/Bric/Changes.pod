@@ -89,11 +89,16 @@ being displayed. [Scott]
 
 =item *
 
-Added `make hot_copy`, which will install a clone that uses hardlinks to the
+Added C<make hot_copy>, which will install a clone that uses hardlinks to the
 original installation for MASON_DATA_ROOT and MASON_COMP_ROOT.  This is
 useful for forking a production install into a development install (on the
 same box) without duplicating all of your media files.  Requires `cp` from
 GNU coreutils, so it will not work out of the box on BSD or OS X. [Marshall]
+
+=item *
+
+Added a C<--site> option to C<bric_dev_sync> to limit the templates and
+elements that are synchronized to one site. [Marshall]
 
 =back
 
@@ -249,6 +254,11 @@ Schults and others. [David]
 The delete checkbox and menu to move an asset to another desk no longer appear
 for assets listed on a desk that are checked out do a different user. [David
 Beaudet]
+
+=item *
+
+Fixed bugs in C<bric_dev_sync> resulting from the renaming of Elements to
+Element Types. [Marshall]
 
 =back
 
