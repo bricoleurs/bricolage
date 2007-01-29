@@ -1,5 +1,5 @@
 <& '/widgets/wrappers/sharky/table_top.mc',
-    caption => "Existing Notes",
+    caption => "Notes for Prior Versions",
     number  => $number++
 &>
 <table class="listManager">
@@ -7,22 +7,28 @@
     <th width="10%">Version</th>
     <th>Note</th>
 </tr>
-% if (%$notes) {
-%     for my $version (sort {$a <=> $b } keys %$notes) {
-<tr class="<% $version % 2 ? 'odd' : 'even' %>">
-    <td class="label"><% $version %></td>
-    <td><% $notes->{$version} %></td>
-%     } # for my $version
-% } # if (%$notes)
-% else {
+
+% my $count = 0;
+% foreach my $n (@notes) {
+%    if ( $n->{id} && $n->{note} ) {
+<tr class="<% (++$count % 2 == 0) ? 'even' : 'odd' %>">
+    <td class="name"><% $n->{id} %></td>
+    <td><% $n->{note} %></td>
+</tr>
+%    }
+% }
+
+% unless ($count) {
 <tr>
     <td colspan="2"><% $lang->maketext('No existing notes.') %></td>
 </tr>
-% } # else
+% }
 </table>
+
+
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 <& '/widgets/wrappers/sharky/table_top.mc',
-    caption => "Current Note",
+    caption => "New Note",
     number  => $number &>
 % my $key = $widget . '|note';
 <& '/widgets/profile/displayFormElement.mc',
@@ -60,6 +66,8 @@ $number
 </%args>
 <%init>;
 my $notes      = get_state_data($widget => 'notes');
+my @notes 	= map { { id => $_, note => $notes->{$_} } }
+            	  sort { $b <=> $a } keys %$notes;
 my $version    = get_state_data($widget => 'version');
 my $return_url = get_state_data($widget => 'return_url');
 my $obj        = get_state_data($widget => 'obj');

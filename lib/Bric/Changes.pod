@@ -100,6 +100,12 @@ GNU coreutils, so it will not work out of the box on BSD or OS X. [Marshall]
 Added a C<--site> option to C<bric_dev_sync> to limit the templates and
 elements that are synchronized to one site. [Marshall]
 
+=item *
+
+Various minor notes tweaks, including the elimination of version 0 notes from
+the UI, and we no longer include the note from the previous version in the
+form for the new version. [David Beaudet]
+
 =back
 
 =head2 Bug Fixes

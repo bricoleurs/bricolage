@@ -2110,8 +2110,8 @@ sub checkout {
     $oc_coll->del_objs(@ocs);
     $oc_coll->add_new_objs(@ocs);
 
-    $self->_set([qw(user__id modifier version_id checked_out)] =>
-                [$param->{user__id}, $param->{user__id}, undef, 1]);
+    $self->_set([qw(user__id modifier version_id checked_out note)] =>
+                [$param->{user__id}, $param->{user__id}, undef, 1 undef]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 

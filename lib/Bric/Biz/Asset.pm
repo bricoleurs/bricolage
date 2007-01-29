@@ -1538,9 +1538,6 @@ sub get_notes {
         $self->_set(['_notes'] => [$notes] );
     }
 
-    if (defined( my $note = $self->get_note)) {
-        $notes->{$self->get_version} = $note;
-    }
     return $notes;
 }
 
