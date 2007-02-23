@@ -484,7 +484,8 @@ sub find_or_create_category {
         # if cat does not exist create it
         if ($make_categories) {
             print "\nCategory ".$category." needs to be created.\n" if $VERBOSE;
-            (my $parent) = ( $category =~ m[^(.+)/] );
+            # Match all but the last directory in the category.
+            (my $parent) = ( $category =~ m{^(.+)/.} );
             if (defined $parent) {
                 find_or_create_category( $parent, $targ_url );
             }

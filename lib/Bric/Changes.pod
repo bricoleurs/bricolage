@@ -219,7 +219,7 @@ alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
 =item *
 
 Fixed F<contrib/bric_media_upload> so that it works with 1.10 categories and
-XML elements. [David and Paul Orrock]
+XML elements. [David, Paul Orrock, and George Harrison]
 
 =item *
 
