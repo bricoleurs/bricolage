@@ -1870,12 +1870,16 @@ $get_em = sub {
             # database with the index-defeating query
             # "WHERE outut_channel__id = NULL"
             return ($href ? {} : []) unless defined $v;
-            $tables .= ', job__resource jrr, job__server_type jst, '
-                     . 'server_type__output_channel stoc';
-            $wheres .= ' AND r.id = jrr.resource__id '
-                     . 'AND jrr.job__id = jst.job__id '
-                     . 'AND jst.server_type__id = stoc.server_type__id AND '
-                     . any_where $v, 'stoc.output_channel__id = ?', \@params;
+            $wheres .= ' AND r.id IN (
+                    SELECT jrr.resource__id
+                    FROM   job__resource jrr,
+                           job__server_type jst,
+                           server_type__output_channel stoc
+                    WHERE  jrr.job__id = jst.job__id
+                           AND jst.server_type__id = stoc.server_type__id
+                           AND jrr.resource__id = r.id AND '
+                . any_where($v, 'stoc.output_channel__id = ?', \@params)
+                . ')';
         } elsif ($k eq 'is_dir') {
             # Check for directories or not.
             $wheres .= " AND r.$k = ?";

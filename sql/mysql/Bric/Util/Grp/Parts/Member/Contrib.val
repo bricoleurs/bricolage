@@ -1,0 +1,45 @@
+-- Project: Bricolage Business API
+-- File:    Grp.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-11-09 05:32:57 +0200 (Tue, 09 Nov 2004) $
+
+-- Create the 'Bio' attribute.
+INSERT INTO attr_grp (id, subsys, name, sql_type, active)
+VALUES ('1', '_MEMBER_SUBSYS', 'Bio', 'blob', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('1', '1', 'maxlength', '0', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('2', '1', 'cols', '50', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('3', '1', 'length', '', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('4', '1', 'multiple', '', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('5', '1', 'vals', '', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('6', '1', 'rows', '5', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('7', '1', 'type', 'textarea', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('8', '1', 'disp', 'Bio', '1');
+
+INSERT INTO attr_grp_meta (id, attr__id, name, value, active)
+VALUES ('9', '1', 'pos', '1', '1');
+
+-- Associate Bio with Writers.
+INSERT INTO attr_grp_val(id, object__id, attr__id, active)
+VALUES ('1', '39', '1', '1');
+
+-- Associate Bio with Illustrators.
+INSERT INTO attr_grp_val(id, object__id, attr__id, active)
+VALUES ('2', '40', '1', '1');
+

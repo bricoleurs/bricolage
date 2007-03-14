@@ -1,0 +1,16 @@
+-- Project: Bricolage Business API
+-- File:    Source.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+INSERT INTO source (id, org__id, name, description, expire, active)
+VALUES ('1', '1', 'Internal', 'Ourselves.', '0', '1');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('429', '5', '35', '1');
+
+INSERT INTO source_member (id, object_id, member__id)
+VALUES ('1', '1', '429'); 
+

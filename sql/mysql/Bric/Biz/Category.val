@@ -1,0 +1,36 @@
+-- -----------------------------------------------------------------------------
+-- Catergory.val
+--
+-- VERSION: $LastChangedRevision$
+--
+-- Test values.
+--
+
+-- -----------------------------------------------------------------------------
+-- Master Category
+
+INSERT INTO category (id,site__id,directory, uri, parent_id, name, description,
+                      asset_grp_id) 
+VALUES ('0', '100','', '', '0', 'Master Root Category', 'Master Root Category', '68');
+
+-- Put it into the All Categories group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('58', '26', '20', '1');
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES ('1', '0', '58'); 
+
+-- -----------------------------------------------------------------------------
+-- This is the default category for the default site
+
+INSERT INTO category (id,site__id,directory, uri, parent_id, name, description,
+                      asset_grp_id) 
+VALUES ('1', '100','', '/', '0', 'Default Site Root Category',
+        'Default Site root category', '68');
+
+-- Put it into the All Categories group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('61', '26', '20', '1');
+
+INSERT INTO category_member (id, object_id, member__id)
+VALUES ('2', '1', '61'); 

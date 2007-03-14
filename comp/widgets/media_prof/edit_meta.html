@@ -127,26 +127,68 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
         title       => 'Content',
         start_count => 6
 );
-
-if (ENABLE_OC_ASSET_ASSOCIATION) {
-    $m->comp('/widgets/profile/asset_ocs.mc',
-             asset  => $media,
-             widget => $widget,
-             ocs    => \@ocs,
-             num    => $num++,
-             at_ocs => \@aocs
-         );
-}
-
-$m->comp("/widgets/wrappers/table_top.mc",
-         caption => "Associations",
-         number => $num++);
 </%perl>
-% my $rowColor = "even";
+
+% if (ENABLE_OC_ASSET_ASSOCIATION) {
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Output Channels",
+    number  => $num++
+&>
+<div id="output_channels">
+    <& 'list_output_channels.html',
+        media           => $media,
+        output_channels => [ $media->get_output_channels ],
+        primary_oc_id   => $media->get_primary_oc_id
+    &>
+</div>
+<& "/widgets/wrappers/table_bottom.mc" &>
+% }
+
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Contributors",
+    number  => $num++ 
+&>
+    <script type="text/javascript">
+    function deleteContrib(button) {
+        var id = $(button).value;
+        var index = $('contrib_order_' + id).selectedIndex;
+        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
+            if (select.selectedIndex > index) select.selectedIndex--;
+            Element.remove(select.options[select.options.length - 1]);
+        });
+        Element.remove($('contrib_id_' + id).parentNode.parentNode);
+        alternateTableRows('contribs');
+    }
+    </script>
+    <div id="contribs">
+    <& '/widgets/profile/contributors/_list.html',
+        asset      => $media,
+        asset_type => 'media',
+        widget => $widget,
+        contribs => \@{ $media->get_contributors() }
+    &>
+    </div>
+    
+    <div class="actions">
+        <& '/widgets/profile/button.mc',
+            disp    => $lang->maketext("Add"),
+            name    => "add_contributor",
+            button  => "add_lgreen",
+            useTable => 0,
+            js      => qq{onclick="openWindow('/workflow/profile/media/contributors.html', undefined, { closeOnUnload: true }); return false"}
+        &>
+    </div>
+    
+<& "/widgets/wrappers/table_bottom.mc" &>
+
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Associations",
+    number => $num++
+&>
+% my $rowColor = 1;
 <table class="associations">
 % if (ENABLE_CATEGORY_BROWSER) {
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
 <th><% $lang->maketext('Category') %>:</th>
 <td><% $media->get_category->get_uri %></td>
 <td class="edit"><& '/widgets/profile/button.mc',
@@ -159,48 +201,13 @@ $m->comp("/widgets/wrappers/table_top.mc",
 </tr>
 % }   # if ENABLE_CATEGORY_BROWSER
 
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>" style="line-height: 2em">
 <th><% $lang->maketext('Keywords') %>:</th>
-<td><%perl>
-my @keywords;
-foreach my $kw ($media->get_keywords) {
-    push @keywords, $kw->get_name;
-}
-
-$m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
-
-</%perl></td>
-<td class="edit"><& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'keywords_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &></td>
-</tr>
-
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
-<th><% $lang->maketext('Contributors') %>:</th>
-<td><%perl>
-my @contribs;
-foreach my $cntr ($media->get_contributors) {
-    push @contribs,  $cntr->get_name;
-}
-$m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
-
-</%perl></td>
-<td class="edit">
-% unless ($media->get_alias_id) {
-<& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'contributors_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &>
-% }
+<td colspan="2">
+<& '/widgets/profile/fast_add.mc',
+    type    => "keyword",
+    objects => [ $media->get_keywords ]
+&>
 </td>
 </tr>
 </table>

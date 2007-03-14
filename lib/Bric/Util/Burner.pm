@@ -1197,13 +1197,19 @@ sub publish {
     $self->_set(['mode'], [PUBLISH_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
-    my $published = 0;
+
     $publish_date ||= strfdate;
+    my $published   = 0;
+    my $baid        = $ba->get_id;
+    my $repub       = $ba->get_publish_status;
+
+    # Mark the story as published, so that other stories published by
+    # burn_another() can find it as published in the database.
     $ba->set_publish_date($publish_date);
-    my $baid = $ba->get_id;
+    $ba->set_publish_status(1) unless $repub;
+    $ba->save;
 
     # Determine if we've published before. Set the expire date if we haven't.
-    my $repub = $ba->get_publish_status;
     my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
 
     # Get a list of the relevant categories.
@@ -1245,7 +1251,7 @@ sub publish {
                 "$key\_id" => $baid,
                 $key eq 'story'
                     ? (path  => "$base_path/%")
-                    : (oc_id => $oc->get_id ),
+                    : ( oc_id => $oc->get_id, not_uri => $ba->get_uri($oc) ),
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
               '" from "' . $oc->get_name . '"';
@@ -1331,7 +1337,6 @@ sub publish {
     }
 
     if ($published) {
-        $ba->set_publish_status(1);
         # Set published version if we've reverted
         # (i.e. unless we're republishing published_version)
         my $pubversion = $ba->get_published_version;
@@ -1438,8 +1443,8 @@ sub publish_another {
 
 =item @resources = $burner->burn_one($ba, $oc, $cat);
 
-Burn an asset in a given output channel and category, this is usually called by
-the preview or publish method. Returns a list of resources burned. 
+Burn an asset in a given output channel and category, this is usually called
+by the preview or publish method. Returns a list of resources burned.
 
 Parameters are:
 

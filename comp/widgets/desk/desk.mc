@@ -30,7 +30,6 @@ $desk_id => undef
 $desk    => undef
 $user_id => undef
 $work_id => undef
-$style   => 'standard'
 $action  => undef
 $wf      => undef
 $sort_by => undef
@@ -189,12 +188,15 @@ my $put_onto_desk = sub {
             $obj->get_name, $desk->get_name);
     return $desk;
 };
+my %desk_sort_for = (
+    cover_date   => 'deploy_date',
+    element_type => 'output_channel',
+);
 </%once>
 <%init>;
 my $pkg   = get_package_name($class);
 my $meths = $pkg->my_meths;
 my $desk_type = 'workflow';
-my $mlabel = 'Move to';
 my $order_key;
 
 if (defined $desk_id) {
@@ -205,7 +207,6 @@ if (defined $desk_id) {
 elsif (defined $user_id) {
     # This is a user workspace
     $desk_type = 'workspace';
-    $mlabel = 'Check In to';
     $order_key = "$class\_order_ws_$user_id";
 }
 # Initialize the ordering.
@@ -217,13 +218,17 @@ set_state_data($widget, $order_key => $sort_by);
 
 #-- Output each desk item  --#
 my $highlight = $sort_by;
-unless ($highlight) {
+if ($highlight) {
+    if ($class eq 'template') {
+        $sort_by = $desk_sort_for{$sort_by} || $sort_by;
+        $highlight = 'name' if $highlight eq 'uri';
+    }
+} else {
     foreach my $f (keys %$meths) {
         # Break out of the loop if we find the searchable field.
         $highlight = $f and last if $meths->{$f}->{search};
     }
 }
-
 # Paging limit
 my $num_displayed = $r->pnotes('num_displayed') || 0;
 my $limit = $show_all ? 0 : get_pref('Search Results / Page');
@@ -250,75 +255,11 @@ if (defined $objs && @$objs > $obj_offset) {
              others => $others,
              sort_by_val => $sort_by);
 
-    my $disp = get_disp_name($class);
-    my (%types, %users, %wfs);
-    my $profile_page = "/workflow/profile/$class";
+    my $start = ($limit ? $obj_offset : 0);
+    foreach my $obj (@$objs[$start..$#$objs]) {
 
-    for (my $i = 0; $i < @$objs; $i++) {
-        if ($limit) {
-            next unless $i >= $obj_offset;
-        }
-        my $obj = $objs->[$i];
-
-        my $can_edit = chk_authz($obj, EDIT, 1);
-        my $aid = $obj->get_id;
-
-        # Grab the type name.
-        my $atid = $obj->get_element_type_id;
-        my $oc   = ($class eq 'template') ? $obj->get_output_channel_name : '';
-        my $type = defined $atid ? $types{$atid} ||= $obj->get_element_name : '';
-
-        # Grab the User ID.
-        my $user_id = $obj->get_user__id;
-        # Figure out the Checkout status.
-        my $label = $can_edit ? 'Check Out' : '';
-        my $vlabel = 'View';
-        my $action = 'checkout_cb';
-        my $desk_opts = [['', '']];
-        my ($user);
-        my $pub = '';
-        my $a_wf = $wfs{$obj->get_workflow_id} ||= $obj->get_workflow_object;
+        my $a_wf = $obj->get_workflow_object;
         if ($desk_type eq 'workflow') {
-            # Figure out the checkout/edit link.
-            if (defined $user_id) {
-                if (get_user_id() == $user_id) {
-                    $label = 'Check In';
-                    $action = 'checkin_cb';
-                    $vlabel = 'Edit' if $can_edit;
-                } else {
-                    $desk_opts = undef;
-                    my $uid = $obj->get_user__id;
-                    $user = $users{$uid} ||= Bric::Biz::Person::User->lookup
-                      ({ id => $uid })->format_name;
-                }
-            }
-            # Make a checkbox for Publish/Deploy if publishing is authorized
-            # and the asset isn't checked out; otherwise, a Delete checkbox
-            my $checkname = "${class}_delete_ids";
-            my $checklabel = $lang->maketext('Delete');
-            # Only show Delete checkbox if user can edit the story
-            # (Publish checkbox when PUBLISH permission, but PUBLISH > EDIT anyway)
-            if ($can_edit) {
-                my $id = $aid;
-                my $can_pub = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
-                if ($can_pub and ! $obj->get_checked_out) {
-                    $id = $obj->get_version_id; # Publish uses version id.
-                    $checkname = "$widget|${class}_pub_ids";
-                    $checklabel = $lang->maketext(
-                        $class eq 'template' ? 'Deploy' : 'Publish'
-                    );
-                }
-
-                # We don't want both Delete and Publish on the same page
-                unless ($desk->can_publish && $checkname =~ /_delete_ids$/) {
-                    $pub = $m->scomp('/widgets/profile/checkbox.mc',
-                                     name  => $checkname,
-                                     id    => "$widget\_$id",
-                                     value => $id)
-                      . qq{<label for="$widget\_$id">$checklabel</label>};
-                }
-            }
-
             # XXX HACK: Stop the 'allowed_desks' error.
             unless ($a_wf) {
                 if ($obj->is_active) {
@@ -327,8 +268,7 @@ if (defined $objs && @$objs > $obj_offset) {
                     if ($work_id) {
                         $obj->set_workflow_id($work_id);
                         $obj->save;
-                        $a_wf = $wfs{$work_id}
-                          ||= Bric::Biz::Workflow->lookup({ id => $work_id});
+                        $a_wf = Bric::Biz::Workflow->lookup({ id => $work_id});
                         add_msg('Warning: object "[_1]" had no associated '
                                 . 'workflow.  It has been assigned to the '
                                 . '"[_2]" workflow.',
@@ -360,83 +300,16 @@ if (defined $objs && @$objs > $obj_offset) {
                 # a fatal error occurs. So find a desk for it.
                 $desk = $put_onto_desk->($obj, $a_wf, EDIT) or next;
             }
-
-            $desk_id = $desk->get_id;
-            $label = $lang->maketext('Check In to [_1]', $desk->get_name);
-            $action = 'checkin_cb';
-            if ($can_edit) {
-                $vlabel = 'Edit';
-                $pub = $m->scomp('/widgets/profile/checkbox.mc',
-                                 name  => "${class}_delete_ids",
-                                 id    => "$widget\_$aid",
-                                 value => $aid)
-                  . qq{<label for="$widget\_$aid">}
-                  . $lang->maketext('Delete') . '</label>';
-            }
         }
 
-        # Assemble the list of desks we can move this to.
-        my $value = '';
-        my $to = $lang->maketext('to') . ' ';
-        if ($desk_opts) {
-            my %seen;
-            my $a_wfid = $a_wf->get_id;
-            foreach my $d ($a_wf->allowed_desks) {
-                next unless chk_authz(undef, READ, 1, $d->get_asset_grp);
-                my $did = $d->get_id;
-                next if $did == $desk_id and $desk_type eq 'workflow';
-                push @$desk_opts, [join('-', $aid, $desk_id, $did, $class,
-                                        $a_wfid),
-                                   $to . $d->get_name];
-                $seen{$did} = 1;
-            }
-
-            if (ALLOW_WORKFLOW_TRANSFER) {
-                # Find all the other workflows this desk is in.
-                foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $desk_id })) {
-                    my $wid = $wf->get_id;
-                    next if $wid == $a_wfid;
-                    # Add all of their desks to the list.
-                    foreach ($wf->allowed_desks) {
-                        my $did = $_->get_id;
-                        next if $seen{$did};
-                        next if $did == $desk_id and $desk_type eq 'workflow';
-                        push @$desk_opts, [join('-', $aid, $desk_id, $did,
-                                                $class, $wid),
-                                           $to . $_->get_name];
-                        $seen{$did} = 1;
-                    }
-                }
-            }
-            push @$desk_opts, [
-                join('-', $aid, $desk_id, 'shelve', $class),
-                $lang->maketext('and Shelve')
-            ];
-        }
-
-        # Now display it!
         $m->comp('desk_item.html',
-                 widget    => $widget,
-                 highlight => $highlight,
-                 obj       => $obj,
-                 can_edit  => $can_edit,
-                 vlabel    => $vlabel,
-                 mlabel    => $mlabel,
-                 desk_val  => $value,
-                 desk_opts => $desk_opts,
-                 ppage     => $profile_page,
-                 aid       => $aid,
-                 pub       => $pub,
-                 disp      => $disp,
-                 type      => $type,
-                 oc        => $oc,
-                 class     => $class,
-                 desk      => $desk,
-                 did       => $desk_id,
-                 user      => $user,
-                 label     => $label,
-                 action    => $action,
-                 desk_type => $desk_type);
+            widget    => $widget,
+            highlight => $highlight,
+            obj       => $obj,
+            action    => $action,
+            desk_type => $desk_type,
+            work_id   => $work_id
+        );
 
         $num_displayed++;
         last if $limit && $num_displayed == $limit;

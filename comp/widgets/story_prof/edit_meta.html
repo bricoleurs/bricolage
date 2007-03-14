@@ -139,129 +139,85 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 %        caption => "Categories",
 %        number  => $num++);
 
-% my @cat = $story->get_categories;
-% my $primary = $story->get_primary_category();
-% my $p_id    = $primary ? $primary->get_id : '';
-% my $rowspan = scalar (@cat) + 2;
-
-<table class="listManager">
-<tr>
-  <th><% $lang->maketext('Name') %></th>
-  <th><% $lang->maketext('URI') %></th>
-  <th class="radio"><% $lang->maketext('Primary') %></th>
-  <th class="checkbox"><% $lang->maketext('Delete') %></th>
-</tr>
-% # BEGIN FOREACH CAT
-% my $curr_cats = {};
-% foreach (sort { $a->get_uri cmp $b->get_uri } @cat) {
-%     my $cat_id = $_->get_id;
-%     $curr_cats->{$cat_id} = 1;
-  <tr>
-    <td><% $_->get_name %></td>
-    <td><% $_->get_uri %></td>
-    <td class="radio">
-<& "/widgets/profile/radio.mc",
-    disp        => '',
-    value       => $_->get_id,
-    name        => "$widget|primary_cat",
-    js          => '',
-    req         => 0,
-    checked     => ($cat_id == $p_id),
-&>
-    </td>
-    <td class="checkbox">
-% if ($cat_id != $p_id) {
-<& '/widgets/profile/checkbox.mc',
-        name => "$widget|delete_cat",
-        value => $_->get_id
-&>
-% }
-&nbsp;
-    </td>
-  </tr>
-% }
-% # END FOREACH CAT
-
-
-% if (!@cat) {
-<tr>
-  <td colspan="4"><% $lang->maketext('This story has not been assigned to a category.')%></td>
-</tr>
-% } else {
-
-<tr>
-  <td colspan="3">&nbsp;</td>
-  <td align="center" valign="middle">
-  <& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Delete Categories"),
-    widget    => $widget,
-    cb        => 'delete_cat_cb',
-    button    => 'delete_red',
-    useTable  => 0 &>
-  </td>
-</tr>
-% }
-
-</table>
-% # Create the subroutine to exclude categories.
-% my $excl_sub = sub { $curr_cats->{$_[0]->get_id} || ! chk_authz($_[0], READ, 1) };
-
-<div class="actions">
-<&
-  '/widgets/profile/imageSubmit.mc',
-             formName => "theForm",
-             callback => "$widget|add_category_cb",
-             image    => "add_category_lgreen",
-             alt      => 'Add Category',
-             vspace   => 3,
-             hspace   => 2
-&>
-<& '/widgets/select_object/select_object.mc',
-        object => 'category',
-        name => "$widget|new_category_id",
-        constrain => { site_id => $story->get_site_id },
-        exclude => $excl_sub,
-        field => 'uri',
-        sort_field => 'uri',
-        useTable => 0
-&>
+<div id="categories">
+    <& 'list_categories.html',
+        story => $story,
+        categories => [ $story->get_categories ],
+        primary_category_id => $story->get_primary_category->get_id
+    &>
 </div>
 
-<%perl>;
-$m->comp("/widgets/wrappers/table_bottom.mc");
+<& "/widgets/wrappers/table_bottom.mc" &>
 
-}   # unless ENABLE_CATEGORY_BROWSER
+% }   # unless ENABLE_CATEGORY_BROWSER
 
-if (ENABLE_OC_ASSET_ASSOCIATION) {
-    $m->comp('/widgets/profile/asset_ocs.mc',
-             asset  => $story,
-             widget => $widget,
-             ocs    => \@ocs,
-             num    => $num++,
-             at_ocs => \@aocs
-         );
-}
+% if (ENABLE_OC_ASSET_ASSOCIATION) {
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Output Channels",
+    number  => $num++
+&>
+<div id="output_channels">
+    <& 'list_output_channels.html',
+        story => $story,
+        output_channels => [ $story->get_output_channels ],
+        primary_oc_id   => $story->get_primary_oc_id
+    &>
+</div>
+<& "/widgets/wrappers/table_bottom.mc" &>
+% }
 
-$m->comp("/widgets/wrappers/table_top.mc",
-       caption => "Associations",
-       number  => $num++);
-</%perl>
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Contributors",
+    number  => $num++ 
+&>
+    <script type="text/javascript">
+    function deleteContrib(button) {
+        var id = $(button).value;
+        var index = $('contrib_order_' + id).selectedIndex;
+        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
+            if (select.selectedIndex > index) select.selectedIndex--;
+            Element.remove(select.options[select.options.length - 1]);
+        });
+        Element.remove($('contrib_id_' + id).parentNode.parentNode);
+        alternateTableRows('contribs');
+    }
+    </script>
+    <div id="contribs">
+    <& '/widgets/profile/contributors/_list.html',
+        asset      => $story,
+        asset_type => 'story',
+        widget     => $widget,
+        contribs   => \@{ $story->get_contributors() }
+    &>
+    </div>
+    
+    <div class="actions">
+        <& '/widgets/profile/button.mc',
+            disp    => $lang->maketext("Add"),
+            name    => "add_contributor",
+            button  => "add_lgreen",
+            useTable => 0,
+            js      => qq{onclick="openWindow('/workflow/profile/story/contributors.html', undefined, { closeOnUnload: true }); return false"}
+        &>
+    </div>
+    
+<& "/widgets/wrappers/table_bottom.mc" &>
 
-% my $rowColor = "even";
+
+<& "/widgets/wrappers/table_top.mc",
+    caption => "Associations",
+    number  => $num++
+&>
+
+% my $rowColor = 1;
 <table class="associations">
 % if (ENABLE_CATEGORY_BROWSER) {
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>">
 <th><% $lang->maketext('Categories') %>:</th>
-<td><%perl>
-my @cats;
-my $primary_cat_uri = $story->get_primary_category->get_uri;
-push @cats, $primary_cat_uri;
-foreach my $cat ($story->get_secondary_categories) {
-    push @cats, $cat->get_uri;
-}
-$m->out(scalar(@cats) ? join('<br />', @cats) : $lang->maketext("No categories defined."));
-</%perl></td>
+<td>
+% my @cats = map { $_->get_uri } ( $story->get_primary_category, $story->get_secondary_categories );
+% $m->out(scalar(@cats) ? join('<br />', @cats) : $lang->maketext("No categories defined."));
+</td>
 <td class="edit"><& '/widgets/profile/button.mc',
     disp      => $lang->maketext("Edit"),
     widget    => $widget,
@@ -272,49 +228,14 @@ $m->out(scalar(@cats) ? join('<br />', @cats) : $lang->maketext("No categories d
 </tr>
 % }
 
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
-<th><% $lang->maketext('Contributors') %>:</th>
-<td><%perl>
-my @contribs;
-foreach my $cntr ($story->get_contributors) {
-    push @contribs,  $cntr->get_name;
-}
-$m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contributors defined."));
-
-</%perl></td>
-<td class="edit">
-% unless ($story->get_alias_id) {
-<& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'contributors_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &>
-% }
-</td>
-</tr>
-
-% $rowColor = $rowColor eq "odd" ? "even" : "odd";
-<tr class="<% $rowColor %>">
+<tr class="<% $rowColor++ % 2 == 0 ? "even" : "odd" %>" style="line-height: 2em">
 <th><% $lang->maketext('Keywords') %>:</th>
-<td><%perl>
-my @keywords;
-foreach my $kw ($story->get_keywords) {
-    push @keywords, $kw->get_name;
-}
-
-$m->out(scalar(@keywords) ? join(", ", @keywords) : $lang->maketext("No keywords defined."));
-
-</%perl></td>
-<td class="edit"><& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Edit"),
-    widget    => $widget,
-    cb        => 'keywords_cb',
-    button    => 'pencil',
-    useTable  => 0,
-    globalImage => 1 &></td>
+<td colspan="2">
+<& '/widgets/profile/fast_add.mc',
+    type    => "keyword",
+    objects => [ $story->get_keywords ]
+&>
+</td>
 </tr>
 </table>
 <%perl>

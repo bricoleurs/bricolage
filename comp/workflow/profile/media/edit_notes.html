@@ -1,27 +1,3 @@
-%#-- Once Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name('media');
-my $context = "Workflow | Profile | $disp | ";
-</%once>
-
-%#-- Args Section --#
-<%args>
-$id => undef
-</%args>
-
-%#-- Init Section --#
-<%init>;
-# Do any redirects first.
-do_queued_redirect();
-
-my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
-                        id      => $id,
-                        action  => 'edit',
-                        type    => 'media',
-                        section => 'notes');
-</%init>
-
 <& '/widgets/wrappers/header.mc', 
     'title' => 'Notes',
     context => $context . $r->pnotes("asset_meta|name") . ' | Notes'
@@ -38,3 +14,25 @@ my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
 
 </form>
 <& /widgets/wrappers/footer.mc &>
+
+
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name('media');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+
+<%args>
+$id => undef
+</%args>
+
+<%init>;
+# Do any redirects first.
+do_queued_redirect();
+
+my $content = $m->scomp('/widgets/asset_meta/asset_meta.mc',
+                        id      => $id,
+                        action  => 'edit',
+                        type    => 'media',
+                        section => 'notes');
+</%init>

@@ -170,6 +170,7 @@ my $widget = 'select_object';
 $style      => 'dropdown'
 $object
 $name       => ''
+$id         => undef
 $field
 $getter     => undef
 $constrain  => {}
@@ -248,14 +249,9 @@ if ($pkg) {
     my $val_get = $getter || $meth->{$field}->{'get_meth'};
     my $val_arg = $meth->{$field}->{'get_args'};
 
-    foreach my $o (@$objs) {
-        my $id = $o->get_id;
-
-        # Do not add excluded IDs.
-        next if $exclude && $exclude->($o);
-
-        my $val = $val_get->($o, $val_arg);
-        push @vals, [$id, $val];
+    foreach (@$objs) {
+        next if $exclude && $exclude->($_);
+        push @vals, [$_->get_id, $val_get->($_, $val_arg)];
     }
 } else {
     # Handle the case where the package name is not in the database.
@@ -269,6 +265,7 @@ $m->comp($style.'.html',
          width    => $width,
          indent   => $indent,
          disp     => $disp,
+         id       => $id,
          useTable => $useTable,
          readOnly => $readOnly,
          # For non-multi less than 51 vals, use a dropdown (<select size="1">);

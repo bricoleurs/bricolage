@@ -3,6 +3,7 @@
     value   => $object,
 &>
 <& /widgets/profile/select.mc,
+  id       => $id,
   name     => $name,
   value    => $sel_id,
   options  => $vals,
@@ -23,6 +24,7 @@ $object
 $vals
 $width
 $indent   => FIELD_INDENT
+$id       => undef
 $disp     => ''
 $useTable => 1
 $readOnly => 0

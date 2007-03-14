@@ -2,7 +2,8 @@
 
 =head1 NAME
 
-required.pl - installation script to probe for required software
+required.pl - installation script to probe for required software and 
+select database type
 
 =head1 VERSION
 
@@ -54,27 +55,42 @@ use Config;
 
 our %REQ;
 our %RESULTS;
+our %DBPROBES;
 
 # check to see whether we should ask questions or not
 our $QUIET;
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+shift if $QUIET or $ARGV[0] eq 'STANDARD';
 
 # collect data - configuration requirements data goes into %REQ, raw
 # binary pass/fail goes into %RESULTS.
 
+print "\n\n==> Selecting Database <==\n\n";
+
+# setup some defaults
+$REQ{DB_TYPE}   = get_default("DB_TYPE") || 'Pg';
+
+get_probes();
+get_database();
+
+print "\n\n==> Finished Selecting Database <==\n\n";
+
 print "\n\n==> Probing Required Software <==\n\n";
 
 # run tests
-$RESULTS{PG}      = find_pg();
+$RESULTS{PG}      = find_pg() if $REQ{DB_TYPE} eq "Pg";
+$RESULTS{MYSQL}   = find_mysql() if $REQ{DB_TYPE} eq "mysql";
 $RESULTS{APACHE}  = find_apache();
 $RESULTS{EXPAT}   = find_expat();
 
 # print error message and fail if something not found
-unless ($RESULTS{PG} and $RESULTS{APACHE} and
+unless (($RESULTS{PG} or $RESULTS{MYSQL}) and $RESULTS{APACHE} and
         $RESULTS{EXPAT}) {
   hard_fail("Required software not found:\n\n",
             $RESULTS{PG}     ? "" :
             "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
+            $RESULTS{MYSQL}     ? "" :
+            "\tMySQL client >= 4.1.0 (http://mysql.com)\n",	    
             $RESULTS{APACHE} ? "" :
             "\tApache >= 1.3.12    (http://apache.org)\n",
             $RESULTS{EXPAT}  ? "" :
@@ -141,6 +157,56 @@ sub find_pg {
 
     return 1;
 }
+
+sub find_mysql {
+    print "Looking for MySQL client with version >= 4.1....\n";
+
+    # find MySQL by looking for mysql_config.
+    my @paths = (split(", ", get_default("MYSQL_CONFIG_PATH")), path);
+    foreach my $path (@paths) {
+    if (-e catfile($path, "mysql_config")) {
+        $REQ{MYSQL_CONFIG} = catfile($path, "mysql_config");
+        last;
+    }
+    }
+
+    # confirm or deny
+    if ($REQ{MYSQL_CONFIG}) {
+        print "Found MySQL's mysql_config at '$REQ{MYSQL_CONFIG}'.\n";
+        unless (ask_yesno("Is this correct?", 1, $QUIET)) {
+            ask_confirm("Enter path to mysql_config", \$REQ{MYSQL_CONFIG});
+        }
+    } else {
+        print "Failed to find mysql_config.\n";
+        if (ask_yesno("Do you want to provide a path to mysql_config?", 0, $QUIET)) {
+            $REQ{MYSQL_CONFIG} = 'NONE';
+            ask_confirm("Enter path to mysql_config", \$REQ{MYSQL_CONFIG});
+        } else {
+            return soft_fail("Failed to find mysql_config. Looked in:",
+                             map { "\n\t$_" } @paths);
+        }
+    }
+
+    # check version
+    my $version = `$REQ{MYSQL_CONFIG} --version`;
+    return soft_fail("Failed to find MysqlSQL version with ",
+                     "`$REQ{MYSQL_CONFIG} --version`.") unless $version;
+    chomp $version;
+    my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
+    return soft_fail("Failed to parse Mysql client version from string ",
+                     "\"$version\".") 
+        unless defined $x and defined $y;
+    $z ||= 0;
+    return soft_fail("Found old version of Mysql client: $x.$y.$z - ",
+                     "4.1.0 or greater required.")
+        unless (($x > 4) or ($x == 4 and $y >= 1));
+    print "Found acceptable version of Mysql: $x.$y.$z.\n";
+
+    $REQ{MYSQL_CLIENT_VERSION} = [$x,$y,$z];
+
+    return 1;
+}
+
 
 # look for apache
 sub find_apache {
@@ -234,3 +300,33 @@ sub find_expat {
 
     return 1;
 }
+
+sub get_probes {
+    my $temp1;
+    my $temp2;
+    while (@ARGV) {
+        $temp1=$temp2=shift @ARGV;
+        $temp1=~s/inst\/dbprobe_//;
+        $temp1=~s/.pl//;
+        $DBPROBES{$temp1}=$temp2;
+    }
+}
+
+# ask the user to choose a database
+sub get_database {
+    my $dbstring;
+    $dbstring=join(', ',keys(%DBPROBES));
+    print "\n";
+    ask_confirm("Database ($dbstring): ", \$REQ{DB_TYPE}, $QUIET);
+}
+
+
+
+
+
+
+
+
+
+
+

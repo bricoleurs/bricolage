@@ -140,7 +140,7 @@ my @COLS = qw(
     max_length
     sql_type
     widget_type
-    precision
+    "precision"
     cols
     rows
     length
@@ -180,7 +180,7 @@ use constant ORD => qw(
     min_occurrence
     max_occurrence
     widget_type
-    precision
+    "precision"
     default_val
     length
     cols

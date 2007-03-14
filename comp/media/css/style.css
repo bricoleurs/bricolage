@@ -4,13 +4,16 @@ body {
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 70%;
 }
+body.popup { background: white; }
 th         { font-size: 1.1em; }
 pre        { font-size: 1.3em; padding: 1em; margin: 0; } 
 code       { font-size: 1.3em; }
 h3         { font-size: 1.1em; }
 
+img        { vertical-align: middle; }
 a          { color: #006666; }
-a img      { border: none; vertical-align: middle; }
+a img      { border: none; }
+button img { vertical-align: bottom; }
 
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
@@ -29,8 +32,10 @@ textarea {
 
 #bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
 #mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
+body.popup #mainContainer { min-width: 450px; }
 #sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
 #contentContainer { padding: 8px 0 0 158px; }
+body.popup #contentContainer { padding: 0; }
 #help #contentContainer { padding: 0; }
 
 .adminBox,
@@ -65,6 +70,7 @@ textarea {
  * PAGE HEADER
  ***************************************************/
 #headerContainer               { position: relative; width: 100%; padding-top: 20px; }
+body.popup #headerContainer    { padding-top: 8px; }
 #headerContainer .adminBox,
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
@@ -130,6 +136,7 @@ textarea {
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
+a.small         { font-size: .9em; }
 .orangeLink     { font-size:10px; color:#CC6633;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
@@ -141,14 +148,9 @@ textarea {
 .blackUnderlinedLink { font-size:10px; color:#006666;}
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
 
-.label       { font-weight: bold}
-.redLabel    { font-weight: bold; color: red}
+.label          { font-weight: bold }
+.label.required { font-weight: bold; color: red}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
-.errorMsg    { color: red; font-weight: bold}
-.statusMsg   { display: none; } /* Status messages are sent to the browser before the */
-                                /* stylesheet.  If this style ever gets applied, that */
-                                /* means there was an error and these messages should */
-                                /* be hidden. (See bug 751) */
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
 
@@ -157,8 +159,23 @@ textarea {
 .lightHeader    {background-color: #cccc99;}
 .alias          { font-style:italic; }
 
+#errors      { margin: 10px 0; }
+.errorMsg    { padding: 3px 0; color: red; font-weight: bold}
+.statusMsg   { display: none; } /* Status messages are sent to the browser before the */
+                                /* stylesheet.  If this style ever gets applied, that */
+                                /* means there was an error and these messages should */
+                                /* be hidden. (See bug 751) */
+
 .desk .alias          {background: #99cc99 url("/media/images/link.png") 112px -5px no-repeat !important; margin-left: 18px;}
 .listManager .alias {background: url("/media/images/link.png") 0px -10px no-repeat; margin-left: 18px; margin: 0; padding-left: 15px; }
+
+div.debug .hide    { display: none; }
+div.debug .content { display: none; }
+
+div.debug.expanded .show    { display: none; }
+div.debug.expanded .hide    { display: block; }
+div.debug.expanded .hide a  { font-size: .8em; font-weight: normal; }
+div.debug.expanded .content { display: block; }
 
 div.debug dt {
     float: left;
@@ -275,34 +292,27 @@ div.debug dt:after {
     border-top: solid white 1px;
     padding: 0 5px;
 }
-.desk .item .actions p { margin: 5px 0 0 0; }
-.desk .item .actions .mover { 
-    margin: 0;
-    padding: 15px 0 10px 0;
-}
-.desk .short .actions .mover {
-    padding: 8px 0 0 0;
-}
-.desk .item .actions .mover select {
-    vertical-align: middle;
-}
+.desk .item .actions p { margin: 0; padding: 5px 0; line-height: 20px; }
 .desk .item .actions ul { 
-    margin: 0; 
+    margin: 5px 0; 
     padding: 0; 
     list-style: none; 
 }
-.desk .item .actions ul li {
-    display: block;
-    float: left;
+.desk .item .actions ul.action li {
+    display: inline;
     margin: 0;
     padding: 0;
     line-height: 2em;
 }
 .desk .item .actions ul li.inactive { color: #999; }
-.desk .item .actions ul.action { float: left; }
+.desk .item .actions ul.action { text-align: right; }
+
+.desk .item .tall .actions ul.action { margin-bottom: 20px; }
+.desk .item .short .actions ul.action { margin-bottom: 5px; }
+
 .desk .item .actions ul.view { float: right; }
-.desk .item .actions ul.action li { padding: 0px 15px 0px 0px; }
-.desk .item .actions ul.view li   { padding: 0px 15px 0px 0px; }
+.desk .item .actions ul.action li { padding: 0px 5px 0px 0px; }
+.desk .item .actions ul.view li   { padding: 0px 5px 0px 0px; }
 
 .desk .item .actions li,
 .desk .item .actions img,
@@ -311,33 +321,38 @@ div.debug dt:after {
 .desk .item .actions button { vertical-align: middle; }
 .desk .item .actions select { font-size: 1em; }
 
-.desk .item .actions button {
-    font-size: 1em;
-    border-color: transparent;
-    background-color: transparent;
-    padding: 2px;
-    cursor: pointer;
+.desk .item .movers li { position: relative; float: right; margin: 0 0 0 5px; }
+.desk .item .movers li li { float: none; }
+
+div.popup-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #888;
+  margin: 0px;
+  padding: 0px;
+  z-index: 1000;
 }
-.desk .item .actions button.delete {
-    background-image: url("/media/images/delete.png");
-    background-position: 1px 1px;
-    background-repeat: no-repeat;
-    padding-left: 18px;
+div.popup-menu ul {
+  list-style-type: none;
+  margin: 0px !important;
+  padding: 0px !important;
 }
-.desk .item .actions button.clone {
-    background-image: url("/media/images/copy.png");
-    background-position: 1px 1px;
-    background-repeat: no-repeat;
-    padding-left: 18px;
+div.popup-menu ul li {
+  list-style-type: none;
+  display: block;
+  margin: 0 !important;
+  white-space: nowrap;
 }
+div.popup-menu h4 { font-size: .9em; margin: 0; padding: 3px 4px 4px 4px; background: #EAEAEA; color: #999; border-bottom: solid #CCC 1px; }
+div.popup-menu a { display: block; padding: 3px 4px; color: black; text-decoration: none; }
+div.popup-menu a:hover { background-color: #336FCB; color: white; }
 
 form .row {
     position: relative;
     margin-bottom: 4px;
     z-index: 300;
 }
-form .row .label,
-form .row .redLabel {
+form .row .label {
     float: left;
     width: 130px;
     padding-right: 5px;
@@ -358,26 +373,16 @@ form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
 table tr.odd { background: #f5f5e6; }
-table td.name { 
-    width: 8em; 
-    padding-right: 5px;
-    text-align: right; 
-    font-weight: bold; 
-    vertical-align: top; 
-    padding-top: 12px; 
-}
-table td.value { padding-top: 7px; }
-table td.position,
-table td.edit { width: 50px; text-align: center; }
-table td.delete { white-space: nowrap; }
+table td.action,
+table td.delete,
+table td.order { width: 30px; text-align: center; white-space: nowrap; }
 
-.listManager,
-.containerProf { width: 100%; border-style: hidden; }
 #bulkedit { width: 100%; }
-.listManager th,
-.containerProf th{ background: #999966; color: black; padding: 5px;
-                   text-align: left; vertical-align: bottom;
-                   border: solid #cccc99 1px; }
+
+.listManager { width: 100%; border-style: hidden; }
+.listManager th { background: #999966; color: black; padding: 5px;
+                  text-align: left; vertical-align: bottom;
+                  border: solid #cccc99 1px; font-size: .9em; }
 .listManager th.sortup { 
     background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
     padding: 0;
@@ -394,11 +399,10 @@ table td.delete { white-space: nowrap; }
 .adminBox .listManager th.sortdown { 
     background: #993300 url("../images/listsort_down_red.gif") center right no-repeat;
 }
-.listManager th a { display: block; font-size: .85em; color: black; text-decoration: none; }
+.listManager th a { display: block; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { padding: 5px 17px 5px 5px; color: white; }
-.listManager td,
-.containerProf td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
+.listManager td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
 th.checkbox, th.radio,
@@ -578,6 +582,104 @@ div.addelement { text-align: right;}
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
+#containerprof fieldset {
+    border: solid #CC9 1px;
+    background: #F3F3F3;
+    margin-right: 24px;
+}
+#containerprof fieldset fieldset {
+    background: white;
+}
+#containerprof fieldset fieldset fieldset {
+    background: #F3F3F3;
+}
+#containerprof h3,
+#containerprof fieldset legend { background: transparent; font-weight: bold; font-size: 1em; }
+
+#containerprof ul.elements { position: relative; margin: 0; padding: 10px; }
+#containerprof ul.elements li.container,
+#containerprof ul.elements li.element {
+  margin: 0 0 10px 0;
+  position: relative;
+}
+#containerprof ul.elements li.element h3.name { 
+  margin: 0; clear: both;
+  float: left; width: 75px;
+  text-align: right;
+  padding: 3px 10px 0 0 !important;
+  background: transparent !important;
+}
+#containerprof ul.elements li.container h3.name {
+  background: #E8E8CD; margin: 0;
+  padding: 5px 10px;
+}
+#containerprof ul.elements li.element .content {
+  position: relative;
+  margin-left: 85px;
+  padding: 0 20px 0 0;
+}
+#containerprof .content .delete {
+    position: absolute;
+    top: 0; right: 0;
+}
+#containerprof .container .delete { top: 5px; }
+#containerprof .actions { background: transparent; }
+#containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
+#containerprof div.popup-menu ul li { white-space: normal; }
+
+
+div.autocomplete {
+  position: absolute;
+  width: 250px;
+  background-color: white;
+  border: 1px solid #888;
+  margin: 0px;
+  padding: 0px;
+  z-index: 1000;
+}
+div.autocomplete ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+div.autocomplete ul li.selected { background-color: #ffb !important;}
+div.autocomplete ul li {
+  list-style-type: none;
+  display: block;
+  margin: 0;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+div.autocomplete ul li span.value { display: none; }
+div.autocomplete span.highlight { font-weight: bold; }
+
+#new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }
+
+.adminBox .tabs {
+  background: #F5F5E6 url("/media/images/horizline.gif") bottom left repeat-x;
+}
+.adminBox .tab { float: left; }
+.adminBox .tab a {
+  display: block;
+  float: left;
+  text-decoration: none;
+  padding: 6px 10px;
+}
+.adminBox .tab.selected {
+  background: white url("/media/images/box_tab_left.gif") bottom left no-repeat;
+  font-weight: bold;
+}
+.adminBox .tab.selected.first {
+  background-image: none;
+}
+.adminBox .tab.selected.first a {
+  padding-left: 10px;
+}
+.adminBox .tab.selected a {
+  background: url("/media/images/box_tab_right.gif") bottom right no-repeat;
+  padding: 6px 14px;
+}
+
 /******************************************************
  * DIFFS                                              *
  ******************************************************/
@@ -638,10 +740,10 @@ div.addelement { text-align: right;}
 button:hover { cursor: pointer; }
 button {
     font-weight: bold;
-    font-size: 12px;
+    font-size: .9em;
     color: black;
     background: #cc9;
-    padding: 3px 7px;
+    padding: 2px 7px;
     margin: 0;
     border-style: solid;
     border-width: 2px;
@@ -649,7 +751,7 @@ button {
     border-left-color: #e8e8cd;
     border-right-color: #663;
     border-bottom-color: #663;
-    vertical-align: bottom; /* Needed to prevent extra space from showing up! */
+    vertical-align: middle; /* Needed to prevent extra space from showing up! */
 }
 
 button:active {

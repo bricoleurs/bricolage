@@ -1,0 +1,20 @@
+
+-- Project:      Bricolage Business API
+-- File:    Site.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- Default site.
+
+INSERT INTO site (id, name, description, domain_name, active)
+VALUES ('100', 'Default Site', 'The default site', 'www.example.com', '1');
+
+-- Add it to the 'All Sites' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('59', '47', '75', '1');
+
+INSERT INTO site_member (id, object_id, member__id)
+VALUES ('1', '100', '59');
+ 

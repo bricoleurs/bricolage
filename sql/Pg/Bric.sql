@@ -30,13 +30,13 @@ CREATE AGGREGATE array_accum (
     initcond = '{}'
 );
 
- * Then change the usage from id_list(foo) to
+ * Then change the usage from group_concat(foo) to
  * array_to_string(array_accum(foo), ' ')
 
 */
 
 -- This function is used to append a space followed by a number to a TEXT
--- string. It is used primarily for the id_list aggregate (below). We omit
+-- string. It is used primarily for the group_concat aggregate (below). We omit
 -- the ID 0 because it is a hidden, secret group to which permissions do not
 -- apply.
 CREATE   FUNCTION append_id(TEXT, INTEGER)
@@ -55,7 +55,7 @@ WITH     (ISCACHABLE, ISSTRICT);
 -- out the list of IDs using split, _and_ keeps the entire contents of
 -- an object in a single row, thus also enabling the use of OFFSET and
 -- LIMIT.
-CREATE AGGREGATE id_list (
+CREATE AGGREGATE group_concat (
     SFUNC    = append_id,
     BASETYPE = INTEGER,
     STYPE    = TEXT,

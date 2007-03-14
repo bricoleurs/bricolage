@@ -32,7 +32,7 @@ if (! defined $id && ! defined $new_desk) {
          callback => "new_desk",
          alt      => 'New Desk',
 	     image    => "new_desk_red",
-	     js       => qq{onClick="requiredFields='';return customSubmit('desk_profile', 'new_desk', 1)"}
+	     js       => qq{onClick="return customSubmit('desk_profile', 'new_desk', 1)"}
 	   );
 
     $m->out(qq{</td></tr></table>\n});

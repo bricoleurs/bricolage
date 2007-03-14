@@ -1,61 +1,90 @@
-%#-- Begin HTML --#
 <& '/widgets/wrappers/header.mc',
    title => "$disp Profile",
    context => "Admin | Profile | $disp | $crumb"
 &>
 <form method="post" action="<% $r->uri %>" name="src_profile" onsubmit="return confirmChanges(this)">
-<%perl>;
-$m->comp('/widgets/profile/hidden.mc', value => $id, name => 'source_id')
-  if defined $id;
 
-$m->comp("/widgets/wrappers/table_top.mc",
-  	 caption => "Properties",
-	 number  => 1
-	);
-if (defined $id) {
-    # It's an existing org. Spit out the org name.
-    $m->comp('/widgets/profile/displayFormElement.mc', objref => $src, localize => 0,
-	     key => 'name', readOnly => 1);
-} elsif (!defined $id && !$new_org) {
-    # It's a new source. Give 'em a list of available organizations to choose
-    # from.
-    $m->comp('/widgets/select_object/select_object.mc', object => 'org',
-             name => 'org', field => 'name', disp => 'Organization',
-	     useTable => 1, constrain => { personal => 0 } );
-    $m->out(qq {<table width=578 cellpadding=2 cellspacing=0 border=0><tr><td width=140>&nbsp;</td><td width=438>});
+<& '/widgets/wrappers/table_top.mc', caption => "Properties", number  => 1 &>
 
-    $m->comp('/widgets/profile/imageSubmit.mc',
-	     formName => "src_profile",
-	     callback => "new_org",
-         alt      => 'New Organization',
-	     image    => "new_organization_lgreen",
-	     js       => qq{onClick="requiredFields='';return customSubmit('src_profile', 'new_org', 1)"}
-	   );
+% if (defined $id) { # It's an existing org. Spit out the org name.
 
-    $m->out(qq{</td></tr></table>\n});
-} elsif ($new_org) {
-    # We'll be displaying all fields except active.
-    $used = { active => 1 };
-}
+    <& '/widgets/profile/hidden.mc', value => $id, name => 'source_id' &>
+    <& '/widgets/profile/displayFormElement.mc', 
+        objref => $src, 
+        key => 'name', 
+        localize => 0,
+	    readOnly => 1 
+	&>
+	
+% } elsif (!defined $id && !$new_org) {
 
-$m->comp('/widgets/profile/dumpRemainingFields.mc', objref => $src,
-          fieldsUsed => $used, readOnly => $no_edit);
+%   # It's a new source. Give 'em a list of available organizations to choose
+%   # from.
 
-$m->comp("/widgets/wrappers/table_bottom.mc");
+    <div id="org">
+    <div id="existingorg" class="row">
+        <div class="label"><label for="org">Organization</label>:</div>
+        <div class="input">
+            <& '/widgets/select_object/select_object.mc', 
+                object => 'org',
+                name => 'org', 
+                field => 'name', 
+                useTable => 0, 
+                constrain => { personal => 0 }
+            &>
+            <span style="font-size: .9em;">or
+                <a href="#" onclick="if (hidden_org.firstChild) { $('org').appendChild(hidden_org.firstChild); }; hidden_org.appendChild($('existingorg')); return false;">create a new organization</a>
+            </span>
+        </div>
+    </div>
+    
+    <div id="neworg" style="margin-bottom: 15px;">
+    <& '/widgets/profile/text.mc',
+        name    => "name",
+        disp    => "Organization",
+        req     => 1
+    &>
+
+    <& '/widgets/profile/text.mc',
+        name    => "long_name",
+        disp    => "Long Name"
+    &>
+    
+    <div class="row">
+        <div class="input" style="font-size: .9em;">
+        <a href="#" onclick="if (hidden_org.firstChild) { $('org').appendChild(hidden_org.firstChild); }; hidden_org.appendChild($('neworg'));  return false;">Cancel and use an existing organization</a>
+        </div>
+    </div>
+    </div>
+    </div>
+    <script type="text/javascript">
+    // Stores the hidden DOM elements for safe-keeping.  We have to do this so
+    // that we can swap them back and forth, but prevent the hidden fields 
+    // from being submitted with the form.
+    var hidden_org = document.createElement('div');
+    hidden_org.appendChild($('neworg'));
+    </script>
+
+% }
+
+<& '/widgets/profile/dumpRemainingFields.mc', 
+    objref => $src,
+    fieldsUsed => $used,
+    readOnly => $no_edit
+&>
+
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 
-$m->comp("/widgets/grp_membership/grp_membership.mc",
-         grp_class => 'Bric::Util::Grp::Source',
-         obj => $src,
-         formName => 'src_profile',
-         no_edit => $no_edit,
-         widget  => $type,
-         num => 2
-);
+<& '/widgets/grp_membership/grp_membership.mc',
+    grp_class => 'Bric::Util::Grp::Source',
+    obj => $src,
+    formName => 'src_profile',
+    no_edit => $no_edit,
+    widget  => $type,
+    num => 2
+&>
 
-
-
-</%perl>
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
    no_del => $no_del, no_save => $no_edit, widget => $type &>
 </form>

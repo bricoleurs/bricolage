@@ -1,0 +1,22 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2004-06-09 06:19:39 +0300 (Wed, 09 Jun 2004) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: Michael Soderstrom <miraso@pacbell.net>
+--
+
+ALTER TABLE grp_member
+ADD CONSTRAINT fk_grp__grp_member FOREIGN KEY (object_id)
+REFERENCES grp(id) ON DELETE CASCADE;
+
+ALTER TABLE grp_member
+ADD CONSTRAINT fk_member__grp_member FOREIGN KEY (member__id)
+REFERENCES member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE grp_member AUTO_INCREMENT 1024;

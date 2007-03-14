@@ -156,5 +156,9 @@ if (my $media = get_state_data($widget, 'media')) {
     $r->pnotes("$widget|title", '&quot;' . $media->get_title . '&quot;');
 }
 
-$m->comp($state.'_'.$section.'.html', widget => $widget, param => $param, media => $media);
+if ($state eq "edit" && $section eq "contributors") {
+    $m->comp("/widgets/profile/contributors/edit.html", asset_type => 'media', widget => $widget, param => $param);
+} else {
+    $m->comp($state.'_'.$section.'.html', widget => $widget, param => $param, media => $media);
+}
 </%init>

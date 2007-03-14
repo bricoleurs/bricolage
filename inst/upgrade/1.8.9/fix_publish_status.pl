@@ -6,8 +6,6 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-exit if test_constraint 'story', 'ck_story__publish_status';
-
 # Later versions will have booleans instead of NUMERIC.
 my ($true, $false)
     = test_column('story', 'publish_status', undef, undef, 'boolean')
@@ -83,6 +81,20 @@ for my $thing (qw(story media)) {
                       publish_date IS NOT NULL
                       OR first_publish_date IS NOT NULL
                       OR published_version IS NOT NULL
+                  )
+        },
+
+        # Try to catch other stragglers.
+        qq{UPDATE $thing
+           SET    published_version = NULL,
+                  publish_status = $false,
+                  publish_date = NULL,
+                  first_publish_date = NULL
+           WHERE  publish_status = $true
+                  AND (
+                      publish_date IS NULL
+                      OR first_publish_date IS NULL
+                      OR published_version IS NULL
                   )
         },
     ;

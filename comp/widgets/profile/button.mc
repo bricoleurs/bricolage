@@ -31,7 +31,9 @@ $widget    => undef
 $disp      => ''
 $cb        => 'create_cb'
 $button    => 'create_red'
+$extension => 'gif'
 $globalImage => 0
+$id        => undef
 $name      => ''
 $value     => undef
 $js        => ''
@@ -46,14 +48,16 @@ my $local = $globalImage ? '' : "$lang_key/";
 my $vals = { disp      => '',
              value     => $value || $disp,
              props     => { type      => 'image',
-                            src       => "/media/images/$local$button.gif"
+                            src       => "/media/images/$local$button.$extension",
+                            title     => $disp
                           },
 
              js        => $js,
            };
 
 $m->comp("/widgets/profile/displayFormElement.mc",
-         key       => $key,
+         id        => $id,
+         key       => $key, 
          vals      => $vals,
          indent    => $indent,
          useTable  => $useTable,

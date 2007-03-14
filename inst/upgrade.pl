@@ -47,6 +47,7 @@ unless ($> == 0) {
 our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
                                    '/usr/local/bricolage' );
 our $INSTALL;
+our (%DB,$DB,%PG);
 
 print q{
 ##########################################################################
@@ -69,6 +70,7 @@ get_bricolage_root();
 read_install_db();
 check_version();
 confirm_paths();
+modify_vars();
 output_dbs();
 
 print "\n\n==> Finished Setting-up Bricolage Upgrade Process <==\n\n";
@@ -172,10 +174,20 @@ sub confirm_paths {
                 \$INSTALL->{CONFIG}{MASON_COMP_ROOT});
 }
 
+# modify_vars makes small changes to variables names introduced in 1.11.0
+sub modify_vars {
+    my ($x, $y, $z) = $INSTALL->{VERSION} =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
+    if (($x < 1) or ($x == 1 and $y < 11)) {
+	%DB = %PG;    
+	$DB->{db_type} = 'Pg';
+	$DB->{exec} = $DB->{psql};
+    }
+}
+
 # output .db files used by installation steps
 sub output_dbs {
     # fake up the .dbs from %INSTALL
-    my %dbs = ( PG     => "postgres.db",
+    my %dbs = ( DB     => "database.db",
                 CONFIG => "config.db",
                 AP     => "apache.db"  );
     while ( my ($key, $file) = each %dbs) {

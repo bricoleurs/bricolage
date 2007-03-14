@@ -1,6 +1,6 @@
 <table cellspacing="0" border="0" width="100%" cellpadding="0">
   <tr>
-    <td align="right"><span class="redLabel"><% $lang->maketext('Or upload as:') %></span>&nbsp;</td>
+    <td align="right"><span class="label required"><% $lang->maketext('Or upload as:') %></span>&nbsp;</td>
     <td><& '/widgets/select_object/select_object.mc',
     disp       => undef,
     name       => "media_prof|at_id",

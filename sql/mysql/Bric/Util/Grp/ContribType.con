@@ -1,0 +1,26 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+
+-- 
+-- TABLE: contrib_type_member
+--
+
+ALTER TABLE    contrib_type_member
+ADD CONSTRAINT fk_contrib_type__ctype_member FOREIGN KEY (object_id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+ALTER TABLE    contrib_type_member
+ADD CONSTRAINT fk_member__ctype_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE contrib_type_member AUTO_INCREMENT 1024;

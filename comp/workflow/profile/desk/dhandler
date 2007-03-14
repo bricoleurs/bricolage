@@ -1,9 +1,58 @@
+<& '/widgets/wrappers/header.mc',
+   title => "$d_name Desk",
+   context => "Workflow | $wfname | &quot;$d_name&quot;"
+&>
+
+% if ($d) { # Don't display anything if the desk object could not be found.
+
+<form method="post" action="<% $r->uri %>" name="desk">
+
+% foreach my $class (qw(story media template)) {
+
+    <& '/widgets/desk/desk.mc',
+        desk_id  => $d_id,
+        desk     => $d,
+        wf       => $wf,
+        work_id  => $w_id,
+        sort_by  => $ARGS{"${class}_sort_by"},
+        class    => $class,
+        offset   => $offset,
+        show_all => $show_all,
+    &>
+
+% }
+
+<& '/widgets/desk/desk_bottom.html',
+    offset   => $offset,
+    show_all => $show_all 
+&>
+
+</form>
+
+% }
+
+<& '/widgets/wrappers/footer.mc', param => \%ARGS &>
+
+
+<%args>
+$offset           => 0
+$show_all         => undef
+</%args>
+
+<%init>;
+my ($w_id, $d_id) = $r->uri =~ m!/(\d+)/(\d+)/?$!;
+my $d = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $d_id});
+my $d_name = $d ? $d->get_name : 'Unknown';
+my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
+my $wfname = '&quot;' . $wf->get_name . '&quot;';
+</%init>
+
 <%doc>
 ###############################################################################
 
 =head1 NAME
 
-<name> -- <description>
+dhandler -- Desk display dhandler
 
 =head1 VERSION
 
@@ -15,91 +64,8 @@ $LastChangedDate$
 
 =head1 DESCRIPTION
 
-<description>
+Displays the desks
 
 =cut
 
 </%doc>
-
-%#-- Once Section --#
-<%once>
-my $widget = 'desk_asset';
-</%once>
-
-%#-- Args Section --#
-<%args>
-$story_sort_by    => undef
-$media_sort_by    => undef
-$template_sort_by => undef
-$offset           => 0
-$show_all         => undef
-</%args>
-
-%#-- Init Section --#
-<%init>;
-my ($w_id, $d_id) = $r->uri =~ m!/(\d+)/(\d+)/?$!;
-my $d = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $d_id});
-my $d_name = $d ? $d->get_name : 'Unknown';
-my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });
-my $wfname = '&quot;' . $wf->get_name . '&quot;';
-</%init>
-
-%#-- Begin HTML --#
-
-<& '/widgets/wrappers/header.mc',
-   title => "$d_name Desk",
-   context => "Workflow | $wfname | &quot;$d_name&quot;"
- &>
-
-<%perl>;
-# Don't display anything if the desk object could not be found.
-if ($d) {
-    $m->out(qq{<form method="post" action="} . $r->uri
-      . qq{" name="desk" onsubmit="return confirmChanges(this)">});
-
-    $m->comp('/widgets/desk/desk.mc',
-             desk_id  => $d_id,
-             desk     => $d,
-             wf       => $wf,
-             work_id  => $w_id,
-             sort_by  => $story_sort_by,
-             class    => 'story',
-             offset   => $offset,
-             show_all => $show_all,
-            );
-    $m->comp('/widgets/desk/desk.mc',
-             desk_id  => $d_id,
-             desk     => $d,
-             wf       => $wf,
-             sort_by  => $media_sort_by,
-             work_id  => $w_id,
-             class    => 'media',
-             offset   => $offset,
-             show_all => $show_all,
-            );
-    $m->comp('/widgets/desk/desk.mc',
-             desk     => $d,
-             wf       => $wf,
-             sort_by  => $template_sort_by,
-             desk_id  => $d_id,
-             work_id  => $w_id,
-             class    => 'template',
-             offset   => $offset,
-             show_all => $show_all,
-            );
-    $m->comp('/widgets/desk/desk_bottom.html',
-             widget   => $widget,
-             wf       => $wf,
-             w_id     => $w_id,
-             desk     => $d,
-             offset   => $offset,
-             show_all => $show_all,
-            );
-    $m->out("</form>\n");
-}
-$m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
-</%perl>
-
-%#-- End HTML --#
-
-

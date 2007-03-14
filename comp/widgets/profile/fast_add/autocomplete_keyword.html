@@ -1,0 +1,21 @@
+<ul>
+% foreach my $keyword (@$possible_keywords) {
+%   next if $existing_keywords{$keyword->get_id} || $other_new_keywords{$keyword->get_name};
+%   (my $name = $keyword->get_name) =~ s|(\E$add_keyword\U)|<span class="highlight">$1</span>|ig;
+    <li><% $name %></li>
+% }
+</ul>
+
+<%args>
+$add_keyword => undef
+$new_keyword => undef
+$keyword_id => undef
+</%args>
+
+<%init>
+my $pkg = get_package_name('keyword');
+
+my $possible_keywords = $pkg->list({ name => "%$add_keyword%" });
+my %existing_keywords = map { $_ => 1 } @{mk_aref($keyword_id)};
+my %other_new_keywords = map { $_ => 1 } @{mk_aref($new_keyword)};
+</%init>

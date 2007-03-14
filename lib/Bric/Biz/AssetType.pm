@@ -26,6 +26,7 @@ instead.
 =cut
 
 use base 'Bric::Biz::ElementType';
+use Bric::Biz::AssetType::Parts::Data;
 
 1;
 __END__

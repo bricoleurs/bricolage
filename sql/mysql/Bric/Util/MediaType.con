@@ -1,0 +1,37 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+-- 
+-- TABLE: media_type_ext 
+--
+
+ALTER TABLE media_type_ext ADD CONSTRAINT fk_media_type__media_type_ext
+    FOREIGN KEY (media_type__id)
+    REFERENCES media_type(id) ON DELETE CASCADE;
+
+-- 
+-- TABLE: media_type_member 
+--
+
+ALTER TABLE    media_type_member
+ADD CONSTRAINT fk_media_type__media_type_member FOREIGN KEY (object_id)
+REFERENCES     media_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    media_type_member
+ADD CONSTRAINT fk_member__media_type_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE media_type AUTO_INCREMENT 1024;
+ALTER TABLE media_type_ext AUTO_INCREMENT 1024;
+ALTER TABLE media_type_member AUTO_INCREMENT 1024;
+

@@ -919,13 +919,14 @@ sub test_upload_before_save : Test(6) {
 
     # Cache the cat_dir sub, and set up a path that's okay to write to.
     my $cat_dir = \&Bric::Util::Trans::FS::cat_dir;
-    my @paths =  (undef, $cat_dir->($ENV{BRIC_TEMP_DIR}, '_media'));
+
+    my @paths =  (undef, $cat_dir->(undef, $ENV{BRIC_TEMP_DIR}, '_media'));
 
     my $mock_fs = Test::MockModule->new('Bric::Util::Trans::FS');
     $mock_fs->mock(mk_path => 1);
     $mock_fs->mock(cat_dir => sub {
         return shift @paths if @paths;
-        goto &$cat_dir;
+        goto $cat_dir;
     });
 
     ok my $media = $self->construct(

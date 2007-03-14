@@ -1,3 +1,80 @@
+// Extend Prototype's Form.Element
+Object.extend(Form.Element, {
+    label: function(element) {
+        element = $(element);
+        if (element.id) {
+            return $A(document.getElementsByTagName("label")).collect(function(label) {
+                if (label.htmlFor == element.id) {
+                    return Element.collectTextNodes(label);
+                }
+            }).join('');
+        }
+        return false;
+    },
+    
+    radioValue: function(form, name) {
+        var val = $A(Form.getInputs(form, "radio", name)).find(function(radio) {
+            return radio.checked;
+        });
+        return val.value;
+    }
+});
+
+// Override Prototype's Form.EventObserver constructor to force it to work when
+// $(element) is not a form tag.
+Form.EventObserver.prototype._initialize = Form.EventObserver.prototype.initialize;
+Object.extend(Form.EventObserver.prototype, {
+    initialize: function(element, callback) {
+      this._initialize(element, callback);
+      this.registerFormCallbacks();
+    }
+});
+
+Ajax.Autocompleter.prototype._onComplete = 
+  Ajax.Autocompleter.prototype.onComplete;
+Ajax.Autocompleter.prototype._onKeyPress = 
+  Ajax.Autocompleter.prototype.onKeyPress;
+Object.extend(Ajax.Autocompleter.prototype, {
+  onKeyPress: function(event) {
+      var originallyActive = this.active;
+      this._onKeyPress(event);
+      
+      // Catch <enter> keypresses
+      if (event.keyCode == 13) {
+          
+          // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
+          // This makes the selection go to the end.
+          if(navigator.appVersion.indexOf('AppleWebKit') > 0) {
+              var element = Event.element(event);
+              element.setSelectionRange(element.value.length, element.value.length);
+              return false;
+          }
+          
+          // Don't submit the form when you click enter!
+          Event.stop(event);
+
+          if (!originallyActive && this.options.onEnter) {
+              this.options.onEnter(this.element);
+          }
+          
+          return false;
+      }
+      
+      return true;
+  },
+  
+  // Extend Ajax.Autocompleter to add a callback when the returned list is empty
+  // See http://dev.rubyonrails.org/ticket/5120
+  onComplete: function(request) {
+    this._onComplete(request);
+    if (this.entryCount == 0 && this.options.onEmpty) {
+      this.options.onEmpty(this.element);
+    } else if (this.options.onNotEmpty) {
+      this.options.onNotEmpty(this.element);
+    }
+  }
+});
+
 // set up global to track names of double list managers
 var doubleLists = new Array();
 var formObj = '';
@@ -18,9 +95,9 @@ returns number of words in form field, based on number of spaces found
 function wordCount(textbox, words, chars) {
 
     // Get a handle on things.
-    textbox = document.getElementById(textbox);
-    words   = document.getElementById(words);
-    chars   = document.getElementById(chars);
+    textbox = $(textbox);
+    words   = $(words);
+    chars   = $(chars);
     
     // Remove POD tags and newlines.
     var text = textbox.value.replace(/=.*|\n+/g, ' ');
@@ -44,7 +121,7 @@ and do an alert and return false if found.
 function uniqueRole(obj) {
 
     if (typeof roles != "undefined") {
-        if (inArray(obj.value, roles)) {
+        if ($A(roles).include(obj.value)) {
             alert(role_msg);
             obj.focus();
             return false;
@@ -135,7 +212,6 @@ function customSubmit(formName, cbNames, cbValues, optFunctions) {
     } else {
         for (var i in cbNames) {
             frm.elements[cbNames[i]].value = cbValues[i];
-            alert(frm.elements[cbNames[i]].name);
         }
     }
     if (optFunctions != null) {
@@ -169,15 +245,6 @@ function hasSpecialCharacters(what) {
 }
 
 /*
-returns true if characters that would be illegal for a URL prefix or suffix, false otherwise.
-*/
-function hasSpecialCharactersOC(what) {
-    var regExp = new RegExp("[^-a-zA-Z0-9_./]");
-    return regExp.test(what);
-
-}
-
-/*
 general textarea cleanup function
 
 XXX: Can this be done using only the text variable?
@@ -191,72 +258,38 @@ function textUnWrap (text) {
 }
 
 /*
-input: a form object, and the name of the form it contains
+input: a form object (e.g. input, select, textarea), and the container that groups
+       all of the reorder selects together
 output: none.
 This function is called when a position drop down is changed in a story profile.
-It looks for form elements named in the selectOrderNames array, and tries to find
-a new home for the now displaced value.
 */
-function reorder(obj) {
-
-    var newVal  = obj.selectedIndex;
-    var tmp;
-    var form  = obj.form;
-
-    // Bail if there are no names.
-    if (typeof selectOrderNames == "undefined") return false;
-
-    var curObjName;
-    var curObjVal;
-    var curObj = new Object();
-    var orderObjs = new Array(); 
-
-    // First order the elements by their index.
-    for (var i = 0; i < selectOrderNames.length; i++) {
-        curObjName = selectOrderNames[i];
-        curObj     = form[curObjName];
-        if (curObj.type == null) {
-            // It's an array. Process all if its elements.
-            for (var i = 0; i < curObj.length; i++) {
-                curObjVal = curObj[i].selectedIndex;
-                if (curObj[i] != obj) {
-                    orderObjs[curObjVal] = curObj[i];
-                }
-            }
-        } else {
-            // It's a normal input object.
-            curObjVal  = curObj.selectedIndex;
-            if (curObj != obj) {
-                orderObjs[curObjVal] = curObj;
-            }
-        }
-    }
-
+function reorder(obj, container) {
+    
+    var container = $(container);
+    var selects = $A(document.getElementsByClassName("reorder", container));
+    var newIndex = obj.selectedIndex;
+    
+    var order = $A();
+    selects.each(function(select) {
+        if (select != obj) order[select.selectedIndex] = select;
+    });
+    
     var offset = 0;
-
-    // Now go through and shift the elements forward or backward as required.
-    for (var i=0; i<orderObjs.length; i++) {
-        curObj     = orderObjs[i];
-
-        // If we hit an empty array slot, its where the moving element is; suck
-        // the subsequent elements toward it.
-        if (typeof curObj == "undefined") {
+    for (var i = 0; i < order.length; i++) {
+        var curObj = order[i];
+        
+        if (!(i in order)) {
             // This is the empty space left by the moving element; backshuffle
-            offset = offset - 1;
-
-
-        // Otherwise get the object and see if we need to update our offset
+            offset--;
         } else {
-
+            // Otherwise get the object and see if we need to update our offset
+            
             // No shifting has been done if offset is 0 
-            if ((i == newVal) && (offset == 0)) {
-                offset = offset + 1;
-            }
+            if (i == newIndex && offset == 0) offset++;
+            
             // Special adjustment to make sure all necessary elems are shifted
-            if ((i == (newVal+1)) && (offset == -1)) {
-                offset = 0;
-            }
-
+            if (i == newIndex + 1 && offset == -1) offset = 0;
+            
             // Update the index.
             curObj.selectedIndex = curObj.selectedIndex + offset;
         }
@@ -275,15 +308,14 @@ function uncheck (id) {
 }
 
 /*
-input: a value, and a hash
-output: returns true if the value of 'what' is found in the values of the hash, otherwise returns false
-*/
-function inHash(what, hash) {
-
-    for (field in hash) {
-        if (hash[field] == what) return true;
-    }
-    return false;
+input: An element ID.
+output: none.
+This function looks up a checkbox element by its ID, and if it exists, it
+unchecks it. If it does not exist, it does nothing.
+ */
+function uncheck (id) {
+    var checkbox = document.getElementById(id);
+    if (checkbox) checkbox.checked = false;
 }
 
 /*
@@ -334,18 +366,6 @@ function setDays (year, month, days, obj) {
     daysObj.selectedIndex = (curDay == -1) ? 0 : curDay;
 }
 
-/*
-Input: a string.
-Output: Returns false if there is non whitespace text in the string, true if it is blank.
-*/
-function isEmpty(what) {
-    for (var i=0; i < what.length; i++) {
-        var c = what.charAt(i);
-        if ((c != ' ') && (c != '\n') && (c != '\t')) return false;
-    }
-    return true
-}
-
 function confirmDeletions() {
     return confirm(warn_delete_msg);
 }
@@ -379,7 +399,7 @@ formBuilder.submit = function(frm, mainform, action) {
 
 formBuilder.confirm = function (frm) {
 
-    // look for formbuilder mainects, and get their values
+    // look for formbuilder objects, and get their values
     // assign these values to the hidden fields in the main form
 
     for (var i = 0; i < frm.elements.length; i++) {
@@ -452,9 +472,20 @@ new values on the right are marked selected.
 */
 var confirming = false
 var submitting = false
-var requiredFields         = new Object();
-var specialCharacterFields = new Object();
-var specialOCFields = new Object();
+
+function checkRequiredFields(form) {
+    ret = true;
+    Form.getElements(form).each(function(element) {
+        if (Element.hasClassName(element, "required") 
+                && Element.visible(element) && $F(element) == '') {
+            alert(empty_field_msg + Form.Element.label(element));
+            element.focus();
+            ret = false;
+        }
+    });
+    return ret;
+}
+
 function confirmChanges(obj) {
     if (confirming || submitting) return false;
     confirming = true
@@ -487,50 +518,7 @@ function confirmChanges(obj) {
         }
     }
 
-    // make sure all required fields are filled out.
-    if (typeof requiredFields != "undefined") {         
-        for (field in requiredFields) {
-            tmp = obj[field];
-            if (typeof tmp != "undefined") {
-                if ( tmp.value == '') {
-                    alert(empty_field_msg + requiredFields[field]);
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }
-
-    // examine registered special character fields
-    if (typeof specialCharacterFields != "undefined") {         
-        for (field in specialCharacterFields) {
-            tmp = eval("obj." + field);
-            if (typeof tmp != "undefined") {
-                if ( hasSpecialCharacters(tmp.value) ) {
-                    alert( specialCharacterFields[field] + illegal_chars_msg );
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }
-
-    // examine registered special output channel fields(with slash allowed).
-    if (typeof specialOCFields != "undefined") {         
-        for (field in specialOCFields) {
-            tmp = eval("obj." + field);
-            if (typeof tmp != "undefined") {
-                if ( hasSpecialCharactersOC(tmp.value) ) {
-                    alert( specialOCFields[field] + illegal_chars_msg );
-                    tmp.focus();
-                    confirming = false
-                    return false;
-                }
-            }
-        }
-    }  
+    if (!checkRequiredFields(obj)) { confirming = false; return false; }
 
     // if we get this far, we've got a live submission.
     // if there is a 2xLM,
@@ -581,23 +569,6 @@ function confirmURIFormats(obj) {
     }
     return true;
 }
-
-function inArray(what, arr) {
-
-    for (var i=0; i < arr.length; i++) {
-        if (arr[i].toString() == what.toString()) return true
-    }
-    return false
-}
-
-function isInList(what, list) {
-
-        for (var i=0; i < list.length; i++) {
-                if (list.options[i].value == what) return true
-        }
-        return false;
-}
-// end double list manager functions
 
 // begin double list manager functions
 
@@ -697,23 +668,44 @@ function Browser () {
 /*
 Open popup window
 */
-function openWindow(page) {
-    if (!/^\//.test(page)) page = '/' + page;
-    if (!/\.html$/.test(page)) page += '.html';
-    window.open(
-        '/help/' + lang_key + page,
-        'BricolageHelp',
-        'menubar=0,location=0,toolbar=0,personalbar=0,status=0,scrollbars=1,'
-        + 'height=600,width=505'
+function openWindow(uri, name, opts) {
+    var options = Object.extend({
+      width: 600,
+      height: 600,
+      scrollbars: 1,
+      status: 1,
+      personalbar: 0,
+      toolbar: 0,
+      location: 0,
+      menubar: 0,
+      resizable: 1,
+      closeOnUnload: false
+    }, opts || {});
+    
+    if (options['closeOnUnload']) {
+      Event.observe(window, "unload", (function() { 
+        if (win && !win.closed) win.close()
+      }).bindAsEventListener(this));
+    }
+    delete options['closeOnUnload'];
+    
+    var win = window.open(
+        uri,
+        name || 'BricolagePopup',
+        $H(options).map(function(opt) {
+          return opt[0] + "=" + opt[1];
+        }).join(",")
     );
-    return false;
+    return win;
 }
-function openAbout() { return openWindow("about"); }
+function openAbout() { return openWindow("/help/" + lang_key + "/about.html"); }
 function openHelp()  { 
     var uri = window.location.pathname.replace(/[\d\/]+$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
-    return openWindow(uri);
+    if (!/^\//.test(uri)) uri = '/' + uri;
+    if (!/\.html$/.test(uri)) uri += '.html';
+    return openWindow('/help/' + lang_key + uri, "BricolageHelp", { width: 505 });
 }
 
 
@@ -1003,3 +995,322 @@ function toggleMenu (el, id) {
     // Don't follow the link
     return false;
 }
+
+function alternateTableRows(element) {
+    element = $(element);
+    $A(element.getElementsByTagName("tr")).select(function(row) { 
+      return row.getElementsByTagName("td").length > 0 // Exclude header rows
+    }).each(function(row, index) {
+        if (index % 2 == 0) {
+            Element.addClassName(row, "even");
+            Element.removeClassName(row, "odd");
+        } else {
+            Element.addClassName(row, "odd");
+            Element.removeClassName(row, "even");
+        }
+    })
+}
+
+document.getParentByClassName = function(element, className) {
+    element = $(element);
+    while (element.parentNode && !Element.hasClassName(className)) {
+        element = element.parentNode;
+    }
+    return element;
+}
+document.getParentByTagName = function(element, tagName) {
+    element = $(element);
+    while (element.parentNode && (!element.tagName ||
+        (element.tagName.toUpperCase() != tagName.toUpperCase()))) {
+      element = element.parentNode;      
+    }
+    return element;
+}
+
+var Desk = {
+    visibleMenu: '',
+    
+    update: function(element, opts) {
+        element = $(element);
+        var options = Object.extend({
+            uri: '/widgets/desk/desk_item.html',
+            parameters: ''
+        }, opts || {});
+        Desk.hideMenu();
+        new Ajax.Updater(element, options.uri, { insertion: Element.replace, asynchronous: true, parameters: options.parameters });
+    },
+    
+    request: function(opts) {
+        var options = Object.extend({
+            uri: document.location,
+            parameters: ''
+        }, opts || {});
+        Desk.hideMenu();
+        new Ajax.Request(options.uri, { asynchronous: true, parameters: options.parameters });
+    },
+    
+    showMenu: function(button, event) {
+        Desk.hideMenu();
+        Desk.visibleMenu = button.id + "_desks";
+        Element.show(Desk.visibleMenu);
+        Event.stop(event);
+        Event.observe(document, "click", Desk.hideMenu);
+    },
+    
+    hideMenu: function() {
+        if (Desk.visibleMenu != '') Element.hide(Desk.visibleMenu);
+        Desk.visibleMenu = '';
+        Event.stopObserving(document, "click", Desk.hideMenu);
+    }
+};
+
+/*
+ * Handles the fast_add.mc widget, for adding multiple items such as keywords
+ * quickly.
+ *
+ * Options:
+ *  - autocomplete: determines whether an AJAX request will be made to list
+ *        existing options for the user to choose from. 
+ *        (default: true)
+ *  - uri: the URI of the page that will return the autocompletion list
+ *  - list: the ID or DOM object of the container list to which the new objects
+ *        will be added (default: 'fast-add-$type')
+ */
+var FastAdd = Class.create();
+FastAdd.prototype = {
+    initialize: function(type, options, autocomplete_options) {
+        this.options = Object.extend({
+            autocomplete: true,
+            uri: '/widgets/profile/fast_add/autocomplete_' + type + '.html',
+            list: 'fast-add-' + type
+        }, options || {});
+        this.type = type;
+        this.list = $(this.options.list);
+        
+        if (this.options.autocomplete) {
+          this.autocompleter = new Ajax.Autocompleter(
+            'add_' + this.type, 
+            'add_' + this.type + '_autocomplete', 
+            this.options.uri, 
+            autocomplete_options
+          );
+        }
+    },
+    
+    add: function(element) {
+        value = $F(element);
+
+        var item = Builder.node("li", { className: 'keyword' }, [
+            Builder.node("input", { type: 'hidden', name: 'new_' + this.type, value: value }),
+            Builder.node("span", { className: 'value' }, value),
+            " (",
+            Builder.node("a", { href: "#", onclick: "fastadd" + this.type + ".remove(this.parentNode); return false" }, 'remove'),
+            ")"
+        ]);
+
+        var placed = false;
+        $A(document.getElementsByClassName('value', this.list)).each((function(sibling) {
+            if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
+                this.list.insertBefore(item, sibling.parentNode);
+                placed = true;
+                throw $break;
+            }
+        }).bind(this));
+
+        if (!placed) {
+            this.list.appendChild(item);
+        }
+        
+        $(element).value = '';
+        if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
+    },
+    
+    remove: function(element) {
+        Element.remove(element);
+        if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
+    }
+}
+
+var Tabs = Class.create();
+Tabs.prototype = {
+    initialize: function(tabGroup, pageGroup) {
+        this.tabs = document.getElementsByClassName('tab', $(tabGroup));
+        this.pages = document.getElementsByClassName('page', $(pageGroup));
+        
+        var selected = this.tabs.first();
+        this.tabs.each(function(tab) {
+          Element.removeClassName(tab, "first");
+          if (Element.hasClassName(tab, "selected")) selected = tab;
+        })
+        Element.addClassName(this.tabs.first(), "first");
+        
+        // Select the first tab by default
+        this.switchTab(selected);
+    },
+    
+    switchTab: function(newTab) {
+        this.tabs.each(function(tab) {
+            if (tab.id == newTab.id) {
+                Element.addClassName(tab, "selected");
+                Element.show(tab.id + "_page");
+            } else {
+                Element.removeClassName(tab, "selected");
+                Element.hide(tab.id + "_page");
+            }
+        });
+    }
+};
+
+Abstract.ListManager = function() {};
+Abstract.ListManager.prototype = {
+    setOptions: function(options) {
+        this.options = {
+            extraParameters: []
+        };
+        Object.extend(this.options, options || {});
+    },
+    
+    updatePartial: function(uri, callback) {
+        var extraParams = this.options.extraParameters.join("&");
+        extraParams = extraParams ? "&" + extraParams : '';
+        
+        new Ajax.Updater(this.element, uri, {
+          parameters: Form.serialize(this.element) + extraParams,
+          asynchronous: true,
+          evalScripts: true,
+          onComplete: callback
+        });
+    }
+};
+
+var AssociationListManager = Class.create();
+AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
+    initialize: function(element, options) {
+        this.element = $(element);
+        this.setOptions(options);
+        this.initializePrimaryRadios();
+    },
+    
+    initializePrimaryRadios: function() {
+        var self = this;
+        new Form.EventObserver(this.element, function() { self.updateDeletes(); } );
+    },
+    
+    updateList: function() {
+        this.updatePartial(this.options.uri, function() { 
+            this.updateDeletes();
+        });
+    },
+  
+    add: function(element) {
+        this.options.extraParameters.push($(element).id + "=" + $F(element));
+        this.updateList();
+        this.options.extraParameters.pop();
+    },
+    
+    remove: function(element) {
+        Element.remove(element); 
+        this.updateList();
+    },
+    
+    updateDeletes: function() {
+        var deleteButtons = Form.getInputs(this.element, "image", "delete_" + this.options.type);
+        var primary = Form.Element.radioValue(this.element, "primary_" + this.options.type + "_id");
+        $A(deleteButtons).each(function(button) {
+            if (button.value == primary) {
+                Element.hide(button);
+            } else {
+                Element.show(button);
+            }
+        });
+    }
+})
+
+/*
+ * Container profile
+ */
+var Container = {
+    refresh: function(container_id, opts) {
+        var options = Object.extend({
+            extraParameters: ''
+        }, opts || {});
+        
+        var element = $('element_' + container_id + '_content');
+        
+        var params = 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form"));
+        if (options.extraParameters != '') {
+            params = params + '&' + options.extraParameters;
+        }
+        
+        new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', { 
+            parameters: params,
+            asynchronous: true, 
+            evalScripts: true,
+            onComplete: function(request) { 
+                Container.updateOrder('element_' + container_id)
+            } 
+        });
+    },
+    
+    updateOrder: function(list) {
+        list = $(list);
+
+        // We must do this so that new elements are sortable
+        Sortable.create(list, { 
+            onUpdate: function(elem) { 
+                Container.updateOrder(elem); 
+            }, 
+            handle: 'name'
+        });
+        
+        $('container_prof_' + list.id).value = Sortable.sequence(list);
+    },
+    
+    confirmDelete: function() {
+        return confirm(warn_delete_msg);
+    },
+    
+    // Used to associate a story or media with an element, from a popup.  It returns the updated
+    // partial, which is then inserted into the parent window.
+    // Takes the container ID to which to add the asset and the ID of the asset to relate
+    update_related: function(action, type, widget, container_id, asset_id) {
+        new Ajax.Updater(
+          window.opener.document.getElementById('element_' + container_id + '_rel_' + type),
+          '/widgets/container_prof/_related.html', {
+              parameters: 'type=' + type + '&widget=' + widget + '&container_id=' + container_id + '&container_prof|' + action + '_' + type + '_cb=' + asset_id,
+              asynchronous: true, 
+              onComplete: function(request) { 
+                  window.close();
+              }
+          }
+        )
+    },
+    
+    relate: function(type, widget, container_id, asset_id) {
+        return Container.update_related('relate', type, widget, container_id, asset_id);
+    },
+    
+    unrelate: function(type, widget, container_id, asset_id) {
+        return Container.update_related('unrelate', type, widget, container_id, asset_id);
+    },
+    
+    addElement: function(container_id, element_id) {
+        Container.refresh(container_id, { 
+            extraParameters: 'container_prof|add_element_cb=' + container_id + '&container_prof|add_element_to_' + container_id + '=' + element_id
+        });
+    },
+    
+    deleteElement: function(container_id, element_id) {
+        if (Container.confirmDelete()) { 
+            Container.refresh(container_id, { 
+                extraParameters: 'container_prof|delete_cb=' + element_id 
+            });
+        }
+    }
+};
+
+Event.observe(window, 'load', function() {
+  $A(document.getElementsByClassName('listManager')).each(function(table) {
+      alternateTableRows(table);
+  })
+});

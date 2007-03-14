@@ -1,8 +1,3 @@
-% if ($usePosition) {
-<script>
-var selectOrderNames = new Array("attr_pos")
-</script>
-% }
 <%args>
 $attr
 $usePosition => 1
@@ -19,9 +14,8 @@ my @meta_props = qw(type length maxlength rows cols multiple size precision);
 my $num_fields = @$attr;
 my $sel_opts = [ map { [ $_ => $_] } 1..$num_fields ];
 my $curField = 1;
-my $width = 578 - 100 * $useDelete - 100 * $usePosition;
 
-$m->out(qq{<table>});
+$m->out(qq{<div id="containerprof"><ul id="attrs" class="elements">});
 
 foreach my $attr (@$attr) {
     # Assemble the properties.
@@ -45,14 +39,15 @@ foreach my $attr (@$attr) {
         }
         $props->{vals} = $val_prop;
     }
-
+    
     # Assemble the vals argument.
     my $vals = {
         value => $attr->{value},
         props => $props,
     };
 
-    $m->out(qq{<tr><td class="name">\n});
+    (my $attr_name = $attr->{name}) =~ s/\s|\|/_/g; # Replace spaces and pipes with underscores
+    $m->out(qq{<li id="attr_$attr_name" class="element clearboth"><h3 class="name">\n});
 
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
@@ -60,63 +55,61 @@ foreach my $attr (@$attr) {
          name => 'attr_name'
      ) if (!$readOnly);
 
-    $m->out($attr->{meta}{disp}{value} . qq{:</td><td class="value">});
+    $m->out($attr->{meta}{disp}{value} . qq{:</h3>});
+    
+    $m->out(qq{<div class="content">});
 
     # Spit out the attribute.
     $m->comp('/widgets/profile/displayFormElement.mc',
          key => "attr|$attr->{name}",
          vals => $vals,
          useTable => 0,
-         width => $width,
-         indent => FIELD_INDENT,
          localize => $localize,
          readOnly => $readOnly
-     );
-
-    $m->out("</td>");
-
-    if ($usePosition) {
-        $m->out(qq{<td class="position">\n});
-        $m->comp(
-            '/widgets/profile/select.mc',
-            disp     => '',
-            value    => $curField++,
-            options  => $sel_opts,
-            useTable => 0,
-            name     => 'attr_pos',
-            readOnly => $readOnly,
-            js       => qq{onChange="reorder(this, '$form_name')"}
-        );
-        $m->out("</td>");
-    }
-
+    );
+    
     if ($useEdit) {
-        $m->out(qq{<td class="edit">\n});
+        $m->out(qq{<div class="edit">\n});
 
         my $url = '/admin/profile/field_type/' . $attr->{id};
         my $edit_url = sprintf('<a href="%s" class=redLink>%s</a>&nbsp;',
                                $url, $lang->maketext('Edit'));
         $m->out($edit_url);
-        $m->out("</td>");
+        $m->out("</div>");
     }
 
     if ($useDelete) {
     # And spit out a delete checkbox.
-        $m->out(qq{<td class="delete">\n});
+        $m->out(qq{<div class="delete">\n});
         $m->comp(
-            '/widgets/profile/checkbox.mc',
-            checked => 0,
-            label_after => 1,
-            disp => 'Delete',
-            value => $attr->{name},
-            name => "delete_attr",
-            useTable => 0,
-            readOnly => $readOnly
+            '/widgets/profile/button.mc',
+            disp      => $lang->maketext("Delete"),
+            name      => 'delete_' . $attr_name,
+            button    => 'delete',
+            extension => 'png',
+            globalImage => 1,
+            js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs'); } return false"],
+            useTable  => 0
         );
-        $m->out("</td>\n");
+        $m->out("</div>\n");
     }
+    
+    $m->out("</div>");
 
-    $m->out("</tr>\n");
+    $m->out("</li>\n");
 }
-$m->out("</table>");
+$m->out("</ul></div>");
 </%perl>
+
+% if ($usePosition) {
+<input type="hidden" name="attr_pos" id="attr_pos" value="" />
+<script type="text/javascript">
+Sortable.create('attrs', { 
+    onUpdate: function(elem) { 
+        $('attr_pos').value = Sortable.sequence(elem);
+    },
+    handle: 'name'
+});
+$('attr_pos').value = Sortable.sequence('attrs');
+</script>
+% }

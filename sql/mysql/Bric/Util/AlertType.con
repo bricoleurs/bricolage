@@ -1,0 +1,61 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+
+-- 
+-- TABLE: alert_type 
+--
+
+-- MySQL compatibility measure until I find out why it fails
+--ALTER TABLE    alert_type
+--ADD CONSTRAINT fk_event_type__alert_type FOREIGN KEY (event_type__id)
+--REFERENCES     event_type(ID) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type
+ADD CONSTRAINT fk_usr__alert_type FOREIGN KEY (usr__id)
+REFERENCES     usr(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: alert_type__grp__contact 
+--
+
+ALTER TABLE    alert_type__grp__contact
+ADD CONSTRAINT fk_alert_type__grp__contact FOREIGN KEY (alert_type__id)
+REFERENCES     alert_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type__grp__contact
+ADD CONSTRAINT fk_contact__grp__contact FOREIGN KEY (contact__id)
+REFERENCES     contact(id) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type__grp__contact
+ADD CONSTRAINT fk_grp__grp__contact FOREIGN KEY (grp__id)
+REFERENCES     grp(id) ON DELETE CASCADE;
+
+
+-- 
+-- TABLE: alert_type__usr__contact 
+--
+
+ALTER TABLE    alert_type__usr__contact
+ADD CONSTRAINT fk_alert_type__at_user__cont FOREIGN KEY (alert_type__id)
+REFERENCES     alert_type(id) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type__usr__contact
+ADD CONSTRAINT fk_contact__at_usr__contact FOREIGN KEY (contact__id)
+REFERENCES     contact(id) ON DELETE CASCADE;
+
+ALTER TABLE    alert_type__usr__contact
+ADD CONSTRAINT fk_usr__at_usr__contact FOREIGN KEY (usr__id)
+REFERENCES     usr(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE alert_type AUTO_INCREMENT 1024;

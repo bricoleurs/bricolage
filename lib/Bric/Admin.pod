@@ -37,7 +37,7 @@ mod_alias. For SSL also install mod_ssl or apache-ssl.
 
 =item 3
 
-Install PostgreSQL 7.3 or greater. Be sure to use UNICODE for data encoding.
+Install PostgreSQL 7.3 or greater or MySQL 5.0.3 or greater.
 
 =item 4
 
@@ -143,7 +143,9 @@ START MODULE LIST
 
 =item HTML::Mason 1.23
 
-=item DBD::Pg 1.22
+=item DBD::Pg 1.22 (optional)
+
+=item DBD::mysql 3.0007 (optional)
 
 =item DB_File
 
@@ -257,7 +259,7 @@ mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 
-PostgreSQL 7.3.0
+PostgreSQL 7.3.0 or MySQL 5.0.3
 
 =item *
 
@@ -980,7 +982,7 @@ F<httpd.conf> file (an example is provided in F<conf/httpd.conf>):
 Bricolage will automatically pass the necessary configuration directives to
 the Apache daemon. As of mod_perl 1.27, Bricolage uses Apache::ReadConfig to
 configure the httpd daemon. There is no httpd include file. If you wish to
-have Bricolage generate and use an httpd include file, or if you with to
+have Bricolage generate and use an httpd include file, or if you wish to
 manually configure your httpd daemon, set the C<MANUAL_APACHE> directive in
 F<conf/bricolage.conf>. This directive will force the startup process to write
 out the Bricolage configuration directives to

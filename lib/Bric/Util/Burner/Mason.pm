@@ -3,7 +3,7 @@ package Bric::Util::Burner::Mason;
 
 =head1 NAME
 
-Bric::Util::Burner::Mason Publish sturies using Mason templates
+Bric::Util::Burner::Mason - Publish sturies using Mason templates
 
 =head1 VERSION
 
@@ -90,28 +90,28 @@ my $xml_fh = INCLUDE_XML_WRITER
 
 BEGIN {
     Bric::register_fields({
-                         #- Per burn/deploy values.
-                         'job'            => Bric::FIELD_READ,
-                         'more_pages'     => Bric::FIELD_READ,
+        #- Per burn/deploy values.
+        'job'             => Bric::FIELD_READ,
+        'more_pages'      => Bric::FIELD_READ,
 
-                         # Private Fields
-                         '_interp'         => Bric::FIELD_NONE,
-                         '_comp_root'      => Bric::FIELD_NONE,
-                         '_buf'            => Bric::FIELD_NONE,
-                         '_writer'         => Bric::FIELD_NONE,
-                         '_elem'           => Bric::FIELD_NONE,
-                         '_at'             => Bric::FIELD_NONE,
-                         '_files'          => Bric::FIELD_NONE,
-                         '_page_place'     => Bric::FIELD_NONE,
-                        });
+        # Private Fields
+        '_interp'         => Bric::FIELD_NONE,
+        '_comp_root'      => Bric::FIELD_NONE,
+        '_buf'            => Bric::FIELD_NONE,
+        '_writer'         => Bric::FIELD_NONE,
+        '_elem'           => Bric::FIELD_NONE,
+        '_at'             => Bric::FIELD_NONE,
+        '_files'          => Bric::FIELD_NONE,
+        '_page_place'     => Bric::FIELD_NONE,
+    });
 }
 
-__PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_MASON,
-                               category_fn    => 'autohandler',
-                               cat_fn_has_ext => 0,
-                               exts           =>
-                                 { mc => 'Mason Component (.mc)' }
-                             );
+__PACKAGE__->_register_burner(
+    Bric::Biz::OutputChannel::BURNER_MASON,
+    category_fn    => 'autohandler',
+    cat_fn_has_ext => 0,
+    exts           => { mc => 'Mason Component (.mc)' },
+);
 
 #==============================================================================#
 
@@ -122,11 +122,6 @@ __PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_MASON,
 =over 4
 
 =cut
-
-#--------------------------------------#
-# Constructors
-
-#------------------------------------------------------------------------------#
 
 =item $obj = Bric::Util::Burner::Mason->new($burner);
 
@@ -188,7 +183,6 @@ sub burn_one {
     my $self = shift;
     my ($ba, $oc, $cat) = @_;
     my ($outbuf, $retval);
-
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];
@@ -259,23 +253,29 @@ sub burn_one {
     no warnings 'redefine';
     local *HTML::Mason::Component::inherit_start_path = sub {
         my $self = shift;
+        # Allow template-defined inheritance to work.
+        return $self->{inherit_start_path} if exists $self->{flags}{inherit};
+
+        # Use the template path if executing our dhandler.
         return $tmpl_path if $self->name =~ m/\Q$tmpl_name\E$/;
+
+        # Otherwise, just fall back on Mason's default.
         return $self->{inherit_start_path};
     };
 
     while (1) {
         # Run the biz asset through the template
-        eval { $retval = $interp->exec($tmpl_path . '/') };
+        eval { $retval = $interp->exec($tmpl_path) };
         if (my $err = $@) {
             my $msg;
-	    if (HTML::Mason::Exceptions::isa_mason_exception(
-                  $err, 'TopLevelNotFound'
-              )) {
+            if (HTML::Mason::Exceptions::isa_mason_exception(
+                $err, 'TopLevelNotFound'
+            )) {
                 # We'll handle this exception ourselves to prevent it from
                 # percolating back up to the UI and returning a 404.
-		$err = "Mason error: ". $err->message;
-                $msg = "Template '$tmpl_name' not found in path '$tmpl_path'";
-	    } elsif (isa_exception($err)) {
+                $err = "Mason error: ". $err->message;
+                $msg = "Template '$tmpl_name' not found in path '$tmpl_path' for output channel '" . $oc->get_name . "'";
+            } elsif (isa_exception($err)) {
                 # Just dump it.
                 rethrow_exception($err);
             } else {
@@ -366,8 +366,8 @@ sub chk_syntax {
 =item my $template = $burner->find_template($uri, $tmpl_name)
 
 Finds the first instance of the template with the name $tmpl_name in the URI
-directory hierarchy in $uri. Returns the template path, if it exists, and undef
-if it does not. For example:
+directory hierarchy in $uri. Returns the template path, if it exists, and
+undef if it does not. For example:
 
   my $uri = '/foo/bar/bletch';
   my $tmpl_name = 'story.mc';
@@ -375,23 +375,23 @@ if it does not. For example:
 
 The find_template() method will look first for '/foo/bar/bletch/story.mc', and
 return that string if the template exists. If it doesn't, it'll look for
-'/foo/bar/story.mc'. If it doesn't find that, it'll look for '/foo/story.mc' and
-then '/story.mc'. If it finds none of these, it will rutrn null (or an empty
-list in an array context.
+'/foo/bar/story.mc'. If it doesn't find that, it'll look for '/foo/story.mc'
+and then '/story.mc'. If it finds none of these, it will return null (or an
+empty list in an array context.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> Uses HTML::Mason::Interp->comp_exists() internally to determine if the
-template exists.
+B<Notes:> Uses HTML::Mason::Interp->comp_exists() internally to determine if
+the template exists.
 
 =cut
 
 sub find_template {
     my ($self, $uri, $name) = @_;
     my $interp = $self->_get('_interp');
-    my @dirs = $fs->split_uri($uri);
+    my @dirs = ('', grep { $_ || $_ ne '' } $fs->split_uri($uri));
     while (@dirs) {
         my $tmpl = $fs->cat_uri(@dirs, $name);
         return $tmpl if $interp->comp_exists($tmpl);

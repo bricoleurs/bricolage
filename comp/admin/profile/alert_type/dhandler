@@ -39,12 +39,17 @@ if (defined $id) {
 
     my $rules = $at->get_rules;
 
-    $m->comp('/widgets/add_more/add_more.mc', type => 'alert_type_rule',
-             fields => [qw(attr operator value)], name => 'rule',
-             reset_key => $id, objs => $rules, param => \%ARGS,
-             meths => $meths, incr => 2, useTable => 0,
-             formName => 'alert_type_profile');
-
+    $m->out(qq{<div style="padding: 10px;">});
+    $m->comp('/widgets/add_more/add_more.mc', 
+        type => 'alert_type_rule',
+        fields => [qw(attr operator value)], 
+        name => 'rule',
+        objs => $rules, 
+        param => \%ARGS,
+        meths => $meths, 
+        read_only => $no_edit
+    );
+    $m->out(qq{</div>});
     $m->comp("/widgets/wrappers/table_bottom.mc");
 
     # Output the content fields.

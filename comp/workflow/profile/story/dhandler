@@ -1,32 +1,18 @@
-<%doc>
-###############################################################################
+<& '/widgets/wrappers/header.mc',
+    title => "$disp Profile",
+    context => "Workflow | Profile | $disp | " . $r->pnotes('story_prof|title'),
+    scrollx => $scrollx,
+    scrolly => $scrolly
+&>
+<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges('theForm')">
+    <% $content %>
+</form>
+<& /widgets/wrappers/footer.mc &>
 
-=head1 NAME
 
-<name> -- <description>
-
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$LastChangedDate$
-
-=head1 DESCRIPTION
-
-<description>
-
-=cut
-
-</%doc>
-
-%#-- Once Section --#
 <%once>;
 my $disp = get_disp_name('story');
 </%once>
-
-%#-- Args Section --#
 <%args>
 $checkout => undef
 $version  => undef
@@ -34,8 +20,6 @@ $return   => undef
 $scrollx  => 0
 $scrolly  => 0
 </%args>
-
-%#-- Init Section --#
 <%init>;
 # Do any redirects first.
 do_queued_redirect();
@@ -52,25 +36,4 @@ my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
                         version  => $version,
                         param    => \%ARGS,
                         return   => $return);
-
-# Output the Header.
-$m->comp("/widgets/wrappers/header.mc",
-         title => "$disp Profile",
-         context => "Workflow | Profile | $disp | " . $r->pnotes('story_prof|title'),
-         scrollx => $scrollx,
-         scrolly => $scrolly);
-
 </%init>
-%# Output the content.
-% # <form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="saveScrollXY('theForm'); return confirmChanges('theForm')">
-<form method="post" action="<% $r->uri %>" name="theForm" id="theForm" enctype="multipart/form-data" onsubmit="return confirmChanges('theForm')">
-<%doc>
-%# XXX
-<& '/widgets/profile/hidden.mc', name => 'scrollx', value => 0 &>
-<& '/widgets/profile/hidden.mc', name => 'scrolly', value => 0 &>
-</%doc>
-<% $content %>
-</form>
-<& /widgets/wrappers/footer.mc &>
-
-

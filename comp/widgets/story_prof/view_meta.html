@@ -3,7 +3,7 @@ my $note_img = $story->has_notes ? 'note_fill' : 'note';
 my $toText = qq{
 <a href="/workflow/profile/story/view_notes.html?id=} . $id .
  qq{"><img src="/media/images/$note_img.gif" border="0" alt="View Notes" /></a>
-    <a href="/workflow/trail/story/}. $id . qq{"><img src="/media/images/} .
+    <a href="/workflow/events/story/}. $id . qq{?filter_by=story_moved"><img src="/media/images/} .
   $lang_key  . qq{/view_trail_teal.gif" border="0" alt="View Trail" /></a>
 };
 

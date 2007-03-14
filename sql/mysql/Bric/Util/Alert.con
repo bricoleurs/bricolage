@@ -1,0 +1,28 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+
+
+-- 
+-- TABLE: alert 
+--
+
+ALTER TABLE alert ADD CONSTRAINT fk_alert_type__alert 
+    FOREIGN KEY (alert_type__id)
+    REFERENCES alert_type(id) ON DELETE CASCADE
+;
+
+ALTER TABLE alert ADD CONSTRAINT fk_event__alert 
+    FOREIGN KEY (event__id)
+    REFERENCES event(id) ON DELETE CASCADE
+;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE alert AUTO_INCREMENT 1024;

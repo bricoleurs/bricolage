@@ -1,58 +1,158 @@
-<div class="item">
-  <div class="head">
-    <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
-    <div class="title<% ($highlight eq 'name' ? ' sorted' : $alias ? $alias : '') %>"><% $uri || $name %></div>
-    <% $m->comp('publish_status_span.mc',
-                sorted => $highlight eq 'name' ? ' sorted' : '',
-                asset => $obj) %>
-  </div>
-  <div class="body<% (@$sites <= 1 && $class eq 'template') ? ' short' : ' tall' %>">
+<div id="<% "$class\_$id" %>" class="item">
+    <div class="head">
+        <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
+        <div class="title<% ($highlight eq 'name' ? ' sorted' : $alias ? $alias : '') %>"><% $uri || $name %></div>
+        <& publish_status_span.mc,
+            sorted => $highlight eq 'name' ? ' sorted' : '',
+            asset => $obj
+        &>
+    </div>
+    <div class="body<% (@$sites <= 1 && $class eq 'template') ? ' short' : ' tall' %>">
     <dl>
 % if ($class ne 'template') {
-      <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
-      <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $obj->get_primary_uri || '&nbsp;' %></dd>
+        <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
+        <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $obj->get_primary_uri || '&nbsp;' %></dd>
 % }
-      <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
-      <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+        <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
+        <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
 % if ($class eq 'template') {
-      <dt name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
-      <dd name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $oc || '&nbsp;' %></dd>
+        <dt name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
+        <dd name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $obj->get_output_channel_name || '&nbsp;' %></dd>
 % } else {
-      <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
-      <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+        <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
+        <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
 % }
 % if (@$sites > 1) {
-      <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
-      <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
+        <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
+        <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
 % }
-      <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
-      <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
+        <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
+        <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
     
     <div class="actions">
-        <p><% $elink %></p>
-        
-        <div class="mover">
-% if ($can_edit && $desk_opts) {
-          <label for="move<% $id %>"><% $lang->maketext($mover_label) %></label>
-          <& '/widgets/profile/select.mc',
-             name     => "$widget|next_desk",
-             value    => $desk_val,
-             options  => $desk_opts,
-             useTable => 0,
-             id       => "move$id" &>
-% } else {
-        &nbsp;
-% }
-        </div>
-        
         <ul class="action">
-          <li><a href="<% $link %>" title="<% $vlabel . " &#x201c;$name&#x201d;" %>"><% $vlabel %></a></li>
-          <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $aid %>">Notes</a></li>
-          <li><a href="<% $item_url %>"><% $lang->maketext($item_label) %></a></li>
-          <li><a href="/workflow/events/<% $class %>/<% $aid %>"><% $lang->maketext('Log') %></a></li>
-          <li><% $pub %></li>
+            <li><a href="<% $link %>" title="<% $vlabel %>">
+                <img src="/media/images/<% lc $vlabel %>.gif" alt="<% $vlabel %>" /></a></li>
+            <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $id %>" title="<% $lang->maketext("Notes") %>">
+                <img src="/media/images/notes.png" alt="Notes" /></a></li>
+%           if ($class eq 'story') {
+            <li><a href="/workflow/profile/workspace/clone/<% $id %>" title="<% $lang->maketext("Clone") %>">
+                <img src="/media/images/clone.png" alt="<% $lang->maketext("Clone") %>" /></a></li>
+%           }
+            <li><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Trail/Log') %>">
+                <img src="/media/images/log.png" alt="<% $lang->maketext('Trail/Log') %>" /></a></li>
+% if ($can_edit) {
+            <li>
+            <& /widgets/profile/button.mc,
+                disp => "Delete",
+                name  => "${class}_delete_ids",
+                id    => "$widget\_$id",
+                value => $id,
+                button => 'trash',
+                extension => 'png',
+                globalImage => 1,
+                useTable => 0,
+                js    => qq/onclick="Desk.request({ parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); return false"/
+            &>
+            </li>
+% }
         </ul>
+        
+        <ul class="movers" style="float: right; width: 100px">
+% if (!$user && $action eq 'checkin_cb') {
+            <li>
+                <& /widgets/profile/button.mc,
+                    disp => "Check in (double click to check in to " . $desk->get_name . ")",
+                    name => "check_in_$class\_$id",
+                    button => "checkin",
+                    globalImage => 1,
+                    useTable => 0,
+                    js => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . $checkin_js->(undef) . '"'
+                &>
+                <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
+                    <h4>Check in:</h4>
+                    <ul>
+% foreach (@$checkin_opts) {
+                        <li><a href="#" onclick="<% $checkin_js->($_->[0]) %>"><% $_->[1] %></a></li>
+% }
+                    </ul>
+                </div>
+            </li>
+% } elsif (!$user && $action eq 'checkout_cb') {
+            <li>
+            <& /widgets/profile/button.mc,
+                  disp => "Check out",
+                  widget => $widget,
+                  cb => "checkout_cb",
+                  value => "$class\_$id",
+                  button => "checkout",
+                  globalImage => 1,
+                  useTable => 0
+              &>
+             </li> 
+% }
+
+% if (!$user && $can_edit && $move_opts) {
+            <li>
+                <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move">
+                    <img src="/media/images/move.gif" alt="Move" />
+                </a>
+                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
+                    <h4>Move:</h4>
+                    <ul>
+% foreach (@$move_opts) {
+                        <li><a href="#" onclick="<% $move_js->($_->[0]) %>"><% $_->[1] %></a></li>
+% }
+                    </ul>
+%                   if (!$obj->get_checked_out) {
+                    <h4>Other:</h4>
+                    <ul>
+                        <li><a href="#" onclick="<% $move_js->(($class eq 'template') ? 'deploy' : 'publish') %>"><% $lang->maketext(($class eq 'template') ? 'Deploy' : 'Publish') %></a></li>
+                        <li><a href="#" onclick="<% $move_js->('shelve') %>"><% $lang->maketext('Shelve') %></a></li>
+                    </ul>
+%                   }
+                </div>
+            </li>
+% }
+
+% if ($can_publish && !$obj->get_checked_out) {
+            <li>
+%           if ($class eq 'template') {
+                <& /widgets/profile/button.mc,
+                    disp => "Deploy",
+                    name   => "deploy_${class}_${id}",
+                    button => "deploy",
+                    js     => 'onclick="' . &$publish_js . '"',
+                    globalImage => 1,
+                    useTable => 0
+                &>    
+%           } else {
+                <& /widgets/profile/button.mc,
+                    disp => "Publish (double click to publish now)",
+                    name   => "publish_${class}_${id}",
+                    button => "publish",
+                    js     => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . &$publish_js . '"',
+                    globalImage => 1,
+                    useTable => 0
+                &>
+                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; width: auto; display: none">
+                    <h4>Publish:</h4>
+                    <ul>
+                        <li><a href="#" onclick="<% &$publish_js %>">Now</a></li>
+                        <li><a href="<% $r->uri %>?desk_asset|publish_cb=1&amp;desk_asset|<% $class %>_pub_ids=<% $obj->get_version_id %>">Later</a></li>
+                    </ul>
+                </div>
+%           }
+            </li>
+% }
+        </ul>
+        
+%       if ($user) {
+        <p><% $user %></p>
+%       } else {
+        <p><% $desk->get_name %> Desk</p>
+%       }
     </div>
   </div>
 </div>
@@ -63,33 +163,100 @@ my $priors = Bric::Biz::Asset->list_priorities;
 $widget => 'desk_asset'
 $obj
 $highlight
-$can_edit
-$vlabel => 'View'
-$desk_val
-$desk_opts
-$ppage
-$disp
-$oc     => ''
-$type   => ''
-$pub    => ''
-$aid
-$class  => 'story'
-$did
 $desk_type
-$user => undef
-$label => undef
-$action => undef
+$work_id => undef
 </%args>
 <%init>;
-# Get the ID.
-my $id = $obj->get_id;
+my ($id, $class);
+unless (ref $obj) {
+    ($class, $id) = split /_/, $obj;
+    $obj = get_package_name($class)->lookup({ id => $id });
+} else {
+    $class = $obj->key_name;
+    $id = $obj->get_id;
+}
+
+# Grab the type name.
+my $atid = $obj->get_element_type_id;
+my $type = defined $atid ? $obj->get_element_name : '';
+
+# Grab the User ID.
 my $user_id = $obj->get_user__id;
+
+my $checked_out_by_current_user = defined $user_id && get_user_id() == $user_id;
+
+# Figure out the Checkout status.
+my ($user);
+my $desk = $obj->get_current_desk;
+my $desk_id = $desk->get_id;
+my $workflow = $obj->get_workflow_object;
+
+my $can_publish = $desk->can_publish && chk_authz($obj, PUBLISH, 1);
+my $can_edit = $can_publish || chk_authz($obj, EDIT, 1);
+
+my $action = 'checkout_cb';
+
+my $checkin_opts = [];
+my $move_opts = [];
+
+if ($checked_out_by_current_user) {
+    $action = 'checkin_cb';
+} elsif (defined $user_id) {
+    $checkin_opts = undef;
+    $user = $obj->get_user->format_name;    
+}
+
+# Assemble the list of desks we can move this to.
+my $to = $lang->maketext('to') . ' ';
+if ($checkin_opts || $move_opts) {
+    my %seen;
+    my $workflow_id = $workflow->get_id;
+    foreach my $d ($workflow->allowed_desks) {
+        next unless chk_authz(undef, READ, 1, $d->get_asset_grp);
+        my $did = $d->get_id;
+        my $key = join('-', $did, $workflow_id);
+        my $value = $to . $d->get_name;
+        push @$checkin_opts, [$key, $value];
+        push @$move_opts, [$key, $value] unless $did == $desk_id;        
+        $seen{$did} = 1;
+    }
+
+    if (ALLOW_WORKFLOW_TRANSFER) {
+        # Find all the other workflows this desk is in.
+        foreach my $wf (Bric::Biz::Workflow->list({ desk_id => $desk_id })) {
+            my $wid = $wf->get_id;
+            next if $wid == $workflow_id;
+            # Add all of their desks to the list.
+            foreach ($wf->allowed_desks) {
+                my $did = $_->get_id;
+                next if $seen{$did};
+                my $key = join('-', $did, $wid);
+                my $value = $to . $_->get_name;
+                push @$checkin_opts, [$key, $value];
+                push @$move_opts, [$key, $value] unless $did == $desk_id; 
+                $seen{$did} = 1;
+            }
+        }
+    }
+    if ($checked_out_by_current_user && chk_authz($obj, PUBLISH, 1)) {
+        if ($class eq 'template') {
+            my @and_deploy = ['deploy', $lang->maketext('and Deploy')];
+            push @$checkin_opts, @and_deploy;
+        } else {
+            my @and_publish = ['publish', $lang->maketext('and Publish')];
+            push @$checkin_opts, @and_publish;
+        }
+    }
+    my @and_shelve = ['shelve', $lang->maketext('and Shelve')];
+    push @$checkin_opts, @and_shelve;
+}
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);
 my $alias = '';
-my $site = Bric::Biz::Site->lookup({id => $obj->get_site_id})->get_name;
+my $site = $obj->get_site;
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
-my $idv_class = 'idv';
+
+my $vlabel = $can_edit && $checked_out_by_current_user ? 'Edit' : 'View';
 
 if ($class eq 'template') {
     $date       = $obj->get_deploy_date;
@@ -99,58 +266,25 @@ if ($class eq 'template') {
     $name       = $obj->get_name;
     $date       = $obj->get_cover_date;
     $date_label = 'Cover Date';
-    $type_label = "$disp Type";
-    my $co      = $vlabel eq 'Edit';
+    $type_label = get_disp_name($class) . " Type";
     $uuid       = $obj->get_uuid;
     $alias      = ' alias' if $obj->get_alias_id;
 
-    if ($class eq 'media') {
-        $uri = $m->comp(
-            '/widgets/profile/preview_link.mc',
-            type  => $class,
-            doc   => $obj,
-            value => $name,
-        ) if $obj->get_file_name;
-    } else {
-        $uri = $m->comp(
-            '/widgets/profile/preview_link.mc',
-            type  => $class,
-            doc   => $obj,
-            value => $name,
-        );
-    }
+    $uri = $m->comp(
+        '/widgets/profile/preview_link.mc',
+        type  => $class,
+        doc   => $obj,
+        value => $name,
+    ) unless $class eq 'media' && !$obj->get_file_name;
 }
 
-my $classes = { $highlight => ' class="sorted"' };
+my @query_string;
+push @query_string, 'return=' . $desk->get_id if $desk_type eq 'workflow';
+push @query_string, 'checkout=1' if $vlabel eq 'Edit';
 
-my $checked_out = defined $user_id && get_user_id() == $user_id;
-
-my $mover_label = $desk_type ne 'workflow' ? 'Check in' : 'Move';
-
-my $callback_widget = ($class eq 'template' ? 'tmpl' : $class) . '_prof';
-
-my $link = $ppage . '/' . $aid;
-my $item_label = 'Trail';
-my $item_url = "/workflow/trail/$class/$aid";
-if ($desk_type eq 'workflow') {
-    $link .= '?return=' . $did;
-    if ($vlabel eq 'Edit') {
-        $link .= '&amp;checkout=1';
-    }
-} else {
-    if ($vlabel eq 'Edit') {
-        $link .= '?checkout=1';
-    }
-    if ($class eq 'story') {
-        $item_label = 'Clone';
-#        $item_url = $r->uri . "?$widget|clone_cb=$aid";
-        $item_url = "/workflow/profile/workspace/clone/$aid";
-    }
-}
-
-my $elink = $user ? $user : $label ? '<a href="' . $r->uri . "?"
-  . join('&amp;', "$widget|$action=$aid", "$widget|asset_class=$class")
-  . qq{">$label</a>} : '';
+my $ppage = "/workflow/profile/$class";
+my $link = $ppage . '/' . $id;
+$link .= '?' . join("&amp;", @query_string) if scalar @query_string;
 
 # Create alternating row colors
 my $count = 1;
@@ -159,6 +293,65 @@ my $rowtype = sub {
     $m->out(($count++ <= 2) ? 'odd' : 'even');
     $count = 1 if ($count > 4);
     return;
+};
+
+
+my $checkin_js = sub {
+    my $next_desk = shift;
+    if ($desk_type eq 'workspace' || $next_desk !~ m/^$desk_id/) {
+        # The workspace only shows assets that are checked out, so the
+        # asset needs to disappear when it's checked in.
+        #
+        # Similarly, workflow desks only show assets assigned to them.
+        # If the next desk isn't the same as the current desk, it needs
+        # to disappear.
+        my $uri = $r->uri;
+        my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", ($next_desk ? ("desk_asset|next_desk=$next_desk") : ()));
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+    } else {
+        my $parameters = join('&amp;', "desk_type=workflow", 
+                                       "obj=${class}_${id}", 
+                                       "highlight=$highlight", 
+                                       "desk_asset|checkin_cb=${class}_${id}", 
+                                       "desk_asset|next_desk=$next_desk");
+        return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
+    }
+};
+
+my $move_js = sub {
+    my $next_desk = shift;
+    if ($desk_type eq 'workflow') {
+        # Workflows only show assets from one desk, so the asset needs to 
+        # disappear when it's moved to a different desk.
+        my $uri = $r->uri;
+        my $parameters = join('&amp;', "desk_asset|move_cb=$class\_$id", "desk_asset|next_desk=$next_desk");
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+    } else {
+        # The workspace shows assets from many desks, so the asset needs
+        # to be updated.
+        my $parameters = join('&amp;', "desk_type=$desk_type", 
+                                       "obj=${class}_${id}", 
+                                       "highlight=$highlight", 
+                                       "desk_asset|move_cb=${class}_${id}", 
+                                       "desk_asset|next_desk=$next_desk");
+        if ($next_desk eq 'shelve') {
+            return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        } else {
+            return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
+        }
+    }
+};
+
+my $publish_js = sub {
+    my $version_id = $obj->get_version_id;
+    my $uri = $r->uri;
+    if ($class eq 'template') {
+        my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";        
+    } else {
+        my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";                
+    }
 };
 
 </%init>

@@ -1,0 +1,20 @@
+
+-- Project:      Bricolage Business API
+-- File:    Person.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+-- Administrator.
+
+INSERT INTO person (id, lname, fname, mname, prefix, suffix, active)
+VALUES ('0', 'Administrator', 'Bricolage', '', '', '', '1');
+
+-- Add 'em to the 'All Users' Group.
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('0', '1', '1', '1');
+
+INSERT INTO person_member (id, object_id, member__id)
+VALUES ('0', '0', '0'); 
+

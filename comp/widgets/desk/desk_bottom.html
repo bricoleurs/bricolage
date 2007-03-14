@@ -1,52 +1,29 @@
 % # Do paging
 % if ($num_pages) {
-<div class="paginate">
-<div class="pages">
-      <% $prev_link %>
-%     foreach my $page (0 .. $num_pages) {
-%         if ($page == $offset) {
-      <span class="current"><% $page + 1 %></span>&nbsp;
-%         } else {
-%             my $off = $page * $limit;
-      <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>&nbsp;
-%     }}
-      <% $next_link %>
-</div>
-%     unless ($show_all) {
-     <div class="all"><a href="<% $url %>?show_all=1">Show All</a></div>
-%     }
-% }  # if $num_pages
-</div><br />
 
-<div class="buttonbar">
-<& /widgets/buttons/submit.mc,
-   disp      => $chk_label,
-   widget    => $widget,
-   cb        => $chk_cb . '_cb',
-   button    => $chk_cb . '_assets_' . $color1,
-   useTable  => 0 &>
-<& /widgets/buttons/submit.mc,
-   disp      => 'Check All',
-   name      => 'checkall',
-   button    => 'select_all_lgreen',
-   js        => qq{onclick="checkAll('} . $checkbox_name . qq{'); return false"},
-   useTable  => 0 &>
-<& /widgets/buttons/submit.mc,
-   disp      => $act_label,
-   widget    => $widget,
-   cb        => $act_cb . '_cb',
-   button    => $act_label,
-   useTable  => 0 &>
+<div class="paginate">
+    <div class="pages">
+        <% $prev_link %>
+%       foreach my $page (0 .. $num_pages) {
+%           if ($page == $offset) {
+                <span class="current"><% $page + 1 %></span>&nbsp;
+%           } else {
+%               my $off = $page * $limit;
+                <a href="<% $url %>?offset=<% $off %>" class="prev"><% $page + 1 %></a>&nbsp;
+%           }
+%       }
+        <% $next_link %>
+    </div>
+% unless ($show_all) {
+    <div class="all"><a href="<% $url %>?show_all=1">Show All</a></div>
+% }
 </div>
+
+% }  # if $num_pages
 
 </div><!-- end .desk -->
 
 <%args>
-$widget
-$wf   => undef
-$desk => undef
-$w_id => undef
-$d_id => undef
 $offset => 0
 $show_all => undef
 </%args>
@@ -56,33 +33,6 @@ my $d = $r->pnotes('desk_asset.objs');    # from desk.mc
 $d->{story} ||= [];  $d->{media} ||= [];  $d->{template} ||= [];
 my $num_objs = @{$d->{story}} + @{$d->{media}} + @{$d->{template}};
 return unless $num_objs;
-$wf ||= Bric::Biz::Workflow->lookup({ id => $w_id }) if defined $w_id;
-$desk ||= Bric::Biz::Workflow::Parts::Desk->lookup({ id => $d_id }) if defined $d_id;
-my ($chk_label, $chk_cb, $act_label, $act_cb);
-if ($desk) {
-    $chk_label = 'Move Assets';
-    $chk_cb    = 'move';
-} else {
-    $chk_label = 'Check In Assets';
-    $chk_cb    = 'checkin';
-}
-if ($desk && $desk->can_publish) {
-    if ($wf && $wf->get_type == TEMPLATE_WORKFLOW) {
-        $act_label = 'deploy_checked_red';
-        $act_cb    = 'deploy';
-    } else {
-        $act_label = 'publish_checked_red';
-        $act_cb    = 'publish';
-    }
-} else {
-    $act_label = 'delete_checked_red';
-    $act_cb    = 'delete';
-}
-
-my $color1 = ($chk_cb eq 'move') ? 'lgreen' : 'red';
-my $color2 = ($act_cb) ? 'red' : 'red';
-my $mod    = ($chk_cb eq 'move') ? 'assets': 'checked';
-my $checkbox_name = $act_cb eq 'delete' ? '_delete_ids' : 'desk_asset|';
 
 # Paging
 my $limit = get_pref('Search Results / Page');

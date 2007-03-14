@@ -1,0 +1,16 @@
+
+-- Project:      Bricolage Business API
+-- File:    Org.val
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Author: David Wheeler <david@justatheory.com>
+
+INSERT INTO org (id, name)
+VALUES ('1', 'Internal');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('428', '3', '3', '1');
+
+INSERT INTO org_member (id, object_id, member__id)
+VALUES ('1', '1', '428'); 

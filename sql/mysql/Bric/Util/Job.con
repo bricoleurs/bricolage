@@ -1,0 +1,111 @@
+-- Project: Bricolage
+-- VERSION: $Revision: 1.1 $
+--
+-- $Date: 2003/02/02 19:46:47 $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+-- 
+-- TABLE: job
+--
+
+ALTER TABLE job ADD CONSTRAINT fk_job__usr
+    FOREIGN KEY (usr__id)
+    REFERENCES usr(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job ADD CONSTRAINT fk_job__class
+    FOREIGN KEY (class__id)
+    REFERENCES class(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job ADD CONSTRAINT fk_job__story_instance
+    FOREIGN KEY (story_instance__id)
+    REFERENCES story_instance(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job ADD CONSTRAINT fk_job__media_instance
+    FOREIGN KEY (media_instance__id)
+    REFERENCES media_instance(id) ON DELETE CASCADE
+;
+
+-- 
+-- TABLE: job__resource
+--
+
+ALTER TABLE job__resource ADD CONSTRAINT fk_job__job__resource
+    FOREIGN KEY (job__id)
+    REFERENCES job(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job__resource ADD CONSTRAINT fk_resource__job__resource
+    FOREIGN KEY (resource__id)
+    REFERENCES resource(id) ON DELETE CASCADE
+;
+
+
+-- 
+-- TABLE: job__server_type
+--
+
+ALTER TABLE job__server_type ADD CONSTRAINT fk_job__job__server_type
+    FOREIGN KEY (job__id)
+    REFERENCES job(id) ON DELETE CASCADE
+;
+
+ALTER TABLE job__server_type ADD CONSTRAINT fk_srvr_type__job__srvr_type
+    FOREIGN KEY (server_type__id)
+    REFERENCES server_type(id) ON DELETE CASCADE
+;
+
+-- 
+-- TABLE: job_member
+--
+
+ALTER TABLE    job_member
+ADD CONSTRAINT fk_job__job_member FOREIGN KEY (object_id)
+REFERENCES     job(id) ON DELETE CASCADE;
+
+ALTER TABLE    job_member
+ADD CONSTRAINT fk_member__job_member FOREIGN KEY (member__id)
+REFERENCES     member(id) ON DELETE CASCADE;
+
+--------------------------------------------------------------------------------
+-- Trigger creation to replace the check constraints until MySQL supports them
+
+DELIMITER |
+
+CREATE TRIGGER ck_priority_tries_insert_job BEFORE INSERT ON job
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
+	        THEN SET NEW.priority=NULL;
+		END IF;        
+    	    IF ((NEW.tries < 0) OR (NEW.tries > 10))
+	        THEN SET NEW.tries=NULL;
+		END IF;        
+        END;
+|
+
+CREATE TRIGGER ck_priority_tries_update_job BEFORE UPDATE ON job
+    FOR EACH ROW 
+	BEGIN
+	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
+	        THEN SET NEW.priority=NULL;
+		END IF;        
+    	    IF ((NEW.tries < 0) OR (NEW.tries > 10))
+	        THEN SET NEW.tries=NULL;
+		END IF;        
+        END;
+|
+
+DELIMITER ;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE job AUTO_INCREMENT 1024;
+ALTER TABLE job_member AUTO_INCREMENT 1024;

@@ -1,0 +1,28 @@
+-- Project: Bricolage
+-- VERSION: $LastChangedRevision$
+--
+-- $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+-- Target DBMS: PostgreSQL 7.1.2
+-- Author: David Wheeler <david@justatheory.com>
+--
+
+ALTER TABLE    contact_value
+ADD CONSTRAINT fk_contact__contact_value FOREIGN KEY (contact__id)
+REFERENCES     contact(id) ON DELETE CASCADE;
+
+ALTER TABLE    person__contact_value
+ADD CONSTRAINT fk_person__p_c_val FOREIGN KEY (person__id)
+REFERENCES     person(id) ON DELETE CASCADE;
+
+
+ALTER TABLE    person__contact_value
+ADD CONSTRAINT fk_contact_value__p_c_val FOREIGN KEY (contact_value__id)
+REFERENCES     contact_value(id) ON DELETE CASCADE;
+
+--
+-- AUTO_INCREMENT;
+-- http://bugs.mysql.com/bug.php?id=21404
+--
+
+ALTER TABLE contact AUTO_INCREMENT 1024;
+ALTER TABLE contact_value AUTO_INCREMENT 1024;

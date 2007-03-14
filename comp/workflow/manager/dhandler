@@ -40,7 +40,7 @@ my $profile = sub {
     } else {
         $ret = [['View', "/workflow/profile/$alt/$id?return=search", '']];
     }
-    push @$ret, [ 'Log', "/admin/events/$type/$id", ''];
+    push @$ret, [ 'Log', "/workflow/events/$type/$id", ''];
     return $ret;
 };
 
@@ -147,12 +147,6 @@ my $fields = {
     media    => [ qw(title version cover_date publish_status) ],
 };
 
-my $sort_by = {
-    template => 'uri',
-    story    => get_pref('Default Asset Sort') || 'title',
-    media    => get_pref('Default Asset Sort') || 'title',
-};
-
 unshift @{$fields->{'media'}}, 'thumb' if USE_THUMBNAILS;
 
 </%once>
@@ -188,6 +182,8 @@ unless ($sites) {
 my @fields = @{$fields->{$type}};
 push @fields, 'site'
   unless $type eq 'template' || @$sites <= 1;
+my $sort_by = $type eq 'template' ? 'uri'
+    : get_pref('Default Asset Sort') || 'title';
 </%init>
 <& '/widgets/wrappers/header.mc',
    title => "Find $pl_name->{$type}",
@@ -208,7 +204,7 @@ push @fields, 'site'
 <& '/widgets/listManager/listManager.mc',
     object    => $type,
     state_key => $type . $work_id,
-    sortBy    => $sort_by->{$type},
+    sortBy    => $sort_by,
     fields    => \@fields,
     alter     => $alter,
     exclude   => $exclude,
