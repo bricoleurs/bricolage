@@ -97,6 +97,10 @@ GNU coreutils, so it will not work out of the box on BSD or OS X. [Marshall]
 
 =item *
 
+Removed extra call to Category->list during cloning. [Scott]
+
+=item *
+
 Added a C<--site> option to C<bric_dev_sync> to limit the templates and
 elements that are synchronized to one site. [Marshall]
 
