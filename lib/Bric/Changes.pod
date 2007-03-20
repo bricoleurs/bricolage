@@ -270,6 +270,11 @@ Beaudet]
 Fixed bugs in C<bric_dev_sync> resulting from the renaming of Elements to
 Element Types. [Marshall]
 
+=item *
+
+Fixed an apparently old bug with editing keywords in the Category Profile,
+where you couldn't Save if there were exactly 3 keywords. [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
