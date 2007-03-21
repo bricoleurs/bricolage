@@ -73,11 +73,12 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 my $kws = $cat->get_keywords;
 # This prevents an alert demanding you fill in the required 'Name'
 my $meths = get_package_name('keyword')->my_meths;
-$meths->{name}{req} = 0;
+my $meths_copy = { %$meths };    # avoids modifying the original $METHS
+$meths_copy->{name}{req} = 0;
 $m->comp('/widgets/add_more/add_more.mc', type => 'keyword', param => \%ARGS,
          fields => [qw(keyword)], name => 'keyword', deleteLabelOnly => 1,
          reset_key => $reset, objs => $kws, incr => 4, no_edit => [qw(keyword)],
-         num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit, meths => $meths,
+         num => @$kws >= 4 ? @$kws + 2 : 4, read_only => $no_edit, meths => $meths_copy,
          formName => 'cat_profile');
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
