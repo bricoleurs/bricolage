@@ -93,7 +93,7 @@ $LastChangedDate$
  # Access Categories
  $cat             = $biz->get_primary_category;
  $biz             = $biz->set_primary_category($cat);
- ($cats || @cats) = $biz->get_secondary_categories;
+ ($cats || @cats) = $biz->get_secondary_categories($sortby);
  $biz             = $biz->add_categories([$category, ...])
  ($cats || @cats) = $biz->get_categories()
  $biz             = $biz->delete_categories([$category, ...]);
@@ -1486,9 +1486,21 @@ sub set_primary_category {
 
 ################################################################################
 
-=item (@cats || $cats) = $story->get_secondary_categories()
+=item (@cats || $cats) = $story->get_secondary_categories( $sortby )
 
-Returns the non-primary categories that are associated with this story
+Returns the non-primary categories that are associated with this story. Takes 
+an optional sort by field.
+
+Supported Keys:
+
+=over 4
+
+=item *
+
+uri - Sort in alphabetically ascending uri order.
+
+=back 
+
 
 B<Throws:>
 
@@ -1505,7 +1517,7 @@ NONE
 =cut
 
 sub get_secondary_categories {
-    my ($self) = @_;
+    my ($self,$sort) = @_;
     my $cats = $self->_get_categories();
     my @seconds;
     my $reset;
@@ -1528,6 +1540,13 @@ sub get_secondary_categories {
         $self->_set({ '_categories' => $cats });
         $self->_set__dirty($dirty);
     }
+	if (($sort) && ($sort eq 'uri')) {
+	    @seconds =
+	      map  { $_->[1]                  }
+		  sort { $a->[0] cmp $b->[0]      }
+	      map  { [ lc $_->get_uri => $_ ] }
+		  @seconds; 
+	};
     return wantarray ? @seconds : \@seconds;
 }
 
