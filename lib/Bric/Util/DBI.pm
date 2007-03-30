@@ -1745,6 +1745,8 @@ B<Notes:> NONE.
 
 sub _connect {
     my $dbh = eval {
+        # Prevent using the same connection across processes.
+        $ATTR->{bric_process_id} = $$;
         my $d = DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
                                     CONNECT_USER, CONNECT_PASS, $ATTR);
         # Make sure we're consistent about what we think the transaction
