@@ -280,6 +280,11 @@ Element Types. [Marshall]
 Fixed an apparently old bug with editing keywords in the Category Profile,
 where you couldn't Save if there were exactly 3 keywords. [Scott]
 
+=item *
+
+Fixed pasto in <LBric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> that should
+have prevented it from ever working, but somehow did not. [David P. Beaudet]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)

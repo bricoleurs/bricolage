@@ -342,7 +342,7 @@ $sftp_args = sub {
         push @ssh_args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
     }
 
-    (my $hn = $s->get_host_name) =~ s/:\d+$//;
+    (my $hn = $server->get_host_name) =~ s/:\d+$//;
     return (
         $hn,
         debug    => DEBUG,
