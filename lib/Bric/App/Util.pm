@@ -53,6 +53,7 @@ use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
 use Bric::Util::Priv::Parts::Const qw(:all);
+use URI;
 use URI::Escape;
 
 #==============================================================================#
@@ -591,8 +592,14 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
+
+    # escape the path+query part if necessary
+    my $uri = URI->new($loc);
+    my $pq = $uri->path_query;
+    $uri->path_query($pq);
+
     my $js  = sprintf q{<script>location.href='%s';</script>\n},
-                      uri_escape($loc);
+                      $uri;
 
     if (my $m = HTML::Mason::Request->instance) {
         # Use the Mason request object.
