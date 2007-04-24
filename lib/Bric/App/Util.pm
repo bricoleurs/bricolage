@@ -582,7 +582,7 @@ browser and to abort the request.
 
 B<Throws:> NONE.
 
-B<Side Effects:> Becuase C<redirect_onload()> executes immediately, if it is
+B<Side Effects:> Because C<redirect_onload()> executes immediately, if it is
 called from a callback, note that no further callbacks will be executed, not
 even post-callback request callbacks.
 
