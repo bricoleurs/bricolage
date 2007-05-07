@@ -209,7 +209,7 @@ sub test_oc_id : Test(14) {
         "Construct document" );
     # Add the new output channel to it and save it.
     ok( $ba->add_output_channels($oc), "Add bogus OC" );
-    ok( $ba->save, "Save docuument" );
+    ok( $ba->save, "Save document" );
 
     # Save the ID for cleanup.
     ok( my $id = $ba->get_id, "Get ID" );

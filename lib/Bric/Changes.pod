@@ -110,10 +110,15 @@ Various minor notes tweaks, including the elimination of version 0 notes from
 the UI, and we no longer include the note from the previous version in the
 form for the new version. [David Beaudet]
 
-=item * 
+=item *
 
 Added optional sortby parameter to $story->get_secondary_categories to allow
 sorting by uri. Returns default order if not given. [Paul Orrock]
+
+=item *
+
+Fixed typo in 'Story' element type description. Reported (bug 1289) by
+Brad Harder. [Scott]
 
 =back
 
