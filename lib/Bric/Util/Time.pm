@@ -318,7 +318,7 @@ sub datetime {
     return unless $date;
     $tz ||= Bric::Util::Pref->lookup_val('Time Zone');
     my $dt = eval {
-        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?$/;
+        $date =~ m/^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)(\.\d*)?/;
         DateTime->new( year       => $1,
                        month      => $2,
                        day        => $3,

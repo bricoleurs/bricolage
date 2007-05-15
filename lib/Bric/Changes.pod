@@ -290,6 +290,12 @@ where you couldn't Save if there were exactly 3 keywords. [Scott]
 Fixed pasto in <LBric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> that should
 have prevented it from ever working, but somehow did not. [David P. Beaudet]
 
+=item *
+
+Fixed the datetime-handling regex in L<Bric::Util::Time|Bric::Util::Time>'s
+C<datetime> function, introduced in version 1.9.0. It was failing on datetimes
+that end with 'Z' (c.f. ISO 8601). [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
