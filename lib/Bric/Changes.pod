@@ -287,7 +287,7 @@ where you couldn't Save if there were exactly 3 keywords. [Scott]
 
 =item *
 
-Fixed pasto in <LBric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> that should
+Fixed pasto in L<Bric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> that should
 have prevented it from ever working, but somehow did not. [David P. Beaudet]
 
 =item *
