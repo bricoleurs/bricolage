@@ -120,6 +120,10 @@ sorting by uri. Returns default order if not given. [Paul Orrock]
 Fixed typo in 'Story' element type description. Reported (bug 1289) by
 Brad Harder. [Scott]
 
+=item *
+
+Fixed German localization of javascript error messages. [Steffen Schwigon]
+
 =back
 
 =head2 Bug Fixes
