@@ -222,7 +222,7 @@ sub organize_media {
     } elsif (-f _ and $media_source =~ /.*\.zip$/) {
         $media_source_type = 'zip';
     } else {
-+        die "Unrecognized media source '$media_source' - must be a directory or a .tar or .zip file.\n";
+        die "Unrecognized media source '$media_source' - must be a directory or a .tar or .zip file.\n";
      }
 
     # initialize start_path and set it to $media_source if media_source is dir
