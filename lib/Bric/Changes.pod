@@ -124,6 +124,11 @@ Brad Harder. [Scott]
 
 Fixed German localization of javascript error messages. [Steffen Schwigon]
 
+=item *
+
+When saving from the Keyword Profile, the message 'Keyword profile "Name"
+saved.' was using the previous Name instead of the updated one. [Scott]
+
 =back
 
 =head2 Bug Fixes
