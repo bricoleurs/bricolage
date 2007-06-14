@@ -126,6 +126,11 @@ Fixed German localization of javascript error messages. [Steffen Schwigon]
 
 =item *
 
+Increased length of full names of categories to be 128 characters from 64
+[Paul Orrock]
+
+=item *
+
 When saving from the Keyword Profile, the message 'Keyword profile "Name"
 saved.' was using the previous Name instead of the updated one. [Scott]
 

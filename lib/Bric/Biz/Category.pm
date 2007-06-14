@@ -524,7 +524,7 @@ sub my_meths {
                               set_args => [],
                               disp     => 'Name',
                               type     => 'short',
-                              len      => 64,
+                              len      => 128,
                               req      => 1,
                               props    => { type       => 'text',
                                             length     => 32,
