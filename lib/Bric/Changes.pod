@@ -131,6 +131,11 @@ F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
 
 Updated the Portuguese localizations. [Pedro Custodio]
 
+=item *
+
+Added the C<related_story_id> and C<related_media_id> parameters to
+C<< Bric::Biz::Element::Container->list()>. [David]
+
 =back
 
 =head2 Bug Fixes

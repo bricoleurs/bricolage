@@ -414,6 +414,18 @@ must be C<NULL>. May use C<ANY> for a list of possible values.
 The ID of the Bric::Biz::ElementType object that specifies the structure of the
 container elements. May use C<ANY> for a list of possible values.
 
+=item related_story_id
+
+The ID of a Bric::Biz::Asset::Business::Story object that may be related to
+container elements. Pass C<undef> to this parameter to specify that the
+C<parent_id> must be C<NULL>. May use C<ANY> for a list of possible values.
+
+=item related_media_id
+
+The ID of a Bric::Biz::Asset::Business::Media object that may be related to
+container elements. Pass C<undef> to this parameter to specify that the
+C<parent_id> must be C<NULL>. May use C<ANY> for a list of possible values.
+
 =item active
 
 A boolean value indicating whether the returned data elements are active or
@@ -1814,6 +1826,13 @@ sub _do_list {
 
         elsif ($k eq 'element_type_id' || $k eq 'element_id') {
             push @wheres, any_where $v, 'e.element_type__id = ?', \@params;
+        }
+
+        elsif ($k eq 'related_media_id' || $k eq 'related_story_id') {
+            ($col = $key) =~ s/_id$/__id/;
+            push @wheres, defined $v
+                ? any_where($v, "e.$col = ?", \@params)
+                : "e.$col IS NULL";
         }
 
         elsif ($k eq 'key_name' || $k eq 'name' || $k eq 'description') {
