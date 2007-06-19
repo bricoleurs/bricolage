@@ -144,6 +144,11 @@ reverse proxying to work in Apache2. [Steffen Schwigon]
 Made category browser show only categories in the same site as the story,
 fix for bug 1249. [Scott]
 
+=item *
+
+Fixed bug 1251, the list of Element Types when uploading a new media from
+a related media subelement is constrained to those in the current site. [Scott]
+
 =back
 
 =head2 Bug Fixes
