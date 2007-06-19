@@ -136,11 +136,6 @@ saved.' was using the previous Name instead of the updated one. [Scott]
 
 =item *
 
-For bug 1267, remove protocol+hostname+port from a login URL in order to allow
-reverse proxying to work in Apache2. [Steffen Schwigon]
-
-=item *
-
 Made category browser show only categories in the same site as the story,
 fix for bug 1249. [Scott]
 
