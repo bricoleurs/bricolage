@@ -253,7 +253,7 @@ if ($checkin_opts || $move_opts) {
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);
 my $alias = '';
-my $site = $obj->get_site;
+my $site = $obj->get_site->get_name;
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 
 my $vlabel = $can_edit && $checked_out_by_current_user ? 'Edit' : 'View';
