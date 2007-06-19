@@ -136,7 +136,8 @@ saved.' was using the previous Name instead of the updated one. [Scott]
 
 =item *
 
-Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
+For bug 1267, remove protocol+hostname+port from a login URL in order to allow
+reverse proxying to work in Apache2. [Steffen Schwigon]
 
 =back
 
@@ -313,6 +314,10 @@ have prevented it from ever working, but somehow did not. [David P. Beaudet]
 Fixed the datetime-handling regex in L<Bric::Util::Time|Bric::Util::Time>'s
 C<datetime> function, introduced in version 1.9.0. It was failing on datetimes
 that end with 'Z' (c.f. ISO 8601). [Scott]
+
+=item *
+
+Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
 
 =back
 
