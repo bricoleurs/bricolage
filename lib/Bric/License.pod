@@ -258,6 +258,8 @@ Folks who have submitted patches include:
 
 =item * Steffen Schwigon
 
+=item * Bret Dawson
+
 =back
 
 Friends who have spotted bugs include:

@@ -134,6 +134,10 @@ Increased length of full names of categories to be 128 characters from 64
 When saving from the Keyword Profile, the message 'Keyword profile "Name"
 saved.' was using the previous Name instead of the updated one. [Scott]
 
+=item *
+
+Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
+
 =back
 
 =head2 Bug Fixes
