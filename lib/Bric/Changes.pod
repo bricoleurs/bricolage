@@ -319,6 +319,10 @@ that end with 'Z' (c.f. ISO 8601). [Scott]
 
 Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
 
+=item *
+
+Fixed bug 1283, allowing C<< <= >> in Alerts. [Brad Fox]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
