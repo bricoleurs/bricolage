@@ -11,4 +11,6 @@ do_sql
 	q{UPDATE category SET new_name = CAST(name AS varchar(128)},
     q{ALTER TABLE category DROP COLUMN name},
     q{ALTER TABLE category RENAME new_name TO name},
+	q{DROP INDEX idx_category__name},
+	q{CREATE INDEX idx_category__name ON category(LOWER(name))}
 ;
