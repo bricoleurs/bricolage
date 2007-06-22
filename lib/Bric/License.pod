@@ -422,6 +422,8 @@ Friends who have spotted bugs include:
 
 =item * Dan McGarry
 
+=item * Matt Rolf
+
 =back
 
 Bricolage's translation team:

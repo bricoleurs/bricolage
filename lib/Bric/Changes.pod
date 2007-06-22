@@ -328,6 +328,11 @@ Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
 
 Fixed bug 1283, allowing C<< <= >> in Alerts. [Brad Fox]
 
+=item *
+
+Fixed pasto causing C<Can't locate object method "get_grp_ids" via package "id">
+error in Element Profile. Reported by Matt Rolf. [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
