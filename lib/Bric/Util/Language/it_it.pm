@@ -473,6 +473,9 @@ our %Lexicon = (
 
 To translate:
 
+   'Shelve'
+   'and Shelve'
+   'and'
   'Slug required for non-fixed (non-cover) story type.'
 
   'Cannot both delete and make primary a single output channel.'

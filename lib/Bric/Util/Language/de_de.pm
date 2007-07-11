@@ -334,6 +334,7 @@ our %Lexicon = (
   'all' => 'alle',
   'one per line' => 'eines pro Zeile',
   'to' => 'auf',
+  'and' => 'und',
 
 # Action Commands
 
@@ -395,6 +396,8 @@ our %Lexicon = (
    'New Template' => 'Neue Vorlage',
    'Preview in' => 'Vorschau in',
    'Publish' => 'Veröffentlichen',
+   'Shelve' => 'Beiseite legen',
+   'and Shelve' => 'und Beiseite legen',
    'Relate' => 'In Bezug bringen',
    'Remove' => 'Löschen',
    'Repeat new password' => 'Neues Passwort wiederholen',

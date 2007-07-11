@@ -712,6 +712,9 @@ our %Lexicon = (
 
 To translate:
 
+   'Shelve'
+   'and Shelve'
+   'and'
   'Slug required for non-fixed (non-cover) story type.' => 'Slug required for non-fixed (non-cover) story type.',
   '[_1] Site [_2] Permissions' => '[_1] Site [_2] Permissions', # Site Category Permissions
   'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'

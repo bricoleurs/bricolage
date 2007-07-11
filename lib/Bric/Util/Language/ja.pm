@@ -4,7 +4,7 @@ package Bric::Util::Language::ja;
 
 =head1 NAME
 
-Bric::Util::Language::de_de - Bricolage German translation
+Bric::Util::Language::ja - Bricolage Japanese translation
 
 =head1 VERSION
 
@@ -24,7 +24,7 @@ $LastChangedDate: 2006-01-23 15:34:28 -0800 (Mon, 23 Jan 2006) $
 
 =head1 DESCRIPTION
 
-Translation to German using Lang::Maketext.
+Translation to Japanese using Lang::Maketext.
 
 =cut
 
@@ -35,6 +35,12 @@ use base qw(Bric::Util::Language);
 use constant key => 'ja';
 
 =begin comment
+
+To translate:
+
+   'Shelve'
+   'and Shelve'
+   'and'
 
 our %Lexicon = (
 

@@ -144,6 +144,11 @@ fix for bug 1249. [Scott]
 Fixed bug 1251, the list of Element Types when uploading a new media from
 a related media subelement is constrained to those in the current site. [Scott]
 
+=item *
+
+Localization patch for the "and" and "to" of "and Shelve", etc., with German
+translations from Steffen Schwigon. [Scott]
+
 =back
 
 =head2 Bug Fixes

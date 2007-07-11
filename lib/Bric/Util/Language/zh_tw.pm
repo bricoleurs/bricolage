@@ -696,6 +696,9 @@ our %Lexicon =
 =begin comment
 
 To translate:
+   'Shelve'
+   'and Shelve'
+   'and'
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'All Categories' => '所有分類',
   'Object Groups' => '物件群組',
