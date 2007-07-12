@@ -405,6 +405,29 @@ For a large database on a system with lots of memory, you can assign more. A
 value of 75000 should be more than enough for expected activity in a 1 GB
 database.
 
+=head2 Genetic Query Optimizer
+
+The Genetic Query Optimizer (or GEQO) is an algorithm that attempts to do
+query planning without exhaustive searching. It can be very useful when you
+execute a query with a lot of joins. Note, however, that GEQO queries
+generally run more slowly than regular queries. In particular, in some
+installations of Bricolage, templates calling C<<
+Bric::Biz::Assset::Business::Story->list >> with a lot of parameters have been
+found to really confuse the GEQO. For that reason, if you your templates pass
+a parameters to C<< Bric::Biz::Assset::Business::Story->list >> that cause
+many tables to be joined, we recommend that you increase the value of
+C<geqo_threshold> to greater than the number of joined tables. In one
+installation, we found that setting
+
+  geqo_threshold = 15
+
+reduced query times from 20 minutes or more to under a second. You'll know
+that you need to tweak this setting when you find that publish jobs just go on
+forever and never finish. Note, also, that such queries may run quickly in one
+run, and then much longer in subsequent runs on the same connection. If you
+don't notice execution times that are that slow, you can probably leave this
+paramter alone.
+
 =head2 Where to Learn More
 
 =over
