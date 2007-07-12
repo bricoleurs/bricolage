@@ -149,6 +149,11 @@ a related media subelement is constrained to those in the current site. [Scott]
 Localization patch for the "and" and "to" of "and Shelve", etc., with German
 translations from Steffen Schwigon. [Scott]
 
+=item *
+
+Added notes about PostgreSQL's genetic query optimizer and its hate for
+Bricolage queries to L<Bric::DBA|Bric::DBA>. [David]
+
 =back
 
 =head2 Bug Fixes
