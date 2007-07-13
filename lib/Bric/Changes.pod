@@ -348,6 +348,13 @@ error in Element Profile. Reported by Matt Rolf. [Scott]
 When adding subelements to an ElementType profile, subelements that have already
 been added are no longer listed. Reported by Phillip Smith in bug 1253. [Scott]
 
+=item *
+
+Stopped the upgrade script F<inst/upgrade/1.9.1/delete_old_stuff.pl> from
+incorrectly deleting F<lib/Bric/App/Callback/Profile/ElementType.pm>,
+which is still in use. If you've upgraded from before 1.9.1, you'll have to
+copy that file from the distribution source. [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
