@@ -343,6 +343,11 @@ Fixed bug 1283, allowing C<< <= >> in Alerts. [Brad Fox]
 Fixed pasto causing C<Can't locate object method "get_grp_ids" via package "id">
 error in Element Profile. Reported by Matt Rolf. [Scott]
 
+=item *
+
+When adding subelements to an ElementType profile, subelements that have already
+been added are no longer listed. Reported by Phillip Smith in bug 1253. [Scott]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
