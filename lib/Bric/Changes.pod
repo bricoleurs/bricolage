@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.3 (2006-10-?)
+=head1 RELEASE CANDIDATE 1 for 1.10.3 (2007-07-25)
 
 =head2 Improvements
 
@@ -168,7 +168,7 @@ contributor group. Reported by Joe Pletcher. [David]
 =item *
 
 Fixed some foreign key constraints in the C<story_instance> and
-C<template_instance> tables that improperly has C<ON DELETE SET NULL> clauses
+C<template_instance> tables that improperly have C<ON DELETE SET NULL> clauses
 on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
 
 =item *
@@ -186,7 +186,7 @@ permission to create the F<inst/Pg.sql> file. [David]
 
 C<make clone> no longer runs C<distclean>, and therefore no longer deletes
 F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
-directory, instead over replacing the existing F<Pg.sql>. [David]
+directory, instead of replacing the existing F<Pg.sql>. [David]
 
 =item *
 
@@ -241,20 +241,20 @@ upgrade. Reported by Chris Schults (Ticket # 1239). [David]
 
 =item *
 
-Story and media subelements are once again proparly deleted from within their
+Story and media subelements are once again properly deleted from within their
 profiles when the "Delete this Profile" checkbox is checked and either the
-"Save" or the "Save and Stay" is pressed. Reported by Chris Schults (Ticket #
-1240). [David]
+"Save" or the "Save and Stay" button is pressed. Reported by Chris Schults
+(Ticket #1240). [David]
 
 =item *
 
-Searches for media to relate to a document that search by URI now properly
+Searches by URI for media to relate to a document now properly
 remember the search results the next time the related media search page is
 loaded. Reported by Chris Schults (Ticket # 1241). [David]
 
 =item *
 
-`make dev` no longer supports the "single" installation mode, since it has
+`make dev` no longer supports the "single" installation mode, since it
 will wipe out all of F</usr/local/lib> and F</usr/local/bin>. Reported by
 Christian Muise (Ticket # 1246). [David]
 
