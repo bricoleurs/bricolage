@@ -1225,6 +1225,9 @@ sub set_category__id {
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
 
+    # If we've changed the category we need to repreview it if on autopreview
+    $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
+
     $self->_set([qw(_category_obj category__id uri    grp_ids   _update_uri)] =>
                 [   $cat,         $cat_id,     $uri, \@grp_ids, $update_uri]);
 
