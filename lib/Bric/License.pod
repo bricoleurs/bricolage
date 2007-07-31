@@ -260,6 +260,8 @@ Folks who have submitted patches include:
 
 =item * Bret Dawson
 
+=item * Rolf Schaufelberger
+
 =back
 
 Friends who have spotted bugs include:
