@@ -351,12 +351,13 @@ incorrectly deleting F<lib/Bric/App/Callback/Profile/ElementType.pm>,
 which is still in use. If you've upgraded from before 1.9.1, you'll have to
 copy that file from the distribution source. [Scott]
 
-=item* 
+=item *
 
 Changing the category of a media object now calls a preview of the asset if 
 AUTO_PREVIEW_MEDIA is turned on. [Paul Orrock]
 
-=item*
+=item *
+
 For bug 1267, remove protocol+hostname+port from a login URL in order to allow
 reverse proxying to work in Apache2. [Steffen Schwigon]
 
