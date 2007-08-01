@@ -356,6 +356,10 @@ copy that file from the distribution source. [Scott]
 Changing the category of a media object now calls a preview of the asset if 
 AUTO_PREVIEW_MEDIA is turned on. [Paul Orrock]
 
+=item*
+For bug 1267, remove protocol+hostname+port from a login URL in order to allow
+reverse proxying to work in Apache2. [Steffen Schwigon]
+
 =back
 
 =head1 VERSION 1.10.2 "Summer" (2006-06-22)
