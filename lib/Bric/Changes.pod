@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 RELEASE CANDIDATE 1 for 1.10.3 (2007-07-25)
+=head1 RELEASE CANDIDATE 2 for 1.10.3 (2007-08-02)
 
 =head2 Improvements
 
