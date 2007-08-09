@@ -14,13 +14,13 @@ $LastChangedRevision$
 
 =item Release Version
 
-1.10.4
+1.10.3
 
 =cut
 
 # Set the Version Number.
 BEGIN {
-    our $VERSION = '1.10.4';
+    our $VERSION = '1.10.3';
 }
 
 =item Date
