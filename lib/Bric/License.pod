@@ -262,6 +262,8 @@ Folks who have submitted patches include:
 
 =item * Rolf Schaufelberger
 
+=item * Greg Heo
+
 =back
 
 Friends who have spotted bugs include:

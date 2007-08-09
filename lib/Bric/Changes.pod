@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 RELEASE CANDIDATE 2 for 1.10.3 (2007-08-02)
+=head1 VERSION 1.10.3 "Finally" (2007-08-09)
 
 =head2 Improvements
 
@@ -360,6 +360,10 @@ AUTO_PREVIEW_MEDIA is turned on. [Paul Orrock]
 
 For bug 1267, remove protocol+hostname+port from a login URL in order to allow
 reverse proxying to work in Apache2. [Steffen Schwigon]
+
+=item *
+
+Fixed contributor type creation (bug 1299). [Greg Heo]
 
 =back
 
