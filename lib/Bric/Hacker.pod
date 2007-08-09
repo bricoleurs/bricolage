@@ -650,7 +650,7 @@ Subversion branches.
 
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
-tarball. First, proof-read the list of changes in Bric::Changes. Be sure
+tarball. First, proof-read the list of changes in L<Bric::Changes>. Be sure
 to add today's date to the header for the new release:
 
   =head1 VERSION 1.x.x (2003-11-29)
@@ -717,7 +717,9 @@ tag the release. Again, it's a simple copy:
 The tag is mainly kept for the purposes of record-keeping. And since copies
 are cheap in Subversion, it's worthwhile.
 
-At this point, you might want to add the next version to inst/versions.txt.
+At this point, you can add the next version to inst/versions.txt, change the
+version in F<lib/Bric.pm> and F<README>, add a new section to the top of
+L<Bric::Changes>, and add a new directory to F<inst/upgrade/>.
 
 =head2 Documentation Generation
 
