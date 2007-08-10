@@ -16,6 +16,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
+=item *
+
+More German corrections. [Steffen Schwigon]
+
 =back
 
 =head2 Bug Fixes
