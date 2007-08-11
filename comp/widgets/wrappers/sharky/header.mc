@@ -23,7 +23,7 @@ HTML wrapper for top and side navigation.
 
 </%doc>
 <%args>
-$title   => get_pref('Bricolage Instance Name')
+$title   => 'Bricolage'
 $jsInit  => ""
 $context
 $useSideNav => 1
@@ -79,7 +79,7 @@ if(ref($title) eq 'ARRAY') {
 <link rel="stylesheet" type="text/css" href="/media/css/i18n/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/i18n/<% $lang_key %>_messages.js"></script>
-<title><% $title %></title>
++<title><% $title %> | <% get_pref('Bricolage Instance Name') %></title>
 <script type="text/javascript"><!--
 var lang_key = '<% $lang_key %>';
 var checkboxValues = new Array();

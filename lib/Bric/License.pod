@@ -264,6 +264,8 @@ Folks who have submitted patches include:
 
 =item * Greg Heo
 
+=item * Phillip Smith
+
 =back
 
 Friends who have spotted bugs include:
@@ -381,8 +383,6 @@ Friends who have spotted bugs include:
 =item * JosE<eacute> Castro
 
 =item * Alexandra Gershman
-
-=item * Phillip Smith
 
 =item * Guido BE<uuml>lskE<auml>mper
 

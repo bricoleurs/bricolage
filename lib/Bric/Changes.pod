@@ -14,6 +14,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Improvements
 
+=item *
+
+Nicer use of the "Bricolage Instance Name" preference, now used on every page.
+[Phillip Smith]
+
 =over
 
 =item *
