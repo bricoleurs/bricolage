@@ -1,25 +1,5 @@
 package Bric::Util::Burner;
 ##############################################################################
-sub find_workflow {
-    my ($site_id, $type, $perm, $asset) = @_;
-    my @wfs = $asset ? Bric::Biz::Workflow->list({
-        type    => $type,
-        site_id => $site_id,
-        desk_id => $asset->get_desk_id,
-    }) : ();
-
-    push @wfs, Bric::Biz::Workflow->list({
-        type    => $type,
-        site_id => $site_id,
-    });
-
-    for my $wf (@wfs) {
-        return $wf if chk_authz(
-            0, $perm, 1, $wf->get_asset_grp_id, $wf->get_grp_ids
-        );
-    }
-    return undef;
-}
 
 =head1 NAME
 
