@@ -227,7 +227,7 @@ sub logout_handler {
                                     "https://$hostname$ssl_port/login");
             } elsif ($r->get_server_port == &SSL_PORT) {
                 $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "http://$hostname$port/logout?goodbye");
+                                    "/logout?goodbye");
                 return HTTP_MOVED_TEMPORARILY;
             } else {
                 $r->custom_response(HTTP_MOVED_TEMPORARILY,
@@ -235,7 +235,7 @@ sub logout_handler {
                 return HTTP_MOVED_TEMPORARILY;
             }
         } else {
-            $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
+            $r->custom_response(FORBIDDEN, "/login");
         }
         return FORBIDDEN;
     };

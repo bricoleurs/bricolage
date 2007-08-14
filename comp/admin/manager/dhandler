@@ -180,9 +180,9 @@ my $prefix = '';
 if ($type eq 'user') {
     # We'll probably need to redirect them to ssl if its enabled
     if (get_state_name('login') ne 'ssl') {
-    my ($http, $p) = SSL_ENABLE ? ('https://', $ssl_port)
-      : ('http://', $port);
-    $prefix = $http . $r->hostname . $p;
+        if (SSL_ENABLE) {
+            $prefix = 'https://' . $r->hostname . $ssl_port;
+        }
     }
 }
 
@@ -300,7 +300,6 @@ my $job_type_sub = sub {
 };
 
 # We'll use these variables for redirection relative to the user profiles.
-my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 # Define the look and feel for each type of manager.

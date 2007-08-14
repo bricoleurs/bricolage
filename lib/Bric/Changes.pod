@@ -31,6 +31,12 @@ More German corrections. [Steffen Schwigon]
 
 =over
 
+=item *
+
+More changes around bug 1267, remove protocol+hostname+port from 
+practically all redirects (especially "user profiles") in order to 
+allow reverse proxying to work in Apache2. [Steffen Schwigon]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)
