@@ -266,8 +266,6 @@ Folks who have submitted patches include:
 
 =item * Phillip Smith
 
-=item * George Heo
-
 =back
 
 Friends who have spotted bugs include:

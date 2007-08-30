@@ -25,6 +25,12 @@ Nicer use of the "Bricolage Instance Name" preference, now used on every page.
 
 More German corrections. [Steffen Schwigon]
 
+=item *
+
+Documented the need to look at
+L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk> in
+L<Bric::Biz::Asset|Bric::Biz::Asset>'s C<set_desk_id()> method. [Greg Heo]
+
 =back
 
 =head2 Bug Fixes
