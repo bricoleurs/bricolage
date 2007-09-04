@@ -47,7 +47,7 @@ use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
 use HTML::Mason::Request;
-use Apache::Constants qw(HTTP_OK);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(HTTP_OK);
 use Apache::Util qw(escape_html);
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
@@ -490,7 +490,7 @@ sub del_redirect {
     # cookies to 2nd server build hash of cookies from blessed reference into
     # Apache::Tables
     my %cookies;
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
     $r->err_headers_out->do(sub {
         my($k,$v) = @_;     # foreach key matching Set-Cookie
         ($k,$v) = split('=',$v,2);
@@ -698,7 +698,7 @@ sub log_history {
     my $session = Bric::App::Session->instance();
     my $history = $session->{'_history'};
 
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
     my $curr = $r->uri;
 
     # Only push this URI onto the stack if it is different than the top value

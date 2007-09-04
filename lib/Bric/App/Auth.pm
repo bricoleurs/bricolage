@@ -49,7 +49,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Apache::Constants qw(:common);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(:common);
 use Apache::Log;
 use Bric::Config qw(:auth :cookies);
 use Bric::App::Session qw(:user);

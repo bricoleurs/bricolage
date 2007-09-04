@@ -73,8 +73,15 @@ use Bric::Config qw(:qa :mod_perl CACHE_DEBUG_MODE);
 
 # Load the Apache modules if we're in mod_perl.
 if (defined MOD_PERL) {
-    require Apache;
-    require Apache::Request;
+    if (MOD_PERL_VERSION < 2)
+    {
+        require Apache;
+        require Apache::Request;
+    }
+    else
+    {
+        require Apache2::Request;
+    }
 }
 
 

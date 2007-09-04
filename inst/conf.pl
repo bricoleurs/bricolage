@@ -148,6 +148,7 @@ sub create_httpd_conf {
     set_httpd_var(\$httpd, User         => $AP->{user});
     set_httpd_var(\$httpd, Group        => $AP->{group});
     set_httpd_var(\$httpd, ServerName   => $AP->{server_name});
+    delete_httpd_var(\$httpd, ServerType => 'standalone') unless $REQ->{APACHE_VERSION}[0] == 1;
 
     # paths
     my $root    = $CONFIG->{BRICOLAGE_ROOT};
@@ -205,27 +206,32 @@ sub create_httpd_conf {
             if ($mod eq 'log_config'|| $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
                 if ($AP->{load_modules}{"${mod}_module"}) {
-                    $dso_section .= "LoadModule \t config_log_module " .
-                      $AP->{load_modules}{"${mod}_module"} . "\n" .
-                        "AddModule \t mod_log_config.c\n\n";
+                    # Apache 2 hates config_log_module
+                    $dso_section .= "LoadModule \t ". ($REQ->{APACHE_VERSION}[0] == '1' ? 'config_log_module ' : 'log_config_module ') .
+                      $AP->{load_modules}{"${mod}_module"} . "\n" . 
+                        # Apache 2 also hates AddModule
+                        ($REQ->{APACHE_VERSION}[0] == '1' ? "AddModule \t mod_log_config.c\n\n" : "\n");
                 }
             } elsif ($mod eq 'gzip') {
                 # Load optional module mod_gzip
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t ${mod}_module " .
                         $AP->{load_modules}{"${mod}_module"} . "\n";
-                    $dso_section .= "AddModule \t mod_$mod.c\n\n";
+                    $dso_section .= "AddModule \t mod_$mod.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
+                    $dso_section .= "\n";
                 }
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t apache_ssl.c\n\n";
+                $dso_section .= "AddModule \t apache_ssl.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
+                $dso_section .= "\n";
             } else {
                 next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t mod_$mod.c\n\n";
+                $dso_section .= "AddModule \t mod_$mod.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
+                $dso_section .= "\n";
             }
         }
 
@@ -251,6 +257,18 @@ sub set_httpd_var {
         return $1.$val;
     } else {
         hard_fail("Unable to set httpd.conf variable $var to \"$val\".");
+    }
+}
+
+# removes vars in $$httpd
+sub delete_httpd_var {
+    my ($httpd, $var, $val, $global) = @_;
+    if ($global && $$httpd =~ s/^(\s*$var\s+).*$//gmi) {
+        return 1;
+    } elsif ($$httpd =~ s/^(\s*$var\s+).*$//mi) {
+        return 1;
+    } else {
+        hard_fail("Unable to remove httpd.conf variable $var and the value \"$val\".");
     }
 }
 

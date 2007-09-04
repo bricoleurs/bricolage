@@ -148,7 +148,7 @@ sub chk_authz {
         my $id = $obj->get_id;
         $id = '' unless defined $id;
         my $key = "_AUTHZ_:$ref:$id";
-        my $r = Apache::Request->instance(Apache->request);
+        my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
         unless (defined ($perm = $r->pnotes($key))) {
             $perm = get_user_object()->what_can($obj, @gids);
             $r->pnotes($key, $perm);

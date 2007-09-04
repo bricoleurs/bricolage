@@ -54,7 +54,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Apache::Constants qw(OK);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(OK);
 use Bric::App::Session;
 use Bric::App::Event qw(commit_events);
 use Bric::Util::DBI qw(:trans);

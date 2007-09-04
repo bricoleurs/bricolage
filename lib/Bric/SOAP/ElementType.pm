@@ -474,7 +474,7 @@ sub load_asset {
         # Convert the name to a key name, if needed.
         unless (defined $edata->{key_name}) {
             ($edata->{key_name} = lc $edata->{name}) =~ y/a-z0-9/_/cs;
-            my $r = Apache::Request->instance(Apache->request);
+            my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
             $r->log->warn("No key name in element type loaded via SOAP. "
                           . "Converted '$edata->{name}' to "
                           . "'$edata->{key_name}'");

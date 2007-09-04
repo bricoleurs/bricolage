@@ -11,7 +11,7 @@ use Bric::Config qw(FULL_SEARCH);
 use Bric::Util::DBI qw(ANY);
 
 sub no_new_search {
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
     $r->pnotes(CLASS_KEY . '.no_new_search' => 1);
 }
 

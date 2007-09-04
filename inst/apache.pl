@@ -166,9 +166,13 @@ sub get_dso_data {
     while ($AP{conf} =~ /^\s*LoadModule\s+(\S+)\s+(.*)$/gm) {
         $AP{load_modules}{$1} = $2;
     }
-    # get a hash of add module directives
-    while ($AP{conf} =~ /^\s*AddModule\s+(\w+).c$/gm) {
-        $AP{add_modules}{$1} = 1;
+    # Apache 2 does not support AddModule
+    if ($REQ->{APACHE_VERSION}[0] == '1')
+    {
+        # get a hash of add module directives
+        while ($AP{conf} =~ /^\s*AddModule\s+(\w+).c$/gm) {
+            $AP{add_modules}{$1} = 1;
+        }
     }
 }
 
@@ -200,17 +204,24 @@ sub check_modules {
                  ( $mod eq 'apache_ssl' && $AP{add_modules}{$mod})) and
                 $AP{load_modules}{"${mod}_module"}                  and
                 -e catfile($AP{HTTPD_ROOT}, 
-                           $AP{load_modules}{"${mod}_module"})) {
+                           $AP{load_modules}{"${mod}_module"})) 
+            {
                 $AP{$mod} = 1 if $mod =~ /ssl$/;
                 next MOD;
             # On some platforms, "log_config" can actually be loaded via
             # AddModule as "config_log".
-            } elsif ($mod eq 'log_config' and $AP{add_modules}{"mod_$mod"} and
-                     $AP{load_modules}{config_log_module}                  and
-                     -e catfile($AP{HTTPD_ROOT},
-                                 $AP{load_modules}{config_log_module})) {
-                next MOD;
-            }
+            } 
+            # Apache 2.0 has some different ideas.
+#            if ( $REQ{APACHE_VERSION}[0] = '1' )
+#            {
+#                elsif ($mod eq 'log_config' and $AP{add_modules}{"mod_$mod"} and
+#                         $AP{load_modules}{config_log_module}                  and
+#                         -e catfile($AP{HTTPD_ROOT},
+#                                 $AP{load_modules}{config_log_module})) 
+#                {
+#                    next MOD;
+#                }
+#            }
 
             # The apache-perl package provided by Debian doesn't
             # use the AddModule directive.  Also it uses the full
@@ -231,6 +242,8 @@ sub check_modules {
             foreach my $path (catdir($AP{HTTPD_ROOT}, "modules"),
                               catdir($AP{HTTPD_ROOT}, "libexec"),
                               "/usr/lib/apache/1.3",
+                              "/usr/lib/apache/2.0",
+                              "/usr/lib/apache/2.2",
                               "/usr/lib/apache/modules",
                               "/usr/lib/apache/libexec",
                               "/usr/local/lib/apache/modules",
@@ -240,7 +253,7 @@ sub check_modules {
                 # perl uses libfoo.so format filenames
                 if ($mod eq 'perl') {
                     if (-e ($_ = catfile($path, "lib${mod}.so"))) {
-                        $AP{add_modules}{"mod_$mod"} = 1;
+                        $AP{add_modules}{"mod_$mod"} = 1 if $REQ->{APACHE_VERSION}[0] = '1';
                         $AP{load_modules}{"${mod}_module"} = $_;
                         $AP{$mod} = 1 if $mod =~ /ssl$/;
                         next MOD;
@@ -251,7 +264,7 @@ sub check_modules {
                 # perl is sometimes mod_foo.so too.  I can imagine a
                 # package maintainer getting smart and "fixing" it.
                 if (-e ($_ = catfile($path, "mod_${mod}.so"))) {
-                    $AP{add_modules}{"mod_$mod"} = 1;
+                    $AP{add_modules}{"mod_$mod"} = 1 if $REQ->{APACHE_VERSION}[0] = '1';
                     $AP{load_modules}{"${mod}_module"} = $_;
                     $AP{$mod} = 1 if $mod =~ /ssl$/;
                     next MOD;

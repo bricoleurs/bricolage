@@ -54,7 +54,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependencies
-use Apache::Constants qw(:common :http);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(:common :http);
 use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);

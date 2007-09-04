@@ -261,11 +261,14 @@ sub find_apache {
     return soft_fail("Failed to parse Apache version from string ",
                      "\"$version\".") 
         unless defined $x and defined $y and defined $z;
-    return soft_fail("Found Apache 2. Bricolage only supports Apache 1.3.\n")
-      if $x > 1;
+
+    return soft_fail("Found old version of Apache 2: $x.$y.$z - ",
+                     "2.0.51 or greater required\n")
+        unless (($x == 1) or ($x == 2 and $y >= 0 and $z >= 51));
+
     return soft_fail("Found old version of Apache: $x.$y.$z - ",
                      "1.3.12 or greater required.")
-        unless (($x == 1 and $y > 3) or ($x == 1 and $y == 3 and $z >= 12));
+        unless (($x == 2) or ($x == 1 and $y > 3) or ($x == 1 and $y == 3 and $z >= 12));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
 

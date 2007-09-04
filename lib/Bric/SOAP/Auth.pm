@@ -7,7 +7,7 @@ use warnings;
 use Bric::App::Auth;
 use Bric::Util::Fault qw(throw_ap);
 use Apache;
-use Apache::Constants qw(OK FORBIDDEN);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(OK FORBIDDEN);
 
 use SOAP::Lite;
 import SOAP::Data 'name';

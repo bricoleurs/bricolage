@@ -45,10 +45,23 @@ use warnings;
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
 BEGIN { 
-  if(Apache->define('BRICOLAGE_DEBUG')) {
-    require Apache::DB;
-    Apache::DB->init;
-    $DEBUGGING = 1;
+  # Constant is not located because module is not loaded yet
+  use Bric::Config;
+  if (MOD_PERL_VERSION < 2)
+  {
+    if(eval{Apache->define('BRICOLAGE_DEBUG')}) {
+      require Apache::DB;
+      Apache::DB->init;
+      $DEBUGGING = 1;
+    }
+  }
+  else
+  {
+    if(eval{Apache2::ServerUtil->exists_config_define('BRICOLAGE_DEBUG')}) {
+      require Apache::DB;
+      Apache::DB->init;
+      $DEBUGGING = 1;
+    }
   }
 }
 
@@ -90,9 +103,10 @@ use Bric::App::CleanupHandler;
 use Bric::App::Auth;
 use mod_perl;
 
+# Below is going to require much testing before Apache2 support
 if (CHECK_PROCESS_SIZE) {
     # see Apache::SizeLimit manpage
-    require Apache::SizeLimit;
+    require (MOD_PERL_VERSION < 2 ? 'Apache::SizeLimit' : 'Apache2::SizeLimit');
 
     # XXX These globals are deprecated in Apache::SizeLimit 0.9.
     # apache child processes larger than this size will be killed

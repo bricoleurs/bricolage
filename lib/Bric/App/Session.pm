@@ -63,7 +63,7 @@ use Apache::Session::File;
 use Bric::Util::Trans::FS;
 
 use File::Path qw(mkpath);
-use Apache::Cookie;
+use (MOD_PERL_VERSION < 2 ? 'Apache::Cookie' : 'Apache2::Cookie');
 
 #==============================================================================#
 # Inheritance                          #

@@ -90,7 +90,7 @@ use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Apache;
 use Apache::Request;
-use Apache::Constants qw(OK);
+use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(OK);
 use Apache::Util qw(escape_html);
 require Encode if ENCODE_OK;
 

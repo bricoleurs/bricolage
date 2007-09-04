@@ -160,6 +160,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MANUAL_APACHE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
+                    MOD_PERL_VERSION
                     ALLOW_ALL_SITES_CX
                     RELATED_MEDIA_UPLOAD
                     ALLOW_SLUGLESS_NONFIXED
@@ -330,7 +331,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      CHECK_FREQUENCY
                                      MIN_SHARE_SIZE
                                      MAX_UNSHARED_SIZE)],
-                    mod_perl  => [qw(MOD_PERL)],
+                    mod_perl  => [qw(MOD_PERL
+                                     MOD_PERL_VERSION)],
                     uri       => [qw(STORY_URI_WITH_FILENAME)],
                     l10n      => [qw(LOAD_LANGUAGES
                                      ENCODE_OK
@@ -764,6 +766,18 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Set the MOD_PERL constant.
     use constant MOD_PERL => $ENV{MOD_PERL};
+    # The hope is this is available here, if not then need a different approach
+    # The following bit was stolen directly from perl.apache.org
+    # It sets the constant to 0 if mod_perl is not available, 
+    # to 1 if running under mod_perl 1.0 and 2 for mod_perl 2.0.
+    use constant MOD_PERL_VERSION => MOD_PERL
+          ? { ( exists $ENV{MOD_PERL_API_VERSION} and 
+                $ENV{MOD_PERL_API_VERSION} >= 2 ) ? 2 : 1 }
+          : 0;
+
+    # Manual override if needed for testing
+    #make sure to comment everything else before it out
+    #use constant MOD_PERL_VERSION => 2;
 
     use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
 
