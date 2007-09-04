@@ -723,6 +723,8 @@ L<Bric::Changes>, and add a new directory to F<inst/upgrade/>.
 
 =head2 Documentation Generation
 
+=head3 General
+
 Once the new version of Bricolage has been released, you'll need to regenerate
 the documentation on the Web site. There is documentation for each major
 version of Bricolage. The documentation for each version is generated from the
@@ -734,6 +736,32 @@ and add a link to it on the documentation page of the Web site.
 The documentation is generated with the F<pod_browser> script, which is in the
 F<distutils/PodBrowser> in Subversion. Read its instructions carefully, and
 then generate the documentation on the Web server.
+
+=head3 In more detail
+
+Currently there is a /usr/local/www/bin/update_devel_docs and a cron
+job set up to run it every night again (using David's personal
+account, not root or nobody). To get it to work, the pod_browser was
+copied from SVN to /usr/ local/bin on the server, and Pod::Simple got
+patch in SVN applied and installed.
+
+So, after a minor release, all you have to do is:
+
+cd /usr/local/src
+cp /usr/local/www/doc_roots/bricolage.cc/downloads/
+bricolage-1.10.3.tar.gz .
+tar zxf bricolage-1.10.3.tar.gz
+cd zxf bricolage-1.10.3
+/usr/local/bin/pod_browser --app-root . --app-name Bricolage \
+  --doc-root /usr/local/www/doc_roots/bricolage.cc/docs/1.10/api \
+  --base-uri /docs/1.10/api --version-in Bric.pm
+
+That's it.
+
+There is a symlink /usr/local/www/doc_roots/bricolage.cc/current to
+1.10. After a major release (1.12, 2.0, etc.), the symlink would need
+to be updated and /ui/js/tree.js would also need to be modified on
+line 28 so that it properly recognized the symlink.
 
 =head2 Where to Send Notices
 
