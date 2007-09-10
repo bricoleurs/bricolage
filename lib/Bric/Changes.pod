@@ -31,6 +31,11 @@ Documented the need to look at
 L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk> in
 L<Bric::Biz::Asset|Bric::Biz::Asset>'s C<set_desk_id()> method. [Greg Heo]
 
+=item *
+
+Fixed documentation of C<Bric::Biz::Element::Container>'s C<delete_elements>
+method. [Bret Dawson]
+
 =back
 
 =head2 Bug Fixes
