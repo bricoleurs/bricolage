@@ -1312,7 +1312,7 @@ sub add_tile { shift->add_element(@_) }
 
 ################################################################################
 
-=item $container->delete_element(\@subelements)
+=item $container->delete_elements(\@subelements)
 
 Removes the specified subelements from the current element. The arguments that
 can be passed via the array reference can be either container or data element
