@@ -114,7 +114,7 @@ files modified, from the root directory. For example, if you made changes to
 F<lib/Bric/Changes.pod> and F<comp/foo.mc>, you would generate a diff by
 running this command from the root of your Subversion checkout:
 
-  svn diff lib/Bric/Changes.pod comp/foo.mc > patch.txt
+  svn diff -u lib/Bric/Changes.pod comp/foo.mc > patch.txt
 
 If you created one or more new files in your changes then you'll have to add
 them to the patch separately using normal C<diff> against C</dev/null>. For
