@@ -6,7 +6,12 @@
 # /usr/local/etc/rc.d/bricolage. You should configure these variables:
 
 # Where to find Bricolage.
-BRICOLAGE_ROOT="/usr/local/bricolage"
+export BRICOLAGE_ROOT="/usr/local/bricolage"
+
+# Enable this startup script.
+enable_bricolage="YES"
+name="bricolage"
+command="$BRICOLAGE_ROOT/bric_apachectl"
 
 # Whether to use bric_queued. Set to non-null to make it so.
 USE_BRIC_QUEUED=
