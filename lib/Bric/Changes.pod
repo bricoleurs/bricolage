@@ -48,6 +48,12 @@ More changes around bug 1267, remove protocol+hostname+port from
 practically all redirects (especially "user profiles") in order to 
 allow reverse proxying to work in Apache2. [Steffen Schwigon]
 
+=item *
+
+The C<$BRICOLAGE_ROOT> environment variable specified in
+F<contrib/start_scripts/freebsd> is now exported, allowing it to be properly
+passed through to F<bric_apachectl>. [David]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)
