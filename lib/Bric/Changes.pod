@@ -14,12 +14,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Improvements
 
+=over
+
 =item *
 
 Nicer use of the "Bricolage Instance Name" preference, now used on every page.
 [Phillip Smith]
-
-=over
 
 =item *
 
@@ -35,6 +35,12 @@ L<Bric::Biz::Asset|Bric::Biz::Asset>'s C<set_desk_id()> method. [Greg Heo]
 
 Fixed documentation of C<Bric::Biz::Element::Container>'s C<delete_elements>
 method. [Bret Dawson]
+
+=item *
+
+Include meta-equiv tag in the header to set the charset to be UTF-8 if it is 
+the only charset loaded in C<$LOAD_CHAR_SETS>. Reported by Daisuke Maki. 
+[Paul Orrock]
 
 =back
 

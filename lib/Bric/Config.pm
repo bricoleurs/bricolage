@@ -275,6 +275,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      WYSIWYG_EDITOR
                                      XINHA_PLUGINS
                                      XINHA_TOOLBAR
+									 LOAD_CHAR_SETS
                                      HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
                     admin     => [qw(ADMIN_GRP_ID)],

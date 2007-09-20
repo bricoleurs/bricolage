@@ -72,6 +72,9 @@ if(ref($title) eq 'ARRAY') {
 <html>
 <head>
 <meta name="bricolage-version" content="<% Bric->VERSION %>" />
+% if (LOAD_CHAR_SETS eq "UTF-8") {
+<meta name="http-equiv" content="text/html; charset=UTF-8" />
+% }
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 % if (DISABLE_NAV_LAYER) {
 <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
@@ -79,7 +82,7 @@ if(ref($title) eq 'ARRAY') {
 <link rel="stylesheet" type="text/css" href="/media/css/i18n/<% $lang_key %>.css" />
 <script type="text/javascript" src="/media/js/lib.js"></script>
 <script type="text/javascript" src="/media/js/i18n/<% $lang_key %>_messages.js"></script>
-+<title><% $title %> | <% get_pref('Bricolage Instance Name') %></title>
+<title><% $title %> | <% get_pref('Bricolage Instance Name') %></title>
 <script type="text/javascript"><!--
 var lang_key = '<% $lang_key %>';
 var checkboxValues = new Array();
