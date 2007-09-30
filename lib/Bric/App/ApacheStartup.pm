@@ -45,8 +45,7 @@ use warnings;
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
 BEGIN { 
-  # Constant is not located because module is not loaded yet
-  use Bric::Config;
+  use Bric::Config qw(:mod_perl);
   if (MOD_PERL_VERSION < 2)
   {
     if(eval{Apache->define('BRICOLAGE_DEBUG')}) {

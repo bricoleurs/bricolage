@@ -45,8 +45,16 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(DECLINED OK);
-use Bric::Config qw(:prev :err);
+use Bric::Config qw(:prev :err :mod_perl);
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require Apache::Constants;
+        Apache::Constants->import(qw(DECLINED OK));
+    } else {
+        require Apache2::Const;
+        Apache2::Const->import(qw(DECLINED OK));
+    }
+}
 use Bric::Util::Trans::FS;
 use Apache::Log;
 

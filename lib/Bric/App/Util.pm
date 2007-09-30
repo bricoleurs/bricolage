@@ -47,7 +47,15 @@ use Bric::Util::Pref;
 use Apache;
 use Apache::Request;
 use HTML::Mason::Request;
-use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(HTTP_OK);
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require Apache::Constants;
+        Apache::Constants->import(qw(HTTP_OK));
+    } else {
+        require Apache2::Const;
+        Apache2::Const->import(qw(HTTP_OK));
+    }
+}
 use Apache::Util qw(escape_html);
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);

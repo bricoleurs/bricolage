@@ -766,13 +766,18 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Set the MOD_PERL constant.
     use constant MOD_PERL => $ENV{MOD_PERL};
-    # The hope is this is available here, if not then need a different approach
-    # The following bit was stolen directly from perl.apache.org
-    # It sets the constant to 0 if mod_perl is not available, 
-    # to 1 if running under mod_perl 1.0 and 2 for mod_perl 2.0.
-    use constant MOD_PERL_VERSION => MOD_PERL
-          ? { ( exists $ENV{MOD_PERL_API_VERSION} and 
-                $ENV{MOD_PERL_API_VERSION} >= 2 ) ? 2 : 1 }
+
+    # if not in MOD_PERL environment, set to 0,
+    # if bricolage.conf sets HTTPD_VERSION to 'apache2' and we seem
+    # to have mod_perl2, set to 2;
+    # otherwise, set to 1
+    use constant MOD_PERL_VERSION => $ENV{MOD_PERL}
+          ? ( ($config->{HTTPD_VERSION} eq 'apache2'
+                 and exists($ENV{MOD_PERL_API_VERSION})
+                 and $ENV{MOD_PERL_API_VERSION} >= 2)
+                ? 2
+                : 1
+             )
           : 0;
 
     # Manual override if needed for testing

@@ -80,7 +80,7 @@ use constant DEBUG => 0;
 # turn on tracing when debugging
 use SOAP::Lite +trace => [ (DEBUG ? ('all') : ()), fault => \&handle_soap_err ];
 use SOAP::Transport::HTTP;
-use Bric::Config qw(:l10n);
+use Bric::Config qw(:l10n :mod_perl);
 use Bric::App::Auth;
 use Bric::App::Session;
 use Bric::Util::DBI qw(:trans);
@@ -90,7 +90,15 @@ use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Apache;
 use Apache::Request;
-use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(OK);
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require Apache::Constants;
+        Apache::Constants->import(qw(OK));
+    } else {
+        require Apache2::Const;
+        Apache2::Const->import(qw(OK));
+    }
+}
 use Apache::Util qw(escape_html);
 require Encode if ENCODE_OK;
 

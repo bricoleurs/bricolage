@@ -4,6 +4,7 @@ package Bric::SOAP::ElementType;
 use strict;
 use warnings;
 
+use Bric::Config qw(:mod_perl);
 use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Biz::Site;

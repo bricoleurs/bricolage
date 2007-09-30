@@ -22,6 +22,8 @@ template files, conf.pl uses the sample configuration files directly.
 
 Sam Tregar <stregar@about-inc.com>
 
+changes for Apache 2:  Scott Lanning <slanning@cpan.org>, Chris Heiland
+
 =head1 SEE ALSO
 
 L<Bric::Admin>
@@ -60,8 +62,10 @@ our $VERSION = $ARGV[1];
 print "\n\n==> Creating Bricolage Conf Files <==\n\n";
 
 mkpath 'bconf';
-create_bricolage_conf() unless $UPGRADE;
-create_httpd_conf()     unless $UPGRADE;
+unless ($UPGRADE) {
+    create_bricolage_conf();
+    create_httpd_conf();
+}
 create_install_db();
 
 print "\n\n==> Finished Creating Bricolage Conf Files <==\n\n";
@@ -80,6 +84,7 @@ sub create_bricolage_conf {
     study($conf);
 
     # simple settings
+    set_bric_conf_var(\$conf, HTTPD_VERSION   => $REQ->{HTTPD_VERSION});
     set_bric_conf_var(\$conf, APACHE_BIN      => $REQ->{APACHE_EXE});
     set_bric_conf_var(\$conf, LISTEN_PORT     => $AP->{port});
     set_bric_conf_var(\$conf, SSL_PORT        => $AP->{ssl_port});
@@ -131,6 +136,22 @@ sub set_bric_conf_var {
 
 # create conf/httpd.conf
 sub create_httpd_conf {
+    my $version = $REQ->{HTTPD_VERSION};
+
+    # Note: I moved code for create_httpd_conf from before the apache 2 changes
+    # out to create_apache_conf, and added sub create_apache2_conf.
+    # Although there's a bunch of duplication of code,
+    # we don't have to worry about breaking apache 1.3 support.
+
+    if ($version eq 'apache') {
+        create_apache_conf();
+    }
+    elsif ($version eq 'apache2') {
+        create_apache2_conf();
+    }
+}
+
+sub create_apache_conf {
     # read in default httpd.conf file
     my $file = catfile 'conf', 'httpd.conf';
     print "Reading $file...\n";
@@ -148,7 +169,6 @@ sub create_httpd_conf {
     set_httpd_var(\$httpd, User         => $AP->{user});
     set_httpd_var(\$httpd, Group        => $AP->{group});
     set_httpd_var(\$httpd, ServerName   => $AP->{server_name});
-    delete_httpd_var(\$httpd, ServerType => 'standalone') unless $REQ->{APACHE_VERSION}[0] == 1;
 
     # paths
     my $root    = $CONFIG->{BRICOLAGE_ROOT};
@@ -206,32 +226,137 @@ sub create_httpd_conf {
             if ($mod eq 'log_config'|| $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
                 if ($AP->{load_modules}{"${mod}_module"}) {
-                    # Apache 2 hates config_log_module
-                    $dso_section .= "LoadModule \t ". ($REQ->{APACHE_VERSION}[0] == '1' ? 'config_log_module ' : 'log_config_module ') .
-                      $AP->{load_modules}{"${mod}_module"} . "\n" . 
-                        # Apache 2 also hates AddModule
-                        ($REQ->{APACHE_VERSION}[0] == '1' ? "AddModule \t mod_log_config.c\n\n" : "\n");
+                    $dso_section .= "LoadModule \t config_log_module " .
+                      $AP->{load_modules}{"${mod}_module"} . "\n" .
+                        "AddModule \t mod_log_config.c\n\n";
                 }
             } elsif ($mod eq 'gzip') {
                 # Load optional module mod_gzip
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t ${mod}_module " .
                         $AP->{load_modules}{"${mod}_module"} . "\n";
-                    $dso_section .= "AddModule \t mod_$mod.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
-                    $dso_section .= "\n";
+                    $dso_section .= "AddModule \t mod_$mod.c\n\n";
                 }
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t apache_ssl.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
-                $dso_section .= "\n";
+                $dso_section .= "AddModule \t apache_ssl.c\n\n";
             } else {
                 next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t mod_$mod.c\n" if $REQ->{APACHE_VERSION}[0] == '1';
-                $dso_section .= "\n";
+                $dso_section .= "AddModule \t mod_$mod.c\n\n";
+            }
+        }
+
+        # put DSO loads at the top.  This could be prettier.
+        $httpd = $dso_section . "\n\n" . $httpd;
+    }
+
+    # write out new httpd.conf.
+    $file = catfile 'bconf', 'httpd.conf';
+    print "Writing $file...\n";
+    open HTTPD, ">$file" or die "Cannot open $file: $!";
+    print HTTPD $httpd;
+    close HTTPD;
+    copy $file, "$file.def";
+}
+
+sub create_apache2_conf {
+    # read in default httpd.conf file
+    my $file = catfile 'conf', 'httpd.conf';
+    print "Reading $file...\n";
+    open HTTPD, $file or die "Cannot read $file: $!";
+    my $httpd = join '', <HTTPD>;
+    close HTTPD;
+
+
+    # lots of regexes to come
+    study($httpd);
+
+    # simple settings
+    my $listen80 = set_httpd_var(\$httpd,
+                           Listen       => $AP->{port});
+    set_httpd_var(\$httpd, User         => $AP->{user});
+    set_httpd_var(\$httpd, Group        => $AP->{group});
+
+    # paths
+    my $root    = $CONFIG->{BRICOLAGE_ROOT};
+    my $ap_root = $AP->{HTTPD_ROOT};
+    my $log     = $CONFIG->{LOG_DIR};
+
+    set_httpd_var(\$httpd, ServerRoot      => $ap_root);
+    set_httpd_var(\$httpd, TypesConfig     => $AP->{types_config} ||
+                  catfile($ap_root, "conf", "mime.types"));
+    set_httpd_var(\$httpd, DocumentRoot    => $CONFIG->{MASON_COMP_ROOT});
+    set_httpd_var(\$httpd, PidFile         => $CONFIG->{PID_FILE});
+    set_httpd_var(\$httpd, ErrorLog        => catfile($log, "error_log"));
+    set_httpd_var(\$httpd, CustomLog       => catfile($log,
+                                                      "access_log combined"));
+
+    # httpsd must listen on another port
+
+    if ($AP->{ssl}) {
+        my $rm = '_random_marker_123454321_' . $$;
+        $httpd =~ s/$listen80/$rm/;
+        set_httpd_var(\$httpd, Listen => $AP->{ssl_port}, 'set all of them');
+        $httpd =~ s/$rm/$listen80/;
+    }
+
+    # take a stab at SSL settings if ssl is on.  This stuff is
+    # probably wrong and probably needs to be probed for explicitly
+    # in apache.pl.
+
+    if ($AP->{ssl} =~ /apache_ssl/) {
+
+       my $gc_loc = $AP->{SUEXEC_BIN} || '';
+       $gc_loc =~ s/suexec/gcache/;
+       set_httpd_var(\$httpd, SSLCacheServerPath => catfile($gc_loc));
+       set_httpd_var(\$httpd, SSLCacheServerPort => catfile($log, "gcache_port"));
+
+    } elsif ($AP->{ssl} =~ /mod_ssl/) {
+
+        set_httpd_var(\$httpd, SSLSessionCache => "dbm:" . 
+                      catfile($log, "ssl_scache"));
+        set_httpd_var(\$httpd, SSLMutex        => "file:" .
+                      catfile($log, "ssl_mutex"));
+        set_httpd_var(\$httpd, SSLLog          => catfile($log,
+                                                          "ssl_engine_log"));
+    }
+
+    # DSO Apache's need that sweet DSO spike in the vein just to get
+    # up in the morning
+    if ($AP->{dso}) {
+        my $dso_section = "# Load DSOs\n\n";
+        # XXX: need to verify relevance of config_log, apache_ssl, and gzip
+        # since there is no more AddModule; I imagine this can be simplified now.
+        foreach my $mod (qw(perl log_config config_log mime alias ssl apache_ssl gzip)) {
+            # static modules need no load
+            next if exists $AP->{static_modules}{"mod_$mod"};
+            next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{$mod};
+
+            if ($mod eq 'log_config'|| $mod eq 'config_log') {
+                # I want to kill whoever decided this was a good idea
+                if ($AP->{load_modules}{"${mod}_module"}) {
+                    $dso_section .= "LoadModule \t ${mod}_module " .
+                      $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                }
+            } elsif ($mod eq 'gzip') {
+                # Load optional module mod_gzip
+                if ($AP->{load_modules}{"${mod}_module"}) {
+                    $dso_section .= "LoadModule \t ${mod}_module " .
+                        $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                }
+            } elsif ($mod eq 'apache_ssl') {
+                next unless $AP->{ssl} =~ /apache_ssl/;
+                $dso_section .= "LoadModule \t ${mod}_module " .
+                    $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                $dso_section .= "AddModule \t apache_ssl.c\n\n";
+            } else {
+                next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
+                $dso_section .= "LoadModule \t ${mod}_module " .
+                    $AP->{load_modules}{"${mod}_module"} . "\n\n";
             }
         }
 

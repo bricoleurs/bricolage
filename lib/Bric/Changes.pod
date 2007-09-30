@@ -37,6 +37,11 @@ Added a C<NONE> function to Bric::Util::DBI. For any C<list> parameter where
 you could've used C<ANY> before, you can now use C<NONE> to return only
 objects that don't match. [Scott]
 
+=item *
+
+Added support for Apache 2. Updating to Apache 2 from a Bricolage install
+using Apache 1.3 is not currently supported. [Scott, Chris Heiland]
+
 =back
 
 =head2 Improvements

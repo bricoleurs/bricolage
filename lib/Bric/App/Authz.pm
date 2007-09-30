@@ -50,6 +50,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
+use Bric::Config qw(:mod_perl);
 use Apache;
 use Apache::Request;
 

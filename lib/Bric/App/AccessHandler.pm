@@ -54,12 +54,20 @@ use strict;
 
 ################################################################################
 # Programmatic Dependencies
-use (MOD_PERL_VERSION < 2 ? Apache::Constants : Apache2::Const) qw(:common :http);
 use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl :cookies);
+use Bric::Config qw(:err :ssl :cookies :mod_perl);
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require Apache::Constants;
+        Apache::Constants->import(qw(:common :http));
+    } else {
+        require Apache2::Const;
+        Apache2::Const->import(qw(:common :http));
+    }
+}
 
 ################################################################################
 # Inheritance

@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'search';
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
-use Bric::Config qw(FULL_SEARCH);
+use Bric::Config qw(FULL_SEARCH :mod_perl);
 use Bric::Util::DBI qw(ANY);
 
 sub no_new_search {

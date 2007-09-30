@@ -57,13 +57,19 @@ use strict;
 
 #--------------------------------------#
 # Programmatic Dependencies
-use Bric::Config qw(:sys_user :admin :temp :cookies);
+use Bric::Config qw(:sys_user :admin :temp :cookies :mod_perl);
 use Bric::Util::Fault qw(:all);
 use Apache::Session::File;
 use Bric::Util::Trans::FS;
 
 use File::Path qw(mkpath);
-use (MOD_PERL_VERSION < 2 ? 'Apache::Cookie' : 'Apache2::Cookie');
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require Apache::Cookie;
+    } else {
+        require Apache2::Cookie;
+    }
+}
 
 #==============================================================================#
 # Inheritance                          #
