@@ -29,7 +29,7 @@ Technologies. [David]
 
 =item *
 
-Added support for MySQL, from Andrei Arsu's Google Summer of Code project.
+Added support for MySQL, from Andrei Arsu's Google Summer of Code 2006 project.
 
 =item *
 
@@ -134,7 +134,7 @@ Updated the Portuguese localizations. [Pedro Custodio]
 =item *
 
 Added the C<related_story_id> and C<related_media_id> parameters to
-C<< Bric::Biz::Element::Container->list()>. [David]
+C<< Bric::Biz::Element::Container->list() >>. [David]
 
 =back
 
