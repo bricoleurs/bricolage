@@ -23,6 +23,8 @@ mysql_config and asking the user questions.  Output collected in
 
 Andrei Arsu <acidburn@asynet.ro>
 
+derived from code by Sam Tregar <stregar@about-inc.com>
+
 =head1 SEE ALSO
 
 L<Bric::Admin>
@@ -37,7 +39,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-our $QUIET;
+my $QUIET = '';
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 
 print "\n\n==> Probing MySQL Configuration <==\n\n";

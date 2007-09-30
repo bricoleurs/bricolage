@@ -43,9 +43,6 @@ $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 print "\n\n==> Gathering User Configuration <==\n\n";
 our %CONFIG;
 
-# our $REQ;
-# do "./required.db" or die "Failed to read required.db : $!";
-
 our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
 

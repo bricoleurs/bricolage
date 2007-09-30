@@ -37,7 +37,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-our $QUIET;
+my $QUIET = '';
 $QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
 
 print "\n\n==> Probing PostgreSQL Configuration <==\n\n";

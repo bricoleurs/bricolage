@@ -176,7 +176,7 @@ sub load_db {
         hard_fail($errmsg);
     }
 
-    print "Loading Bricolage PgSql Database (this may take a few minutes).\n";
+    print "Loading Bricolage Pg Database (this may take a few minutes).\n";
     my $err = exec_sql(0, $db_file);
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;
