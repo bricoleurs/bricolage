@@ -47,16 +47,7 @@ use Bric::App::Event qw(log_event clear_events);
 use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Bric::Util::Time qw(:all);
-use Bric::Config qw(:mod_perl);
-BEGIN {
-    if (MOD_PERL_VERSION < 2) {
-        require Apache::Constants;
-        Apache::Constants->import(qw(HTTP_OK));
-    } else {
-        require Apache2::Const;
-        Apache2::Const->import(qw(HTTP_OK));
-    }
-}
+use Bric::Util::ApacheConst qw(HTTP_OK);
 use Apache::Log;
 
 ################################################################################

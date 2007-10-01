@@ -70,20 +70,7 @@ use strict;
 # Programmatic Dependencies
 use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:qa :mod_perl CACHE_DEBUG_MODE);
-
-# Load the Apache modules if we're in mod_perl.
-if (defined MOD_PERL) {
-    if (MOD_PERL_VERSION < 2)
-    {
-        require Apache;
-        require Apache::Request;
-    }
-    else
-    {
-        require Apache2::Request;
-    }
-}
-
+use Bric::Util::ApacheReq;
 
 ##############################################################################
 # Public Instance Fields
@@ -185,10 +172,10 @@ C<lookup()> methods. See C<lookup()> for an example.
 sub cache_lookup {
     if (defined MOD_PERL) {
         my ($pkg, $param) = @_;
-        my $req = Apache->request;
+        my $req = Bric::Util::ApacheReq->request;
         # We may be called during Apache startup
         return unless $req;
-        my $r = Apache::Request->instance($req);
+        my $r = Bric::Util::ApacheReq->instance($req);
         $pkg = ref $pkg || $pkg;
         while (my ($k, $v) = each %$param) {
             if (my $obj = $r->pnotes("$pkg|$k|" . lc $v)) {
@@ -568,10 +555,10 @@ sub cache_me {
         my $pkg = ref $self or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
-        my $req = Apache->request;
+        my $req = Bric::Util::ApacheReq->request;
         # We may be called during Apache startup
         return $self unless $req;
-        my $r = Apache::Request->instance($req);
+        my $r = Bric::Util::ApacheReq->instance($req);
         # Cache it under its ID.
         $r->pnotes("$pkg|id|$self->{id}" => $self);
         # Cache it under other unique identifiers.
@@ -612,10 +599,10 @@ sub uncache_me {
         my $pkg = ref $self or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
-        my $req = Apache->request;
+        my $req = Bric::Util::ApacheReq->request;
         # We may be called during Apache startup
         return $self unless $req;
-        my $r = Apache::Request->instance($req);
+        my $r = Bric::Util::ApacheReq->instance($req);
 
         # Uncache it under its ID.
         $r->pnotes("$pkg|id|$self->{id}" => undef);

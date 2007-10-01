@@ -50,16 +50,8 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Apache::Log;
-use Bric::Config qw(:auth :cookies :mod_perl);
-BEGIN {
-    if (MOD_PERL_VERSION < 2) {
-        require Apache::Constants;
-        Apache::Constants->import(qw(:common));
-    } else {
-        require Apache2::Const;
-        Apache2::Const->import(qw(:common));
-    }
-}
+use Bric::Config qw(:auth :cookies);
+use Bric::Util::ApacheConst qw(:common);
 use Bric::App::Session qw(:user);
 use Bric::App::Cache;
 use Bric::App::Util qw(:redir);

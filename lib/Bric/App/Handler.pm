@@ -52,21 +52,13 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:mason :sys_user :err :l10n :mod_perl);
+use Bric::Config qw(:mason :sys_user :err :l10n);
 use Bric::Util::Fault qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(del_redirect add_msg get_pref);
-BEGIN {
-    if (MOD_PERL_VERSION < 2) {
-        require Apache::Constants;
-        Apache::Constants->import(qw(OK));
-    } else {
-        require Apache2::Const;
-        Apache2::Const->import(qw(OK));
-    }
-}
+use Bric::Util::ApacheConst qw(OK);
 use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;

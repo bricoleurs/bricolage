@@ -13,6 +13,7 @@ use Bric::App::Authz   qw(chk_authz READ);
 use Bric::App::Event   qw(log_event);
 use Bric::Util::Fault  qw(throw_ap throw_dp);
 use Bric::SOAP::Util   qw(parse_asset_document);
+use Bric::Util::ApacheReq;
 
 use SOAP::Lite;
 import SOAP::Data 'name';
@@ -475,7 +476,7 @@ sub load_asset {
         # Convert the name to a key name, if needed.
         unless (defined $edata->{key_name}) {
             ($edata->{key_name} = lc $edata->{name}) =~ y/a-z0-9/_/cs;
-            my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
+            my $r = Bric::Util::ApacheReq->instance;
             $r->log->warn("No key name in element type loaded via SOAP. "
                           . "Converted '$edata->{name}' to "
                           . "'$edata->{key_name}'");

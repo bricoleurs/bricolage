@@ -50,9 +50,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
-use Bric::Config qw(:mod_perl);
-use Apache;
-use Apache::Request;
+use Bric::Util::ApacheReq;
 
 ################################################################################
 # Inheritance
@@ -149,7 +147,7 @@ sub chk_authz {
         my $id = $obj->get_id;
         $id = '' unless defined $id;
         my $key = "_AUTHZ_:$ref:$id";
-        my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
+        my $r = Bric::Util::ApacheReq->instance;
         unless (defined ($perm = $r->pnotes($key))) {
             $perm = get_user_object()->what_can($obj, @gids);
             $r->pnotes($key, $perm);
