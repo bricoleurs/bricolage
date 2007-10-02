@@ -32,7 +32,7 @@ $m->out('<p>',
         "</p>\n");
 $m->comp('/widgets/wrappers/footer.mc');
 $m->flush_buffer;
-$r->status(Apache::Constants::HTTP_FORBIDDEN);
+$r->status(HTTP_FORBIDDEN);
 $m->abort;
 </%perl>
 <%args>

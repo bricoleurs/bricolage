@@ -102,22 +102,25 @@ use Bric::App::CleanupHandler;
 use Bric::App::Auth;
 use mod_perl;
 
-# Below is going to require much testing before Apache2 support
 if (CHECK_PROCESS_SIZE) {
-    # see Apache::SizeLimit manpage
-    require (MOD_PERL_VERSION < 2 ? 'Apache::SizeLimit' : 'Apache2::SizeLimit');
+    my $apsizepkg = (MOD_PERL_VERSION < 2) ? 'Apache::SizeLimit' : 'Apache2::SizeLimit';
+    eval "require $apsizepkg";
+
+    no strict 'refs';
 
     # XXX These globals are deprecated in Apache::SizeLimit 0.9.
+    # (note: I don't see where they are deprecated (??))
+
     # apache child processes larger than this size will be killed
-    $Apache::SizeLimit::MAX_PROCESS_SIZE	= MAX_PROCESS_SIZE;
+    ${"${apsizepkg}::MAX_PROCESS_SIZE"}	= MAX_PROCESS_SIZE;
 
     # requests handled per size check
-    $Apache::SizeLimit::CHECK_EVERY_N_REQUESTS	= CHECK_FREQUENCY;
+    ${"${apsizepkg}::CHECK_EVERY_N_REQUESTS"}	= CHECK_FREQUENCY;
 
-    $Apache::SizeLimit::MIN_SHARE_SIZE		= MIN_SHARE_SIZE
+    ${"${apsizepkg}::MIN_SHARE_SIZE"}		= MIN_SHARE_SIZE
         if MIN_SHARE_SIZE > 0;
 
-    $Apache::SizeLimit::MAX_UNSHARED_SIZE	= MAX_UNSHARED_SIZE
+    ${"${apsizepkg}::MAX_UNSHARED_SIZE"}	= MAX_UNSHARED_SIZE
         if MAX_UNSHARED_SIZE > 0;
 }
 

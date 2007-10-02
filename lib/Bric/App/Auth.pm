@@ -56,6 +56,7 @@ use Bric::App::Session qw(:user);
 use Bric::App::Cache;
 use Bric::App::Util qw(:redir);
 use Bric::Biz::Person::User;
+use Bric::Util::Cookie;
 use Digest::MD5 qw(md5_hex);
 use URI::Escape;
 use base qw( Exporter );
@@ -85,16 +86,9 @@ use constant LOGIN_MARKER_REGEX => qr/${ \LOGIN_MARKER() }/;
 ################################################################################
 # Private Class Fields
 my $ap = 'Bric::Util::Fault::Exception::AP';
-my ($c, $cookie_class);
+my ($c);
 
 ################################################################################
-
-################################################################################
-# Instance Fields
-BEGIN {
-    $cookie_class = $ENV{MOD_PERL} ? 'Apache::Cookie' : 'CGI::Cookie';
-    eval "require $cookie_class";
-}
 
 ################################################################################
 # Class Methods
@@ -134,7 +128,7 @@ B<Notes:> NONE.
 
 sub auth {
     my $r = shift;
-    return &$fail($r) unless my %cookies = $cookie_class->fetch;
+    return &$fail($r) unless my %cookies = Bric::Util::Cookie->fetch($r);
     return &$fail($r) unless my $cookie = $cookies{&AUTH_COOKIE};
     my %val = $cookie->value;
      return &$fail($r) unless $val{exp} > time;
@@ -254,12 +248,12 @@ B<Notes:> NONE.
 
 sub logout {
     my $r = shift;
-    my $cookie = $cookie_class->new($r,
+    my $cookie = Bric::Util::Cookie->new($r,
       -name    => AUTH_COOKIE,
       -expires => "-1d",
       -path    => '/',
       -value   => "logout");
-    $cookie->bake;
+    $cookie->bake($r);
     return 1;
 }
 
@@ -306,12 +300,15 @@ $make_cookie = sub {
                                lmu => $lul
                              }
                );
+
+    # note: I'm not sure why CGI::Cookie and Apache::Cookie were treated
+    # differently, so I left this basically as is when converting to Bric::Util::Cookie
     if ($ENV{MOD_PERL}) {
-        my $cookie = $cookie_class->new($r, @args);
-        $cookie->bake;
+        my $cookie = Bric::Util::Cookie->new($r, @args);
+        $cookie->bake($r);
         return 1;
     } else {
-        return $cookie_class->new(@args);
+        return Bric::Util::Cookie->new($r, @args);
     }
 };
 

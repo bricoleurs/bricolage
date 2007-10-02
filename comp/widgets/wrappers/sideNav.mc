@@ -112,7 +112,7 @@ unless ($workflows) {
     $c->set('__WORKFLOWS__'. $site_id, $workflows);
 }
 
-my %cookies = Apache::Cookie->fetch;
+my %cookies = Bric::Util::Cookie->fetch($r);
 my $cookie = exists($cookies{BRICOLAGE_MENUS})
   ? $cookies{BRICOLAGE_MENUS}->value
   : '';

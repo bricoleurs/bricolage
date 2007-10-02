@@ -114,7 +114,8 @@ use MasonX::Interp::WithCallbacks;
     package HTML::Mason::Commands;
 
     # Load all modules to be used from elements.
-    use Apache::Cookie;
+    use Bric::Util::Cookie;
+    use Bric::Util::ApacheConst qw(HTTP_INTERNAL_SERVER_ERROR HTTP_FORBIDDEN HTTP_NOT_FOUND);
     use Apache::Util qw(escape_uri);
     use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);

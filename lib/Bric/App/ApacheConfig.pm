@@ -47,7 +47,7 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::Config qw(:ui :ssl);
+use Bric::Config qw(:ui :ssl :mod_perl);
 use constant DEBUGGING => 0;
 
 do {
@@ -77,9 +77,11 @@ do {
     # Setup Apache::DB handler if debugging
     push @config, '  PerlFixupHandler       Apache::DB' if DEBUGGING;
 
-    # see Apache::SizeLimit manpage
-    push @config, '  PerlFixupHandler       Apache::SizeLimit'
-      if CHECK_PROCESS_SIZE;
+    # see Apache::SizeLimit manpage (xxx: actually that says PerlCleanupHandler...)
+    if (CHECK_PROCESS_SIZE) {
+        my $apsizepkg = (MOD_PERL_VERSION < 2) ? 'Apache::SizeLimit' : 'Apache2::SizeLimit';
+        push @config, "  PerlFixupHandler       $apsizepkg";
+    }
 
     # This will slow down every request; thus we recommend that previews
     # not be local.

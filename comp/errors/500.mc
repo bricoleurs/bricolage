@@ -69,7 +69,7 @@
 % }
 
 <& '/widgets/wrappers/footer.mc' &>
-% $r->status(Apache::Constants::HTTP_INTERNAL_SERVER_ERROR);
+% $r->status(HTTP_INTERNAL_SERVER_ERROR);
 % $m->abort;
 <%init>;
 # Clear out messages - they're likely irrelevant now.
