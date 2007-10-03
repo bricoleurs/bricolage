@@ -90,7 +90,7 @@ use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Apache;
 use Bric::Util::ApacheConst qw(OK);
-use Bric::Util::ApacheUtil qw(escape_html);
+use HTML::Entities;
 require Encode if ENCODE_OK;
 
 use constant SOAP_CLASSES => [qw(
@@ -131,7 +131,7 @@ BEGIN {
     {
         $ec =~ s/::/__/g;
         eval qq{sub SOAP::Serializer::as_$ec {
-            [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
+            [ \$_[2], \$_[4], encode_entities(\$_[1]->error) ];
         }};
     }
 }

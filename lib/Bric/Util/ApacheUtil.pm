@@ -29,13 +29,12 @@ classes so that Bricolage doesn't have to care about which version of Apache is 
 
 use strict;
 
-use HTML::Entities ();
 use URI::Escape ();
 
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = ();
-our @EXPORT_OK = qw(unescape_url escape_uri escape_html);
+our @EXPORT_OK = qw(unescape_url escape_uri);
 
 use Bric::Config qw(:mod_perl);
 BEGIN {
@@ -45,7 +44,6 @@ BEGIN {
     } else {
         require Apache2::Util;   Apache2::Util->import();
         require Apache2::URI;    Apache2::URI->import();
-        require HTML::Entities;  HTML::Entities->import();
     }
 }
 
@@ -79,15 +77,6 @@ sub escape_uri {
     # so don't just alias this
     return URI::Escape::uri_escape($_[0]);
 }
-
-=item my $str = Bric::Util::ApacheUtil::escape_html($uri);
-
-Replaces C<Apache::Util::escape_html>, C<Apache2::Util::escape_html>,
-or C<HTML::Entities::encode_entities>.
-
-=cut
-
-*escape_html = \&HTML::Entities::encode_entities;
 
 =back
 

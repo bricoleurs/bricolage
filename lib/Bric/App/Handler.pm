@@ -116,7 +116,8 @@ use MasonX::Interp::WithCallbacks;
     use Bric::Util::Cookie;
     use Bric::Util::ApacheConst qw(HTTP_INTERNAL_SERVER_ERROR HTTP_FORBIDDEN HTTP_NOT_FOUND);
     # xxx: is escape_uri actually used anywhere under comp/ ?
-    use Bric::Util::ApacheUtil qw(escape_uri escape_html);
+    use Bric::Util::ApacheUtil qw(escape_uri);
+    use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;

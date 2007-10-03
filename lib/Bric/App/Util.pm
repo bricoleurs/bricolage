@@ -47,7 +47,8 @@ use Bric::Util::Pref;
 use Bric::Util::ApacheReq;
 use HTML::Mason::Request;
 use Bric::Util::ApacheConst qw(HTTP_OK);
-use Bric::Util::ApacheUtil qw(escape_html escape_uri);
+use Bric::Util::ApacheUtil qw(escape_uri);
+use HTML::Entities;
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
@@ -630,7 +631,7 @@ B<Notes:> NONE.
 
 sub status_msg {
     if (MOD_PERL) {
-        _send_msg(escape_html(Bric::Util::Language->instance->maketext(@_)));
+        _send_msg(encode_entities(Bric::Util::Language->instance->maketext(@_)));
     } else {
         print STDERR Bric::Util::Language->instance->maketext(@_);
     }
@@ -639,7 +640,7 @@ sub status_msg {
 sub severe_status_msg {
     if (MOD_PERL) {
     _send_msg('<span style="font-weight: bold; font-color: red;">' .
-              escape_html(Bric::Util::Language->instance->maketext(@_)) .
+              encode_entities(Bric::Util::Language->instance->maketext(@_)) .
               "</span>");
     } else {
         print STDERR "##################################################\n\n";
