@@ -47,7 +47,7 @@ use Bric::Util::Pref;
 use Bric::Util::ApacheReq;
 use HTML::Mason::Request;
 use Bric::Util::ApacheConst qw(HTTP_OK);
-use Apache::Util qw(escape_html);
+use Bric::Util::ApacheUtil qw(escape_html escape_uri);
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
@@ -499,13 +499,12 @@ sub del_redirect {
 
     # get the current authorization cookie
     return $rv unless $cookies{&AUTH_COOKIE};
-    my $qsv = AUTH_COOKIE .'='. URI::Escape::uri_escape($cookies{&AUTH_COOKIE});
+    my $qsv = AUTH_COOKIE .'='. escape_uri($cookies{&AUTH_COOKIE});
     # Add current session ID which should not need to be escaped. For now, the
     # path is always "/", since that's what AccessHandler sets it to. If that
     # changes in the future, we'll need to change it here, too, by adding code
     # to attach the proper query string to the URI.
-    $qsv .= '&'. COOKIE .'='. $session->{_session_id} .
-        URI::Escape::uri_escape('; path=/');
+    $qsv .= '&'. COOKIE .'='. $session->{_session_id} . escape_uri('; path=/');
     $rv =~ s/$login_marker/$qsv/;
     return $rv;
 }

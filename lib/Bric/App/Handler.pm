@@ -59,7 +59,6 @@ use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(del_redirect add_msg get_pref);
 use Bric::Util::ApacheConst qw(OK);
-use Apache::Log;
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 
@@ -116,8 +115,8 @@ use MasonX::Interp::WithCallbacks;
     # Load all modules to be used from elements.
     use Bric::Util::Cookie;
     use Bric::Util::ApacheConst qw(HTTP_INTERNAL_SERVER_ERROR HTTP_FORBIDDEN HTTP_NOT_FOUND);
-    use Apache::Util qw(escape_uri);
-    use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
+    # xxx: is escape_uri actually used anywhere under comp/ ?
+    use Bric::Util::ApacheUtil qw(escape_uri escape_html);
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
     use Bric::Biz::Asset::Business::Media::Audio;

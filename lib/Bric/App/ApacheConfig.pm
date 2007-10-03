@@ -135,8 +135,9 @@ do {
     # Apache::DB handler in place the output from the first screen
     # after login goes to the debugger's STDOUT instead of the
     # browser!
+    my $OK = (MOD_PERL_VERSION < 2) ? 'Apache::OK' : 'Apache2::Const::OK';
     my $fix = DEBUGGING
-      ? "\n    PerlFixupHandler    Apache::OK"
+      ? "\n    PerlFixupHandler    $OK"
       : '';
 
     # This URI will handle logging users in.
@@ -155,8 +156,8 @@ do {
     push @locs,
       "  <Location /media>\n" .
       "    SetHandler          default-handler\n" .
-      "    PerlAccessHandler   Apache::OK\n" .
-      "    PerlCleanupHandler  Apache::OK$fix\n" .
+      "    PerlAccessHandler   $OK\n" .
+      "    PerlCleanupHandler  $OK$fix\n" .
       "  </Location>";
 
     # Force JavaScript to the proper MIME type and always use Unicode.
@@ -173,23 +174,27 @@ do {
 
     # Enable CGI for spellchecker.
     if (ENABLE_WYSIWYG){
+        my $apreg = (MOD_PERL_VERSION < 2)
+          ? "    PerlHandler Apache::Registry\n"
+          : "    PerlResponseHandler ModPerl::Registry\n";
+
         push @locs,
           "  <Location /media/wysiwyg/htmlarea/plugins/SpellChecker>\n" .
           "    SetHandler None\n" .
           "    AddHandler perl-script .cgi\n" .
-          "    PerlHandler Apache::Registry\n" .
+          $apreg .
           "  </Location>" if lc WYSIWYG_EDITOR eq 'htmlarea';
         push @locs,
           "  <Location /media/wysiwyg/xinha/plugins/SpellChecker>\n" .
           "    SetHandler None\n" .
           "    AddHandler perl-script .cgi\n" .
-          "    PerlHandler Apache::Registry\n" .
+          $apreg .
           "  </Location>" if lc WYSIWYG_EDITOR eq 'xinha';
         push @locs,
           "  <Location /media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts>\n" .
           "    SetHandler None\n" .
           "    AddHandler perl-script .pl\n" .
-          "    PerlHandler Apache::Registry\n" .
+          $apreg .
           "  </Location>" if lc WYSIWYG_EDITOR eq 'fckeditor';
     }
 
@@ -204,7 +209,7 @@ do {
       "  <Location /soap>\n" .
       "    SetHandler          perl-script\n" .
       "    PerlHandler         Bric::SOAP::Handler\n" .
-      "   PerlAccessHandler    Apache::OK\n" .
+      "   PerlAccessHandler    $OK\n" .
       "  </Location>";
 
     if (ENABLE_DIST) {
@@ -219,12 +224,15 @@ do {
     if (QA_MODE) {
         # Turn on Perl warnings and run Apache::Status.
         push @config, '  PerlWarn               On';
+        my $apstat = (MOD_PERL_VERSION < 2)
+          ? "    PerlHandler         Apache::Status\n"
+          : "    PerlResponseHandler         Apache2::Status\n";
         push @locs,
           "  <Location /perl-status>\n" .
           "    SetHandler          perl-script\n" .
-          "    PerlHandler         Apache::Status\n" .
-          "    PerlAccessHandler   Apache::OK\n" .
-          "    PerlCleanupHandler  Apache::OK$fix\n" .
+          $apstat .
+          "    PerlAccessHandler   $OK\n" .
+          "    PerlCleanupHandler  $OK$fix\n" .
           "  </Location>";
     }
 
@@ -245,7 +253,7 @@ do {
             push @locs,
               "  <Location $prev_loc>\n" .
               "    PerlFixupHandler    " .
-                   qq{"sub { \$_[0]->no_cache(1); return Apache::OK; }"\n} .
+                   qq{"sub { \$_[0]->no_cache(1); return $OK; }"\n} .
               "  </Location>";
         }
     }

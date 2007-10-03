@@ -54,13 +54,13 @@ use strict;
 
 ################################################################################
 # Programmatic Dependencies
-use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
 use Bric::Config qw(:err :ssl :cookies);
 use Bric::Util::ApacheConst qw(:common :http);
 use Bric::Util::Cookie;
+use Bric::Util::ApacheUtil qw(unescape_url);
 
 ################################################################################
 # Inheritance
@@ -144,8 +144,7 @@ sub handler {
         if ( exists $qs{&AUTH_COOKIE} && ! $cookies{&AUTH_COOKIE} ) {
             foreach(&COOKIE, &AUTH_COOKIE) {
                 if (exists $qs{$_} && $qs{$_}) {
-                    # hmmm.... Apache is in @INC or we would not have $r
-                    my $cook = Apache::unescape_url($qs{$_});
+                    my $cook = unescape_url($qs{$_});
                     $cookies{$_} = $cook;           # insert / overwrite value
                     # propagate this particular cookie back to the browser with
                     # all properties

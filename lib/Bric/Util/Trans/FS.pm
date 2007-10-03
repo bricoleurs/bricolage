@@ -65,6 +65,7 @@ use File::Find qw(find);
 use File::Spec::Functions ();
 use File::Spec::Unix;
 use Bric::Util::Fault qw(throw_gen);
+use Bric::Util::ApacheUtil qw(escape_uri);
 
 ################################################################################
 # Inheritance
@@ -109,7 +110,6 @@ my $osen = { mac => 'MacOS',
              amiga => 'AmigaOS',
              amigaos => 'AmigaOS',
            };
-my $escape_uri;
 
 ################################################################################
 
@@ -117,17 +117,6 @@ my $escape_uri;
 # Instance Fields
 BEGIN {
     Bric::register_fields();
-
-    # Set up the best escape_uri() function.
-    if ($ENV{MOD_PERL}) {
-        require Apache::Util;
-        rethrow_exception($@) if $@;
-        $escape_uri = \&Apache::Util::escape_uri;
-    } else {
-        require URI::Escape;
-        rethrow_exception($@) if $@;
-        $escape_uri = \&URI::Escape::uri_escape;
-    }
 }
 
 ################################################################################
@@ -784,7 +773,7 @@ sub dir_to_uri {
     # Dump any leading drive name on Win32 and OS/2.
     $d[0] = '' if ($^O eq 'Win32' || $^O eq 'OS2') &&
       File::Spec::Functions::file_name_is_absolute($_[1]);
-    return File::Spec::Unix->catdir(map { &$escape_uri($_) } @d);
+    return File::Spec::Unix->catdir(map { escape_uri($_) } @d);
 }
 
 ################################################################################

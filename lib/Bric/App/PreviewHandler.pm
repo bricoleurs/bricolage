@@ -48,7 +48,6 @@ use strict;
 use Bric::Config qw(:prev :err);
 use Bric::Util::ApacheConst qw(DECLINED OK);
 use Bric::Util::Trans::FS;
-use Apache::Log;
 
 ################################################################################
 # Inheritance

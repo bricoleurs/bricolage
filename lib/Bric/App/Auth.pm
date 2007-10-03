@@ -49,7 +49,6 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Apache::Log;
 use Bric::Config qw(:auth :cookies);
 use Bric::Util::ApacheConst qw(:common);
 use Bric::App::Session qw(:user);

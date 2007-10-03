@@ -90,7 +90,7 @@ use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Apache;
 use Bric::Util::ApacheConst qw(OK);
-use Apache::Util qw(escape_html);
+use Bric::Util::ApacheUtil qw(escape_html);
 require Encode if ENCODE_OK;
 
 use constant SOAP_CLASSES => [qw(

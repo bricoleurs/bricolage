@@ -5,7 +5,6 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'contrib';
 
 use strict;
-use Apache::Util qw(escape_uri);
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);

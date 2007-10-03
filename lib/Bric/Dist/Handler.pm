@@ -48,7 +48,6 @@ use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Bric::Util::Time qw(:all);
 use Bric::Util::ApacheConst qw(HTTP_OK);
-use Apache::Log;
 
 ################################################################################
 # Inheritance

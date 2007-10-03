@@ -40,12 +40,12 @@ add it to your own httpd.conf by using only a single line.
 package Bric::App::ApacheConfig;
 use strict;
 use warnings;
+use Bric::Config qw(:mod_perl);
 
 # start Apache::DB if we're debugging.  This is done here so that
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
 BEGIN { 
-  use Bric::Config qw(:mod_perl);
   if (MOD_PERL_VERSION < 2)
   {
     if(eval{Apache->define('BRICOLAGE_DEBUG')}) {
@@ -101,6 +101,17 @@ use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
 use Bric::App::Auth;
 use mod_perl;
+
+# note: this just boots (XS) Apache::Log or Apache2::Log modules,
+# which are used in other modules, so this doesn't have to be
+# put at the top of all the Handler modules (they use Log methods
+# only through $r or $s objects, and have a compatible API in mod_perl 2)
+if (MOD_PERL_VERSION < 2) {
+    require Apache::Log;
+} else {
+    require Apache2::Log;
+}
+
 
 if (CHECK_PROCESS_SIZE) {
     my $apsizepkg = (MOD_PERL_VERSION < 2) ? 'Apache::SizeLimit' : 'Apache2::SizeLimit';
