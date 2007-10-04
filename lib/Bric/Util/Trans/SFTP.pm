@@ -130,7 +130,7 @@ B<Notes:> Uses Net::SFTP internally.
 =cut
 
 sub put_res {
-    my ($pkg, $res, $st) = @_;
+    my ($pkg, $resources, $st) = @_;
 
     # Set HOME environment variable for SSH client
     local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
@@ -156,12 +156,12 @@ sub put_res {
 
         # Now, put each file on the remote server.
         my %dirs;
-        foreach my $r (@$res) {
+        foreach my $res (@$resources) {
             # Get the source and destination paths for the resource.
-            my $src = $r->get_tmp_path || $r->get_path;
+            my $src = $res->get_tmp_path || $res->get_path;
             # Create the destination directory if it doesn't exist and we
             # haven't created it already.
-            my $dest_dir = $fs->uri_dir_name($r->get_uri);
+            my $dest_dir = $fs->uri_dir_name($res->get_uri);
             my ($status, $dirhandle);
             unless ($dirs{$dest_dir}) {
                 $dirhandle = eval {
@@ -202,7 +202,7 @@ sub put_res {
                 }
             }
             # Now, put the file on the server.
-            my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
+            my $dest_file = $fs->cat_dir($doc_root, $res->get_uri);
             my $tmp_dest = $dest_file . '.tmp';
             $status = eval{
                 local $SIG{__WARN__} = $no_warn;
@@ -251,7 +251,7 @@ B<Notes:> See put_res(), above.
 =cut
 
 sub del_res {
-    my ($pkg, $res, $st) = @_;
+    my ($pkg, $resources, $st) = @_;
 
     # Set HOME environment variable for SSH client
     local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
@@ -273,9 +273,9 @@ sub del_res {
 
         # Get the document root.
         my $doc_root = $s->get_doc_root;
-        foreach my $r (@$res) {
+        foreach my $res (@$resources) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $file = $fs->cat_uri($doc_root, $res->get_uri);
             my $status = eval{
                 local $SIG{__WARN__} = $no_warn;
                 $sftp->do_stat($file);

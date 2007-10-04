@@ -171,14 +171,14 @@ B<Notes:> NONE.
 sub save {
     my ($self, $atid) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
-    foreach my $r (values %$del_objs) {
-	$r->remove;
-	$r->save;
+    foreach my $rule (values %$del_objs) {
+	$rule->remove;
+	$rule->save;
     }
     %$del_objs = ();
-    foreach my $r (values %$objs, @$new_objs) {
-	$r->set_alert_type_id($atid) if defined $atid;
-	$r->save;
+    foreach my $rule (values %$objs, @$new_objs) {
+	$rule->set_alert_type_id($atid) if defined $atid;
+	$rule->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();

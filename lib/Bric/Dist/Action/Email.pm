@@ -459,31 +459,31 @@ B<Thows:>
 =cut
 
 sub do_it {
-    my ($self, $res) = @_;
+    my ($self, $resources) = @_;
     my $handle_txt = $self->$get_attr('handle_text');
     my $handle_oth = $self->$get_attr('handle_other');
     my $content_type = $self->$get_attr('content_type');
     my (@attach);
     my $msg = '';
 
-    foreach my $r (@$res) {
-        if ($r->get_media_type =~ /^text\//) {
+    foreach my $res (@$resources) {
+        if ($res->get_media_type =~ /^text\//) {
             # It's a text file. Grab the content type if it hasn't been set
             # explicitly. First one in wins.
-            $content_type ||= $r->get_media_type;
+            $content_type ||= $res->get_media_type;
             if ($handle_txt == INLINE) {
                 # Make it part of the message.
-                $msg .= $r->get_contents;
+                $msg .= $res->get_contents;
             } elsif ($handle_txt == ATTACH) {
                 # We'll attach it.
-                push @attach, $r;
+                push @attach, $res;
             } else {
                 # Ignore it.
                 next;
             }
         } else {
             # It's something other than a text file.
-            push @attach, $r if $handle_oth == ATTACH;
+            push @attach, $res if $handle_oth == ATTACH;
         }
     }
 

@@ -129,14 +129,14 @@ $save = sub {
 	my $rids = mk_aref($param->{alert_type_rule_id});
 	for (my $i = 0; $i < @{$param->{attr}}; $i++) {
 	    if (my $id = $rids->[$i]) {
-		my ($r) = $at->get_rules($id);
-		$r->set_attr($param->{attr}[$i]);
-		$r->set_operator($param->{operator}[$i]);
-		$r->set_value($param->{value}[$i]);
+		my ($rule) = $at->get_rules($id);
+		$rule->set_attr($param->{attr}[$i]);
+		$rule->set_operator($param->{operator}[$i]);
+		$rule->set_value($param->{value}[$i]);
 	    } else {
 		next unless $param->{attr}[$i];
-		my $r = $at->new_rule($param->{attr}[$i], $param->{operator}[$i],
-				      $param->{value}[$i]);
+		my $rule = $at->new_rule($param->{attr}[$i], $param->{operator}[$i],
+                                         $param->{value}[$i]);
 	    }
 	}
 	$at->del_rules(@{ mk_aref($param->{del_alert_type_rule})} )

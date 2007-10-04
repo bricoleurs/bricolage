@@ -184,9 +184,9 @@ sub save {
             VALUES (?, ?)
         }, undef);
 
-	foreach my $r (@$new_objs) {
-	    $r->save;
-	    execute($ins, $job_id, $r->get_id);
+	foreach my $st (@$new_objs) {
+	    $st->save;
+	    execute($ins, $job_id, $st->get_id);
 	}
 	$self->add_objs(@$new_objs);
 	@$new_objs = ();

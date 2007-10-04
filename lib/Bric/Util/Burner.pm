@@ -960,17 +960,17 @@ sub preview {
             "$key\_instance_id" => $ba->get_version_id,
             priority            => $ba->get_priority,
         });
-        my $res = [];
+        my $resources = [];
         # Burn, baby, burn!
         if ($key eq 'story') {
             foreach my $cat (@cats) {
-                push @$res, $self->burn_one($ba, $oc, $cat);
+                push @$resources, $self->burn_one($ba, $oc, $cat);
             }
         } else {
             my $path = $ba->get_path;
             my $uri = $ba->get_uri($oc);
             if ($path && $uri) {
-                my $r = Bric::Dist::Resource->lookup({ path => $path,
+                my $res = Bric::Dist::Resource->lookup({ path => $path,
                                                        uri  => $uri })
                   || Bric::Dist::Resource->new
                     ({ path => $path,
@@ -978,13 +978,13 @@ sub preview {
                        uri => $uri
                      });
 
-                $r->add_media_ids($ba->get_id);
-                $r->save;
-                push @$res, $r;
+                $res->add_media_ids($ba->get_id);
+                $res->save;
+                push @$resources, $res;
             }
         }
         # Save the delivery job.
-        $job->add_resources(@$res);
+        $job->add_resources(@$resources);
         $job->save;
         log_event('job_new', $job);
 
@@ -995,26 +995,26 @@ sub preview {
         $job->execute_me unless $job->get_comp_time;
 
         # Make sure there are some files to redirect to.
-        unless (@$res) {
+        unless (@$resources) {
             status_msg("No output to preview.") if $do_status_msg;
             return;
         }
 
         if (PREVIEW_LOCAL) {
             # Copy the files for previewing locally.
-            foreach my $rsrc (@$res) {
+            foreach my $rsrc (@$resources) {
                 $fs->copy($rsrc->get_path,
                           $fs->cat_dir($comp_root, PREVIEW_LOCAL,
                                        $rsrc->get_uri));
             }
             # Return the redirection URL.
-            return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
+            return $fs->cat_uri('/', PREVIEW_LOCAL, $resources->[0]->get_uri);
         } else {
             # Return the redirection URL, if we have one
             if (@$bat) {
                 return ($oc->get_protocol || 'http://')
                   . ($bat->[0]->get_servers)[0]->get_host_name
-                  . $res->[0]->get_uri;
+                  . $resources->[0]->get_uri;
             }
         }
     };
@@ -1279,7 +1279,7 @@ sub publish {
                 my $path = $ba->get_path;
                 my $uri = $ba->get_uri($oc);
                 if ($path && $uri) {
-                    my $r = Bric::Dist::Resource->lookup({ path => $path,
+                    my $res = Bric::Dist::Resource->lookup({ path => $path,
                                                            uri  => $uri })
                       || Bric::Dist::Resource->new({
                           path => $path,
@@ -1287,9 +1287,9 @@ sub publish {
                           uri => $uri
                       });
 
-                    $r->add_media_ids($baid);
-                    $r->save;
-                    $job->add_resources($r);
+                    $res->add_media_ids($baid);
+                    $res->save;
+                    $job->add_resources($res);
                     $published = 1;
                 } else {
                     $published = 1;

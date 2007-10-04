@@ -140,19 +140,19 @@ B<Thows:>
 =cut
 
 sub do_it {
-    my ($self, $res) = @_;
+    my ($self, $resources) = @_;
     # Optimize the code away if we don't have XML::LibXML installed.
     if (HAVE_LIB_XML) {
         my $types = $self->get_media_href;
-        foreach my $r (@$res) {
+        foreach my $res (@$resources) {
             # Skip media types we're not interested in.
-            next unless $types->{$r->get_media_type};
+            next unless $types->{$res->get_media_type};
 
             # Get the resource path.
-            my $path = $r->get_tmp_path || $r->get_path;
+            my $path = $res->get_tmp_path || $res->get_path;
 
             # Get the resource URI sans output channel ID.
-            (my $uri = $r->get_uri) =~ s|^/\d+||;
+            (my $uri = $res->get_uri) =~ s|^/\d+||;
 
             # Let 'em know what we're doing.
             status_msg "Validating $uri";
