@@ -42,6 +42,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::Config qw(:mod_perl);
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
 use Bric::App::Util qw(:pref);
@@ -145,8 +146,8 @@ sub handler {
     my $r = shift;
     eval {
         $r->content_type('text/plain');
-        $r->header_out(BricolageDist => 1);
-        $r->send_http_header;
+        $r->headers_out->{BricolageDist} = 1;
+        $r->send_http_header if MOD_PERL_VERSION < 2;
 
         # Set up the language object and handle the request.
         Bric::Util::Language->get_handle(get_pref('Language'));

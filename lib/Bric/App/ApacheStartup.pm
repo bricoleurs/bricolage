@@ -46,52 +46,19 @@ use Bric::Config qw(:mod_perl);
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
 BEGIN { 
-  if (MOD_PERL_VERSION < 2)
-  {
-    if(eval{Apache->define('BRICOLAGE_DEBUG')}) {
-      require Apache::DB;
-      Apache::DB->init;
-      $DEBUGGING = 1;
+    if (MOD_PERL_VERSION < 2) {
+        if (eval{Apache->define('BRICOLAGE_DEBUG')}) {
+            require Apache::DB;
+            Apache::DB->init;
+            $DEBUGGING = 1;
+        }
     }
-  }
-  else
-  {
-    if(eval{Apache2::ServerUtil->exists_config_define('BRICOLAGE_DEBUG')}) {
-      require Apache::DB;
-      Apache::DB->init;
-      $DEBUGGING = 1;
-    }
-  }
-}
-
-BEGIN {
-    # Set up profiling with Devel::Profiler - this installs a
-    # ChildInitHandler. It needs to be setup as early as possible to enable
-    # the CORE::GLOBAL::caller override to be used by the profiled modules.
-    use Bric::Config qw(PROFILE QA_MODE);
-    if (PROFILE) {
-        # Exclude upper-case subs, which are mostly constants in Bric anyway
-        my $sub_filter = sub {
-            return 0 if $_[1] =~ /^[A-Z_]+$/;
-            return 1;
-        };
-
-        # Exclude Bric::Util::Fault and some misbehavin' packages used by Bric
-        my $pkg_filter = sub {
-            return 0 if ($_[0] =~ /^Bric::Util::Fault/ or
-                         $_[0] =~ /^XML::Parser/       or
-                         $_[0] =~ /^SOAP/);
-            return 1;
-        };
-
-        require Devel::Profiler::Apache;
-        Devel::Profiler::Apache->import(sub_filter     => $sub_filter,
-                                        package_filter => $pkg_filter);
-
-        # Profiling with QA_MODE on is inadvisable
-        print STDERR "WARNING: Both PROFILE and QA_MODE options activated.\n",
-                     "         PROFILE results will be skewed.\n\n"
-            if QA_MODE;
+    else {
+        if (eval{Apache2::ServerUtil->exists_config_define('BRICOLAGE_DEBUG')}) {
+            require Apache::DB;
+            Apache::DB->init;
+            $DEBUGGING = 1;
+        }
     }
 }
 
@@ -100,16 +67,19 @@ use Bric::App::Handler;
 use Bric::App::AccessHandler;
 use Bric::App::CleanupHandler;
 use Bric::App::Auth;
-use mod_perl;
 
-# note: this just boots (XS) Apache::Log or Apache2::Log modules,
+# note: we boot (XS) Apache::Log or Apache2::Log modules,
 # which are used in other modules, so this doesn't have to be
 # put at the top of all the Handler modules (they use Log methods
 # only through $r or $s objects, and have a compatible API in mod_perl 2)
-if (MOD_PERL_VERSION < 2) {
-    require Apache::Log;
-} else {
-    require Apache2::Log;
+BEGIN {
+    if (MOD_PERL_VERSION < 2) {
+        require mod_perl;    mod_perl->import();
+        require Apache::Log;
+    } else {
+        require mod_perl2;   mod_perl2->import();
+        require Apache2::Log;
+    }
 }
 
 
@@ -118,9 +88,6 @@ if (CHECK_PROCESS_SIZE) {
     eval "require $apsizepkg";
 
     no strict 'refs';
-
-    # XXX These globals are deprecated in Apache::SizeLimit 0.9.
-    # (note: I don't see where they are deprecated (??))
 
     # apache child processes larger than this size will be killed
     ${"${apsizepkg}::MAX_PROCESS_SIZE"}	= MAX_PROCESS_SIZE;

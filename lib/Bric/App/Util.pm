@@ -599,7 +599,9 @@ sub redirect_onload {
     } elsif (my $cbh = shift) {
         # Use the callback handler object.
         my $r = $cbh->apache_req;
-        $r->send_http_header unless $r->header_out("Content-type");
+        if (MOD_PERL_VERSION < 2) {
+            $r->send_http_header unless $r->headers_out->{'Content-type'};
+        }
         $r->print($js);
         $cbh->abort;
     } else {

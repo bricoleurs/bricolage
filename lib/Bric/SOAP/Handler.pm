@@ -147,7 +147,7 @@ sub handler {
         # Start the database transactions.
         begin(1);
 
-        my $action = $r->header_in('SOAPAction') || '';
+        my $action = $r->headers_in->{'SOAPAction'} || '';
 
         print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
 

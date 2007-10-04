@@ -158,7 +158,7 @@ sub handler {
                 $v = (split('; ',$v))[0];
                 $http_cook .= $k .'='. $v;
             }
-            $r->header_in('Cookie', $http_cook);
+            $r->headers_in->{'Cookie'} = $http_cook;
             # Replacement HTTP_COOKIE string
         }
         # Continue, the session is not the wiser about inserted cookies IN.

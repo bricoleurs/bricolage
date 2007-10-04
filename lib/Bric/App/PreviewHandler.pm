@@ -129,7 +129,7 @@ sub uri_handler {
     # Decline the request unless it's coming from the preview directory.
     {
         local $^W;
-        return DECLINED unless $r->header_in('referer') =~ m{$prev_qr};
+        return DECLINED unless $r->headers_in->{'referer'} =~ m{$prev_qr};
     }
     # Grab the URI and break it up into its constituent parts.
     my $uri = $r->uri;
