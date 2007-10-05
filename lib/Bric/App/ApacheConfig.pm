@@ -75,9 +75,9 @@ do {
             '  PerlAccessHandler      Bric::App::AccessHandler',
             '  PerlCleanupHandler     Bric::App::CleanupHandler',
             '  RedirectMatch          '.
-                    'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
+                    'permanent .*\/favicon\.ico$ /media/images/bricicon.ico', 
         );
-    
+
         # Setup Apache::DB handler if debugging
         push @config, '  PerlFixupHandler       Apache::DB' if DEBUGGING;
     
@@ -345,13 +345,22 @@ do {
             $hostname = Sys::Hostname::hostname();
         }
 
+        # Mask off Apache::DB handler if debugging - the debugger
+        # seems to cause problems for login for some reason.  With the
+        # Apache::DB handler in place the output from the first screen
+        # after login goes to the debugger's STDOUT instead of the browser!
+        my $fix = DEBUGGING
+          ? "\n    PerlFixupHandler    Apache2::Const::OK"
+          : '';
+
+
         # Set up the basic configuration. Default to UTF-8 (it can be overridden
-        # on a per-request basis in Bric::App::Handler.
+        # on a per-request basis in Bric::App::Handler).
         my @config = (
             '  DocumentRoot           ' . MASON_COMP_ROOT->[0][1],
             "  ServerName             $hostname",
-            "  DefaultType            \"text/html; charset=utf-8\"",
-            "  AddDefaultCharset      utf-8",
+            '  DefaultType            "text/html; charset=utf-8"',
+            '  AddDefaultCharset      utf-8',
             '  SetHandler             perl-script',
             '  PerlResponseHandler    Bric::App::Handler',
             '  PerlAccessHandler      Bric::App::AccessHandler',
@@ -359,6 +368,11 @@ do {
             '  RedirectMatch          ' .
               'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
         );
+
+        # XXX: I can't get requests to actually go to Mason....
+        # Directory handing is apparently "special" in apache2. See:
+        # http://www.masonhq.com/?HandlingDirectoriesWithDhandlers
+
 
         # Setup Apache::DB handler if debugging
         push @config, '  PerlFixupHandler       Apache::DB' if DEBUGGING;
@@ -413,14 +427,6 @@ do {
             "    PerlCleanupHandler  Bric::App::CleanupHandler\n" .
             "  </Location>"
         );
-
-        # Mask off Apache::DB handler if debugging - the debugger
-        # seems to cause problems for login for some reason.  With the
-        # Apache::DB handler in place the output from the first screen
-        # after login goes to the debugger's STDOUT instead of the browser!
-        my $fix = DEBUGGING
-          ? "\n    PerlFixupHandler    Apache2::Const::OK"
-          : '';
 
         # This URI will handle logging users in.
         push @locs,

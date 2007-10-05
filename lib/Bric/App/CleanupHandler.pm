@@ -120,6 +120,10 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+
+warn "Cleanup handler\n";
+
+
     eval {
         # Commit events (and send alerts).
         begin(1);

@@ -293,6 +293,8 @@ sub handler {
     my $status;
     my $lang_name = get_pref('Language');
 
+warn "Handler handler\n";
+
     # A global for localization purposes
     local $HTML::Mason::Commands::lang =
         Bric::Util::Language->get_handle($lang_name);

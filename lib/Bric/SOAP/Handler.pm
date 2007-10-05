@@ -88,7 +88,7 @@ use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
-use Apache;
+use Bric::Util::ApacheReq;
 use Bric::Util::ApacheConst qw(OK);
 use HTML::Entities;
 require Encode if ENCODE_OK;
@@ -226,7 +226,7 @@ sub handle_err {
     clear_events();
 
     # Send the error(s) to the apache error log.
-    my $log = Apache->server->log;
+    my $log = Bric::Util::ApacheReq->server->log;
     $log->error($err->full_message);
     $log->error($more_err) if $more_err;
 
@@ -244,7 +244,7 @@ sub handle_soap_err {
     my $caller = (caller(2))[3];
     $caller = (caller(3))[3] if $caller =~ /eval/;
     chomp(my $msg = join ' ', grep { defined } @_);
-    my $log = Apache->server->log;
+    my $log = Bric::Util::ApacheReq->server->log;
     my $err = Bric::Util::Fault::Exception->new("$caller: $msg");
     handle_err(0, 0, $err);
 }

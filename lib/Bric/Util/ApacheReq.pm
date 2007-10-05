@@ -40,6 +40,8 @@ So instead of doing this:
 
 you do what's shown in the SYNOPSIS.
 
+It also adds the C<server> method from C<Apache> and C<Apache2::ServerUtil>.
+
 =cut
 
 use strict;
@@ -50,7 +52,8 @@ BEGIN {
             require Apache;
             require Apache::Request;
         } else {
-            require Apache2::Request::Util;
+            require Apache2::RequestUtil;
+            require Apache2::ServerUtil;
         }
     }
 }
@@ -101,6 +104,19 @@ sub instance {
           ? Apache::Request->instance(Apache->request)
           : Apache2::RequestUtil->request;
     }
+}
+
+=item my $server = Bric::Util::ApacheReq->server;
+
+Returns either C<< Apache->server >> for mod_perl 1
+or C<< Apache2::ServerUtil->server >> for mod_perl 2.
+
+=cut
+
+sub server {
+    return MOD_PERL_VERSION < 2
+      ? Apache->server
+      : Apache2::ServerUtil->server;
 }
 
 =back

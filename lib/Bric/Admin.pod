@@ -141,7 +141,7 @@ START MODULE LIST
 
 =item Apache2::Request
 
-=item HTML::Mason 1.23
+=item HTML::Mason 1.37
 
 =item DBD::Pg 1.22 (optional)
 

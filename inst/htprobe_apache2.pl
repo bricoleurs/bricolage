@@ -84,7 +84,7 @@ sub read_conf {
         unless $data;
 
     # parse out definitions and put them in AP
-    while ($data =~ /^\s*-D\s+([\w]+)(?:="([^"]+)")?/mg) {
+    while ($data =~ /^\s*-D\s+([\w]+)(?:="([^"]*)")?/mg) {
         $AP{uc($1)} = defined $2 ? $2 : 1;
     }
     hard_fail("Unable to extract conf file location from ",
@@ -92,9 +92,23 @@ sub read_conf {
         unless exists $AP{HTTPD_ROOT} and exists $AP{SERVER_CONFIG_FILE};
 
     # figure out conf_file
+    # If HTTPD_ROOT eq "", we try to set it to something reasonable here.
     if (file_name_is_absolute($AP{SERVER_CONFIG_FILE})) {
         $AP{conf_file} = $AP{SERVER_CONFIG_FILE};
+
+        if ($AP{HTTPD_ROOT} eq '') {
+            # set it to the directory part of SERVER_CONFIG_FILE
+            my ($vol, $dir, $file) = File::Spec::Functions::splitpath($AP{SERVER_CONFIG_FILE});
+            $AP{HTTPD_ROOT} = catdir($vol, $dir);
+        }
     } else {
+        if ($AP{HTTPD_ROOT} eq '') {
+            $AP{HTTPD_ROOT} = rootdir();
+            print qq{`$REQ->{APACHE_EXE} -V` says HTTPD_ROOT="", but we need a directory.\n},
+              "This is probably where your httpd.conf is.\n";
+            ask_confirm("HTTPD_ROOT directory? ", \$AP{HTTPD_ROOT}, $QUIET);
+        }
+
         $AP{conf_file} = catfile($AP{HTTPD_ROOT}, $AP{SERVER_CONFIG_FILE});
     }
 
@@ -102,17 +116,47 @@ sub read_conf {
     $AP{conf} = slurp_conf($AP{conf_file});
 
     # Read in any included configuration files.
-    for ($AP{conf} =~ /^\s*Include\s+(.+)$/gim) {
-        $AP{conf} .= "\n" . slurp_conf($1);
+    # (note: this is wrong in htprobe_apache.pl, where I left it alone.)
+    my $included = '';
+    while ($AP{conf} =~ /^\s*Include\s+(.+)$/gim) {
+        $included .= "\n" . slurp_conf($1);
     }
+    $AP{conf} .= $included;
 }
 
 sub slurp_conf {
     my $file = shift;
-    return '' unless -e $file;
-    print "Reading Apache conf file: $file.\n";
-    open CONF, $file or warn("Cannot open '$file': $!\n"), return '';
-    return join '', <CONF>;
+    my @files = ();
+
+    if ($file =~ /\*/) {
+        @files = glob($file);
+    }
+    else {
+        return '' unless -e $file and ! -d _;
+        push @files, $file;
+    }
+
+    # XXX: it's actually worse than this in general....
+    # Include also handles directories,
+    # even when you don't use a wildcard (*).
+    # I didn't implement that because it WORKSFORME
+    # (and it's complicated). I just wanted to get TypesConfig.
+    # README.Debian says:
+    # The Include directive ignores files with names that
+    # - do not begin with a letter or number
+    # - contain a character that is neither letter nor number nor _-.
+    # - contain .dpkg
+
+    my $str = '';
+    foreach my $f (@files) {
+        next if -d $f;
+
+        print "Reading Apache conf file: $f.\n";
+        open my $conf, $f or warn("Cannot open '$f': $!\n"), return '';
+        $str .= join('', <$conf>) . "\n";
+        close($conf);
+    }
+    return $str;
 }
 
 # parse list of Apache modules

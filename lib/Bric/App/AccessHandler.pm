@@ -128,6 +128,8 @@ B<Notes:> NONE.
 sub handler {
     my $r = shift;
 
+warn "Access handler\n";
+
     my $ret = eval {
         # Silently zap foolish user access to http when SSL is always required
         # by web master.

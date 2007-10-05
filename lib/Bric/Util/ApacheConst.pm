@@ -50,10 +50,21 @@ BEGIN {
         }
         else {
             require Apache2::Const;
-            Apache2::Const->import();
-            *EXPORT_TAGS = \%Apache2::Const::EXPORT_TAGS;
-            *EXPORT_OK = \@Apache2::Const::EXPORT_OK;
-            *EXPORT = \@Apache2::Const::EXPORT;
+
+            # ok, let's try this another way....            
+            Apache2::Const->import(-compile => qw(:common :http));
+
+            # this sucks, but if you want to use a different constant,
+            # you'll have to add it here
+            @Bric::Util::ApacheConst::EXPORT = ();
+            %Bric::Util::ApacheConst::EXPORT_TAGS = (
+                common => [qw(DECLINED OK FORBIDDEN)],
+                http   => [qw(HTTP_INTERNAL_SERVER_ERROR HTTP_FORBIDDEN
+                              HTTP_NOT_FOUND HTTP_OK)],
+            );
+            @Bric::Util::ApacheConst::EXPORT_OK =
+              map { ( $_, @{ $Bric::Util::ApacheConst::EXPORT_TAGS{$_} } ) }
+                keys %Bric::Util::ApacheConst::EXPORT_TAGS;
         }
     }
 }
