@@ -62,6 +62,10 @@ use Bric::Util::ApacheConst qw(:common :http);
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
 
+use APR;
+use APR::Request;
+use APR::Request::Apache2;
+
 ################################################################################
 # Inheritance
 ################################################################################
@@ -127,8 +131,6 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
-
-warn "Access handler\n";
 
     my $ret = eval {
         # Silently zap foolish user access to http when SSL is always required

@@ -52,7 +52,7 @@ BEGIN {
             require Apache2::Const;
 
             # ok, let's try this another way....            
-            Apache2::Const->import(-compile => qw(:common :http));
+            Apache2::Const->import(qw(:common :http));
 
             # this sucks, but if you want to use a different constant,
             # you'll have to add it here

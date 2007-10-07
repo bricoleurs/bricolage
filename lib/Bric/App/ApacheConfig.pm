@@ -51,6 +51,8 @@ use Bric::Config qw(:ui :ssl :mod_perl);
 use constant DEBUGGING => 0;
 
 
+BEGIN {
+
 do {
     ### mod_perl 1.3 ###
 
@@ -601,26 +603,41 @@ do {
               '</VirtualHost>';
         }
 
+        require Apache2::ServerUtil;
+        Apache2::ServerUtil->import();
+        my $s = Apache2::ServerUtil->server;
+
         if (MANUAL_APACHE) {
             # Write out a configuration file and include it.
             require Bric::Util::Trans::FS;
             my $conffile = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage',
                                                           'bric_httpd.conf');
-            open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
-            print CONF $names, $config;
-            close CONF;
+            open my $cfh, ">$conffile" or die "Cannot open $conffile for output: $!";
+            print $cfh $names, $config;
+            close $cfh;
 
-            # Place Include directive in Apache's scope
-            package Apache2::ReadConfig;
-            our $Include = $conffile;
+            # XXX: this will likely FAIL
+            $s->add_config(["Include $conffile"]);
         } else {
-            # place VirtualHost stuff in Apache's scope
-            package Apache2::ReadConfig;
-            our $PerlConfig = $names . $config;
+
+            # XXX: this is temporary, until $s->add_config is worked-around
+
+            my $tmpfile = '/tmp/ap2.conf';
+            open my $tmp , ">$tmpfile" or die "blah blah: $!";
+            print $tmp $names . $config;
+            close $tmp;
+
+            # XXX: FAIL
+            #            $s->add_config([$names . $config]);
+
+            # XXX: FAIL
+            #            $s->add_config(["Include $tmpfile"]);
         }
     }
 
 };
+
+}   # BEGIN
 
 
 1;

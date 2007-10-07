@@ -242,7 +242,7 @@ sub check_modules {
     my (@missing);
     # loop over required modules
  MOD:
-    foreach my $mod (qw(perl log_config mime alias apache_ssl ssl)) {
+    foreach my $mod (qw(apreq perl log_config mime alias apache_ssl ssl)) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
