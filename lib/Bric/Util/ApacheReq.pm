@@ -58,6 +58,11 @@ BEGIN {
     }
 }
 
+require Exporter;
+our @ISA = qw(Exporter);
+our @EXPORT = ();
+our @EXPORT_OK = qw(parse_args);
+
 =head1 INTERFACE
 
 =head2 Public Class Methods
@@ -117,6 +122,32 @@ sub server {
     return MOD_PERL_VERSION < 2
       ? Apache->server
       : Apache2::ServerUtil->server;
+}
+
+=back
+
+=head2 Public Functions
+
+=over 4
+
+=item my %args = parse_args(scalar $r->args);
+
+In mod_perl, C<< $r->args >> could be used in list context, to return a parsed hash
+of key => value, but in mod_perl2 it can only be used in scalar context.
+This implements the old behavior for mod_perl2 using C<parse_args>
+from C<Apache2::compat>. Always call C<< $r->args >> in scalar context
+in Bricolage code, then use this function to parse the result if necessary.
+
+=cut
+
+sub parse_args {
+    my ($string) = @_;
+    return () unless defined $string and $string;
+    return map {
+        tr/+/ /;
+        s/%([0-9a-fA-F]{2})/pack("C",hex($1))/ge;
+        $_;
+    } split /[=&;]/, $string, -1;
 }
 
 =back

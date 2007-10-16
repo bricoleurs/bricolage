@@ -73,28 +73,6 @@ BEGIN {
     if (MOD_PERL_VERSION < 2) {
         require mod_perl;    mod_perl->import();
         require Apache::Log;
-    } else {
-        # xxx: man, how annoying can it get?
-        require mod_perl2;
-        mod_perl2->import();
-        require Apache2::Log;
-        Apache2::Log->import();
-        require APR::Request;
-        APR::Request->import();
-        require Apache2::Connection;
-        Apache2::Connection->import();
-        require Apache2::RequestRec;
-        Apache2::RequestRec->import();
-        require Apache2::RequestUtil;
-        Apache2::RequestUtil->import();
-        require Apache2::Response;
-        Apache2::Response->import();
-        require Apache2::RequestIO;
-        Apache2::RequestIO->import();
-        require Apache2::ServerUtil;
-        Apache2::ServerUtil->import();
-        require APR::Table;
-        APR::Table->import();
     }
 }
 

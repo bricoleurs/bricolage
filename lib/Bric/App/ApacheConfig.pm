@@ -51,7 +51,7 @@ use Bric::Config qw(:ui :ssl :mod_perl);
 use constant DEBUGGING => 0;
 
 
-BEGIN {
+#BEGIN {
 
 do {
     ### mod_perl 1.3 ###
@@ -624,7 +624,7 @@ do {
 
             my $tmpfile = '/tmp/ap2.conf';
             open my $tmp , ">$tmpfile" or die "blah blah: $!";
-            print $tmp $names . $config;
+            print $tmp $names . $config . $/;
             close $tmp;
 
             # XXX: FAIL
@@ -637,7 +637,7 @@ do {
 
 };
 
-}   # BEGIN
+#}   # BEGIN
 
 
 1;

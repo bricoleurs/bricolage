@@ -16,6 +16,7 @@ use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Burner;
 use Bric::Util::Fault qw(rethrow_exception);
+use Bric::Config qw(:mod_perl);
 
 my $DESK_URL   = '/workflow/profile/desk/';
 my $SEARCH_URL = '/workflow/manager/template/';
@@ -404,7 +405,7 @@ sub download_file : Callback {
         'Content-Disposition' => qq{attachment; filename="$fn"}
     );
 
-    $req->send_http_header;
+    $req->send_http_header if MOD_PERL_VERSION < 2;
     $req->print($fa->get_data);
     $self->abort;
 }
