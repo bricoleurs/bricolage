@@ -6,7 +6,7 @@ use warnings;
 
 use Bric::App::Auth;
 use Bric::Util::Fault qw(throw_ap);
-use Apache;
+use Bric::Util::ApacheReq;
 use Bric::Util::ApacheConst qw(OK FORBIDDEN);
 
 use SOAP::Lite;
@@ -84,7 +84,7 @@ sub login {
   my $pkg = shift;
   my $env = pop;
   my $args = $env->method || {};
-  my $r = Apache->request;
+  my $r = Bric::Util::ApacheReq->request;
 
   # check for required args
   throw_ap(error => __PACKAGE__ . "::login : missing required parameter 'username'")
