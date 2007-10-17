@@ -152,11 +152,11 @@ if ($at->is_related_media) {
     my $key =  $widget . '|' . $dt->get_id;
 
     # Get the value.
-    $vals->{value} = $dt->get_value(ISO_8601_FORMAT)
-        || $at_obj->get_default_val;
     if ($vals->{props}{type} eq 'checkbox') {
-        $vals->{props}{chk} = $vals->{value};
+        $vals->{props}{chk} = $dt->get_value;
         $vals->{value} = 1;
+    } else {
+        $vals->{value} = $dt->get_value(ISO_8601_FORMAT) || $at_obj->get_default_val;
     }
 
     # Set the array of possible values, if necessary.

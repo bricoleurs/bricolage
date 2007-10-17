@@ -60,6 +60,10 @@ The C<$BRICOLAGE_ROOT> environment variable specified in
 F<contrib/start_scripts/freebsd> is now exported, allowing it to be properly
 passed through to F<bric_apachectl>. [David]
 
+=item *
+
+Fix for bug 1254: checkbox fields are now saved correctly. [Scott]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)
