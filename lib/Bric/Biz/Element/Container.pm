@@ -212,7 +212,7 @@ element.
 =item object_order
 
 The order of this element relative to the other container elements based on
-the same Bric::Biz::AsetType object that are subelements of the parent
+the same Bric::Biz::AssetType object that are subelements of the parent
 element.
 
 =item parent_id
@@ -1462,7 +1462,7 @@ The ID of the element to be deleted.
 B<Throws:> NONE.
 
 B<Side Effects:> Will shift and reorder the remaining subelements to fit. So
-if telements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
+if elements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
 removed the new list of elements will be 2, 7, and 10
 
 B<Notes:> Doesn't actually do any deletions, just schedules them. Call
@@ -1512,8 +1512,8 @@ sub delete_elements {
         my $delete = undef;
         if ($elem->is_container) {
             if (exists $del_cont{$elem->get_id}) {
-                my $subelement_type = $elem->get_element_type;
-                my $elem_name = $subelement_type->get_key_name;
+                my $elem_name = $elem->get_element_type->get_key_name;
+                my $subelement_type = $self->get_element_type->get_containers($elem_name);
                 
                 # Increase the deletion counter
                 $delete_count{$elem_name}++;
@@ -1568,7 +1568,7 @@ sub delete_elements {
                         ]
                     ;
                 } else {
-                    # Schedule for deletion if we haven't                
+                    # Schedule for deletion if we haven't
                     push @$del_elements, $elem;
                     $delete = 1;
                 }
@@ -2000,6 +2000,7 @@ sub _do_list {
         }
 
         elsif ($k eq 'related_media_id' || $k eq 'related_story_id') {
+            my ($col, $key);
             ($col = $key) =~ s/_id$/__id/;
             push @wheres, defined $v
                 ? any_where($v, "e.$col = ?", \@params)

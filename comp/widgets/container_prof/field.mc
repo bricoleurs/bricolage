@@ -21,7 +21,7 @@
 </div>
 % }
 
-% unless ($no_del) {
+% if ($parent->get_field_occurrence($at_obj->get_key_name) > $at_obj->get_min_occurrence) {
     <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -39,6 +39,7 @@
 <%args>
 $widget
 $element
+$parent
 </%args>
 
 <%init>
@@ -58,7 +59,6 @@ my $vals = { props => {
 }};
 
 my $key =  $widget . '|' . $element->get_id;
-my $no_del = $at_obj->get_required && $element->get_object_order == 1;
 
 
 # Get the value.

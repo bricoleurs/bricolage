@@ -29,6 +29,7 @@
     <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
     <& 'container.mc',
         widget  => $widget,
+        parent  => $element,
         element => $dt
     &>
     </li>
@@ -36,6 +37,7 @@
     <li id="subelement_dat<% $dt->get_id %>" class="element clearboth">
     <& 'field.mc',
         widget  => $widget,
+        parent  => $element,
         element => $dt
     &>
     </li>

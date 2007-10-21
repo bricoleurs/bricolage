@@ -309,7 +309,7 @@ sub test_zelem_occurrence : Test(89) {
     ok @pre_conts = $story_pre_pop->get_element->get_containers,
         'Get the containers this story started with,';
     is scalar @pre_conts, 1, 'There should be one container to start.';
-    is $pre_conts[0]->get_key_name, '_page_', 'Make sure a page was added by default.';\
+    is $pre_conts[0]->get_key_name, '_page_', 'Make sure a page was added by default.';
     ok $subelem->set_min_occurrence(0), 'Set the min occurrence back to 0';
     ok $subelem->save, 'Save the subelement';
     ok $story_pre_pop->save, 'Save the story';
