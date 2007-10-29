@@ -64,6 +64,10 @@ passed through to F<bric_apachectl>. [David]
 
 Fix for bug 1254: checkbox fields are now saved correctly. [Scott]
 
+=item *
+
+Fix for bug 1294, where Search/Replace in Bulk Edit wasn't working. [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)

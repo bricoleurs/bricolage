@@ -1000,7 +1000,7 @@ function replaceAll (field) {
         field.value = chunks.join(replace);
         field.focus(); field.blur();
         closeDialog(document.getElementById('finddialog'));
-        alert(replaced + (chunks.length - 1) + chunks.length > 2 ? occurrence : occurrences);
+        alert((replaced) + (chunks.length - 1) + (chunks.length > 2 ? occurrences : occurrence));
     }
     return false;
 }
