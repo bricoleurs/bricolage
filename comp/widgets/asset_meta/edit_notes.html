@@ -13,7 +13,7 @@
 %    if ( $n->{id} && $n->{note} ) {
 <tr class="<% (++$count % 2 == 0) ? 'even' : 'odd' %>">
     <td class="name"><% $n->{id} %></td>
-    <td><% $n->{note} %></td>
+    <td><% $n->{note} |h %></td>
 </tr>
 %    }
 % }
