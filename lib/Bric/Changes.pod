@@ -77,6 +77,11 @@ Fix for bug 1269, needed to HTML-escape Notes. [Scott]
 For bug 1284, weren't able to search element_type by output_channel in
 C<bric_soap>. [Scott]
 
+=item *
+
+Bug 1291, added check for max_length of fields when importing in
+C<bric_soap>. [Scott]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)
