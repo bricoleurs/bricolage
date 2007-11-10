@@ -82,6 +82,10 @@ C<bric_soap>. [Scott]
 Bug 1291, added check for max_length of fields when importing in
 C<bric_soap>. [Scott]
 
+=item *
+
+Fix bug 1264, prevent searching on bad dates (like February 31). [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)

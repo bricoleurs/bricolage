@@ -285,6 +285,26 @@ sub _build_date_fields {
         # to 23:59:59.
         $v_end =~ s/00:00:00$/23:59:59/ if $v_end;
 
+        # check date fields
+        if ($v_start) {
+            eval('my $check_date = DateTime->new(year=>'.substr($v_start,0,4).
+                ', month=>'.substr($v_start,5,2).
+                ', day=>'.substr($v_start,8,2).')');
+            if ($@) {
+                add_msg("Invalid start date ".substr($v_start,0,10)." ($f)");
+                $v_start = '';
+            }
+        }
+        if ($v_end) {
+            eval('my $check_date = DateTime->new(year=>'.substr($v_end,0,4).
+                ', month=>'.substr($v_end,5,2).
+                ', day=>'.substr($v_end,8,2).')');
+            if ($@) {
+                add_msg("Invalid end date ".substr($v_end,0,10)." ($f)");
+                $v_end = '';
+            }
+        }
+
         # Save the value so we can repopulate the form.
         $state->{"$f\_start"} = $v_start;
         $state->{"$f\_end"}   = $v_end;
