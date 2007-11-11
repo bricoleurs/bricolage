@@ -94,6 +94,11 @@ Marshall Roch. [Greg Heo]
 Fix bug 1259, so burn_again works in the TT and PHP burners. Reported by
 Adeola Awoyemi. [David and Scott]
 
+=item *
+
+Fix bug 1307, related stories can be unrelated. Reported by Steffen Schwigon.
+[Scott]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)

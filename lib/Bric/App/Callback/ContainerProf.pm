@@ -310,7 +310,7 @@ sub relate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_story_id($self->value);
+    $element->set_related_story($self->value);
     $self->_handle_related_up;
 }
 
@@ -321,7 +321,7 @@ sub unrelate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = get_state_data($self->class_key, 'element');
-    $element->set_related_story_id(undef);
+    $element->set_related_story(undef);
     $self->_handle_related_up;
 }
 
