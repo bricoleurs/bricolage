@@ -92,7 +92,7 @@ Marshall Roch. [Greg Heo]
 =item *
 
 Fix bug 1259, so burn_again works in the TT and PHP burners. Reported by
-Adeola Awoyemi. [Scott]
+Adeola Awoyemi. [David and Scott]
 
 =back
 
