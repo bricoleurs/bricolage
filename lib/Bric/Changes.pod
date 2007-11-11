@@ -89,6 +89,11 @@ C<bric_soap>. Reported by Simon Wilcox. [Scott]
 Fix bug 1264, prevent searching on bad dates (like February 31). Reported by
 Marshall Roch. [Greg Heo]
 
+=item *
+
+Fix bug 1259, so burn_again works in the TT and PHP burners. Reported by
+Adeola Awoyemi. [Scott]
+
 =back
 
 =head1 VERSION 1.10.3 "Finally" (2007-08-09)
