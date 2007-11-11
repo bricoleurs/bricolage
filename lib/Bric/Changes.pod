@@ -62,29 +62,32 @@ passed through to F<bric_apachectl>. [David]
 
 =item *
 
-Fix for bug 1254: checkbox fields are now saved correctly. [Scott]
+Fix for bug 1254: checkbox fields are now saved correctly. Reported by
+Dawn Buie. [Scott]
 
 =item *
 
-Fix for bug 1294, where Search/Replace in Bulk Edit wasn't working. [Greg Heo]
+Fix for bug 1294, where Search/Replace in Bulk Edit wasn't working. Reported by
+Phillip Smith. [Greg Heo]
 
 =item *
 
-Fix for bug 1269, needed to HTML-escape Notes. [Scott]
+Fix for bug 1269, needed to HTML-escape Notes. Reported by Matt Rolf. [Scott]
 
 =item *
 
 For bug 1284, weren't able to search element_type by output_channel in
-C<bric_soap>. [Scott]
+C<bric_soap>. Reported by George Harrison. [Scott]
 
 =item *
 
 Bug 1291, added check for max_length of fields when importing in
-C<bric_soap>. [Scott]
+C<bric_soap>. Reported by Simon Wilcox. [Scott]
 
 =item *
 
-Fix bug 1264, prevent searching on bad dates (like February 31). [Greg Heo]
+Fix bug 1264, prevent searching on bad dates (like February 31). Reported by
+Marshall Roch. [Greg Heo]
 
 =back
 

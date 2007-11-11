@@ -430,6 +430,8 @@ Friends who have spotted bugs include:
 
 =item * Daisuke Maki
 
+=item * Dawn Buie
+
 =back
 
 Bricolage's translation team:
