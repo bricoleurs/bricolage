@@ -36,6 +36,8 @@ bric_republish [options]
 
     --category - only publish stories in this category, specified by path
 
+    --site     - only publish stories in this site, specified by name
+
     --published-only - Deprecated; kept for backwards compatibility; Only
                 the published version of all stories will be published.
 
@@ -108,7 +110,7 @@ BEGIN {
     our $no_media        = 0;
     our $timeout         = 30;
     our $chunks          = 0;
-    our ($element, $story_id, $category, $help, $man);
+    our ($element, $story_id, $category, $help, $man, $site);
     GetOptions("help"            => \$help,
                "man"             => \$man,
                "verbose+"        => \$VERBOSE,
@@ -122,6 +124,7 @@ BEGIN {
                "published-only"  => \my $published_only,
                "timeout=s"       => \$timeout,
                "chunks=s"        => \$chunks,
+               "site=s"          => \$site,
               ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
@@ -171,7 +174,7 @@ sub main {
 
 # gets a list of story ids, modified by options
 sub get_story_ids {
-    our ($soap, $element, $story_id, $category, $help, $man);
+    our ($soap, $element, $story_id, $category, $help, $man, $site);
     our @story_ids;
 
     # quit early if the user specified a story_id
@@ -187,6 +190,7 @@ sub get_story_ids {
 
     push(@search, name(element  => $element))  if $element;
     push(@search, name(category => $category)) if $category;
+    push(@search, name(site => $site)) if $site;
 
     # run the search
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');

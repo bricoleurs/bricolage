@@ -432,6 +432,10 @@ Friends who have spotted bugs include:
 
 =item * Dawn Buie
 
+=item * Ryan O'Toole
+
+=item * Chauncey Thorn
+
 =back
 
 Bricolage's translation team:

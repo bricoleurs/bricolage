@@ -42,6 +42,10 @@ Include meta-equiv tag in the header to set the charset to be UTF-8 if it is
 the only charset loaded in C<$LOAD_CHAR_SETS>. Reported by Daisuke Maki. 
 [Paul Orrock]
 
+=item *
+
+Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn.
+
 =back
 
 =head2 Bug Fixes
@@ -98,6 +102,12 @@ Adeola Awoyemi. [David and Scott]
 
 Fix bug 1307, related stories can be unrelated. Reported by Steffen Schwigon.
 [Scott]
+
+=item *
+
+Fixed issue with trailing newlines sometimes becoming a part of a
+contributor's name. [Greg Heo and Ryan O'Toole]
+
 
 =back
 
