@@ -38,13 +38,17 @@ method. [Bret Dawson]
 
 =item *
 
-Include meta-equiv tag in the header to set the charset to be UTF-8 if it is 
-the only charset loaded in C<$LOAD_CHAR_SETS>. Reported by Daisuke Maki. 
-[Paul Orrock]
+Include meta-equiv tag in the header to set the charset to be UTF-8 if it is
+the only charset loaded in C<$LOAD_CHAR_SETS>. Reported by Daisuke Maki. [Paul
+Orrock]
 
 =item *
 
-Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn.
+Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn. [David]
+
+=item *
+
+Updated autovacuum documentation in L<Bric::DBA|Bric::DBA>. [David]
 
 =back
 
@@ -54,9 +58,9 @@ Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn.
 
 =item *
 
-More changes around bug 1267, remove protocol+hostname+port from 
-practically all redirects (especially "user profiles") in order to 
-allow reverse proxying to work in Apache2. [Steffen Schwigon]
+More changes around bug 1267, remove protocol+hostname+port from practically
+all redirects (especially "user profiles") in order to allow reverse proxying
+to work in Apache2. [Steffen Schwigon]
 
 =item *
 

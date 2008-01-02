@@ -185,14 +185,25 @@ example:
   PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a
   PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a -z
 
-These commands vacuum all of the databases on your PostgreSQL server. If the
-vacuum is successful, C<vacuumdb> will output "VACUUM". In the event of a
-failure, it will output "vacuumdb: Vacuum failed."
+However, the best way to keep your database well vacuumed is to configure it
+to be automatically vacuumed. In PostgreSQL 8.1 and later, autovacuum is
+integrated into PostgreSQL and can be configured by editing
+F<postgresql.conf>. For earlier versions, you'll need to compile and install
+C<pg_autovacuum> from F<contrib/pg_autovacuum>.
 
-However, the best way to keep your database well vacuumed is to use the
-C<pg_autovacuum> utility that comes with PostgreSQL 7.4 and later (and which
-can be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum>
-F<README> document:
+To configure autovacuum in 8.1 and later, set these values in
+F<postgresql.conf>:
+
+  autovacuum = on
+  autovacuum_vacuum_threshold = 300
+  autovacuum_analyze_threshold = 500
+  autovacuum_vacuum_scale_factor = 0.5
+  stats_start_collector = on
+  stats_row_level = on
+
+The C<pg_autovacuum> contrib utility comes with PostgreSQL 7.4 - 8.0 (and can
+be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum> F<README>
+document:
 
 "C<pg_autovacuum> is a libpq client program that monitors all the databases
 associated with a PostgreSQL server. It uses the statistics collector to
