@@ -785,7 +785,7 @@ change into that directory.
 
 Build Bricolage:
 
-  make
+  perl Makefile.PL
 
 This step will check your system for all required packages.  It will
 also ask you questions regarding your installation.  In most cases the
@@ -913,6 +913,7 @@ to this directory.
 
 Install Bricolage (as root):
 
+  make
   make install
 
 =back
