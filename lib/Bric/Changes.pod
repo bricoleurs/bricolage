@@ -60,6 +60,12 @@ C<$Config{libpth}> as well as C<$Config{loclibpth}>. [Steffen Schwigon]
 The C<publish_status> attribute can now be set in stories and media created
 via SOAP. [David]
 
+=item *
+
+The code in ode select fields can now access the
+C<Bric::Biz::Element::Field|Bric::Biz::Element::Field> object itself using the
+variable C<$field>. [Greg Heo]
+
 =back
 
 =head2 Bug Fixes

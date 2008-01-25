@@ -892,7 +892,7 @@ sub site_list {
 
 #--------------------------------------#
 
-=item my $select_options = eval_codeselect($code)
+=item my $select_options = eval_codeselect($code, $field)
 
 Returns a hash reference or reference to an array of arrays as returned by the
 code in C<$code>. If the code just returns a list, it will be converted to a
@@ -902,10 +902,11 @@ case an error message will be displayed.
 =cut
 
 sub eval_codeselect {
+    my ($code, $field) = @_;
     # XXX: This is very unsafe, but they need to be able
     # to do things like DBI queries; would that work with Safe?
     local $_;
-    my $res = eval shift;
+    my $res = eval $code;
 
     my $ref = ref $res;
     # Return a hashref.
