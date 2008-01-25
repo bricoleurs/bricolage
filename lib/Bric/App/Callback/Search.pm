@@ -287,20 +287,20 @@ sub _build_date_fields {
 
         # check date fields
         if ($v_start) {
-            eval('my $check_date = DateTime->new(year=>'.substr($v_start,0,4).
-                ', month=>'.substr($v_start,5,2).
-                ', day=>'.substr($v_start,8,2).')');
+            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_start,0,4).
+                ', month=>'.CORE::substr($v_start,5,2).
+                ', day=>'.CORE::substr($v_start,8,2).')');
             if ($@) {
-                add_msg("Invalid start date ".substr($v_start,0,10)." ($f)");
+                add_msg("Invalid start date ".CORE::substr($v_start,0,10)." ($f)");
                 $v_start = '';
             }
         }
         if ($v_end) {
-            eval('my $check_date = DateTime->new(year=>'.substr($v_end,0,4).
-                ', month=>'.substr($v_end,5,2).
-                ', day=>'.substr($v_end,8,2).')');
+            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_end,0,4).
+                ', month=>'.CORE::substr($v_end,5,2).
+                ', day=>'.CORE::substr($v_end,8,2).')');
             if ($@) {
-                add_msg("Invalid end date ".substr($v_end,0,10)." ($f)");
+                add_msg("Invalid end date ".CORE::substr($v_end,0,10)." ($f)");
                 $v_end = '';
             }
         }

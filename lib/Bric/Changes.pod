@@ -50,6 +50,16 @@ Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn. [David
 
 Updated autovacuum documentation in L<Bric::DBA|Bric::DBA>. [David]
 
+=item *
+
+The installer now also checks in F</usr/lib> for libraries, by way of searching
+C<$Config{libpth}> as well as C<$Config{loclibpth}>. [Steffen Schwigon]
+
+=item *
+
+The C<publish_status> attribute can now be set in stories and media created
+via SOAP. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -112,6 +122,30 @@ Fix bug 1307, related stories can be unrelated. Reported by Steffen Schwigon.
 Fixed issue with trailing newlines sometimes becoming a part of a
 contributor's name. [Greg Heo and Ryan O'Toole]
 
+=item *
+
+Eliminated backslashes in F<sql/Pg/Bric/Biz/Asset/Template.val>, which were
+causing warnings under PostgreSQL 8.3. The backslashes were for newlines, so I
+just switched to real newlines, instead.
+
+=item *
+
+Fixed a Perl 5.10 warning in
+L<Bric::App::Callback::Search|Bric::App::Callback::Search>, where calls to
+C<substr> were being properly resolved to C<CORE::substr>.
+
+=item *
+
+Fixed the handling of globs in
+L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>. It
+seems that in Perl 5.10, package scalars can actually be C<SCALAR>s rather
+than `GLOB`s.
+
+=item *
+
+PostgreSQL 8.3 warns when we try to apply inappropriate permissions to
+sequences, so we updated F<bin/bric_pgimport> and F<inst/db_grant.pl> to grant
+permissions to sequences and tables separately.
 
 =back
 

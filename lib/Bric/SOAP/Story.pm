@@ -912,11 +912,8 @@ sub load_asset {
 
         # set simple fields
         my @simple_fields = qw(name description slug primary_uri
-                               priority);
+                               priority publish_status);
         $story->_set(\@simple_fields, [ @{$sdata}{@simple_fields} ]);
-
-        # avoid setting publish_status on create
-        $story->set_publish_status($sdata->{publish_status}) if $update;
 
         # assign dates
         $sdata->{publish_date} ||= $sdata->{first_publish_date}
