@@ -117,7 +117,7 @@ sub test_checkout : Test(30) {
         1 => 'Note 1.1',
         2 => 'Note 1.2',
     }, 'Check first note href';
-    is $ass2->get_note, 'Note 2.2', 'Check second note';
+    is $ass2->get_note, undef, 'The note for a newly-checked out document should be undefined'
     is_deeply $ass2->get_notes, {
         1 => 'Note 2.1',
         2 => 'Note 2.2',
