@@ -201,6 +201,14 @@ F<postgresql.conf>:
   stats_start_collector = on
   stats_row_level = on
 
+In PostgreSQL 8.3 and later, those last two are actually covered by a new
+configuration variable:
+
+  track_counts = on
+
+Nicely, autovacuum is turned on by default in PostgreSQL 8.3 and later, though
+you'll likely want to tweak the thresholds and scale factors as above.
+
 The C<pg_autovacuum> contrib utility comes with PostgreSQL 7.4 - 8.0 (and can
 be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum> F<README>
 document:
