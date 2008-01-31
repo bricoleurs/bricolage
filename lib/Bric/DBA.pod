@@ -361,10 +361,16 @@ for details. To enable autovacuum, you I<must> set these direcives:
   stats_row_level       = on
   autovacuum            = on
 
+In PostgreSQL 8.3 and later autovacuum is enabled by default, but just in case, the
+directives have changed:
+
+  autovacuum   = on
+  track_counts = on
+
 If you enable C<autovacuum> but forget to enable C<stats_start_collector>
-and/or C<stats_row_level>, autovacuum will not actually work. But it's not
-fatal; you'll just happen to see this warning if you're watching your
-PostgreSQL log:
+and/or C<stats_row_level>, or C<track_counts>, autovacuum will not actually
+work. But it's not fatal; you'll just happen to see this warning if you're
+watching your PostgreSQL log:
 
   WARNING: autovacuum not started because of misconfiguration
   HINT: Enable options "stats_start_collector" and stats_row_level".
