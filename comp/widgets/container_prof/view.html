@@ -50,9 +50,11 @@ foreach my $field ($dt->get_fields) {
     </td>
 %   } else {
     <td class="fieldcontent">
+<pre>
 %     my $value = $dt->get_value;
 %     $value = $lang->maketext("Not defined.") unless defined $value;
 %     $m->out(escape_html($value));
+</pre>
     </td>
 %   }
   </tr>

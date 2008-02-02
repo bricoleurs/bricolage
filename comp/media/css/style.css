@@ -578,6 +578,16 @@ div.addelement { text-align: right;}
 
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
+/***************************************************
+ * VIEW BOXES 
+***************************************************/
+
+pre {
+    white-space: pre-wrap;
+    word-break: normal;
+    white-space: -moz-pre-wrap;
+}
+
 /******************************************************
  * DIFFS                                              *
  ******************************************************/
