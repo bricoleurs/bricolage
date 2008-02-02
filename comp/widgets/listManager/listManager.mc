@@ -390,6 +390,7 @@ if (!$search_stale && ($show_all || ($pagination && defined $offset))) {
 
     $param->{site_id} = $site_cx if $site_cx;
     $state->{list_params} = $param if $pagination;
+    $offset = 0;
     $do_list = 1 if %$list_arg;
 }
 

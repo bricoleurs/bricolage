@@ -35,6 +35,7 @@ sub substr : Callback( priority => 7 ) {
     # Set the value that will repopulate the search box and clear the alpha
     $state->{crit_field}  = $param->{$val_fld};
     $state->{crit_letter} = '';
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
@@ -105,6 +106,7 @@ sub media : Callback {
     my $state  = get_state_data($widget => $object);
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
@@ -127,6 +129,7 @@ sub template : Callback {
     my $state  = get_state_data($widget => $object);
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
