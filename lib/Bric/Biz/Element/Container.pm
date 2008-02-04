@@ -298,7 +298,7 @@ sub new {
             $self->add_field($ft) for 1..$min;
         }
     }
-    
+
     # Prepopulate the elements based on min occurrence
     foreach my $subet ($init->{_element_type_obj}->get_containers) {
         if (my $min = $subet->get_min_occurrence) {
@@ -688,10 +688,10 @@ sub set_related_media_id {
 ################################################################################
 
 =item $container->get_elem_occurrence($subelement->get_key_name)
-    
+
 Returns the number of subelements currently in this container
 which match the name passed in.
-    
+
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
@@ -707,10 +707,10 @@ sub get_elem_occurrence{
 ################################################################################
 
 =item $container->get_field_occurrence($field_type->get_key_name)
-    
+
 Returns the number of fields currently in this container
 which match the field name passed in.
-    
+
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
@@ -929,7 +929,7 @@ sub get_element_key_name { $_[0]->get_key_name }
 Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
 objects that define the types of data elements that can be subelements of this
 container element. This list would exclude any data elements that can only be
-added as subelements to this container element a set number of times, and have 
+added as subelements to this container element a set number of times, and have
 already been added that many times. This is the max_occurrence of that FieldType.
 
 B<Throws:> NONE.
@@ -946,7 +946,7 @@ sub get_possible_field_types {
     my $at      = $self->get_element_type;
     my %at_info = map { $_->get_id => $_ } $at->get_field_types;
     my @parts;
-    
+
     for my $data (@$current) {
         if (my $atd = delete $at_info{$data->get_field_type_id}) {
             my $max = $atd->get_max_occurrence;
@@ -986,10 +986,10 @@ sub get_possible_containers {
     my $at = $self->get_element_type or return;
     my $containers = $at->get_containers;
     my @possible_cons;
-    
+
     for my $data (@$containers) {
         my $max = $data->get_max_occurrence;
-        push @possible_cons, $data if !$max || 
+        push @possible_cons, $data if !$max ||
             $max > $self->get_elem_occurrence($data->get_key_name);
     }
 
@@ -1019,9 +1019,9 @@ B<Notes:> NONE.
 sub add_field {
     my ($self, $atd, $data, $place) = @_;
     # Get the field type
-    
-    if ($atd->get_max_occurrence && 
-        ($self->get_field_occurrence($atd->get_key_name) >= 
+
+    if ($atd->get_max_occurrence &&
+        ($self->get_field_occurrence($atd->get_key_name) >=
             $atd->get_max_occurrence)) {
         my $field_name = $atd->get_key_name;
         my $field_occurrence = $self->get_field_occurrence($field_name);
@@ -1039,7 +1039,7 @@ sub add_field {
             ]
         ;
     }
-    
+
     my $field = Bric::Biz::Element::Field->new({
         active             => 1,
         object_type        => $self->_get('object_type'),
@@ -1075,25 +1075,25 @@ B<Notes:> NONE.
 
 sub add_container {
     my ($self, $atc) = @_;
-    
+
     my $elem_key_name = $atc->get_key_name;
     my $parent_key_name = $self->get_key_name;
     my @subets = $self->get_element_type->get_containers($elem_key_name);
-    
+
     # Throw an error if $subets[0] doesn't exist
     if (!($subets[0])) {
     throw_invalid
         error    => qq{$elem_key_name cannot be a subelement }
                   . qq{of $parent_key_name.},
-        maketext => [ '[_1] cannot be a subelement of [_2].', 
+        maketext => [ '[_1] cannot be a subelement of [_2].',
             $elem_key_name,
             $parent_key_name,
         ]
     ;
     }
     my $max_occur = $subets[0]->get_max_occurrence;
-    
-    if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >= 
+
+    if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >=
             $max_occur)) {
         my $elem_name = $atc->get_key_name;
         my $elem_occurrence = $self->get_elem_occurrence($elem_name);
@@ -1475,7 +1475,7 @@ sub delete_elements {
     my (%del_data, %del_cont, $error);
 
     my $err_msg = 'Improper args to delete elements';
-    
+
     for my $elem (@$elements_arg) {
         if (ref $elem eq 'HASH') {
             throw_gen(error => $err_msg)
@@ -1507,22 +1507,22 @@ sub delete_elements {
     my $data_order;
     my $new_list = [];
     my %delete_count;
-    
+
     for my $elem (@$elements) {
         my $delete = undef;
         if ($elem->is_container) {
             if (exists $del_cont{$elem->get_id}) {
                 my $elem_name = $elem->get_element_type->get_key_name;
                 my $subelement_type = $self->get_element_type->get_containers($elem_name);
-                
+
                 # Increase the deletion counter
                 $delete_count{$elem_name}++;
-                
+
                 # Get the minimum occurrence for this parent/child relation
                 my $min_occur = $subelement_type->get_min_occurrence;
-                
+
                 my $occur_diff = $self->get_elem_occurrence($elem_name) - $min_occur;
-                
+
                 # Check if we've deleted too many
                 if ($delete_count{$elem_name} > $occur_diff) {
                     # Throw an error if we have
@@ -1546,13 +1546,13 @@ sub delete_elements {
             if (exists $del_data{$elem->get_id}) {
                 my $field_type = $elem->get_field_type;
                 my $field_name = $field_type->get_key_name;
-                
+
                 # Increase the deletion counter
                 $delete_count{$field_name}++;
-                
-                my $occur_diff = $self->get_field_occurrence($field_name) - 
+
+                my $occur_diff = $self->get_field_occurrence($field_name) -
                         $field_type->get_min_occurrence;
-                
+
                 # Check if we've deleted too many
                 if ($delete_count{$field_name} > $occur_diff) {
                     my $the_min_occur = $field_type->get_min_occurrence;
@@ -1602,7 +1602,7 @@ sub delete_elements {
             $order++;
         }
     }
-    
+
     return $self->_set(
         ['_subelems',  '_del_subelems'],
         [ $new_list,    $del_elements ]
@@ -2366,27 +2366,27 @@ sub _deserialize_pod {
                             element_type       => $elem_types{$kn},
                             parent_id          => $id,
                         });
-                        
+
                 # Check for element occurrence violation
                 my $subelem_key_name = $subelem->get_key_name;
                 my $elem_key_name = $self->get_key_name;
                 my $subelem_occur = $self->get_elem_occurrence($subelem_key_name);
                 my @subets = $self->get_element_type->get_containers($subelem_key_name);
-    
+
                 # Throw an error if $subets[0] doesn't exist
                 if (!($subets[0])) {
                     throw_invalid
                         error    => qq{$subelem_key_name cannot a subelement }
                                   . qq{of $elem_key_name.},
-                        maketext => [ '[_1] cannot be a subelement of [_2].', 
+                        maketext => [ '[_1] cannot be a subelement of [_2].',
                             $subelem_key_name,
                             $elem_key_name,
                         ]
                     ;
                 }
-                
+
                 my $subelem_max = $subets[0]->get_max_occurrence;
-                
+
                 if ($subelem_max && ($subelem_max >= $subelem_occur)) {
                     # Throw an error
                     throw_invalid
@@ -2752,4 +2752,3 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Element>
 
 =cut
-
