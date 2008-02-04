@@ -36,8 +36,8 @@ do_sql
   q{ALTER TABLE subelement_type ADD
     CONSTRAINT fkx_element_type__subelement__child_id FOREIGN KEY (child_id)
     REFERENCES element_type(id) ON DELETE CASCADE},
-    
-  
+
+
 ;
 
 my $sel = prepare(q{

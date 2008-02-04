@@ -29,7 +29,6 @@ CREATE TABLE element_type  (
     related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
     media           BOOLEAN        NOT NULL DEFAULT FALSE,
     biz_class__id   INTEGER        NOT NULL,
-    et_grp__id      INTEGER,
     type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
@@ -37,7 +36,6 @@ CREATE TABLE element_type  (
     ENGINE	    InnoDB
     AUTO_INCREMENT  1024;
 
-/*
 -- -----------------------------------------------------------------------------
 -- Table: subelement_type
 --
@@ -54,8 +52,6 @@ CREATE TABLE subelement_type  (
 )
     ENGINE	    InnoDB
     AUTO_INCREMENT  1024;
-
-*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element__site
@@ -164,15 +160,11 @@ CREATE TABLE attr_element_type_meta (
 --
 CREATE UNIQUE INDEX udx_element_type__key_name ON element_type(key_name);
 CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
-CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
 CREATE INDEX fkx_class__element_type ON element_type(biz_class__id);
 
-/* Subelement_type indexes for future reference.
 CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id);
 CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id);
 CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id);
-
-*/
 
 CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(element_type__id, output_channel__id);
 CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
@@ -218,7 +210,7 @@ CREATE INDEX fkx_output_channel__et__site ON element_type__site(primary_oc__id);
 --
 
 ALTER TABLE element_type AUTO_INCREMENT 1024;
---ALTER TABLE subelement_type AUTO_INCREMENT 1024;
+ALTER TABLE subelement_type AUTO_INCREMENT 1024;
 ALTER TABLE element_type__site AUTO_INCREMENT 1024;
 ALTER TABLE element_type__output_channel AUTO_INCREMENT 1024;
 ALTER TABLE element_type_member AUTO_INCREMENT 1024;
