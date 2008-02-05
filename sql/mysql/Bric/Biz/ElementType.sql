@@ -40,7 +40,7 @@ CREATE TABLE element_type  (
 -- Table: subelement_type
 --
 -- Description: A table that manages element type parent/child relationships.
--- Here for future reference.
+
 CREATE TABLE subelement_type  (
     id              INTEGER        NOT NULL  AUTO_INCREMENT,
     parent_id       INTEGER        NOT NULL,
