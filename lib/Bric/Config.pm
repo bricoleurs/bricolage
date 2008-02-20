@@ -138,6 +138,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     PREVIEW_LOCAL
                     PREVIEW_MASON
                     FULL_SEARCH
+                    BLOB_SEARCH
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
                     ENABLE_OC_ASSET_ASSOCIATION
@@ -262,6 +263,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     ui        => [qw(FIELD_INDENT
                                      DISABLE_NAV_LAYER
                                      FULL_SEARCH
+                                     BLOB_SEARCH
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
                                      RELATED_MEDIA_UPLOAD
@@ -447,9 +449,9 @@ require Bric; our $VERSION = Bric->VERSION;
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
         # While these default to 0.
-        foreach (qw(PREVIEW_MASON FULL_SEARCH INCLUDE_XML_WRITER MANUAL_APACHE
-                    DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE DBI_PROFILE
-                    PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
+        foreach (qw(PREVIEW_MASON FULL_SEARCH BLOB_SEARCH INCLUDE_XML_WRITER
+                    MANUAL_APACHE DISABLE_NAV_LAYER QA_MODE TEMPLATE_QA_MODE
+                    DBI_PROFILE PROFILE CHECK_PROCESS_SIZE ENABLE_SFTP_MOVER
                     ENABLE_SFTP_V2 ENABLE_WEBDAV_MOVER ALWAYS_USE_SSL
                     ALLOW_WORKFLOW_TRANSFER ALLOW_ALL_SITES_CX
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
@@ -701,6 +703,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ALLOW_SLUGLESS_NONFIXED => $config->{ALLOW_SLUGLESS_NONFIXED};
     use constant AUTOGENERATE_SLUG       => $config->{AUTOGENERATE_SLUG};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};
+    use constant BLOB_SEARCH             => $config->{BLOB_SEARCH};
     use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
     use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;
 

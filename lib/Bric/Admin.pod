@@ -1837,12 +1837,23 @@ specified.
 
 =item *
 
-B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its database
-queries, rather than merely to search at the beginning of a string. Full
-sub-string searches are more expensive, since they cannot use database indexes,
-but that may not matter if there are few records in your database. Many users
-find the sub-string searches to be more intuitive, so enable it if you find the
-trade-off to be worth it. Defaults to "Off" if not specified.
+B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its
+database queries, rather than merely to search at the beginning of a string.
+Full sub-string searches are more expensive, since they cannot use database
+indexes, but that may not matter if there are few records in your database.
+Many users find the sub-string searches to be more intuitive, so enable it if
+you find the trade-off to be worth it. Defaults to "Off" if not specified.
+
+=item *
+
+B<BLOB_SEARCH:> Allows the C<data_text> parameter to the C<list()> and friends
+methods of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story> and
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> to
+search large fields (such as paragraphs) as well as short fields (like
+headers). Note that this can make such searches much more expensive if you
+have more than a few thousand paragraph-type fields in your documents.
+Defaults to "Off" if not specified.
 
 =item *
 
