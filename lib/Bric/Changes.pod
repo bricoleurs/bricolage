@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.4 "" (2007-??-??)
+=head1 VERSION 1.10.4 "" (2008-??-??)
 
 =head2 Improvements
 
@@ -62,13 +62,15 @@ via SOAP. [David]
 
 =item *
 
-The code in ode select fields can now access the
+The code in code select fields can now access the
 C<Bric::Biz::Element::Field|Bric::Biz::Element::Field> object itself using the
 variable C<$field>. [Greg Heo]
 
 =item *
 
-When viewing elements when not checked out, whitespace is preserved for IE7, FF2, and Safari 3, so that reading and copying code is easier.  Suggested by Michael Herring. [Matt Rolf]
+When viewing elements when not checked out, whitespace is preserved for IE7,
+FF2, and Safari 3, so that reading and copying code is easier.  Suggested by
+Michael Herring. [Matt Rolf]
 
 =back
 
@@ -159,7 +161,12 @@ permissions to sequences and tables separately.
 
 =item *
 
-Fix for bugs 1255 and 1271, which addresses pagination problems in searches for elements, groups, media, and templates. [Matt Rolf and Michael Herring]
+Fix for bugs 1255 and 1271, which addresses pagination problems in searches for
+elements, groups, media, and templates. [Matt Rolf and Michael Herring]
+
+=item *
+
+Patch from Alex Krohn to hopefully really fix "ident" authentication this time.
 
 =back
 
