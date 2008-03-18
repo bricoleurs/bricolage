@@ -1829,8 +1829,8 @@ sub _do_list {
         }
 
         elsif ($k eq 'related_media_id' || $k eq 'related_story_id') {
-	    my ($col, $key);
-            ($col = $key) =~ s/_id$/__id/;
+	    my $col = $k;
+            $col =~ s/_id$/__id/;
             push @wheres, defined $v
                 ? any_where($v, "e.$col = ?", \@params)
                 : "e.$col IS NULL";
