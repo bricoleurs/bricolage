@@ -150,7 +150,7 @@ fields. [David]
 
 =item *
 
-Fixed a bug (svn 1039) in Container.pm that was preventing trunk from starting up [Beaudet]
+Fixed a bug (svn 8039) in Container.pm that was preventing trunk from starting up [Beaudet]
 
 =back
 
