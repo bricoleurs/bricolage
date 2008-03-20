@@ -20,6 +20,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Added support for the JS-Quicktags WYSIWYG editor. [Greg Heo]
 
+=item *
+
+API doc corrections reported by Rod Taylor. [Scott]
+
 =back
 
 =head2 Bug Fixes

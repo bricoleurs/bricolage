@@ -2040,7 +2040,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::Biz::Grp::User objects found.
+Too many Bric::Util::Grp::User objects found.
 
 =item *
 
