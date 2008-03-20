@@ -30,6 +30,8 @@ API doc corrections reported by Rod Taylor. [Scott]
 
 =over
 
+Patch for codeselect. [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

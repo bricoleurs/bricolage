@@ -8,7 +8,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:aref :msg :history :pkg :browser);
+use Bric::App::Util qw(:aref :msg :history :pkg :browser :elem);
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
@@ -538,8 +538,8 @@ $add_new_attrs = sub {
             if ($param->{fb_type} eq 'codeselect') {
                 # XXX: change if comp/widgets/profile/displayAttrs.mc changes..
                 my $code = $param->{fb_vals};
-                my $items = eval "$code";
-                unless (ref $items eq 'ARRAY' and !(@$items % 2)) {
+                my $items = eval_codeselect($code);
+                unless (ref $items eq 'HASH' or ref $items eq 'ARRAY') {
                     add_msg("Invalid codeselect code (didn't return an array ref of even size)");
                     $$no_save = 1;
                     return;
