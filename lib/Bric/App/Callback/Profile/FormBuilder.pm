@@ -540,7 +540,6 @@ $add_new_attrs = sub {
                 my $code = $param->{fb_vals};
                 my $items = eval_codeselect($code);
                 unless (ref $items eq 'HASH' or ref $items eq 'ARRAY') {
-                    add_msg("Invalid codeselect code (didn't return an array ref of even size)");
                     $$no_save = 1;
                     return;
                 }
