@@ -139,7 +139,7 @@ START MODULE LIST
 
 =item Class::Container 0.09
 
-=item Apache2::Request
+=item Apache2::Request (FIXME - need both old and new)
 
 =item HTML::Mason 1.37
 

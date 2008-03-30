@@ -61,10 +61,7 @@ use Bric::Config qw(:err :ssl :cookies);
 use Bric::Util::ApacheConst qw(:common :http);
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
-
-use APR;
-use APR::Request;
-use APR::Request::Apache2;
+use Bric::Util::ApacheReq qw(parse_args);
 
 ################################################################################
 # Inheritance
@@ -142,7 +139,8 @@ sub handler {
         }
 
         # Propagate SESSION and AUTH cookies if we switched server ports
-        my %qs = $r->args;
+        my %qs = parse_args(scalar $r->args);
+
         my %cookies = Bric::Util::Cookie->fetch($r);
         # work around multiple servers if login event
         if ( exists $qs{&AUTH_COOKIE} && ! $cookies{&AUTH_COOKIE} ) {

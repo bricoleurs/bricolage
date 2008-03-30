@@ -33,16 +33,16 @@ use Bric::Config qw(:mod_perl);
 BEGIN {
     if (MOD_PERL) {
         if (MOD_PERL_VERSION < 2) {
-            require Apache::Cookie;
+            require Apache::Cookie;  Apache::Cookie->import();
             @Bric::Util::Cookie::ISA = 'Apache::Cookie';
         }
         else {
-            require Apache2::Cookie;
+            require Apache2::Cookie;  Apache2::Cookie->import();
             @Bric::Util::Cookie::ISA = 'Apache2::Cookie';
         }
     }
     else {
-        require CGI::Cookie;
+        require CGI::Cookie;  CGI::Cookie->import();
         @Bric::Util::Cookie::ISA = 'CGI::Cookie';
     }
 }

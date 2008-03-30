@@ -9,9 +9,10 @@ use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
 use Bric::Config qw(FULL_SEARCH :mod_perl);
 use Bric::Util::DBI qw(ANY);
+use Bric::Util::ApacheReq;
 
 sub no_new_search {
-    my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
+    my $r = Bric::Util::ApacheReq->instance;
     $r->pnotes(CLASS_KEY . '.no_new_search' => 1);
 }
 
