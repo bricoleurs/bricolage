@@ -365,7 +365,7 @@ require Bric; our $VERSION = Bric->VERSION;
         if (-e $conf_file) {
             unless (open CONF, $conf_file) {
                 require Carp;
-                Carp::croak "Cannot open $conf_file: $!\n";
+                Carp::croak( "Cannot open $conf_file: $!\n" );
             }
 
             while (<CONF>) {
@@ -457,7 +457,7 @@ require Bric; our $VERSION = Bric->VERSION;
                 $config->{SSL_ENABLE} = 0;
             } else {
                 require Carp;
-                Carp::croak "Invalid SSL_ENABLE directive: '$ssl'"
+                Carp::croak( "Invalid SSL_ENABLE directive: '$ssl'" )
                   unless $ssl eq 'mod_ssl' or $ssl eq 'apache_ssl';
             }
         } else {
