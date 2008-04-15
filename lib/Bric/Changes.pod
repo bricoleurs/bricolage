@@ -56,6 +56,12 @@ Fixed a bug when publishing or previewing a story with related media where an
 error could occur when a media document was published to more than one output
 channel with different URIs. Reported by Matt Wlazlo. [David]
 
+=item *
+
+Fixed an issue when a user with publish permission selects "Check in and
+Publish" for a newly created document. Reported by Chris Heiland and Matt Rolf
+(RT #1261). [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

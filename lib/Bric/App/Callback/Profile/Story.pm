@@ -196,6 +196,7 @@ sub checkin : Callback(priority => 6) {
         commit(1);
         begin(1);
         # Use the desk callback to save on code duplication.
+        clear_authz_cache( $story );
         my $pub = Bric::App::Callback::Desk->new(
             cb_request   => $self->cb_request,
             apache_req   => $self->apache_req,

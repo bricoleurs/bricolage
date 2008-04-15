@@ -541,6 +541,7 @@ $checkin = sub {
         $param->{"$class_key|template_pub_ids"} = $fa->get_version_id;
 
         # Call the deploy callback in the desk widget.
+        clear_authz_cache( $fa );
         my $cb = Bric::App::Callback::Desk->new
           ( cb_request => $self->cb_request,
             apache_req => $self->apache_req,
