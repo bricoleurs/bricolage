@@ -40,6 +40,11 @@ Eliminated the display of the login screen in the side nav when C<NO_TOOLBAR>
 is set to false and a session expires. Reported by Matt Rolf (Bug #921).
 [David]
 
+=item *
+
+Worked around a bug in SOAP::Lite that only appears when used in conjunction with
+LWP 5.810 and later. [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
