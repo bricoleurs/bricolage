@@ -68,6 +68,12 @@ When creating a new media document from a related media element, if the user
 clicks "Save" or "Save and Stay" instead of "Create", it will properly create
 the related media document. [David]
 
+=item *
+
+When creating creating a new media document by uploading a file in a related
+media element, clicking "Save", "Cancel", or "Check in" on the media profile
+page now properly redirects back to the related media element profile. [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

@@ -211,6 +211,7 @@ sub create_related_media : Callback {
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
+    clear_state($widget);
 
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
@@ -264,7 +265,7 @@ sub create_related_media : Callback {
         prof       => $asset,
         type       => $type,
         uri        => $self->apache_req->uri,
-        });
+    });
     # Edit the new media document.
     $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }
