@@ -34,6 +34,11 @@ Added the C<active_sites> parameter to C<< Bric::Biz::Category->list >>.
 Categories associated with inactive sites are no longer displayed in the
 category manager. Suggested by Jesper Andersen (Bug # 1286). [David]
 
+=item *
+
+Improved the display of related media and story information in the element
+list, including links to preview them (Bug # 1293). [David]
+
 =back
 
 =head2 Bug Fixes

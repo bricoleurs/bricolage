@@ -68,44 +68,38 @@ foreach my $field ($dt->get_fields) {
 </%perl>
 % if ($value_buf) {
     <tr>
-      <td colspan="3"><b><% $disp_buf %>:</b> <% escape_html($value_buf) %></td>
+      <td colspan="3"><strong><% $disp_buf %>:</strong> <% escape_html($value_buf) %></td>
     </tr>
-% } # if ($value_buf)
+<%perl>;
+} # if ($value_buf)
+my $at = $dt->get_element_type;
+my $label = $lang->maketext($at->is_related_media ? 'URL' : 'Title');
+if ($at->is_related_media || $at->is_related_story) {
+    my $info = '';
+
+    if ($at->is_related_media) {
+        my $rel = $dt->get_related_media;
+        $info = $m->comp(
+            '/widgets/profile/preview_link.mc',
+            doc => $rel,
+            type => 'media',
+        ) if $rel;
+    } else {
+        my $rel = $dt->get_related_story;
+        $info = $m->comp(
+            '/widgets/profile/preview_link.mc',
+            doc => $rel,
+            type => 'story',
+            value => $rel->get_title,
+        ) if $rel;
+    }
+</%perl>
+    <tr>
+      <td colspan="3"><strong><% $label %>:</strong> <% $info %></td>
+    </tr>
+% }
     <tr>
       <td>
-% my $at = $dt->get_element_type;
-% if ($at->is_related_media || $at->is_related_story) {
-      <table border=0 cellpadding=0 cellspacing=1>
-      <tr>
-    <td width=50 class=medHeader align="right">
-      <span class=label><% $lang->maketext($at->is_related_media ? "URL" : "Title" )%>:</span>
-    </td>
-<%perl>
-my $info = '';
-
-if ($at->is_related_media) {
-    my $rel = $dt->get_related_media;
-    $info = $rel->get_uri if $rel;
-} else {
-    my $rel = $dt->get_related_story;
-    $info = $rel->get_title if $rel;
-}
-</%perl>
-    <td width=<% 578 - FIELD_INDENT - 125-50 %>>&nbsp;<% $info %>
-    </td>
-      </tr>
-      <tr>
-      <td colspan="2"><& '/widgets/profile/imageSubmit.mc',
-         formName  => 'theForm',
-         callback  => 'container_prof|edit_cb',
-         image     => 'edit_lgreen',
-         vspace    => 3,
-         value     => $dt->get_id,
-         useHidden => 0
-      &></td>
-      </tr>
-      </table>
-% } else {
 
     <& '/widgets/profile/imageSubmit.mc',
          formName  => 'theForm',
@@ -115,18 +109,14 @@ if ($at->is_related_media) {
          value     => $dt->get_id,
          useHidden => 0
     &>
-% }
-
-</td>
 % # START BULK EDIT SECTION
-      <td align="center" valign="middle"><span class="label"> </span></td>
-      <td><& '/widgets/profile/imageSubmit.mc',
+     <& '/widgets/profile/imageSubmit.mc',
          formName  => 'theForm',
          callback  => 'container_prof|bulk_edit_cb',
          image     => 'bulk_edit_lgreen',
          value     => $dt->get_id,
          useHidden => !$no_hide++
-       &></td>
+     &></td>
     </tr>
     </table>
   </td>
@@ -319,7 +309,7 @@ if ($at->is_related_media) {
 %### Start Related Story Section ###
 % if ($is_related_story) {
 <& /widgets/wrappers/sharky/table_top.mc,
-       caption => 'Related Story',
+     caption => 'Related Story',
      number => $num++
 &>
 
@@ -463,10 +453,6 @@ my $related_summary = sub {
   );
 
   if ($rel) {
-      add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
-              $type, $rel->get_title)
-        unless $rel->is_active;
-
       add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
               $type, $rel->get_title)
         unless $rel->is_active;
