@@ -373,11 +373,16 @@ sub save_and_up : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on.
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
-        $self->_pop_and_redirect;
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on.
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+            $self->_pop_and_redirect;
+        }
     }
 }
 
@@ -396,10 +401,15 @@ sub save_and_stay : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+        }
     }
 }
 

@@ -62,6 +62,12 @@ Fixed an issue when a user with publish permission selects "Check in and
 Publish" for a newly created document. Reported by Chris Heiland and Matt Rolf
 (RT #1261). [David]
 
+=item *
+
+When creating a new media document from a related media element, if the user
+clicks "Save" or "Save and Stay" instead of "Create", it will properly create
+the related media document. [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
