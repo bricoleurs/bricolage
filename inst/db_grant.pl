@@ -64,6 +64,9 @@ sub grant_permissions {
 
         my $objects = join (', ', map { chomp; $_ } @objects);
 
+        # drop the row count if it was returned
+        $objects =~ s/, \(\d+ rows\)//;
+
         $sql = qq{
             GRANT $grant
             ON    $objects

@@ -45,6 +45,11 @@ is set to false and a session expires. Reported by Matt Rolf (Bug #921).
 Worked around a bug in SOAP::Lite that only appears when used in conjunction with
 LWP 5.810 and later. [David]
 
+=item *
+
+Fixed issue in db_grant.pl which was including the returned row count from the 
+list tables call to be one of the tables to grant permissions to [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
