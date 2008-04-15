@@ -235,7 +235,7 @@ my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
                       return $s->get_name
                   };
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
-                  
+
 # And we'll use this coderef to determine whether the user can delete objects.
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
 my $sel_sub = sub {
@@ -427,7 +427,7 @@ my $def = {
         list_fields => [qw(uri site name)],
         behavior    => 'expand',
         srch_field  => 'uri',
-        constrain   => {},
+        constrain   => { active_sites => 1 },
         select      => $cat_sel_sub,
     },
     workflow => {

@@ -279,7 +279,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Biz::Category($crit);
+=item @objs = Bric::Biz::Category->list($crit);
 
 Return a list of category objects based on certain criteria
 
@@ -323,6 +323,10 @@ C<ANY> for a list of possible values.
 
 The ID of a Bric::Biz::Site object with which the category is associated. May
 use C<ANY> for a list of possible values.
+
+=item active_sites
+
+A boolean causing only categories associated with active sites to be returned.
 
 =back
 
@@ -1600,6 +1604,10 @@ sub _do_list {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id "
               . " AND m2.active = '1' AND "
               . any_where($v, "m2.grp__id = ?", \@params);
+        } elsif ($k eq 'active_sites') {
+            next unless $v;
+            $tables .= ', site';
+            $wheres .= ' AND a.site__id = site.id AND site.active = TRUE';
         } else {
             # It's a simpler string comparison.
             $wheres .= ' AND '

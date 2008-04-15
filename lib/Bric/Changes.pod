@@ -24,6 +24,16 @@ Added support for the JS-Quicktags WYSIWYG editor. [Greg Heo]
 
 API doc corrections reported by Rod Taylor. [Scott]
 
+=item *
+
+Added the C<active_sites> parameter to C<< Bric::Biz::Category->list >>.
+[David]
+
+=item *
+
+Categories associated with inactive sites are no longer displayed in the
+category manager. Suggested by Jesper Andersen (Bug # 1286). [David]
+
 =back
 
 =head2 Bug Fixes
