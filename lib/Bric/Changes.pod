@@ -47,8 +47,14 @@ LWP 5.810 and later. [David]
 
 =item *
 
-Fixed issue in db_grant.pl which was including the returned row count from the 
-list tables call to be one of the tables to grant permissions to [Paul Orrock]
+Fixed issue in F<db_grant.pl>, which was trying to grant permissions to a row
+count. [Paul Orrock]
+
+=item *
+
+Fixed a bug when publishing or previewing a story with related media where an
+error could occur when a media document was published to more than one output
+channel with different URIs. Reported by Matt Wlazlo. [David]
 
 =back
 

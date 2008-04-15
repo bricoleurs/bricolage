@@ -438,6 +438,8 @@ Friends who have spotted bugs include:
 
 =item * Chauncey Thorn
 
+=item * Matt Wlazlo
+
 =back
 
 Bricolage's translation team:
