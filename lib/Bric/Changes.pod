@@ -109,6 +109,10 @@ properly set. Reported by Brad Harder (Bug #1288). [David]
 Fixed issue with C<ANY()> not working with the C<exclude_id> parameter to
 C<< Bric::Biz::Asset::Business::Story->list() >> (Bug #1303). [Paul and David]
 
+=item *
+
+A search is no longer cached if it results in an error (Bug #1300). [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
