@@ -172,7 +172,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
     <td class="checkbox">
 % if ($cat_id != $p_id) {
 <& '/widgets/profile/checkbox.mc',
-        name => "$widget|delete_cat",
+        name => "$widget|delete_cat_cb",
         value => $_->get_id
 &>
 % }
@@ -195,7 +195,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
   <& '/widgets/profile/button.mc',
     disp      => $lang->maketext("Delete Categories"),
     widget    => $widget,
-    cb        => 'delete_cat_cb',
+    cb        => 'delete_cat',
     button    => 'delete_red',
     useTable  => 0 &>
   </td>

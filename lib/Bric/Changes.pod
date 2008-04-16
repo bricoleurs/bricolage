@@ -47,7 +47,7 @@ relateds for an alias that are in the same site as the alias, or that are
 aliases in the same site of the original relateds. This means that the
 automatic publishing of related documents should now properly republish only
 relateds in the same site as the alias document being published, rather than
-the relateds of the document it aliases (Bug #1296). [David]
+the relateds of the document it aliases (Bug # 1296). [David]
 
 =item *
 
@@ -55,6 +55,14 @@ In the New Story form, the "Slug" field is no longer required if the
 C<ALLOW_SLUGLESS_NONFIXED> F<bricolage.conf> directive is disabled and the
 C<AUTOGENERATE_SLUG> directive is enabled. It is still required in the normal
 story edit form, of course. Suggested by Phillip Smith (Bug # 1306). [David]
+
+=item *
+
+When the C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is disabled
+(as it is by default), allow the categories to be deleted from the story
+profile when a user checks the delete checkbox and clicks "Save" or "Check
+In", instead of requiring that the "Delete" button be clicked. Suggested by
+Phillip Smith (Bug # 1308). [David]
 
 =back
 

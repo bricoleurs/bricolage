@@ -485,14 +485,15 @@ sub notes : Callback {
 }
 
 sub delete_cat : Callback {
-    my $self = shift;
-    my $widget = $self->class_key;
-    my $cat_ids = mk_aref($self->params->{"$widget|delete_cat"});
-    my $story = get_state_data($widget, 'story');
+    my $self    = shift;
+    my $widget  = $self->class_key;
+    my $cat_ids =  mk_aref( $self->value );
+    my $params  = $self->params;
+    my $story   = get_state_data($widget, 'story');
     chk_authz($story, EDIT);
 
     my (@to_delete, @to_log);
-    my $primary = $self->params->{"$widget|primary_cat"}
+    my $primary = $params->{"$widget|primary_cat"}
       ||  $story->get_primary_category->get_id;
     foreach my $cid (@$cat_ids) {
         my $cat = Bric::Biz::Category->lookup({ id => $cid });
@@ -508,7 +509,7 @@ sub delete_cat : Callback {
     }
 
     $story->delete_categories(\@to_delete);
-    $story->save;
+    $story->save if $params->{"$widget|delete_cat"};
     log_event(@$_) for @to_log;
     set_state_data($widget, 'story', $story);
 }
