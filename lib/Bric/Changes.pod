@@ -49,6 +49,13 @@ automatic publishing of related documents should now properly republish only
 relateds in the same site as the alias document being published, rather than
 the relateds of the document it aliases (Bug #1296). [David]
 
+=item *
+
+In the New Story form, the "Slug" field is no longer required if the
+C<ALLOW_SLUGLESS_NONFIXED> F<bricolage.conf> directive is disabled and the
+C<AUTOGENERATE_SLUG> directive is enabled. It is still required in the normal
+story edit form, of course. Suggested by Phillip Smith (Bug # 1306). [David]
+
 =back
 
 =head2 Bug Fixes
