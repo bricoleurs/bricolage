@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(151) {
+sub test_select_methods: Test(153) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -645,6 +645,13 @@ sub test_select_methods: Test(151) {
     # Make sure we got the correct stories.
     is_deeply( [ map { $_->get_id } @$got ], $OBJ_IDS->{story},
                "Got correct six stories");
+
+    # Try ANY with exclude_id.
+    ok( $got = $self->class->list({
+        slug => 'test%',
+        exclude_id => ANY( $got->[0]->get_id, $got->[1]->get_id )
+    }), 'List with exclude_id => ANY' );
+    is 4, @$got, 'Should get four stories';
 
     # Try primary_uri + Order by title.
     ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }),

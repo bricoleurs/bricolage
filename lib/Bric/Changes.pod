@@ -104,6 +104,11 @@ page now properly redirects back to the related media element profile. [David]
 A template deployed via SOAP now has its C<published_version> attribute
 properly set. Reported by Brad Harder (Bug #1288). [David]
 
+=item *
+
+Fixed issue with C<ANY()> not working with the C<exclude_id> parameter to
+C<< Bric::Biz::Asset::Business::Story->list() >> (Bug #1303). [Paul and David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
