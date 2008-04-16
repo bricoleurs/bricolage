@@ -1585,7 +1585,10 @@ sub get_publish_date { local_date($_[0]->_get('publish_date'), $_[1]) }
 
 =item (@objs || $objs) = $asset->get_related_objects
 
-Return all the related story or media objects for this business asset.
+Return all the related story or media objects for this business asset. If the
+asset is an alias of another asset, related objects will only be returned if
+they are in the same site as the asset, or if there are aliases in the asset's
+site for the related media associated with the aliased asset.
 
 B<Throws:>
 
@@ -1611,10 +1614,22 @@ sub _find_related {
     my @related;
 
     # Add this element's related assets
-    my $rmedia = $element->get_related_media;
-    my $rstory = $element->get_related_story;
-    push @related, $rmedia if $rmedia;
-    push @related, $rstory if $rstory;
+    for my $rel (
+        $element->get_related_media,
+        $element->get_related_story,
+    ) {
+        next unless $rel;
+        if ( $self->get_alias_id && $rel->get_site_id != $self->get_site_id ) {
+            # Try to find a local alias, instead. Skip it if there isn't one.
+            $rel = ref($rel)->lookup({
+                alias_id => $rel->get_id,
+                site_id => $self->get_site_id,
+            }) or next;
+            push @related, $rel;
+        } else {
+            push @related, $rel;
+        }
+    }
 
     # Check all the children for related assets.
     foreach my $c ($element->get_containers) {

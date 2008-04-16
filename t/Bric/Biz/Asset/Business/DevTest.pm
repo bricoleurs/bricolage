@@ -234,7 +234,7 @@ sub test_oc_id : Test(14) {
 ##############################################################################
 # Test aliasing.
 ##############################################################################
-sub test_alias : Test(33) {
+sub test_alias : Test(43) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
@@ -352,6 +352,39 @@ sub test_alias : Test(33) {
               [$ba->get_contributors],
               "Check get_contributors");
 
+    # Try adding relateds.
+    ok my $rel = $self->construct(
+        name => 'Howdy',
+        slug => 'doody',
+        element_type => $element,
+    ), 'Create a document for relating';
+    ok $rel->save;
+    $self->add_del_ids( $rel->get_id );
+
+    ok my $elem = $ba->get_element;
+    my $meth = "set_related_$key";
+    ok $elem->$meth($rel), 'Add the related asset';
+    ok $elem->save, 'Save the element';
+    is $rel->get_id, $ba->get_related_objects->[0]->get_id,
+        'The related should now be related to the original asset';
+
+    # The alias should not return any relateds, however.
+    is undef, $alias_asset->get_related_objects, 'The alias should see no relateds';
+
+    # But if we alias the related to the same site, it should be returnable.
+    ok my $rel_alias = $class->new({
+        alias_id => $rel->get_id,
+        site_id  => $site1_id,
+        user__id => $self->user_id,
+    }), 'Alias the related';
+
+    ok $rel_alias->save , 'Save the related alias';
+    my $rel_alias_id = $rel_alias->get_id;
+    $self->add_del_ids($rel_alias_id);
+    is $rel_alias_id, $alias_asset->get_related_objects->[0]->get_id,
+        'The related alias should be related to the alias';
+
+    # Clean up our mess.
     ok( $element->remove_sites([$site1]), "Remove site" );
     ok( $element->save, "Save element type" );
 }

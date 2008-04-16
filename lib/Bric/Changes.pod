@@ -39,6 +39,16 @@ category manager. Suggested by Jesper Andersen (Bug # 1286). [David]
 Improved the display of related media and story information in the element
 list, including links to preview them (Bug # 1293). [David]
 
+=item *
+
+The C<get_related_objects()> method of
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business> now only returns
+relateds for an alias that are in the same site as the alias, or that are
+aliases in the same site of the original relateds. This means that the
+automatic publishing of related documents should now properly republish only
+relateds in the same site as the alias document being published, rather than
+the relateds of the document it aliases (Bug #1296). [David]
+
 =back
 
 =head2 Bug Fixes
