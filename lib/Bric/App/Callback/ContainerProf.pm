@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'container_prof';
 use strict;
 use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
+use Bric::Util::DBI qw(:trans);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
@@ -258,7 +259,6 @@ sub create_related_media : Callback {
     $element->set_related_media($mid);
 
     # Set up the original state for returning from the media profile.
-    $media_cb->save_and_stay(1);
     set_state_data(_profile_return => {
         state      => $state,
         type_state => $type_state,
@@ -266,6 +266,13 @@ sub create_related_media : Callback {
         type       => $type,
         uri        => $self->apache_req->uri,
     });
+
+    # We have to have the transactions here in case there is a failure
+    # in save_and_stay(). If there is, then $mid would be invalid, although
+    # our session wouldn't know that.
+    commit(1);
+    begin(1);
+    $media_cb->save_and_stay(1);
     # Edit the new media document.
     $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }

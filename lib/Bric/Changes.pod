@@ -128,6 +128,14 @@ C<< Bric::Biz::Asset::Business::Story->list() >> (Bug #1303). [Paul and David]
 
 A search is no longer cached if it results in an error (Bug #1300). [David]
 
+=item *
+
+When creating a new media document by uploading a file to a related media
+element, if there is a duplicate URI for the new media document, there will no
+longer be an SQL error to prevent the association from going through once the
+URI is made unique in the media profile. Spotted by Phillip Smith (Bug #1310).
+[David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
