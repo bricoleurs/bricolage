@@ -1039,7 +1039,7 @@ B<Notes:> NONE.
 
 =item $field = $field->set_description($description)
 
-Sets the human readable descripton for this field, first convering any
+Sets the human readable descripton for this field, first converting any
 non-Unix line endings.
 
 B<Throws:> NONE.
