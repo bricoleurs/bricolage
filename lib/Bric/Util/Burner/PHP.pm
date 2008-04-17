@@ -342,7 +342,16 @@ sub burn_one {
         }
 
         $self->_set(['page'] => [$page]);
-        last unless $self->_get('more_pages');
+
+        my ($more, $again) = $self->_get(qw(more_pages burn_again));
+        if ($again) {
+            # Reset burn_again and move on to the next page.
+            $self->_set(['burn_again'] => [0]);
+            next;
+        }
+
+        # Keep burning this template if it contains more pages.
+        last unless $more;
     }
 
     $self->_pop_element;

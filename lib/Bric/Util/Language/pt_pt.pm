@@ -743,6 +743,9 @@ our %Lexicon = (
 
 To translate:
 
+   'Shelve'
+   'and Shelve'
+   'and'
 	'EXISTING NOTES' => 'NOTAS EXISTENTES',
 	'Primary URI' => 'Endereço URI', 
 	'Story Trail' => 'Histórico do Artigo',

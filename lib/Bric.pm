@@ -14,7 +14,7 @@ $LastChangedRevision$
 
 =item Release Version
 
-1.11.0 - Development Track for 1.12.0
+1.11.0 - Development Track for 2.0.0
 
 =cut
 

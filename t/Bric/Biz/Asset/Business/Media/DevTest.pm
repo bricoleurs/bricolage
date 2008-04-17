@@ -55,7 +55,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(120) {
+sub test_select_methods: Test(137) {
     my $self = shift;
     my $class = $self->class;
 
@@ -724,6 +724,38 @@ sub test_select_methods: Test(120) {
     ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
                           'Search on note "ANY(Note 1, Note 2)"';
     is @$got, 2, 'Should have two media';
+
+    # Try subelement_id. First add a subelement to a couple of stories.
+    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'book_profile' }),
+        'Look up book profile';
+    for my $i (1, 2) {
+        ok my $elem = $media[$i]->get_element, "Get $i media element";
+        ok $elem->add_container($et), "Add book profile subelement to $i media";
+        ok $elem->save, "Save $i media";
+    }
+
+    # Now look them up.
+    ok $got = class->list({ subelement_id => $et->get_id }),
+        'Get a list of media with the book_profile subelement';
+    is 2, @$got, 'There should be two media';
+    is_deeply [ @{$OBJ_IDS->{media}}[1,2] ],
+              [ sort { $a <=> $b } map { $_->get_id } @$got ],
+              'The two media should be the two to which the subelement was added';
+
+    # Now delete the subelement from one fo the media.
+    ok my $elem = $media[1]->get_element,
+        'Get the element from the first media';
+    ok my $sub = $elem->get_container('book_profile'),
+        'Get the book profile subelement from the first media';
+    ok $elem->delete_elements( [ $sub ] ), 'Delete the subelement';
+    ok $elem->save, 'Save the element';
+
+    # Now look up again.
+    ok $got = class->list({ subelement_id => $et->get_id }),
+        'Get a list of media with the book_profile subelement';
+    is 1, @$got, 'There should now be only one media';
+    is $OBJ_IDS->{media}[2], $got->[0]->get_id,
+        'It should have the ID of the second media';
 }
 
 ###############################################################################

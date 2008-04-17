@@ -117,7 +117,7 @@ if (defined $id) {
 
             my %sites = map { $_->get_id => 1 } @elem_sites;
             my @available_sites = grep {
-                !$sites{$_->get_id} && chk_authz($_[0], EDIT, 1)
+                !$sites{$_->get_id} && chk_authz($_, EDIT, 1)
             } Bric::Biz::Site->list({
                 active            => 1,
                 output_channel_id => 'not null',

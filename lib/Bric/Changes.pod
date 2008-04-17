@@ -134,7 +134,7 @@ Updated the Portuguese localizations. [Pedro Custodio]
 =item *
 
 Added the C<related_story_id> and C<related_media_id> parameters to
-C<< Bric::Biz::Element::Container->list()>. [David]
+C<< Bric::Biz::Element::Container->list() >>. [David]
 
 =item *
 
@@ -154,7 +154,315 @@ Fixed a bug (svn 8039) in Container.pm that was preventing trunk from starting u
 
 =back
 
-=head1 VERSION 1.10.3 (2006-09?)
+=head1 VERSION 1.10.5 (2008-??-??)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Added support for the JS-Quicktags WYSIWYG editor. [Greg Heo]
+
+=item *
+
+API doc corrections reported by Rod Taylor. [Scott]
+
+=item *
+
+Added the C<active_sites> parameter to C<< Bric::Biz::Category->list >>.
+[David]
+
+=item *
+
+Categories associated with inactive sites are no longer displayed in the
+category manager. Suggested by Jesper Andersen (Bug # 1286). [David]
+
+=item *
+
+Improved the display of related media and story information in the element
+list, including links to preview them (Bug # 1293). [David]
+
+=item *
+
+The C<get_related_objects()> method of
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business> now only returns
+relateds for an alias that are in the same site as the alias, or that are
+aliases in the same site of the original relateds. This means that the
+automatic publishing of related documents should now properly republish only
+relateds in the same site as the alias document being published, rather than
+the relateds of the document it aliases (Bug # 1296). [David]
+
+=item *
+
+In the New Story form, the "Slug" field is no longer required if the
+C<ALLOW_SLUGLESS_NONFIXED> F<bricolage.conf> directive is disabled and the
+C<AUTOGENERATE_SLUG> directive is enabled. It is still required in the normal
+story edit form, of course. Suggested by Phillip Smith (Bug # 1306). [David]
+
+=item *
+
+When the C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is disabled
+(as it is by default), allow the categories to be deleted from the story
+profile when a user checks the delete checkbox and clicks "Save" or "Check
+In", instead of requiring that the "Delete" button be clicked. Suggested by
+Phillip Smith (Bug # 1308). [David]
+
+=item *
+
+Object attributes that are edited in textarea fields in the UI and that have a
+limited size -- mainly "description" fields -- now have their line endings
+converted to Unix line endings. This is so that character counts properly
+correspond to the limits set by the UI (think of the character counter in the
+story profile for the description field). Reported by Matt Rolf (Bug #1318).
+[David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Patch for codeselect. [Greg Heo]
+
+=item *
+
+Eliminated the display of the login screen in the side nav when C<NO_TOOLBAR>
+is set to false and a session expires. Reported by Matt Rolf (Bug #921).
+[David]
+
+=item *
+
+Worked around a bug in SOAP::Lite that only appears when used in conjunction with
+LWP 5.810 and later. [David]
+
+=item *
+
+Fixed issue in F<db_grant.pl>, which was trying to grant permissions to a row
+count. [Paul Orrock]
+
+=item *
+
+Fixed a bug when publishing or previewing a story with related media where an
+error could occur when a media document was published to more than one output
+channel with different URIs. Reported by Matt Wlazlo. [David]
+
+=item *
+
+Fixed an issue when a user with publish permission selects "Check in and
+Publish" for a newly created document. Reported by Chris Heiland and Matt Rolf
+(RT #1261). [David]
+
+=item *
+
+When creating a new media document from a related media element, if the user
+clicks "Save" or "Save and Stay" instead of "Create", it will properly create
+the related media document. [David]
+
+=item *
+
+When creating creating a new media document by uploading a file in a related
+media element, clicking "Save", "Cancel", or "Check in" on the media profile
+page now properly redirects back to the related media element profile. [David]
+
+=item *
+
+A template deployed via SOAP now has its C<published_version> attribute
+properly set. Reported by Brad Harder (Bug #1288). [David]
+
+=item *
+
+Fixed issue with C<ANY()> not working with the C<exclude_id> parameter to
+C<< Bric::Biz::Asset::Business::Story->list() >> (Bug #1303). [Paul and David]
+
+=item *
+
+A search is no longer cached if it results in an error (Bug #1300). [David]
+
+=item *
+
+When creating a new media document by uploading a file to a related media
+element, if there is a duplicate URI for the new media document, there will no
+longer be an SQL error to prevent the association from going through once the
+URI is made unique in the media profile. Spotted by Phillip Smith (Bug #1310).
+[David]
+
+=item *
+
+Fixed a bug in the handling of the C<subelement_id> parameter to the C<list>
+methods of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story> and
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> where
+they were finding stories that had deleted a subelement, because it was still
+in the story, but was not active. This means that the advanced search for
+stories and media will no longer return stories that have deleted a
+subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
+
+=back
+
+=head1 VERSION 1.10.4 (2008-03-09)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Nicer use of the "Bricolage Instance Name" preference, now used on every page.
+[Phillip Smith]
+
+=item *
+
+More German corrections. [Steffen Schwigon]
+
+=item *
+
+Documented the need to look at
+L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk> in
+L<Bric::Biz::Asset|Bric::Biz::Asset>'s C<set_desk_id()> method. [Greg Heo]
+
+=item *
+
+Fixed documentation of C<Bric::Biz::Element::Container>'s C<delete_elements>
+method. [Bret Dawson]
+
+=item *
+
+Include meta-equiv tag in the header to set the charset to be UTF-8 if it is
+the only charset loaded in C<$LOAD_CHAR_SETS>. Reported by Daisuke Maki. [Paul
+Orrock]
+
+=item *
+
+Added C<--site> option to C<bric_republish>. Suggested by Chauncey Thorn. [David]
+
+=item *
+
+Updated autovacuum documentation in L<Bric::DBA|Bric::DBA>. [David]
+
+=item *
+
+The installer now also checks in F</usr/lib> for libraries, by way of searching
+C<$Config{libpth}> as well as C<$Config{loclibpth}>. [Steffen Schwigon]
+
+=item *
+
+The C<publish_status> attribute can now be set in stories and media created
+via SOAP. [David]
+
+=item *
+
+The code in code select fields can now access the
+C<Bric::Biz::Element::Field|Bric::Biz::Element::Field> object itself using the
+variable C<$field>. [Greg Heo]
+
+=item *
+
+When viewing elements when not checked out, whitespace is preserved for IE7,
+FF2, and Safari 3, so that reading and copying code is easier.  Suggested by
+Michael Herring. [Matt Rolf]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+More changes around bug 1267, remove protocol+hostname+port from practically
+all redirects (especially "user profiles") in order to allow reverse proxying
+to work in Apache2. [Steffen Schwigon]
+
+=item *
+
+The C<$BRICOLAGE_ROOT> environment variable specified in
+F<contrib/start_scripts/freebsd> is now exported, allowing it to be properly
+passed through to F<bric_apachectl>. [David]
+
+=item *
+
+Fix for bug 1254: checkbox fields are now saved correctly. Reported by
+Dawn Buie. [Scott]
+
+=item *
+
+Fix for bug 1294, where Search/Replace in Bulk Edit wasn't working. Reported by
+Phillip Smith. [Greg Heo]
+
+=item *
+
+Fix for bug 1269, needed to HTML-escape Notes. Reported by Matt Rolf. [Scott]
+
+=item *
+
+For bug 1284, weren't able to search element_type by output_channel in
+C<bric_soap>. Reported by George Harrison. [Scott]
+
+=item *
+
+Bug 1291, added check for max_length of fields when importing in
+C<bric_soap>. Reported by Simon Wilcox. [Scott]
+
+=item *
+
+Fix bug 1264, prevent searching on bad dates (like February 31). Reported by
+Marshall Roch. [Greg Heo]
+
+=item *
+
+Fix bug 1259, so burn_again works in the TT and PHP burners. Reported by
+Adeola Awoyemi. [David and Scott]
+
+=item *
+
+Fix bug 1307, related stories can be unrelated. Reported by Steffen Schwigon.
+[Scott]
+
+=item *
+
+Fixed issue with trailing newlines sometimes becoming a part of a
+contributor's name. [Greg Heo and Ryan O'Toole]
+
+=item *
+
+Eliminated backslashes in F<sql/Pg/Bric/Biz/Asset/Template.val>, which were
+causing warnings under PostgreSQL 8.3. The backslashes were for newlines, so I
+just switched to real newlines, instead.
+
+=item *
+
+Fixed a Perl 5.10 warning in
+L<Bric::App::Callback::Search|Bric::App::Callback::Search>, where calls to
+C<substr> were being properly resolved to C<CORE::substr>.
+
+=item *
+
+Fixed the handling of globs in
+L<Bric::Util::Burner::TemplateToolkit|Bric::Util::Burner::TemplateToolkit>. It
+seems that in Perl 5.10, package scalars can actually be C<SCALAR>s rather
+than `GLOB`s.
+
+=item *
+
+PostgreSQL 8.3 warns when we try to apply inappropriate permissions to
+sequences, so we updated F<bin/bric_pgimport> and F<inst/db_grant.pl> to grant
+permissions to sequences and tables separately.
+
+=item *
+
+Fix for bugs 1255 and 1271, which addresses pagination problems in searches for
+elements, groups, media, and templates. [Matt Rolf and Michael Herring]
+
+=item *
+
+Patch from Alex Krohn to hopefully really fix "ident" authentication this time.
+
+=back
+
+=head1 VERSION 1.10.3 "Finally" (2007-08-09)
 
 =head2 Improvements
 
@@ -215,6 +523,85 @@ prevents users from removing the "s" from "https" and thus being able to use
 Bricolage insecurely when their administrators don't want them to. Reported by
 Joe Pletcher (Ticket # 1233). [David]
 
+=item *
+
+Added "Autovacuum" section to Bric::DBA. The C<autovacuum> settings in
+F<postgresql.conf> are available in PostgreSQL 8.1 and later. [David]
+
+=item *
+
+Improved verbose output in F<contrib/bric_media_upload> to include bric_soap 
+commands in output. Also now uses /usr/bin/perl instead of /usr/local/bin/perl
+to be consistent with other scripts and bricolage core. [Paul Orrock]
+
+=item *
+
+Fixed an error message during F<inst/clone.pl> where the wrong version was
+being displayed. [Scott]
+
+=item *
+
+Added C<make hot_copy>, which will install a clone that uses hardlinks to the
+original installation for MASON_DATA_ROOT and MASON_COMP_ROOT.  This is
+useful for forking a production install into a development install (on the
+same box) without duplicating all of your media files.  Requires `cp` from
+GNU coreutils, so it will not work out of the box on BSD or OS X. [Marshall]
+
+=item *
+
+Removed extra call to Category->list during cloning. [Scott]
+
+=item *
+
+Added a C<--site> option to C<bric_dev_sync> to limit the templates and
+elements that are synchronized to one site. [Marshall]
+
+=item *
+
+Various minor notes tweaks, including the elimination of version 0 notes from
+the UI, and we no longer include the note from the previous version in the
+form for the new version. [David Beaudet]
+
+=item *
+
+Added optional sortby parameter to $story->get_secondary_categories to allow
+sorting by uri. Returns default order if not given. [Paul Orrock]
+
+=item *
+
+Fixed typo in 'Story' element type description. Reported (bug 1289) by
+Brad Harder. [Scott]
+
+=item *
+
+Several German localization patches from Steffen Schwigon and improved buttons
+from Rolf Schaufelberger.
+
+=item *
+
+Increased length of full names of categories to be 128 characters from 64
+[Paul Orrock]
+
+=item *
+
+When saving from the Keyword Profile, the message 'Keyword profile "Name"
+saved.' was using the previous Name instead of the updated one. [Scott]
+
+=item *
+
+Made category browser show only categories in the same site as the story,
+fix for bug 1249. [Scott]
+
+=item *
+
+Fixed bug 1251, the list of Element Types when uploading a new media from
+a related media subelement is constrained to those in the current site. [Scott]
+
+=item *
+
+Added notes about PostgreSQL's genetic query optimizer and its hate for
+Bricolage queries to L<Bric::DBA|Bric::DBA>. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -229,7 +616,7 @@ contributor group. Reported by Joe Pletcher. [David]
 =item *
 
 Fixed some foreign key constraints in the C<story_instance> and
-C<template_instance> tables that improperly has C<ON DELETE SET NULL> clauses
+C<template_instance> tables that improperly have C<ON DELETE SET NULL> clauses
 on C<NOT NULL> columns. Reported by Andrei Arsu. [David]
 
 =item *
@@ -247,7 +634,7 @@ permission to create the F<inst/Pg.sql> file. [David]
 
 C<make clone> no longer runs C<distclean>, and therefore no longer deletes
 F<inst/Pg.sql>. It also creates the new F<Pg.sql> in the new distribution
-directory, instead over replacing th existing F<Pg.sql>. [David]
+directory, instead of replacing the existing F<Pg.sql>. [David]
 
 =item *
 
@@ -302,20 +689,20 @@ upgrade. Reported by Chris Schults (Ticket # 1239). [David]
 
 =item *
 
-Story and media subelements are once again proparly deleted from within their
+Story and media subelements are once again properly deleted from within their
 profiles when the "Delete this Profile" checkbox is checked and either the
-"Save" or the "Save and Stay" is pressed. Reported by Chris Schults (Ticket #
-1240). [David]
+"Save" or the "Save and Stay" button is pressed. Reported by Chris Schults
+(Ticket #1240). [David]
 
 =item *
 
-Searches for media to relate to a document that search by URI now properly
+Searches by URI for media to relate to a document now properly
 remember the search results the next time the related media search page is
 loaded. Reported by Chris Schults (Ticket # 1241). [David]
 
 =item *
 
-`make dev` no longer supports the "single" installation mode, since it has
+`make dev` no longer supports the "single" installation mode, since it
 will wipe out all of F</usr/local/lib> and F</usr/local/bin>. Reported by
 Christian Muise (Ticket # 1246). [David]
 
@@ -324,6 +711,111 @@ Christian Muise (Ticket # 1246). [David]
 The search interface for paginated searches no longer gets stuck when the
 alpha search preference is enabled. Reported by Neal Sofge (Ticket # 1247).
 [David]
+
+=item *
+
+Fixed F<contrib/bric_media_upload> so that it works with 1.10 categories and
+XML elements. [David, Paul Orrock, and George Harrison]
+
+=item *
+
+Bricolage now assumes that template files uploaded in the template profile are
+encoded in UTF-8, since the same is assumed for templates pasted into the form
+field. [David]
+
+=item *
+
+Fixed resource deletion code in L<Bric::DBA|Bric::DBA> to properly use
+booleans for boolean columns. Reported by John Greene. [David]
+
+=item *
+
+Eliminated "Use of uninitialized value in substitution (s///)" warning for
+stories with no slug and a URI format with "%{slug}" in it. Reported by Wayne
+Slavin. [David]
+
+=item *
+
+F<bric_soap> no longer prompts for a password if you use C<--use-cookie-file>.
+Reported by Paul Orrock. [Scott]
+
+=item *
+
+F<bin> files should no longer be put under the default site script directory
+(compensates for an ExtUtils::MakeMaker change). [Scott]
+
+=item *
+
+When a media document gets a new file uploaded with the same name as the
+previously published file in that same media document, Bricolage will no
+longer expire the new file right after publishing it. Reported by Chris
+Schults and others. [David]
+
+=item *
+
+The delete checkbox and menu to move an asset to another desk no longer appear
+for assets listed on a desk that are checked out do a different user. [David
+Beaudet]
+
+=item *
+
+Fixed bugs in C<bric_dev_sync> resulting from the renaming of Elements to
+Element Types. [Marshall]
+
+=item *
+
+Fixed an apparently old bug with editing keywords in the Category Profile,
+where you couldn't Save if there were exactly 3 keywords. [Scott]
+
+=item *
+
+Fixed pasto in L<Bric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> that should
+have prevented it from ever working, but somehow did not. [David P. Beaudet]
+
+=item *
+
+Fixed the datetime-handling regex in L<Bric::Util::Time|Bric::Util::Time>'s
+C<datetime> function, introduced in version 1.9.0. It was failing on datetimes
+that end with 'Z' (c.f. ISO 8601). [Scott]
+
+=item *
+
+Fixed bug 1258, where MIME types weren't being recognized. [Bret Dawson]
+
+=item *
+
+Fixed bug 1283, allowing C<< <= >> in Alerts. [Brad Fox]
+
+=item *
+
+Fixed pasto causing C<Can't locate object method "get_grp_ids" via package "id">
+error in Element Profile. Reported by Matt Rolf. [Scott]
+
+=item *
+
+When adding subelements to an ElementType profile, subelements that have already
+been added are no longer listed. Reported by Phillip Smith in bug 1253. [Scott]
+
+=item *
+
+Stopped the upgrade script F<inst/upgrade/1.9.1/delete_old_stuff.pl> from
+incorrectly deleting F<lib/Bric/App/Callback/Profile/ElementType.pm>,
+which is still in use. If you've upgraded from before 1.9.1, you'll have to
+copy that file from the distribution source. [Scott]
+
+=item *
+
+Changing the category of a media object now calls a preview of the asset if 
+AUTO_PREVIEW_MEDIA is turned on. [Paul Orrock]
+
+=item *
+
+For bug 1267, remove protocol+hostname+port from a login URL in order to allow
+reverse proxying to work in Apache2. [Steffen Schwigon]
+
+=item *
+
+Fixed contributor type creation (bug 1299). [Greg Heo]
 
 =back
 

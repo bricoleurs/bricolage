@@ -641,7 +641,7 @@ Real time character counter for text areas
 */
 function textCount(which, maxLength) {
     var myObj= $(which);
-    if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
+    if (myObj.value.length > maxLength) myObj.value=myObj.value.substring(0,maxLength); 
     $("textCountUp" + which).innerHTML = myObj.value.length;
     $("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
@@ -955,7 +955,7 @@ function replaceAll (field) {
         field.value = chunks.join(replace);
         field.focus(); field.blur();
         closeDialog($('finddialog'));
-        alert(replaced + (chunks.length - 1) + chunks.length > 2 ? occurrence : occurrences);
+        alert((replaced) + (chunks.length - 1) + (chunks.length > 2 ? occurrences : occurrence));
     }
     return false;
 }

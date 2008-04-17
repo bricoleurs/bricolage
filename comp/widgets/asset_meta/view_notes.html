@@ -1,22 +1,24 @@
 <& '/widgets/wrappers/table_top.mc',
-    caption => "Notes",
+    caption => "Version Notes",
     number  => $number,
 &>
 <table class="containerProf">
 <tr>
     <th class="name">Version</th>
-    <th>Note</th>
+    <th>Notes</th>
 </tr>
 
-% my $count = 1;
+% my $count = 0;
 % foreach my $n (@notes) {
-<tr class="<% ($count++ % 2 == 0) ? 'even' : 'odd' %>">
+%	if ( $n->{id} && $n->{note} ) {
+<tr class="<% (++$count % 2 == 0) ? 'even' : 'odd' %>">
     <td class="name"><% $n->{id} %></td>
-    <td><% $n->{note} %></td>
+    <td><% $n->{note} |h %></td>
 </tr>
+% 	}
 % }
 
-% unless (@notes) {
+% unless ($count) {
 <tr>
     <td colspan="2"><% $lang->maketext('No existing notes.') %></td>
 </tr>

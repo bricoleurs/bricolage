@@ -11,10 +11,10 @@ $m->comp('/widgets/summary/summary.mc', asset => $asset, number => 1)
   if $show_summary;
 
 # Check if we should display elements.
-if ($element->get_elements || 
-      $element->get_possible_field_types || 
+if ($element->get_elements ||
+      $element->get_possible_field_types ||
       grep { chk_authz($_, READ, 1) } $element->get_possible_containers ) {
-          
+
     $m->comp("/widgets/wrappers/table_top.mc",
              caption => $title,
              id      => 'containerprof',
@@ -40,7 +40,6 @@ if ($is_related_story) {
     $related_summary->($element, 'story', $widget, $asset);
     $m->comp('/widgets/wrappers/table_bottom.mc');
 }
-
 if ($is_related_media) {
     $m->comp( '/widgets/wrappers/table_top.mc',
         caption => 'Related Media',
@@ -135,10 +134,6 @@ my $related_summary = sub {
   );
 
   if ($rel) {
-      add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
-              $type, $rel->get_title)
-        unless $rel->is_active;
-
       add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
               $type, $rel->get_title)
         unless $rel->is_active;

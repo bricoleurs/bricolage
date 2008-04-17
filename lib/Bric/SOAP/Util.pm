@@ -473,9 +473,9 @@ sub _deserialize_element {
         foreach my $d (@{$data->{field}}) {
             my $key_name = $d->{type} || $d->{element};
             my $at = $valid_data{$key_name};
-            throw_ap(error => "Error loading data element for " .
+            throw_ap(error => "Error loading data element '$key_name' for " .
                        $element->get_key_name .
-                       " cannot add field $key_name here.")
+                       ": cannot add field $key_name here.")
               unless $at;
 
             if ($at->get_sql_type eq 'date') {
@@ -487,10 +487,18 @@ sub _deserialize_element {
                     $d->{order}
                 );
             } else {
+                my $content = exists $d->{content} ? $d->{content} : '';
+                my $maxlen = $at->get_max_length;
+                if ($maxlen && length($content) > $maxlen) {
+                    throw_ap(error => "Error loading data element '$key_name' for " .
+                             $element->get_key_name .
+                             ": content exceeds maximum length ($maxlen).");
+                }
+
                 # add data to container
                 $element->add_field(
                     $at,
-                    exists $d->{content} ? $d->{content} : '',
+                    $content,
                     $d->{order}
                 );
             }

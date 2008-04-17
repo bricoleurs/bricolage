@@ -961,7 +961,9 @@ sub where_clause {
                 $where .= " AND $any->[0]" unless exists $seen{$k};
                 $sql = $any->[1];
             }
-            $where .= " AND $not(" . join(' OR ', ($sql) x @$v) . ')';
+            # For exclude with ANY, must use AND not OR
+            my $op = $sql =~ /(?:<>|!=)\s+[?]/ ? ' AND ' : ' OR ';
+            $where .= " AND $not(" . join($op, ($sql) x @$v) . ')';
             my $count = $sql =~ s/\?//g;
             push @args, ($_) x $count for @$v;
         } else {
@@ -1015,7 +1017,9 @@ sub any_where {
     my $not = UNIVERSAL::isa($value, 'Bric::Util::DBI::NONE') ? 'NOT' : '';
     if ($not or UNIVERSAL::isa($value, 'Bric::Util::DBI::ANY')) {
         push @$params, @$value;
-        return "$not(" . join(' OR ', ($sql) x @$value) . ')';
+        # For exclude with ANY, must use AND not OR
+        my $op = $sql =~ /(?:<>|!=)\s+[?]/ ? ' AND ' : ' OR ';
+        return "$not(" . join($op, ($sql) x @$value) . ')';
     }
     push @$params, $value;
     return $sql;
@@ -1799,6 +1803,8 @@ B<Notes:> NONE.
 
 sub _connect {
     my $dbh = eval {
+        # Prevent using the same connection across processes.
+        $ATTR->{bric_process_id} = $$;
         my $d = DBI->connect_cached(join(':', 'DBI', DBD_TYPE, DSN_STRING),
                                     CONNECT_USER, CONNECT_PASS, $ATTR);
         # Make sure we're consistent about what we think the transaction

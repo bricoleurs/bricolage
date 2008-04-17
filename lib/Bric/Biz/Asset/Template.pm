@@ -1839,7 +1839,8 @@ sub checkout {
         $self->_set({'user__id'    => $param->{'user__id'} ,
                      'modifier'    => $param->{'user__id'},
                      'version_id'  => undef,
-                     'checked_out' => 1
+                     'checked_out' => 1,
+                     'note'        => undef,
                     });
 
         return $self;

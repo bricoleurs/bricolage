@@ -134,7 +134,7 @@ if ($showRightList) {
     <td>&nbsp;</td><td valign=top align=right>
 % if ($showLeftList) {
 %   if (!$readOnly) {
-      <select name="<% $leftName %>" id="<% $leftName %>" size="<% $size %>" multiple style="width:225px" width="210">
+      <select name="<% $leftName %>" id="<% $leftName %>" size="<% $size %>" multiple >
       <% $left %>
       </select>
 %   } else {
@@ -145,7 +145,7 @@ if ($showRightList) {
     <td valign=top>
 % if ($showRightList) {
 %   if (!$readOnly) {
-      <select name="<% $rightName %>" id="<% $rightName %>" size="<% $size %>" multiple style="width:225px" width="210">
+      <select name="<% $rightName %>" id="<% $rightName %>" size="<% $size %>" multiple >
       <% $right %>
       </select>
 %   } else {

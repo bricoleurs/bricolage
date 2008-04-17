@@ -264,6 +264,20 @@ Folks who have submitted patches include:
 
 =item * Alex Howarth
 
+=item * David Beaudet
+
+=item * Steffen Schwigon
+
+=item * Bret Dawson
+
+=item * Rolf Schaufelberger
+
+=item * Greg Heo
+
+=item * Phillip Smith
+
+=item * Alex Krohn
+
 =back
 
 Friends who have spotted bugs include:
@@ -382,8 +396,6 @@ Friends who have spotted bugs include:
 
 =item * Alexandra Gershman
 
-=item * Phillip Smith
-
 =item * Guido BE<uuml>lskE<auml>mper
 
 =item * Wayne Slavin
@@ -423,6 +435,20 @@ Friends who have spotted bugs include:
 =item * Andrei Arsu
 
 =item * Chris Schults
+
+=item * Dan McGarry
+
+=item * Matt Rolf
+
+=item * Daisuke Maki
+
+=item * Dawn Buie
+
+=item * Ryan O'Toole
+
+=item * Chauncey Thorn
+
+=item * Matt Wlazlo
 
 =back
 

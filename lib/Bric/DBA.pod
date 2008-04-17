@@ -160,17 +160,22 @@ optimizer. PostgreSQL uses a non-overwriting storage manager, which means that
 C<DELETE> commands don't actually remove data, they just mark it invalid;
 similarly, C<UPDATE> commands and rolled-back transactions will create more
 "old versions" of rows. These should be cleaned up on a periodic basis by
-running C<VACUUM>. Running C<ANALYZE> (known prior to PostgreSQL 7.3 as
-C<VACUUM ANALYZE>) also collects statistics representing the dispersion of the
-data in each column. The statistics maintained include the number of tuples
-and number of pages stored in all transactions. This information is valuable
-when several query execution paths are possible. Running C<ANALYZE>
-periodically will increase the speed of the database in processing user
-queries.
+running C<VACUUM>.
 
-We recommend that you C<VACUUM> and C<ANALYZE> on your Bricolage database
-regularly, in order to remove expired rows and keep the database running
-efficiently.
+Running C<ANALYZE> (known prior to PostgreSQL 7.3 as C<VACUUM ANALYZE>) also
+collects statistics representing the dispersion of the data in each column.
+The statistics include the number of tuples and number of pages stored in all
+transactions. This information is valuable when several query execution paths
+are possible. Running C<ANALYZE> periodically will increase the speed of the
+database in processing user queries.
+
+If you're running PostgreSQL 8.1 or later, we recommend that you use the
+integated support for autovacuuming the database. Skip ahead to the
+L<Autovacuum|"Autovacuum"> section for details.
+
+For older versions of PostreSQL, we recommend that you C<VACUUM> and
+C<ANALYZE> on your Bricolage database regularly, in order to remove expired
+rows and keep the database running efficiently.
 
 There are three ways to C<VACUUM> and B<ANALYZE> a database. The first is
 through an interactive shell such as C<psql>. Another approach is to schedule
@@ -180,14 +185,33 @@ example:
   PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a
   PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a -z
 
-These commands vacuum all of the databases on your PostgreSQL server. If the
-vacuum is successful, C<vacuumdb> will output "VACUUM". In the event of a
-failure, it will output "vacuumdb: Vacuum failed."
+However, the best way to keep your database well vacuumed is to configure it
+to be automatically vacuumed. In PostgreSQL 8.1 and later, autovacuum is
+integrated into PostgreSQL and can be configured by editing
+F<postgresql.conf>. For earlier versions, you'll need to compile and install
+C<pg_autovacuum> from F<contrib/pg_autovacuum>.
 
-However, the best way to keep your database well vacuumed is to use the
-C<pg_autovacuum> utility that comes with PostgreSQL 7.4 and later (and which
-can be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum>
-F<README> document:
+To configure autovacuum in 8.1 and later, set these values in
+F<postgresql.conf>:
+
+  autovacuum = on
+  autovacuum_vacuum_threshold = 300
+  autovacuum_analyze_threshold = 500
+  autovacuum_vacuum_scale_factor = 0.5
+  stats_start_collector = on
+  stats_row_level = on
+
+In PostgreSQL 8.3 and later, those last two are actually covered by a new
+configuration variable:
+
+  track_counts = on
+
+Nicely, autovacuum is turned on by default in PostgreSQL 8.3 and later, though
+you'll likely want to tweak the thresholds and scale factors as above.
+
+The C<pg_autovacuum> contrib utility comes with PostgreSQL 7.4 - 8.0 (and can
+be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum> F<README>
+document:
 
 "C<pg_autovacuum> is a libpq client program that monitors all the databases
 associated with a PostgreSQL server. It uses the statistics collector to
@@ -325,6 +349,41 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
   effective_cache_size = 196608
 
+=head2 Autovacuum
+
+The C<autovacuum> directive turns on the autovacuum daemon that is included in
+PostgreSQL 8.1 and later. We strongly recommend that you take advantage of the
+autovacuum feature in order to keep database performance optimal. See
+L<http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
+for details. To enable autovacuum, you I<must> set these direcives:
+
+  stats_start_collector = on
+  stats_row_level       = on
+  autovacuum            = on
+
+In PostgreSQL 8.3 and later autovacuum is enabled by default, but just in case, the
+directives have changed:
+
+  autovacuum   = on
+  track_counts = on
+
+If you enable C<autovacuum> but forget to enable C<stats_start_collector>
+and/or C<stats_row_level>, or C<track_counts>, autovacuum will not actually
+work. But it's not fatal; you'll just happen to see this warning if you're
+watching your PostgreSQL log:
+
+  WARNING: autovacuum not started because of misconfiguration
+  HINT: Enable options "stats_start_collector" and stats_row_level".
+
+So be sure to enable them!
+
+Beyond these required settings, our current recommendation for running
+autovacuum on a Bricolage database are to set the following directives:
+
+  autovacuum_vacuum_threshold    = 300
+  autovacuum_analyze_threshold   = 500
+  autovacuum_vacuum_scale_factor = 0.5
+
 =head2 Maintenance Work Memory
 
 The C<maintenance_work_mem> (or C<vacuum_mem>, as it was known prior to the
@@ -371,6 +430,29 @@ For a large database on a system with lots of memory, you can assign more. A
 value of 75000 should be more than enough for expected activity in a 1 GB
 database.
 
+=head2 Genetic Query Optimizer
+
+The Genetic Query Optimizer (or GEQO) is an algorithm that attempts to do
+query planning without exhaustive searching. It can be very useful when you
+execute a query with a lot of joins. Note, however, that GEQO queries
+generally run more slowly than regular queries. In particular, in some
+installations of Bricolage, templates calling C<<
+Bric::Biz::Assset::Business::Story->list >> with a lot of parameters have been
+found to really confuse the GEQO. For that reason, if you your templates pass
+a parameters to C<< Bric::Biz::Assset::Business::Story->list >> that cause
+many tables to be joined, we recommend that you increase the value of
+C<geqo_threshold> to greater than the number of joined tables. In one
+installation, we found that setting
+
+  geqo_threshold = 15
+
+reduced query times from 20 minutes or more to under a second. You'll know
+that you need to tweak this setting when you find that publish jobs just go on
+forever and never finish. Note, also, that such queries may run quickly in one
+run, and then much longer in subsequent runs on the same connection. If you
+don't notice execution times that are that slow, you can probably leave this
+paramter alone.
+
 =head2 Where to Learn More
 
 =over
@@ -416,16 +498,16 @@ do this:
            FROM   job_member, job
            WHERE  job.id = job_member.object_id
                   AND (
-                     executing = 1
+                     executing = true
                      OR comp_time IS NULL
                   )
            );
 
   DELETE FROM job
-  WHERE  executing = 0
+  WHERE  executing = false
          AND (
            comp_time IS NOT NULL
-           OR failed = 1
+           OR failed = true
          );
 
 This can result in significant boosts in preview and publish performance,

@@ -25,7 +25,7 @@ CREATE TABLE category (
     site__id         INTEGER         NOT NULL,
     directory        VARCHAR(128)    NOT NULL,
     uri              VARCHAR(256)    NOT NULL,
-    name             VARCHAR(64),
+    name             VARCHAR(128),
     description      VARCHAR(256),
     parent_id        INTEGER         NOT NULL,
     asset_grp_id     INTEGER         NOT NULL,

@@ -161,7 +161,7 @@ my $safe = Safe->new;
 # If new operators get added to Bric::Util::AlertType::Parts::Rule, use
 # `perl -MOpcode=opdump -e opdump` to find their ops and add them here.
 # XXX Add regcmaybe, regcreset, pushre, or regcomp?
-$safe->permit_only(qw(seq sne sgt slt sge le match not lc padany lineseq
+$safe->permit_only(qw(seq sne sgt slt sle sge le match not lc padany lineseq
                       const leaveeval qr regcreset));
 
 ################################################################################
@@ -2040,7 +2040,7 @@ B<Throws:>
 
 =item *
 
-Too many Bric::Biz::Grp::User objects found.
+Too many Bric::Util::Grp::User objects found.
 
 =item *
 

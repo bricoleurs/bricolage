@@ -483,6 +483,24 @@ B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
+=item $p = $p->set_description( $description )
+
+Sets the element description, first converting non-Unix line endings.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
+
 =item my $parent_id = $p->get_parent_id
 
 Returns the ID of the element's parent element.

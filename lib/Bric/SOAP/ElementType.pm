@@ -210,6 +210,7 @@ sub list_ids {
           unless defined $output_channel_id;
 
         $args->{output_channel_id} = $output_channel_id;
+        delete $args->{output_channel};
     }
 
     my @list = Bric::Biz::ElementType->list_ids($args);

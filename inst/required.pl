@@ -279,6 +279,7 @@ sub find_expat {
     # find expat libary libexpat.so by looking in library paths that
     # Perl knows about
     my @paths = grep { defined and length } ( split(' ', $Config{libsdirs}),
+                                              split(' ', $Config{loclibpth}),
                                               split(' ', $Config{loclibpth}));
     push @paths, split(", ", get_default("EXPAT_PATH"));
 

@@ -48,10 +48,10 @@ $LastChangedDate$
  @assets  = $desk->assets();
 
  # Transfer a asset to a different desk.
- $ret     = $desk->transfer($asset_obj, $another_desk);
+ $ret     = $desk->transfer($param);
 
  # Accept a asset from another desk.
- $ret     = $desk->accept($asset_obj);
+ $ret     = $desk->accept($param);
 
  $desk    = $desk->save;
 

@@ -385,14 +385,24 @@ my %formSubs = (
 
             $out .= qq{        <div class="input">\n} if $useTable;
             if (!$readOnly) {
-            $js = $js ? " $js" : '';
-            $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-                 . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
-            $out .= qq{
+                if (lc(WYSIWYG_EDITOR) eq 'js-quicktags') {
+                    $out .= qq{
+ <script type="text/javascript">
+   edToolbar('$key');
+ </script>
+}
+                }
+                $js = $js ? " $js" : '';
+                $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
+                     . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+
+                if (lc(WYSIWYG_EDITOR) eq 'xinha' || lc(WYSIWYG_EDITOR) eq 'htmlarea') {
+                    $out .= qq{
  <script type="text/javascript">
    editors.push("$key");
  </script>
 }
+                }
         } else {
             $out .= $value;
         }

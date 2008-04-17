@@ -42,26 +42,30 @@ if ($widget eq 'story_prof') {
 my $deskText = qq{<select name="$widget|desk">};
 my $can_pub;
 if ($desks) {
+    my $to      = $lang->maketext('to');
+    my $and     = $lang->maketext('and');
+    my $shelve  = $lang->maketext('Shelve');
+
     foreach my $d (@$desks) {
         my $id = $d->get_id;
         my $ag_id = $d->get_asset_grp;
         next unless chk_authz(undef, READ, 1, $ag_id);
         $deskText .= qq{<option value="$id"};
         $deskText .= ' selected="selected"' if $id == $cd->get_id;
-        $deskText .= ">to " .  $d->get_name . "</option>";
+        $deskText .= ">$to " .  $d->get_name . "</option>";
         $can_pub = 1 if $d->can_publish and
           chk_authz(undef, PUBLISH, 1, $ag_id);
     }
 
     # Set up choice to remove from workflow.
-    $deskText .='<option value="remove">and Shelve</option>';
+    $deskText .= qq{<option value="remove">$and $shelve</option>};
 
     # Set up choice to publish, if possible.
     if ($can_pub) {
         my ($act, $cb) = $widget eq 'tmpl_prof'
           ? ($lang->maketext('Deploy'), 'deploy')
           : ($lang->maketext('Publish'), 'publish');
-        $deskText .= qq{<option value="$cb">and $act</option>};
+        $deskText .= qq{<option value="$cb">$and $act</option>};
     }
     $deskText .= "</select>";
 }

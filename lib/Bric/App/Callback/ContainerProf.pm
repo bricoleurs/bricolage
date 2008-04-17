@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'container_prof';
 use strict;
 use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
+use Bric::Util::DBI qw(:trans);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
@@ -177,6 +178,7 @@ sub create_related_media : Callback {
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
+    clear_state($widget);
 
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
@@ -223,14 +225,20 @@ sub create_related_media : Callback {
     $element->set_related_media($mid);
 
     # Set up the original state for returning from the media profile.
-    $media_cb->save_and_stay(1);
     set_state_data(_profile_return => {
         state      => $state,
         type_state => $type_state,
         prof       => $asset,
         type       => $type,
         uri        => $self->apache_req->uri,
-        });
+    });
+
+    # We have to have the transactions here in case there is a failure
+    # in save_and_stay(). If there is, then $mid would be invalid, although
+    # our session wouldn't know that.
+    commit(1);
+    begin(1);
+    $media_cb->save_and_stay(1);
     # Edit the new media document.
     $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }
@@ -273,7 +281,7 @@ sub relate_story : Callback {
     return if $param->{'_inconsistent_state_'};
     
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
-    $element->set_related_story_id($self->value);
+    $element->set_related_story($self->value);
 }
 
 sub unrelate_story : Callback {
@@ -283,7 +291,7 @@ sub unrelate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
-    $element->set_related_story_id(undef);
+    $element->set_related_story(undef);
 }
 
 sub related_up : Callback {
@@ -334,11 +342,16 @@ sub save_and_up : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on.
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
-        $self->_pop_and_redirect;
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on.
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+            $self->_pop_and_redirect;
+        }
     }
 }
 
@@ -357,10 +370,15 @@ sub save_and_stay : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+        }
     }
 }
 

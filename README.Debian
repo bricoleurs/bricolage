@@ -24,8 +24,11 @@ Bricolage:
   apache-dev
   postgresql
   postgresql-dev
+  postgresql-server-dev-X.Y   # use your Postgresql version number
   expat
   unzip
+
+For other Perl module packages see below.
 
 
 SFTP Mover
@@ -41,3 +44,109 @@ built by Debian:
 There was no Net::SFTP installer from Debian, so proceed with
 
     $ sudo cpan install Net::SFTP
+
+
+Perl module dependencies
+------------------------
+
+Debian comes with a lot of modules already available as packages. If
+you prefer them over manual CPAN installation you can install as
+follows. (Though not all packages are available via apt you still have
+to mix apt and CPAN.) Install from top to down and it should work:
+
+Required, via apt-get:
+
+ libdbd-pg-perl
+ libemail-address-perl
+ libxml-writer-perl
+ libimage-base-bundle-perl
+ libmldbm-perl
+ libapache-request-perl
+ libapache-session-perl
+ libxml-simple-perl
+ libsoap-lite-perl
+ libtest-class-perl
+ libparams-callbackrequest-perl
+ libmasonx-interp-withcallbacks-perl
+ libdatetime-perl
+ libdatetime-timezone-perl
+ liblist-moreutils-perl
+ libdevel-symdump-perl
+ libdbi-perl
+ liberror-perl
+ libcache-cache-perl
+ libdigest-sha1-perl
+ liburi-perl
+ libhtml-tagset-perl
+ libwww-perl
+ libparams-validate-perl
+ libexception-class-perl
+ libclass-container-perl
+ libhtml-mason-perl
+ libapache-session-perl
+ libtest-simple-perl
+ libtest-mockmodule-perl
+ libxml-parser-perl
+ libxml-simple-perl
+ libtest-class-perl
+ liblist-moreutils-perl
+ libtext-diff-perl
+ libhtml-parser-perl
+ libmime-base64-perl
+ libtest-harness-perl
+ libfile-temp-perl
+ liblocale-maketext-perl
+
+Required, via CPAN:
+
+ Unix::Syslog
+ Cache::Mmap
+ MIME::Tools
+ Image::Info
+ Test::File::Contents
+ IO::Stringy
+ Text::LevenshteinXS
+ Data::UUID
+ Text::Diff::HTML
+ Text::WordDiff
+ Time::HiRes
+ Net::Cmd
+ Digest::MD5
+ MIME::Tools
+ Mail::Address
+ DB_File
+ Test::File::Contents
+ Text::Balanced
+ Safe
+ List::Util
+ URI::Escape
+ Scalar::Util
+
+Optional, via apt-get:
+
+ libhtml-template-perl
+ libhtml-template-expr-perl
+ libtest-pod-perl
+ libnet-ftpserver-perl
+ libhttp-dav-perl
+ libcrypt-ssleay-perl
+ libimager-perl
+ libxml-dom-perl
+ libtemplate-perl
+ libpod-simple-perl
+ libtest-pod-perl
+ libnet-ftpserver-perl
+ libhttp-dav-perl
+ libcgi-perl
+ libterm-readpassword-perl
+ libtext-aspell-perl
+ 
+Optional, via CPAN:
+
+ Devel::Profiler
+ Net::SFTP
+ Math::BigInt::GMP
+ Text::Aspell
+ PHP::Interpreter
+ Encode
+ Apache::SizeLimit

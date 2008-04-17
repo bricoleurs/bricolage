@@ -382,6 +382,7 @@ sub deploy {
                   $fa);
         $fa->set_deploy_date(strfdate());
         $fa->set_deploy_status(1);
+        $fa->set_published_version($fa->get_version);
 
         # Remove it from the current desk.
         if (my $desk = $fa->get_current_desk) {

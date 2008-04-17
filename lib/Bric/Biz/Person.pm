@@ -1500,12 +1500,12 @@ B<Notes:> NONE.
 
 =item my (@groups || $groups_aref) = $p->get_grps
 
-Returns a list or anonymous array of Bric::Biz::Grp::Person objects representing
+Returns a list or anonymous array of Bric::Util::Grp::Person objects representing
 the groups of which this Bric::Biz::Person object is a member.
 
-Use the Bric::Biz::Grp::Person instance method calls add_members() and
+Use the Bric::Util::Grp::Person instance method calls add_members() and
 delete_members() to associate and dissociate Bric::Biz::Person objects with any
-given Bric::Biz::Grp::Person object.
+given Bric::Util::Grp::Person object.
 
 B<Throws:> See Bric::Util::Grp::Person::list().
 

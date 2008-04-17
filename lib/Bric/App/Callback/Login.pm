@@ -34,7 +34,7 @@ sub login : Callback {
 	    # Redirect them back to port 80 if not using SSL.
 	    set_state_name($self->class_key, 'nossl');
             # redirect_onload() prevents any other callbacks from executing.
-	    redirect_onload('http://' . $r->hostname . $port . $redir, $self);
+	    redirect_onload($redir, $self);
 	}
     } else {
 	add_msg($msg);

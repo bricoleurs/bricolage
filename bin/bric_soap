@@ -278,7 +278,7 @@ BEGIN {
     pod2usage(-verbose => 2) if $man;
     $verbose ||= 0;
 
-    if ($password eq '') {
+    if (!$use_cookie && $password eq '') {
         {
             $password = read_password('Password: ');
             redo unless $password;

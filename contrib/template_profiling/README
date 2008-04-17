@@ -21,7 +21,7 @@ print it to another file, but I didn't want to have to worry about
 locks and things like that, so I used a datbase table. Create the
 table in your bricolage database, using
 
-  $ psql $TABLENAME < create-prof-table.sql
+  $ psql $DBNAME < create-prof-table.sql
 
 You have to grant permissions on it, so run the following from wherever
 you installed Bricolage.
