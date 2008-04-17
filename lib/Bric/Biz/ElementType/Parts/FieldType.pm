@@ -1039,13 +1039,22 @@ B<Notes:> NONE.
 
 =item $field = $field->set_description($description)
 
-Sets the human readable descripton for this field
+Sets the human readable descripton for this field, first convering any
+non-Unix line endings.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =item $max_length $field->get_max_length()
 

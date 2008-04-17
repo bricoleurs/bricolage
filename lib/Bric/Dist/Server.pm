@@ -1208,36 +1208,22 @@ B<Notes:> NONE.
 
 =item $self = $server->set_cookie($cookie)
 
-Sets the cookie that can be used by transfer protocols that require a cookie for
-authentication, such as WebDAV.
+Sets the cookie that can be used by transfer protocols that require a cookie
+for authentication, such as WebDAV. Converts non-Unix line endings.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bad AUTOLOAD method format.
-
-=item *
-
-Cannot AUTOLOAD private methods.
-
-=item *
-
-Access denied: WRITE access for field 'cookie' required.
-
-=item *
-
-No AUTOLOAD method.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
 
 =cut
+
+sub set_cookie {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'cookie' ] => [ $val ]);
+}
 
 ################################################################################
 

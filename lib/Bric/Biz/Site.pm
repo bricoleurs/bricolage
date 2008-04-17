@@ -480,7 +480,16 @@ sub set_name { $set_unique_attr->('name', @_) }
   my $description = $site->get_description;
   $site = $site->set_description($description);
 
-Get and set the site object's description.
+Get and set the site object's description. The setter converts non-Unix line
+endings.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =head3 domain_name
 

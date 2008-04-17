@@ -167,8 +167,6 @@ sub chk_authz {
 
 ##############################################################################
 
-=over 4
-
 =item clear_authz_cache( $obj )
 
 Clears the authz cache for an object as set by a call to C<chk_authz>. The
@@ -223,7 +221,7 @@ David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>
 
 =cut

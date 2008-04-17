@@ -900,7 +900,8 @@ NONE
 
 =item $self = $self->set_description()
 
-This sets the description on the asset
+This sets the description on the asset, first converting non-Unix line
+endings.
 
 B<Throws:>
 
@@ -915,6 +916,12 @@ B<Notes:>
 NONE
 
 =cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 ################################################################################
 

@@ -64,6 +64,15 @@ profile when a user checks the delete checkbox and clicks "Save" or "Check
 In", instead of requiring that the "Delete" button be clicked. Suggested by
 Phillip Smith (Bug # 1308). [David]
 
+=item *
+
+Object attributes that are edited in textarea fields in the UI and that have a
+limited size -- mainly "description" fields -- now have their line endings
+converted to Unix line endings. This is so that character counts properly
+correspond to the limits set by the UI (think of the character counter in the
+story profile for the description field). Reported by Matt Rolf (Bug #1318).
+[David]
+
 =back
 
 =head2 Bug Fixes

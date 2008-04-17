@@ -1031,13 +1031,22 @@ B<Notes:> NONE.
 
 =item $oc = $oc->set_description( $description )
 
-Sets the description of the Output Channel.
+Sets the description of the Output Channel, converting any non-Unix line
+endings.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =item $description = $oc->get_description()
 

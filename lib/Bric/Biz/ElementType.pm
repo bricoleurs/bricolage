@@ -912,7 +912,16 @@ Get and set the element type object's unique name.
   my $description = $element_type->get_description;
   $element_type = $element_type->set_description($description);
 
-Get and set the element type object's description.
+Get and set the element type object's description. The setter converts
+non-Unix line endings.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =head3 key_name
 

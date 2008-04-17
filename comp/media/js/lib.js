@@ -671,7 +671,7 @@ Real time character counter for text areas
 */
 function textCount(which, maxLength) {
     var myObj= document.getElementById(which);
-    if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
+    if (myObj.value.length > maxLength) myObj.value=myObj.value.substring(0,maxLength); 
     document.getElementById("textCountUp" + which).innerHTML = myObj.value.length;
     document.getElementById("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
