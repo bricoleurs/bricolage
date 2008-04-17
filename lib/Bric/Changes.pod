@@ -136,6 +136,17 @@ longer be an SQL error to prevent the association from going through once the
 URI is made unique in the media profile. Spotted by Phillip Smith (Bug #1310).
 [David]
 
+=item *
+
+Fixed a bug in the handling of the C<subelement_id> parameter to the C<list>
+methods of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story> and
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> where
+they were finding stories that had deleted a subelement, because it was still
+in the story, but was not active. This means that the advanced search for
+stories and media will no longer return stories that have deleted a
+subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
