@@ -450,6 +450,8 @@ Friends who have spotted bugs include:
 
 =item * Matt Wlazlo
 
+=item * Jean-Michel Caricand
+
 =back
 
 Bricolage's translation team:
