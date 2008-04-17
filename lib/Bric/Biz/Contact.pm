@@ -1078,7 +1078,7 @@ B<Notes:> NONE.
 
 =item $self = $c->set_description( $description )
 
-Sets te description of the Bric::Biz::Contact object, first converting
+Sets the description of the Bric::Biz::Contact object, first converting
 non-Unix line endings.
 
 B<Throws:> NONE.
