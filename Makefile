@@ -22,7 +22,7 @@
 #
 
 # Set the location of Perl.
-PERL = /usr/local/bin/perl
+PERL = /usr/bin/perl
 
 # Blank by default, but set to QUIET to ask essential questions only
 INSTALL_VERBOSITY?= STANDARD
