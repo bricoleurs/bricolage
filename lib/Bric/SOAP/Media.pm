@@ -704,11 +704,17 @@ sub load_asset {
             if $mdata->{first_publish_date};
         for my $name qw(cover_date expire_date publish_date first_publish_date) {
             my $date = $mdata->{$name};
-            next unless $date; # skip missing date
-            my $db_date = xs_date_to_db_date($date);
-            throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
-              unless defined $db_date;
-            $init{$name} = $db_date;
+            if ($date) {
+                throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
+                    unless $mdata->{publish_status} or $name !~ /publish/;
+                my $db_date = xs_date_to_db_date($date);
+                throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+                    unless defined $db_date;
+                $init{$name} = $db_date;
+            } else {
+                throw_ap error => __PACKAGE__ . "::create : $name must be defined if publish_status is true"
+                    if $mdata->{publish_status} and $name =~ /publish/;
+            }
         }
 
         # assign catgeory__id

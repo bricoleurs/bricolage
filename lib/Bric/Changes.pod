@@ -73,6 +73,14 @@ correspond to the limits set by the UI (think of the character counter in the
 story profile for the description field). Reported by Matt Rolf (Bug #1318).
 [David]
 
+=item *
+
+Added code to the SOAP interface for creating and updating stories, media, and
+templates to throw an exception if publish dates are set when
+C<publish_status> is false, or vice versa, rather than waiting for an
+exception from the database constraint. Suggested by Scott (Bug # 1326).
+[David]
+
 =back
 
 =head2 Bug Fixes
