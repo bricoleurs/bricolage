@@ -99,7 +99,6 @@ use Bric::Inst qw(:all);
 use Data::Dumper;
 use Config;
 use CPAN;
-use CPAN::Queue;
 
 # make sure this is a recent version of CPAN.pm.  The stuff we're doing
 # below is dependent on some recent fixes.
@@ -164,7 +163,8 @@ sub install_module {
     my ($name, $req_version) = @_;
 
     # push onto the queue.  This keeps everything simpler below
-    CPAN::Queue->new($name);
+    my $push = CPAN::Queue->can('new') ? 'new' : 'qpush';
+    CPAN::Queue->$push($name);
 
     # process the queue
     while (my $q = CPAN::Queue->first) {

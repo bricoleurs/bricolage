@@ -166,9 +166,8 @@ subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
 
 =item *
 
-F<inst/cpan.pl> now explicitly loads L<CPAN::Queue|CPAN::Queue>, since it
-appears that some newer versions of L<CPAN|CPAN> may not load it themselves.
-Reported by Jean-Michel Caricand. [David]
+Fixed a compatibility issue with newer versions of L<CPAN|CPAN>. Reported by
+Jean-Michel Caricand. [David]
 
 =back
 
