@@ -27,19 +27,29 @@ my $add_sub = sub {
 # Figure out where we are.
 my ($section, $mode, undef, $id) = parse_uri($r->uri);
 undef $id if $id && $id eq '';
-my ($can_del, $sel_label, $sel_widg, $title, $context, $state_key);
+my ($can_del, $sel_label, $sel_widg, $title, $context, $state_key, $exclude);
 my ($constrain, $behavior) = ({}, 'expand');
 
 # Set the title, selection label, and widget.
 if (defined $id) {
+    # defined $id means we're adding subelements to a profile
+    my $et = $pkg_name->lookup({ id => $id });
+    my %already_added = map { $_->get_id => 1 } $et->get_containers;
     $constrain->{top_level} = 0;
+    $exclude = sub {
+        return 1 unless chk_authz($_[0], READ, 1);
+        return 1 if $already_added{$_[0]->get_id};
+        return 0;
+    };
     $state_key = 'subelement_type';
     $title     = 'Choose Subelements';
-    my $name   = $pkg_name->lookup({ id => $id })->get_name;
+    my $name   = $et->get_name;
     $context   = "Admin | Profile | $disp | &quot;$name&quot; | Subelements";
     $sel_label = 'Add to Element Type';
     $sel_widg  = 'element_type|addElementType_cb'
 } else {
+    # undef $id means we're listing elements in the manager
+    $exclude = sub { ! chk_authz($_[0], READ, 1) };
     $state_key = 'element_type';
     $title     = "$disp Manager";
     $context   = "Admin | Manager | $disp";
@@ -101,7 +111,7 @@ $m->comp('/widgets/listManager/listManager.mc',
          constrain => $constrain,
          profile   => ($id) ? undef : $prof_sub,
          fields    => [qw(name key_name biz_class_id)],
-         exclude   => sub { ! chk_authz($_[0], READ, 1) },
+         exclude   => $exclude,
          addition  => defined $id ? undef : $add_sub,
          select    => $sel_sub,
          alter     => {

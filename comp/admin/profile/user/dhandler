@@ -138,7 +138,6 @@ my $disp = get_disp_name($type);
 # Grab the length setting for the password fields.
 my $pass_len = $class->my_meths->{password}{props}{length};
 my $pass_max = $class->my_meths->{password}{props}{maxlength};
-my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 </%once>
 <%args>
 $id => undef
@@ -178,7 +177,7 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 
 # Establish the return URI.
 my $return = get_state_name('login') eq 'ssl' ? last_page
-      : 'http://' . $r->hostname . $port . last_page;
+      : last_page;
 </%init>
 
 

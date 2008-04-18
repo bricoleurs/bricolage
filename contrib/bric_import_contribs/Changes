@@ -1,4 +1,8 @@
 Revision history for bric_import_contribs.
 
+0.11   2007-12-29T00:25:30
+       - Fixed issue with trailing newlines sometimes becoming a part of a
+         contributor's name. Thanks to Greg Heo and Ryan O'Toole for figuring
+         it out.
 0.10   2004-09-24T01:53:52
        - Initial release.

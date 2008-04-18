@@ -60,7 +60,9 @@ To translate:
   'place must be a positive number.' => 'place must be a positive number.',
   'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
-  
+  'Shelve'
+  'and Shelve'
+  'and'
           'Slug required for non-fixed (non-cover) story type.'
 
           'Cannot both delete and make primary a single output channel.'

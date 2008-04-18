@@ -93,7 +93,7 @@ $LastChangedDate$
  # Access Categories
  $cat             = $biz->get_primary_category;
  $biz             = $biz->set_primary_category($cat);
- ($cats || @cats) = $biz->get_secondary_categories;
+ ($cats || @cats) = $biz->get_secondary_categories($sortby);
  $biz             = $biz->add_categories([$category, ...])
  ($cats || @cats) = $biz->get_categories()
  $biz             = $biz->delete_categories([$category, ...]);
@@ -345,10 +345,10 @@ use constant PARAM_WHERE_MAP => {
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
-      subelement_id          => 'i.id = sse.object_instance_id AND sse.element_type__id = ?',
+      subelement_id          => 'i.id = sse.object_instance_id AND sse.active = TRUE AND sse.element_type__id = ?',
       related_story_id       => 'i.id = sctrs.object_instance_id AND sctrs.related_story__id = ?',
       related_media_id       => 'i.id = sctrm.object_instance_id AND sctrm.related_media__id = ?',
-      data_text              => 'LOWER(sd.short_val) LIKE LOWER(?) AND sd.object_instance_id = i.id',
+      data_text              => 'sd.object_instance_id = i.id AND (LOWER(sd.short_val) LIKE LOWER(?)' . ( BLOB_SEARCH ? ' OR LOWER(sd.blob_val) LIKE LOWER(?))' : ')' ),
       title                  => 'LOWER(i.name) LIKE LOWER(?)',
       description            => 'LOWER(i.description) LIKE LOWER(?)',
       version                => 'i.version = ?',
@@ -426,14 +426,14 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id',
                                 'LOWER(subet.key_name) LIKE LOWER(?)' ],
-    subelement_id          => [ 'i.id = sse.object_instance_id',
+    subelement_id          => [ 'i.id = sse.object_instance_id AND sse.active = TRUE',
                                 'sse.element_type__id = ?' ],
     related_story_id       => [ 'i.id = sctrs.object_instance_id',
                                 'sctrs.related_story__id = ?' ],
     related_media_id       => [ 'i.id = sctrm.object_instance_id',
                                 'sctrm.related_media__id = ?' ],
     data_text              => [ 'sd.object_instance_id = i.id',
-                                'LOWER(sd.short_val) LIKE LOWER(?)' ],
+                                '(LOWER(sd.short_val) LIKE LOWER(?)' . (BLOB_SEARCH ? ' OR LOWER(sd.blob_val) LIKE LOWER(?)' : ')') ],
     output_channel_id      => [ 'i.id = soc.story_instance__id',
                                 'soc.output_channel__id = ?' ],
     category_id            => [ 'i.id = sc2.story_instance__id',
@@ -1488,9 +1488,21 @@ sub set_primary_category {
 
 ################################################################################
 
-=item (@cats || $cats) = $story->get_secondary_categories()
+=item (@cats || $cats) = $story->get_secondary_categories( $sortby )
 
-Returns the non-primary categories that are associated with this story
+Returns the non-primary categories that are associated with this story. Takes 
+an optional sort by field.
+
+Supported Keys:
+
+=over 4
+
+=item *
+
+uri - Sort in alphabetically ascending uri order.
+
+=back 
+
 
 B<Throws:>
 
@@ -1507,7 +1519,7 @@ NONE
 =cut
 
 sub get_secondary_categories {
-    my ($self) = @_;
+    my ($self,$sort) = @_;
     my $cats = $self->_get_categories();
     my @seconds;
     my $reset;
@@ -1530,6 +1542,13 @@ sub get_secondary_categories {
         $self->_set({ '_categories' => $cats });
         $self->_set__dirty($dirty);
     }
+	if (($sort) && ($sort eq 'uri')) {
+	    @seconds =
+	      map  { $_->[1]                  }
+		  sort { $a->[0] cmp $b->[0]      }
+	      map  { [ lc $_->get_uri => $_ ] }
+		  @seconds; 
+	};
     return wantarray ? @seconds : \@seconds;
 }
 

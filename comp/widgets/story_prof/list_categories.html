@@ -40,7 +40,7 @@
             button    => 'delete_red',
             useTable  => 0,
             js        => ($cat_id == $primary_category_id ? qq{style="display: none" } : '') .
-                         qq{onclick="catListMan.remove(this.parentNode.parentNode); return false"} 
+                         qq{onclick="catListMan.remove(this.parentNode.parentNode); return false"}
         &>
     </td>
   </tr>
@@ -74,9 +74,9 @@ new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/wi
 % }
 
 <script type="text/javascript">
-var catListMan = new AssociationListManager('categories', { 
-    type: 'category', 
-    uri: '/widgets/story_prof/list_categories.html' 
+var catListMan = new AssociationListManager('categories', {
+    type: 'category',
+    uri: '/widgets/story_prof/list_categories.html'
 });
 </script>
 

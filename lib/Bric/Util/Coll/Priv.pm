@@ -220,6 +220,6 @@ L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,
 L<Bric::Util::Priv|Bric::Util::Priv>,
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>,
-L<Bric::Biz::Grp::User|Bric::Biz::Grp::User>
+L<Bric::Util::Grp::User|Bric::Util::Grp::User>
 
 =cut

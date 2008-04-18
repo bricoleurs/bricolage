@@ -6,7 +6,7 @@
 # Created by David Wheeler, 2005.
 
 # This is an example of a start/stop script for SysV-style init, such as is
-# used on Linux systems. You should these variables:
+# used on Linux systems. You should configure these variables:
 
 # Where to find Bricolage.
 BRICOLAGE_ROOT="/usr/local/bricolage"

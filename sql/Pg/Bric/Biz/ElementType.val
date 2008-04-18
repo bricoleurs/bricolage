@@ -10,7 +10,7 @@
 INSERT INTO element_type (id, name, key_name, description, top_level,
                           paginated, fixed_uri, related_story, related_media,
                           media, biz_class__id, active)
-VALUES ('1', 'Story', 'story', 'A story docuument type', true, false,
+VALUES ('1', 'Story', 'story', 'A story document type', true, false,
         false, false, false, false, '10', true);
 
 INSERT INTO element_type__site (element_type__id, site__id, primary_oc__id)

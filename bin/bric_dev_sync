@@ -57,6 +57,8 @@ Options:
   --template-id     - set to the ID of a single template to copy.
 
   --element-id      - set to the ID of a single element to copy.
+  
+  --site            - the name of a site to copy.
 
   --with-sub        - also selects sub-elements of the selected element.
                       Useful in combination with --element or
@@ -170,7 +172,7 @@ BEGIN {
     our $yes                    = 0;
     our $dry_run                = 0;
     our $timeout                = 30;
-    our ($category, $template_name, $element_name, $template_id, $element_id);
+    our ($category, $template_name, $element_name, $template_id, $element_id, $site);
     our ($help, $man);
     GetOptions("help"                   => \$help,
 	       "man"                    => \$man,
@@ -184,6 +186,7 @@ BEGIN {
 	       "template=s"             => \$template_name,
 	       "element-id=s"           => \$element_id,
 	       "template-id=s"          => \$template_id,
+	       "site=s"                 => \$site,
 	       "copy-categories"        => \$copy_categories,
 	       "with-sub"               => \$with_sub,
 	       "no-elements"            => \$no_elements,
@@ -327,7 +330,7 @@ sub sync_elements {
 	my ($id, $asset);
 	while (($id, $asset) = each %elements) {
 	    my ($name) = $asset =~ m!<name>(.*?)</name>!s;
-	    my ($update_id) = call_list_ids($soap, 'Element', name => $name);
+	    my ($update_id) = call_list_ids($soap, 'ElementType', name => $name);
 
 	    # found a match on targ
 	    if ($update_id) {
@@ -356,7 +359,7 @@ sub sync_elements {
 
 	if (ask_yesno("Are you sure? [yes] ")) {
 	    print "\nUpdating and creating elements...\n";
-	    call_update($soap, 'Element', $doc, @update_ids);
+	    call_update($soap, 'ElementType', 'element_type_id', $doc, @update_ids);
 	} else {
 	    print "Aborting...\n";
 	    exit 1;
@@ -411,7 +414,7 @@ sub sync_templates {
 	if (ask_yesno("Are you sure? [yes] ")) {
 	    print "\nUpdating and creating templates...\n";
 	    # make update call
-	    @ids = call_update($soap, 'Template', $doc, @update_ids);
+	    @ids = call_update($soap, 'Template', 'template_id', $doc, @update_ids);
 	} else {
 	    print "Aborting...\n";
 	    exit 1;
@@ -456,10 +459,10 @@ sub get_source_elements {
     if ($element_id) {
 	$element_ids[0] = $element_id;
     } elsif ($element_name) {
-	@element_ids = call_list_ids($source, 'Element',
+	@element_ids = call_list_ids($source, 'ElementType',
 				     name => $element_name);
     } else {
-	@element_ids = call_list_ids($source, 'Element');
+	@element_ids = call_list_ids($source, 'ElementType');
     }
 
     print STDERR "Received element ids from source: (",
@@ -467,7 +470,7 @@ sub get_source_elements {
 	    if $VERBOSE > 1;
 
     # get asset documents for source elements into %elements
-    get_documents($source, 'Element', \%elements, @element_ids);
+    get_documents($source, 'ElementType', 'element_type_id', \%elements, @element_ids);
 
     # add sub-elements if --with-sub
     if ($with_sub) {
@@ -480,13 +483,13 @@ sub get_source_elements {
 		my $sub_name = $1;
 
 		# find id for subelement
-		my ($sub_id) = call_list_ids($source, 'Element',
+		my ($sub_id) = call_list_ids($source, 'ElementType',
 					     name => $sub_name);
 
 		# if new, load document
 		unless (exists $elements{$sub_id}) {
 		    push(@element_ids, $sub_id);
-		    get_documents($source, 'Element', \%elements, $sub_id);
+		    get_documents($source, 'ElementType', 'element_type_id', \%elements, $sub_id);
 		    push(@docs, $elements{$sub_id});
 		}
 	    }
@@ -530,7 +533,7 @@ sub get_source_templates {
 	    if $VERBOSE > 1;
 
     # get asset documents for source elements into %elements
-    get_documents($source, 'Template', \%templates, @template_ids);
+    get_documents($source, 'Template', 'template_id', \%templates, @template_ids);
 
     # get templates for all found elements if with-sub is set
     if ($with_sub) {
@@ -545,7 +548,7 @@ sub get_source_templates {
 	    foreach my $sub_id (@sub_ids) {
 		unless (exists $templates{$sub_id}) {
 		    push(@template_ids, $sub_id);
-		    get_documents($source, 'Template', \%templates, $sub_id);
+		    get_documents($source, 'Template', 'template_id', \%templates, $sub_id);
 		}
 	    }
 	}
@@ -571,7 +574,7 @@ sub get_source_categories {
 	    if $VERBOSE > 1;
 
     # get asset documents for source categories into %categories
-    get_documents($source, 'Category', \%categories, @category_ids);
+    get_documents($source, 'Category', 'category_id', \%categories, @category_ids);
 }
 
 #
@@ -581,6 +584,7 @@ sub get_source_categories {
 # get a list of ids from a specified module using search provided
 sub call_list_ids {
     my ($soap, $module) = (shift, shift);
+    our $site;
 
     # switch to module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);
@@ -591,6 +595,7 @@ sub call_list_ids {
 	my ($k, $v) = (shift, shift);
 	push(@search, name($k, $v));
     }
+    push(@search, name("site", $site)) if $site;
 
     print STDERR "Calling Bric::SOAP::$module->list_ids(",
 	join(', ', map { $_->name . " => \"" . $_->value . "\"" } @search),
@@ -611,8 +616,7 @@ sub call_list_ids {
 
 # calls update on chosen SOAP module, returns list of ids
 sub call_update {
-    my ($soap, $module, $document) = (shift, shift, shift);
-    my $type = lc($module) . "_id";
+    my ($soap, $module, $type, $document) = (shift, shift, shift, shift);
     our $dry_run;
 
     # switch to module
@@ -671,8 +675,7 @@ sub call_create {
 
 # delete specified ids
 sub call_delete {
-    my ($soap, $module) = (shift, shift);
-    my $type = lc($module) . "_id";
+    my ($soap, $module, $type) = (shift, shift, shift);
     our $dry_run;
     return unless @_;
 
@@ -687,7 +690,7 @@ sub call_delete {
     unless ($dry_run) {
 	my $response = $soap->delete(name("${type}s" =>
 					  [ map { name($type, $_) } @_ ]),
-				     $module eq 'Element' ?
+				     $module eq 'ElementType' ?
 				     name(force => 1)     :
 				     ());
 	_print_fault($response) if $response->fault;
@@ -719,8 +722,7 @@ sub call_deploy {
 
 # gets asset documents from source and places them in %$hash by id
 sub get_documents {
-    my ($soap, $module, $hash) = (shift, shift, shift);
-    my $type = lc($module) . "_id";
+    my ($soap, $module, $type, $hash) = (shift, shift, shift, shift);
 
     # switch to module
     $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/' . $module);

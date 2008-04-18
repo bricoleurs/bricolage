@@ -38,11 +38,14 @@ our ($CONFIG, $CLONE);
 do "./config.db" or die "Failed to read config.db : $!";
 do "./clone.db" or die "Failed to read clone.db : $!";
 
+our $HOT_COPY;
+$HOT_COPY = 1 if $ARGV[0] and $ARGV[0] eq 'HOT_COPY';
+
 print "\n\n==> Cloning Bricolage Files <==\n\n";
 
 # copy comp, dist and conf from target
-system("cp -pR $CONFIG->{MASON_COMP_ROOT} dist");
-system("cp -pR $CONFIG->{MASON_DATA_ROOT} dist");
+system(($HOT_COPY ? "cp -al" : "cp -pR") . " $CONFIG->{MASON_COMP_ROOT} dist");
+system(($HOT_COPY ? "cp -al" : "cp -pR") . " $CONFIG->{MASON_DATA_ROOT} dist");
 system("cp -pR $CLONE->{CONFIG_DIR} dist");
 
 # Copy lib from target.

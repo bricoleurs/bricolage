@@ -356,7 +356,7 @@ sub load_asset {
         my $id = $adata->{id};
 
         # are we updating?
-        my $update = exists $to_update{$id};
+        my $update = $id && exists $to_update{$id};
 
         # get object
         my $asset;

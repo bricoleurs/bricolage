@@ -680,6 +680,16 @@ div.autocomplete span.highlight { font-weight: bold; }
   padding: 6px 14px;
 }
 
+/***************************************************
+ * VIEW BOXES 
+***************************************************/
+
+pre {
+    white-space: pre-wrap;
+    word-break: normal;
+    white-space: -moz-pre-wrap;
+}
+
 /******************************************************
  * DIFFS                                              *
  ******************************************************/

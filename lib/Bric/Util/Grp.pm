@@ -238,7 +238,7 @@ sub new {
     my ($self, $init) = @_;
     $self = bless {}, $self unless ref $self;
     $init->{_active} = exists $init->{active} ? 0 : 1;
-    $init->{permanent} = exists $init->{permanent} ? 1 : 0;
+    $init->{permanent} = exists $init->{permanent} && $init->{permanent} ? 1 : 0;
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $init->{secret} = ! exists $init->{secret} ? $self->get_secret :
       $init->{secret} ? 1 : 0;

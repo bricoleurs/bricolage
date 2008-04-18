@@ -900,7 +900,8 @@ NONE
 
 =item $self = $self->set_description()
 
-This sets the description on the asset
+This sets the description on the asset, first converting non-Unix line
+endings.
 
 B<Throws:>
 
@@ -915,6 +916,12 @@ B<Notes:>
 NONE
 
 =cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 ################################################################################
 
@@ -1260,6 +1267,13 @@ B<Side Effects:>
 
 Adds the asset_grp_id of the desk to grp_ids (unless it was already there).
 
+B<Notes:>
+
+This method only updates the asset's private variables to reflect the new desk
+and grp assignment. To truly add or transfer an asset to a desk, refer to the
+L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk> object's
+C<accept()> and C<transfer()> methods.
+
 =cut
 
 sub set_current_desk {
@@ -1563,9 +1577,6 @@ sub get_notes {
         $self->_set(['_notes'] => [$notes] );
     }
 
-    if (defined( my $note = $self->get_note)) {
-        $notes->{$self->get_version} = $note;
-    }
     return $notes;
 }
 

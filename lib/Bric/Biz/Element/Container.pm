@@ -1440,7 +1440,7 @@ sub add_tile { shift->add_element(@_) }
 
 ################################################################################
 
-=item $container->delete_element(\@subelements)
+=item $container->delete_elements(\@subelements)
 
 Removes the specified subelements from the current element. The arguments that
 can be passed via the array reference can be either container or data element
@@ -2000,8 +2000,7 @@ sub _do_list {
         }
 
         elsif ($k eq 'related_media_id' || $k eq 'related_story_id') {
-            my ($col, $key);
-            ($col = $key) =~ s/_id$/__id/;
+            ( my $col = $k ) =~ s/_id$/__id/;
             push @wheres, defined $v
                 ? any_where($v, "e.$col = ?", \@params)
                 : "e.$col IS NULL";

@@ -86,6 +86,9 @@ my $exclude_cats = sub {
         return 1 if $cid == $ex->get_id;
     }
 
+    # exclude cats not in story's site
+    return 1 if $cat->get_site_id != $story->get_site_id;
+
     return 0;
 };
 </%init>

@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(151) {
+sub test_select_methods: Test(170) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -646,6 +646,13 @@ sub test_select_methods: Test(151) {
     is_deeply( [ map { $_->get_id } @$got ], $OBJ_IDS->{story},
                "Got correct six stories");
 
+    # Try ANY with exclude_id.
+    ok( $got = $self->class->list({
+        slug => 'test%',
+        exclude_id => ANY( $got->[0]->get_id, $got->[1]->get_id )
+    }), 'List with exclude_id => ANY' );
+    is 4, @$got, 'Should get four stories';
+
     # Try primary_uri + Order by title.
     ok( $got = class->list({ primary_uri => '/_test%', Order => 'title' }),
         'lets do a search by primary uri' );
@@ -864,8 +871,39 @@ sub test_select_methods: Test(151) {
     ok $got = class->list({ note => ANY('Note 1', 'Note 2')}),
                           'Search on note "ANY(Note 1, Note 2)"';
     is @$got, 2, 'Should have two stories';
-}
 
+    # Try subelement_id. First add a subelement to a couple of stories.
+    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'pull_quote' }),
+        'Look up book profile';
+    for my $i (1, 2) {
+        ok my $elem = $story[$i]->get_element, "Get $i story element";
+        ok $elem->add_container($et), "Add book profile subelement to $i story";
+        ok $elem->save, "Save $i story";
+    }
+
+    # Now look them up.
+    ok $got = class->list({ subelement_id => $et->get_id }),
+        'Get a list of stories with the pull_quote subelement';
+    is 2, @$got, 'There should be two stories';
+    is_deeply [ @{$OBJ_IDS->{story}}[1,2] ],
+              [ sort { $a <=> $b } map { $_->get_id } @$got ],
+              'The two stories should be the two to which the subelement was added';
+
+    # Now delete the subelement from one fo the stories.
+    ok my $elem = $story[1]->get_element,
+        'Get the element from the first story';
+    ok my $sub = $elem->get_container('pull_quote'),
+        'Get the book profile subelement from the first story';
+    ok $elem->delete_elements( [ $sub ] ), 'Delete the subelement';
+    ok $elem->save, 'Save the element';
+
+    # Now look up again.
+    ok $got = class->list({ subelement_id => $et->get_id }),
+        'Get a list of stories with the pull_quote subelement';
+    is 1, @$got, 'There should now be only one story';
+    is $OBJ_IDS->{story}[2], $got->[0]->get_id,
+        'It should have the ID of the second story';
+}
 
 ##############################################################################
 # Private class methods

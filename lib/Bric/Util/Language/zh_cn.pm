@@ -565,6 +565,9 @@ To translate:
   "Expire jobs" => "Expire jobs",
   "Failed jobs" => "Failed jobs",
   "My jobs" => "My jobs",
+  'Shelve'
+  'and Shelve'
+  'and'
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'All Categories' => 'All Categories',
   'All' => 'All',

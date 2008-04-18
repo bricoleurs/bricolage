@@ -390,6 +390,7 @@ if (!$search_stale && ($show_all || ($pagination && defined $offset))) {
 
     $param->{site_id} = $site_cx if $site_cx;
     $state->{list_params} = $param if $pagination;
+    $offset = 0;
     $do_list = 1 if %$list_arg;
 }
 
@@ -401,7 +402,12 @@ my $empty_search;
 # Only list if there are search parameters, or if our behaviour is 'narrow'.
 if (!$objs && ($behavior eq 'narrow' or $do_list)) {
     # Combine the list arguments and any passed constraints to search $pkg.
-    @objects = $pkg->list($param);
+    eval { @objects = $pkg->list($param); };
+    if ($@) {
+        # The query failed for some reason. Be sure to clear the search cache.
+        set_state_data($search_widget, $state_key => undef );
+        die $@;
+    }
 } else {
     $empty_search = 1;
 }

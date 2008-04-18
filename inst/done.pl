@@ -76,8 +76,18 @@ your server:
 
 Login in as "admin" with the default password "change me now!". Your
 first action should be changing this password. Click "Logged in as
-Bricolage Administrator" in the top right corder of the browser window
+Bricolage Administrator" in the top right corner of the browser window
 and change the password.
+
+Pointers for documentation and lots of getting started advice are in
+the main README file in the unpacked distribution directory.
+
+=== IMPORTANT NOTE === 
+
+For 1.10.3 the way the login page redirects was changed. Please send 
+a message to the bricolage users list if you cannot login. You should 
+also consider joining the list anyway since there is a lot of useful
+information and help available :  users\@lists.bricolage.cc 
 
 =========================================================================
 =========================================================================

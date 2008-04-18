@@ -1048,7 +1048,7 @@ sub set_type {
 
 Returns the description of the Bric::Biz::Contact object. If the contact has not
 been looked up from the database or if it's type has changed, description
-will be undef.
+will be C<undef>.
 
 B<Throws:>
 
@@ -1075,6 +1075,25 @@ No AUTOLOAD method.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=item $self = $c->set_description( $description )
+
+Sets the description of the Bric::Biz::Contact object, first converting
+non-Unix line endings.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =item my $value =  $c->get_value
 

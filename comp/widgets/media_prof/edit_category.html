@@ -75,6 +75,9 @@ my $exclude_cats = sub {
     # exclude already-associated category
     return 1 if $cat->get_id == $existing_category;
 
+    # exclude cats not in media's site
+    return 1 if $cat->get_site_id != $media->get_site_id;
+
     return 0;
 };
 </%init>

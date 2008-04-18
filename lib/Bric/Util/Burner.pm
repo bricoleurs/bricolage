@@ -1315,7 +1315,7 @@ sub publish {
                 not_job_id => $job->get_id,
                 $key eq 'story'
                     ? (path  => "$base_path/%")
-                    : (oc_id => $oc->get_id ),
+                    : (oc_id => $oc->get_id, not_uri => $ba->get_uri($oc) ),
             })) {
                 # Yep, there are old resources to expire.
                 my $expname = 'Expire stale "' . $ba->get_name .
@@ -2019,9 +2019,13 @@ sub add_resource {
     my ($story, $ext, $ress) = $self->_get(qw(story output_ext resources));
 
     # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({ path => $file }) ||
-      Bric::Dist::Resource->new({ path => $file,
-                                  uri  => $uri });
+    my $res = Bric::Dist::Resource->lookup({
+        path => $file,
+        uri  => $uri,
+    }) || Bric::Dist::Resource->new({
+        path => $file,
+        uri  => $uri,
+    });
 
     # Set the media type.
     $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));

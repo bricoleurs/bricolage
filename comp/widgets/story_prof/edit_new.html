@@ -57,6 +57,7 @@ $m->comp( '/widgets/select_object/select_object.mc',
           name       => "$widget|new_category_id",
           constrain  => { site_id => $site_id },
           exclude    => $excl_sub,
+          size       => 25,
           req        => 1,
           field      => 'uri',
           sort_field => 'uri',
@@ -93,6 +94,7 @@ $pmeth->{value} = 3;
 my $cdate = { %{ Bric::Biz::Asset::Business::Story->my_meths->{cover_date} } };
 my ($tmeth, $smeth) =
   @{ Bric::Biz::Asset::Business::Story->my_meths }{qw(title slug)};
+$smeth->{req} = 0 if AUTOGENERATE_SLUG;
 my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%init>;

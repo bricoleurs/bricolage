@@ -81,17 +81,22 @@ my %vars;
 do {
     no strict 'refs';
     while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
-        if (my $type = first { defined *{$v}{$_} }
-            qw(CODE HASH ARRAY IO GLOB FORMAT)
-        ) {
-            # Use the reference to the variable. IOs can be used directly.
-            $vars{$k} = *{$v}{$type};
+        if (ref $v eq 'SCALAR') {
+            # Perl 5.10 supports this.
+            $vars{$k} = $$v;
         } else {
-            # Dereference any scalar value. SCALAR is always true, so we
-            # evaluate it last (with the "if" in for future-proofing).
-            # See _Programming Perl 3ed_ p 250.
-            $vars{$k} = ${*{$v}{SCALAR}} if *{$v}{SCALAR};
-        };
+            if (my $type = first { defined *{$v}{$_} }
+                    qw(CODE HASH ARRAY IO GLOB FORMAT)
+            ) {
+                # Use the reference to the variable. IOs can be used directly.
+                $vars{$k} = *{$v}{$type};
+            } else {
+                # Dereference any scalar value. SCALAR is always true, so we
+                # evaluate it last (with the "if" in for future-proofing).
+                # See _Programming Perl 3ed_ p 250.
+                $vars{$k} = ${*{$v}{SCALAR}} if *{$v}{SCALAR};
+            };
+        }
     }
 };
 
@@ -298,7 +303,16 @@ sub burn_one {
             $self->add_resource($file, $uri);
         }
         $self->_set([qw(page)],[$page]);
-        last unless $self->_get('more_pages');
+
+        my ($more, $again) = $self->_get(qw(more_pages burn_again));
+        if ($again) {
+            # Reset burn_again and move on to the next page.
+            $self->_set(['burn_again'] => [0]);
+            next;
+        }
+
+        # Keep burning this template if it contains more pages.
+        last unless $more;
     }
     $self->_pop_element;
 
