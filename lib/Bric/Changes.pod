@@ -169,6 +169,11 @@ subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
 Fixed a compatibility issue in the intsaller with newer versions of
 L<CPAN|CPAN>. Reported by Jean-Michel Caricand. [David]
 
+=item *
+
+Fixed the fix for the "ident" authentication issue when granting database
+permissions. [Rolf Schaufelberger]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
@@ -327,7 +332,8 @@ elements, groups, media, and templates. [Matt Rolf and Michael Herring]
 
 =item *
 
-Patch from Alex Krohn to hopefully really fix "ident" authentication this time.
+Yet another fix for the "ident" authentication issue, this time for granting
+database permissions. [Alex Krohn]
 
 =back
 
