@@ -13,7 +13,7 @@
         name    => "$widget|lock_val_cb",
         value   => $element->get_id,
     &>
-    &nbsp;Lock Val: 
+    &nbsp;Lock Val:
     <& '/widgets/profile/checkbox.mc',
         name    => "$widget|lock_val_" . $element->get_id,
         checked => ($element->is_locked ? 1 : 0),
@@ -30,7 +30,7 @@
         extension => 'png',
         globalImage => 1,
         js        => qq{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
-        useTable  => 0 
+        useTable  => 0
     &>
     </div>
 % }

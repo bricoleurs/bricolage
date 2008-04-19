@@ -248,6 +248,7 @@ if (defined $id) {
     $m->comp(
         '/widgets/wrappers/table_top.mc',
         caption => 'Existing Subelement Types',
+        class   => 'subelement',
         number  => ++$num,
     );
 
@@ -268,9 +269,11 @@ if (defined $id) {
         object         => 'element_type',
         objs           => $containers,
         addition       => undef,
-        fields         => [qw(name biz_class_id description)],
+        fields         => [qw(name biz_class_id description min_occurrence max_occurrence)],
         profile        => undef,
         select         => $no_del ? undef : ['Delete', 'element_type|delete_sub'],
+        field_titles   => { min_occurrence => 'Min', max_occurrence => 'Max' },
+        field_values   => $occurrences_sub,
         alter     => {
             biz_class_id => sub {
                 return 'Subelement' unless $_[1]->get_top_level;
@@ -452,6 +455,28 @@ unless ($sites) {
 }
 
 $sites = [grep { chk_authz($_, EDIT, 1) } @$sites];
+
+my $occurrences_sub = sub {
+    my ($sub_type, $th) = @_;
+    return unless $th =~ /occurrence/;
+    # Output a hidden field for each subelement type.
+    my $hidden = $th eq 'min_occurrence'
+        ? $m->scomp(
+            '/widgets/profile/hidden.mc',
+            name  => 'subelement_type_id',
+            value => $sub_type->get_id,
+        ) : '';
+    # Output a text box for the attribute.
+    return $hidden . $m->scomp(
+        '/widgets/profile/text.mc',
+        name      => "subelement_type|$th\_" . $sub_type->get_id,
+        disp      => '',
+        value     => $sub_type->_get($th),
+        size      => 4,
+        maxlength => 4,
+        useTable  => 0
+    );
+};
 </%init>
 <%doc>
 ###############################################################################

@@ -46,11 +46,11 @@
 </ul>
 <input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
 <script type="text/javascript">
-Sortable.create('element_<% $id %>', { 
-    onUpdate: function(elem) { 
-        Container.updateOrder(elem); 
-    }, 
-    handle: 'name' 
+Sortable.create('element_<% $id %>', {
+    onUpdate: function(elem) {
+        Container.updateOrder(elem);
+    },
+    handle: 'name'
 });
 Container.updateOrder('element_<% $id %>');
 </script>
@@ -87,7 +87,7 @@ Container.updateOrder('element_<% $id %>');
         extension => 'png',
         globalImage => 1,
         js        => qq|onclick="Container.deleteElement(| . $element->get_parent_id . qq|, '$name'); return false;"|,
-        useTable  => 0 
+        useTable  => 0
     &>
 </div>
 % }

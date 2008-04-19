@@ -14,6 +14,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Biz::Site;
 use Bric::Util::DBI qw(:junction);
+use List::MoreUtils qw(any none);
 
 my %meta_props = (
     'disp'      => 'fb_disp',
@@ -41,7 +42,7 @@ my %conf = (
 
 my ($base_handler, $do_contrib_type, $do_element_type, $clean_param,
     $delete_ocs, $delete_sites, $check_save_element_type, $get_obj,
-    $set_key_name, $get_data_href, $set_primary_ocs, $add_new_attrs, 
+    $set_key_name, $get_data_href, $set_primary_ocs, $add_new_attrs,
     $save_element_type_etc);
 
 
@@ -139,7 +140,7 @@ $do_contrib_type = sub {
     # Build a map from element names to their order
     my $i = 1;
     my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
-    
+
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
         next if $del_attrs{$aname};
 
@@ -225,7 +226,7 @@ $do_element_type = sub {
     my $key_name   = exists $param->{key_name} ? $param->{key_name} : undef;
     my $widget     = $self->class_key;
     my $cb_key     = $self->cb_key;
-    
+
     # Make sure the name isn't already in use.
     my $no_save;
     # ElementType has been updated to take an existing but undefined 'active'
@@ -281,12 +282,12 @@ $do_element_type = sub {
     my $enabled = $set_primary_ocs->($self, $obj, \$no_save);
 
     my $data_href = $get_data_href->($param, $key);
-    
+
     # Build a map from element names to their order.  This also
     # serves as a list of elements that haven't been deleted.
     my $i = 1;
     my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
-    
+
     # Update existing attributes
     my $del = [];
     foreach my $attr ($obj->get_field_types) {
@@ -305,9 +306,9 @@ $do_element_type = sub {
         }
     }
     $obj->del_field_types($del) if ($cb_key eq 'save' || $cb_key eq 'save_n_stay');
-    
+
     $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
-    
+
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
 
@@ -337,18 +338,50 @@ $do_element_type = sub {
     }
 
     # delete any selected subelement types
+    my $del_ids = [];
     if (my $del = $param->{"$key|delete_sub"}) {
         my %existing  = map { $_->get_id => undef } $obj->get_containers;
-        my $ids       = [
+        my $del_ids   = [
             grep { exists $existing{$_} } ref $del ? @$del : $del
         ];
 
-        if (@$ids) {
+        if (@$del_ids) {
             # Remove them and log it.
-            my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$ids) });
+            my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$del_ids) });
             $obj->del_containers($element_types);
             log_event('element_type_rem', $obj, { Name => $_->get_name })
                 for @$element_types;
+        }
+    }
+
+    # Set min and max occurrence.
+    my @subtype_ids = grep {
+        my $seid = $_;
+        none { $_ == $seid } @$del_ids;
+    } @{ mk_aref( $param->{subelement_type_id} ) };
+    for my $sub_type ( $obj->get_containers( @subtype_ids ) ) {
+        my $seid = $sub_type->get_id;
+        my $min = $param->{"subelement_type|min_occurrence_$seid"};
+        my $max = $param->{"subelement_type|max_occurrence_$seid"};
+        if (defined $min && $min !~ /^\d+$/) {
+            add_msg( 'min_occurrence must be a positive number.' );
+            $min     = undef;
+            $no_save = 1;
+        }
+        if (defined $max && $max !~ /^\d+$/) {
+            add_msg( 'max_occurrence must be a positive number.' );
+            $max     = undef;
+            $no_save = 1;
+        }
+
+        # XXX Add code to check that they're integers.
+        if (
+               ( defined $min && $min != $sub_type->get_min_occurrence )
+            || ( defined $max && $max != $sub_type->get_max_occurrence )
+        ) {
+            $sub_type->set_min_occurrence($min) if defined $min;
+            $sub_type->set_max_occurrence($max) if defined $max;
+            $sub_type->save;
         }
     }
 
@@ -363,10 +396,10 @@ $do_element_type = sub {
 
 $clean_param = sub {
     my $param = shift;
-    
+
     # Pulldowns are always size 1
     $param->{fb_size} = 1 if $param->{fb_type} eq 'pulldown';
-    
+
     # Clean any select/radio values (but not codeselect)
     return $param
         unless $param->{fb_vals} && $param->{fb_type} ne 'codeselect';
