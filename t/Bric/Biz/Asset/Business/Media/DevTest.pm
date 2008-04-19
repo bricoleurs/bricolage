@@ -730,12 +730,12 @@ sub test_select_methods: Test(142) {
         'Lok up photograph element type';
     ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'pull_quote' }),
         'Look up book profile';
-    return; # XXX Start here.
-    ok $photo->add_container($et), 'Add pull quote as subelement to photograph';
+    ok my $se = $photo->add_container($et), 'Add pull quote as subelement to photograph';
     ok $photo->save, 'Save the photo element type';
 
     eval {
         for my $i (1, 2) {
+            $media[$i] = $class->lookup({ id => $media[$i]->get_id });
             ok my $elem = $media[$i]->get_element, "Get $i media element";
             ok $elem->add_container($et), "Add book profile subelement to $i media";
             ok $elem->save, "Save $i media";
@@ -743,7 +743,8 @@ sub test_select_methods: Test(142) {
     };
 
     my $err = $@;
-    ok $photo->del_containers($et->get_id), 'Remove pull quote from photo';
+    $photo = Bric::Biz::ElementType->lookup({ id => $photo->get_id });
+    ok $photo->del_containers( $se ), 'Remove pull quote from photo';
     ok $photo->save, 'Save the photo element type';
     die $err if $err;
 
