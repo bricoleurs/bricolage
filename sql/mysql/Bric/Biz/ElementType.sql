@@ -46,8 +46,8 @@ CREATE TABLE subelement_type  (
     parent_id       INTEGER        NOT NULL,
     child_id        INTEGER        NOT NULL,
     place           INTEGER        NOT NULL DEFAULT 1,
-    min             INTEGER        NOT NULL DEFAULT 0,
-    max             INTEGER        NOT NULL DEFAULT 0,
+    min_occurrence  INTEGER        NOT NULL DEFAULT 0,
+    max_occurrence  INTEGER        NOT NULL DEFAULT 0,
     CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
 )
     ENGINE	    InnoDB

@@ -1828,8 +1828,10 @@ B<Notes:> NONE.
 sub add_container {
     my ($self, $et) = @_;
     my $et_coll = $get_sub_coll->($self);
-    $et_coll->new_obj({ (ref $et ? 'child' : 'child_id') => $et,
-                        element_type_id => $self->_get('id') });
+    $et_coll->new_obj({
+        (ref $et ? 'child' : 'child_id') => $et,
+        element_type_id => $self->_get('id')
+    });
 }
 
 
