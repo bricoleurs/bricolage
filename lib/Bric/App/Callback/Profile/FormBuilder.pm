@@ -374,7 +374,6 @@ $do_element_type = sub {
             $no_save = 1;
         }
 
-        # XXX Add code to check that they're integers.
         if (
                ( defined $min && $min != $sub_type->get_min_occurrence )
             || ( defined $max && $max != $sub_type->get_max_occurrence )
