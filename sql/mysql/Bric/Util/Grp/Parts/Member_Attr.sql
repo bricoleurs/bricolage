@@ -21,7 +21,7 @@
 --              its subsystem, its member ID and an attribute name.
 
 CREATE TABLE attr_member (
-    id         INTEGER       NOT NULL,
+    id         INTEGER       NOT NULL AUTO_INCREMENT,
     subsys     VARCHAR(256)  NOT NULL,
     name       VARCHAR(256)  NOT NULL,
     sql_type   VARCHAR(30)   NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE attr_member (
 -- Description: A table to hold attribute values.
 
 CREATE TABLE attr_member_val (
-    id           INTEGER         NOT NULL,
+    id           INTEGER         NOT NULL AUTO_INCREMENT,
     object__id   INTEGER         NOT NULL,
     attr__id     INTEGER         NOT NULL,
     date_val     DATETIME,
@@ -52,7 +52,7 @@ CREATE TABLE attr_member_val (
 -- Description: A table to represent metadata on types of attributes.
 
 CREATE TABLE attr_member_meta (
-    id        INTEGER         NOT NULL,
+    id        INTEGER         NOT NULL AUTO_INCREMENT,
     attr__id  INTEGER         NOT NULL,
     name      VARCHAR(256)    NOT NULL,
     value     VARCHAR(2048),
