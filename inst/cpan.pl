@@ -171,50 +171,50 @@ sub install_module {
 
     # process the queue
     while (my $q = CPAN::Queue->first) {
-	# get a module object one way or another
-    my $s = ref $q && $q->can('as_string')
-        ? $q->as_string
-        : ref $q ? $q->id : $q;
-	my $m = $q->can('as_string')
-        ? CPAN::Shell->expandany($s)
-        : ref $q ? $q : CPAN::Shell->expandany($q);
-	hard_fail(<<END) unless $m;
+        # get a module object one way or another
+        my $s = ref $q && $q->can('as_string')
+            ? $q->as_string
+            : ref $q ? $q->id : $q;
+        my $m = $q->can('as_string')
+            ? CPAN::Shell->expandany($s)
+            : ref $q ? $q : CPAN::Shell->expandany($q);
+        hard_fail(<<END) unless $m;
 Couldn't find $s on CPAN.  Your CPAN.pm installation
 may be broken.  To debug manually, run:
 
   $perl -MCPAN -e 'install $s'
 END
 
-	print "Found $s  Installing...\n";
+        print "Found $s  Installing...\n";
 
-	# get name of module being installed
-	my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $s;
+        # get name of module being installed
+        my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $s;
 
         # for some reason that doesn't work for HTML::Mason
         $key = 'HTML::Mason' unless defined $key;
 
         # sometimes I used a little too much force
-	$m->force('install') if $flags{$key} and $flags{$key} & FORCE;
+        $m->force('install') if $flags{$key} and $flags{$key} & FORCE;
 
-	# need PG env vars?
-	if ($flags{$key} and $flags{$key} & PG_ENV) {
-	    $ENV{POSTGRES_INCLUDE} = $PG->{include_dir};
-	    $ENV{POSTGRES_LIB}     = $PG->{lib_dir};
-	}
+        # need PG env vars?
+        if ($flags{$key} and $flags{$key} & PG_ENV) {
+            $ENV{POSTGRES_INCLUDE} = $PG->{include_dir};
+            $ENV{POSTGRES_LIB}     = $PG->{lib_dir};
+        }
 
-	# do the install.  If prereqs are found they'll get put on the
-	# Queue and processed in turn.
-    print "Install\n";
-	$m->install;
-    print "Done\n";
+        # do the install. If prereqs are found they'll get put on the Queue
+        # and processed in turn.
+        print "Install\n";
+        $m->install;
+        print "Done\n";
 
-	# I don't understand why this is necessary but CPAN.pm does it
-	# when it walks the queue and not doing it results in failures
-	# in some modules installs (SOAP::Lite, MIME::Lite).
-	$m->undelay;
+        # I don't understand why this is necessary but CPAN.pm does it when it
+        # walks the queue and not doing it results in failures in some modules
+        # installs (SOAP::Lite, MIME::Lite).
+        $m->undelay;
 
-	# remove self from the queue
-	CPAN::Queue->delete_first($s);
+        # remove self from the queue
+        CPAN::Queue->delete_first($s);
     }
 
     # check to make sure it worked
@@ -240,8 +240,8 @@ You can then attempt to install the module manually with:
 END
 
     if (defined $req_version) {
-	eval { $name->VERSION($req_version) };
-	hard_fail(<<END) if $@;
+        eval { $name->VERSION($req_version) };
+        hard_fail(<<END) if $@;
 Installation of $name version $req_version failed.  Your
 CPAN.pm installation may be broken.  To debug manually,
 run (as root):
