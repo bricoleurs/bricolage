@@ -163,24 +163,32 @@ sub install_module {
     my ($name, $req_version) = @_;
 
     # push onto the queue.  This keeps everything simpler below
-    my $push = CPAN::Queue->can('new') ? 'new' : 'qpush';
-    CPAN::Queue->$push($name);
+    if ( CPAN::Queue->can('new') ) {
+        CPAN::Queue->new( $name );
+    } else {
+        CPAN::Queue->queue_item( qmod => $name, reqtype => 'r' );
+    }
 
     # process the queue
     while (my $q = CPAN::Queue->first) {
 	# get a module object one way or another
-	my $m = ref $q ? $q : CPAN::Shell->expandany($q);
+    my $s = ref $q && $q->can('as_string')
+        ? $q->as_string
+        : ref $q ? $q->id : $q;
+	my $m = $q->can('as_string')
+        ? CPAN::Shell->expandany($s)
+        : ref $q ? $q : CPAN::Shell->expandany($q);
 	hard_fail(<<END) unless $m;
-Couldn't find $q on CPAN.  Your CPAN.pm installation
+Couldn't find $s on CPAN.  Your CPAN.pm installation
 may be broken.  To debug manually, run:
 
-  $perl -MCPAN -e 'install $q'
+  $perl -MCPAN -e 'install $s'
 END
 
-	print "Found ", $m->id, ".  Installing...\n";
+	print "Found $s  Installing...\n";
 
 	# get name of module being installed
-	my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $m->id;
+	my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $s;
 
         # for some reason that doesn't work for HTML::Mason
         $key = 'HTML::Mason' unless defined $key;
@@ -196,7 +204,9 @@ END
 
 	# do the install.  If prereqs are found they'll get put on the
 	# Queue and processed in turn.
+    print "Install\n";
 	$m->install;
+    print "Done\n";
 
 	# I don't understand why this is necessary but CPAN.pm does it
 	# when it walks the queue and not doing it results in failures
@@ -204,7 +214,7 @@ END
 	$m->undelay;
 
 	# remove self from the queue
-	CPAN::Queue->delete_first($q);
+	CPAN::Queue->delete_first($s);
     }
 
     # check to make sure it worked

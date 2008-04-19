@@ -166,8 +166,8 @@ subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
 
 =item *
 
-Fixed a compatibility issue with newer versions of L<CPAN|CPAN>. Reported by
-Jean-Michel Caricand. [David]
+Fixed a compatibility issue in the intsaller with newer versions of
+L<CPAN|CPAN>. Reported by Jean-Michel Caricand. [David]
 
 =back
 
