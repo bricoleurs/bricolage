@@ -29,7 +29,7 @@ sub save : Callback {
         return;
     }
 
-    my $name = $param->{disp};
+    my $name = $ed->get_name;
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate;
@@ -80,7 +80,7 @@ sub save : Callback {
         for my $f (qw(multiple)) {
             $set_meta_boolean->($ed, $f, $param);
         }
-        
+
         # The occurrence specs are string variables
         #for my $f (qw(min_occurrence max_occurrence)) {
         #    $set_meta_string->($ed, $f, $param);
