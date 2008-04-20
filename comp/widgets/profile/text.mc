@@ -45,13 +45,17 @@ $indent    => ''
 $useTable  => 1
 $localize  => 1
 $readOnly  => 0
+$class     => undef
+$title     => undef
 </%args>
 <%perl>;
 my $vals = { disp      => $disp,
              value     => $value,
              props     => { type      => 'text',
                             length    => $size || $length,
-                            maxlength => $maxlength
+                            maxlength => $maxlength,
+                            title     => $title,
+                            class     => $class,
                           },
              js        => $js,
              req       => $req,
@@ -65,6 +69,6 @@ $m->comp("/widgets/profile/displayFormElement.mc",
          useTable  => $useTable,
          localize  => $localize,
          readOnly  => $readOnly,
-         id        => $id
+         id        => $id,
 );
 </%perl>

@@ -47,7 +47,7 @@ of the form element, display form element html. For example:
                             }
              };
 
-  $m->comp("/widgets/profile/displayFormElement.mc", 
+  $m->comp("/widgets/profile/displayFormElement.mc",
            vals => $vals,
            key  => 'color',
            js   => 'optional javascript string'
@@ -58,7 +58,7 @@ of the form element, display form element html. For example:
 Pass an object and field name. The element will introspect the object and
 populate the form field with whatever it finds there. For example:
 
-  $m->comp("/widgets/profile/displayFormElement.mc", 
+  $m->comp("/widgets/profile/displayFormElement.mc",
            key    => "fname",
            objref => $obj,
            js     => 'optional javascript string'
@@ -68,7 +68,7 @@ populate the form field with whatever it finds there. For example:
 
 All possible attributes of a form field are supported, but all have defaults.
 If you choose to override the default javascript, none of the default behavior
-(ie, setting the changed flag) will be implemented, unless the overriding 
+(ie, setting the changed flag) will be implemented, unless the overriding
 string does so explicitly.  This is a feature, as it allows the onChange
 to be eliminated entirely if needed.
 
@@ -215,7 +215,10 @@ my $inpt_sub = sub {
     my ($type, $key, $vals, $value, $js, $name, $width, $indent,
         $useTable, $label, $readOnly, $id, $extra) = @_;
 
-    push my @classes, "textInput" if ($type eq "text" || $type eq "password");
+    my @classes = ref $vals && defined $vals->{props}{class}
+        ? ($vals->{props}{class})
+        : ();
+    push @classes, "textInput" if ($type eq "text" || $type eq "password");
     push @classes, "required" if ($vals->{req});
     my $class = ' class="' . join(" ", @classes) . '"' if scalar @classes;
 
@@ -235,7 +238,7 @@ my $inpt_sub = sub {
       : '';
     $key = escape_html($key) if $key;
     $js = $js ? " $js" : '';
-    
+
     (my $idout = $id || $key) =~ s/\|/_/g;
     if ($type ne "checkbox" && $type ne "hidden") {
         $out  = qq{<div class="row">\n} if $useTable;
@@ -493,7 +496,7 @@ my %formSubs = (
                 $label, $readOnly, $id) = @_;
             my $out = '';
             $out .= qq{<div class="row">\n} if $useTable;
-            
+
             # print caption for the group
             $out .= qq{    <div class="$label">$name:</div>\n} if $name;
             $out .= qq{    <div class="input">\n} if $useTable;

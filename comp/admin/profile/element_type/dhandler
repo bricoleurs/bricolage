@@ -471,9 +471,11 @@ my $occurrences_sub = sub {
         '/widgets/profile/text.mc',
         name      => "subelement_type|$th\_" . $sub_type->get_id,
         disp      => '',
-        value     => $sub_type->_get($th),
+        value     => $sub_type->_get($th) || '',
         size      => 4,
-        maxlength => 4,
+        maxlength => 9,
+        class     => 'validate-digits',
+        title     => ( $th eq 'min_occurrence' ? 'Min' : 'Max' ) . ' occurrence value',
         useTable  => 0
     );
 };

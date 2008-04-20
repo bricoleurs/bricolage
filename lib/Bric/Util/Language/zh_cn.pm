@@ -619,6 +619,7 @@ To translate:
   'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.' => 'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.',
   'min_occurrence must be a positive number.' => 'min_occurrence must be a positive number.',
   'max_occurrence must be a positive number.' => 'max_occurrence must be a positive number.',
+  'Min and max occurrence must be a positive numbers.' => 'Min and max occurrence must be a positive numbers.',
   'place must be a positive number.' => 'place must be a positive number.',
   'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',

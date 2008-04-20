@@ -355,38 +355,37 @@ $do_element_type = sub {
     }
 
     # Set min and max occurrence.
-    my @subtype_ids = grep {
-        my $seid = $_;
-        none { $_ == $seid } @$del_ids;
-    } @{ mk_aref( $param->{subelement_type_id} ) };
-    for my $sub_type ( $obj->get_containers( @subtype_ids ) ) {
-        my $seid = $sub_type->get_id;
-        my $min = $param->{"subelement_type|min_occurrence_$seid"};
-        my $max = $param->{"subelement_type|max_occurrence_$seid"};
-        if (defined $min && $min !~ /^\d+$/) {
-            add_msg( 'min_occurrence must be a positive number.' );
-            $min     = undef;
-            $no_save = 1;
-        }
-        if (defined $max && $max !~ /^\d+$/) {
-            add_msg( 'max_occurrence must be a positive number.' );
-            $max     = undef;
-            $no_save = 1;
-        }
+    my @sub_types_to_save;
+    if (my @sub_types = $obj->get_containers ) {
+        my $erred;
+        for my $sub_type ( @sub_types ) {
+            my $seid = $sub_type->get_id;
+            my $modified = 0;
+            for my $occ qw(min max) {
+                my $val = $param->{"subelement_type|$occ\_occurrence_$seid"};
+                $val =~ s/^\s+//;
+                $val =~ s/\s+$//;
+                $val ||= 0;
+                if ( $val !~ /^\d+$/ ) {
+                    add_msg( 'Min and max occurrence must be a positive numbers.' )
+                        unless $erred;
+                    $erred   = 1;
+                    $no_save = 1;
+                    next;
+                }
 
-        if (
-               ( defined $min && $min != $sub_type->get_min_occurrence )
-            || ( defined $max && $max != $sub_type->get_max_occurrence )
-        ) {
-            $sub_type->set_min_occurrence($min) if defined $min;
-            $sub_type->set_max_occurrence($max) if defined $max;
-            $sub_type->save;
+                $sub_type->_set( [ "$occ\_occurrence" ] => [ $val ] );
+            }
+            push @sub_types_to_save, $sub_type if $sub_type->_get__dirty;
         }
     }
 
     # Take care of group management.
     $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
+    unless ($no_save) {
+        $_->save for @sub_types_to_save;
+    }
     $save_element_type_etc->($self, $obj, $key, $no_save, $disp_name, $name);
 
     return $obj;
@@ -611,7 +610,6 @@ $save_element_type_etc = sub {
     $obj->save() unless $no_save;
     $param->{"$key\_id"} = $obj->get_id;
 
-    my $containers = $obj->get_containers;
     unless ($no_save) {
         if ($cb_key eq 'save' || $cb_key eq 'save_n_stay') {
             if ($param->{'isNew'}) {
