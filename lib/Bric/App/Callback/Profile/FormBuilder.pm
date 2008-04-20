@@ -14,6 +14,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
 use Bric::Biz::Site;
 use Bric::Util::DBI qw(:junction);
+use List::MoreUtils qw(any none);
 
 my %meta_props = (
     'disp'      => 'fb_disp',
@@ -41,7 +42,7 @@ my %conf = (
 
 my ($base_handler, $do_contrib_type, $do_element_type, $clean_param,
     $delete_ocs, $delete_sites, $check_save_element_type, $get_obj,
-    $set_key_name, $get_data_href, $set_primary_ocs, $add_new_attrs, 
+    $set_key_name, $get_data_href, $set_primary_ocs, $add_new_attrs,
     $save_element_type_etc);
 
 
@@ -139,7 +140,7 @@ $do_contrib_type = sub {
     # Build a map from element names to their order
     my $i = 1;
     my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
-    
+
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
         next if $del_attrs{$aname};
 
@@ -225,7 +226,7 @@ $do_element_type = sub {
     my $key_name   = exists $param->{key_name} ? $param->{key_name} : undef;
     my $widget     = $self->class_key;
     my $cb_key     = $self->cb_key;
-    
+
     # Make sure the name isn't already in use.
     my $no_save;
     # ElementType has been updated to take an existing but undefined 'active'
@@ -281,12 +282,12 @@ $do_element_type = sub {
     my $enabled = $set_primary_ocs->($self, $obj, \$no_save);
 
     my $data_href = $get_data_href->($param, $key);
-    
+
     # Build a map from element names to their order.  This also
     # serves as a list of elements that haven't been deleted.
     my $i = 1;
     my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
-    
+
     # Update existing attributes
     my $del = [];
     foreach my $attr ($obj->get_field_types) {
@@ -305,9 +306,9 @@ $do_element_type = sub {
         }
     }
     $obj->del_field_types($del) if ($cb_key eq 'save' || $cb_key eq 'save_n_stay');
-    
+
     $add_new_attrs->($self, $obj, $key, $data_href, \$no_save);
-    
+
     $delete_ocs->($obj, $param);
     $delete_sites->($obj, $param, $self);
 
@@ -337,24 +338,54 @@ $do_element_type = sub {
     }
 
     # delete any selected subelement types
+    my $del_ids = [];
     if (my $del = $param->{"$key|delete_sub"}) {
         my %existing  = map { $_->get_id => undef } $obj->get_containers;
-        my $ids       = [
+        my $del_ids   = [
             grep { exists $existing{$_} } ref $del ? @$del : $del
         ];
 
-        if (@$ids) {
+        if (@$del_ids) {
             # Remove them and log it.
-            my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$ids) });
+            my $element_types = Bric::Biz::ElementType->list({ id => ANY(@$del_ids) });
             $obj->del_containers($element_types);
             log_event('element_type_rem', $obj, { Name => $_->get_name })
                 for @$element_types;
         }
     }
 
+    # Set min and max occurrence.
+    my @sub_types_to_save;
+    if (my @sub_types = $obj->get_containers ) {
+        my $erred;
+        for my $sub_type ( @sub_types ) {
+            my $seid = $sub_type->get_id;
+            my $modified = 0;
+            for my $occ qw(min max) {
+                my $val = $param->{"subelement_type|$occ\_occurrence_$seid"};
+                $val =~ s/^\s+//;
+                $val =~ s/\s+$//;
+                $val ||= 0;
+                if ( $val !~ /^\d+$/ ) {
+                    add_msg( 'Min and max occurrence must be a positive numbers.' )
+                        unless $erred;
+                    $erred   = 1;
+                    $no_save = 1;
+                    next;
+                }
+
+                $sub_type->_set( [ "$occ\_occurrence" ] => [ $val ] );
+            }
+            push @sub_types_to_save, $sub_type if $sub_type->_get__dirty;
+        }
+    }
+
     # Take care of group management.
     $self->manage_grps($obj) if $param->{add_grp} || $param->{rem_grp};
 
+    unless ($no_save) {
+        $_->save for @sub_types_to_save;
+    }
     $save_element_type_etc->($self, $obj, $key, $no_save, $disp_name, $name);
 
     return $obj;
@@ -363,10 +394,10 @@ $do_element_type = sub {
 
 $clean_param = sub {
     my $param = shift;
-    
+
     # Pulldowns are always size 1
     $param->{fb_size} = 1 if $param->{fb_type} eq 'pulldown';
-    
+
     # Clean any select/radio values (but not codeselect)
     return $param
         unless $param->{fb_vals} && $param->{fb_type} ne 'codeselect';
@@ -548,8 +579,8 @@ $add_new_attrs = sub {
             my $atd = $obj->new_field_type({
                 key_name    => $key_name,
                 name        => $param->{fb_disp},
-                required    => $param->{fb_req}   ? 1 : 0,
-                quantifier  => $param->{fb_quant} ? 1 : 0,
+                min_occurrence => $param->{fb_minOccur},
+                max_occurrence => $param->{fb_maxOccur},
                 sql_type    => $sqltype,
                 place       => $param->{fb_position},
                 max_length  => $max,
@@ -579,7 +610,6 @@ $save_element_type_etc = sub {
     $obj->save() unless $no_save;
     $param->{"$key\_id"} = $obj->get_id;
 
-    my $containers = $obj->get_containers;
     unless ($no_save) {
         if ($cb_key eq 'save' || $cb_key eq 'save_n_stay') {
             if ($param->{'isNew'}) {

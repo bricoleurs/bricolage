@@ -461,7 +461,7 @@ sub AUTOLOAD {
     throw_gen "Cannot AUTOLOAD private methods: $AUTOLOAD"
       if $field =~ /^_/;
 
-    # Get the permissions for this field 
+    # Get the permissions for this field
     $perm = $pkg->ACCESS()->{$field} || FIELD_INVALID;
 
     # field doesn't exist!
@@ -475,7 +475,7 @@ sub AUTOLOAD {
           unless $perm & FIELD_READ;
 
         # setup get method
-        *{$AUTOLOAD} = QA_MODE ? 
+        *{$AUTOLOAD} = QA_MODE ?
           sub { return $_[0]->{$field} } :    # take a shortcut
           sub { return $_[0]->_get($field) }; # go directly to jail
     }

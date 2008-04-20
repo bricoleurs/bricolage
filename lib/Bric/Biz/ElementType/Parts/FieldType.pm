@@ -42,13 +42,21 @@ $LastChangedDate$
  $field = $field->set_max_length($max_length)
  $max   = $field->get_max_length()
 
- # Get/Set whether this field is required or not.
+ # (deprecated) Get/Set whether this field is required or not.
  $field       = $field->set_required(1 || undef)
  (1 || undef) = $field->get_required()
 
- # Get/Set the quantifier flag.
+ # (deprecated) Get/Set the quantifier flag.
  $field      = $field->set_quantifier( $quantifier )
  $quantifier = $field->get_quantifier()
+ 
+ # Get/Set min occurrence specification limit
+ $field = $field->set_min_occurrence($amount)
+ $min = $field->get_min_occurrence()
+ 
+ # Get/Set max occurrence specification limit
+ $field = $field->set_max_occurrence($amount)
+ $max = $field->get_max_occurrence()
 
  # Get/Set the data type (or SQL type) of this field.
  $field    = $field->set_sql_type();
@@ -122,12 +130,12 @@ use constant DEBUG => 0;
 use constant TABLE => 'field_type';
 my @COLS = qw(
     element_type__id
-    key_name
     name
+    key_name
     description
     place
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     autopopulated
     max_length
     sql_type
@@ -139,17 +147,17 @@ my @COLS = qw(
     vals
     multiple
     default_val
-    active
+    active    
 );
 
 my @ATTRS = qw(
     element_type_id
-    key_name
     name
+    key_name
     description
     place
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     autopopulated
     max_length
     sql_type
@@ -169,8 +177,8 @@ use constant ORD => qw(
     name
     description
     max_length
-    required
-    quantifier
+    min_occurrence
+    max_occurrence
     widget_type
     "precision"
     default_val
@@ -207,8 +215,6 @@ BEGIN {
         description     => Bric::FIELD_RDWR,
         place           => Bric::FIELD_RDWR,
         max_length      => Bric::FIELD_RDWR,
-        required        => Bric::FIELD_RDWR,
-        quantifier      => Bric::FIELD_RDWR,
         sql_type        => Bric::FIELD_RDWR,
         widget_type     => Bric::FIELD_RDWR,
         precision       => Bric::FIELD_RDWR,
@@ -220,6 +226,8 @@ BEGIN {
         default_val     => Bric::FIELD_RDWR,
         autopopulated   => Bric::FIELD_READ,
         active          => Bric::FIELD_READ,
+        max_occurrence	=> Bric::FIELD_RDWR,
+        min_occurrence	=> Bric::FIELD_RDWR,
         _attr           => Bric::FIELD_NONE,
         _meta           => Bric::FIELD_NONE,
         _attr_obj       => Bric::FIELD_NONE,
@@ -287,6 +295,14 @@ sql_type
 
 active
 
+=item *
+
+max_occurrence
+
+=item *
+
+min_occurrence
+
 =back
 
 B<Throws:>
@@ -305,7 +321,8 @@ sub new {
     my ($init) = @_;
 
     $init->{active} = exists $init->{active} ? $init->{active} : 1;
-    $init->{$_} = $init->{$_} ? 1 : 0 for qw(required autopopulated multiple);
+    $init->{$_} = $init->{$_} ? 1 : 0 for qw(autopopulated multiple);
+    $init->{$_} ||= 0 for qw(min_occurrence max_occurrence);
     $init->{element_type_id} ||=
           exists $init->{element_id}  ? delete $init->{element_id}
         : exists $init->{element__id} ? delete $init->{element__id}
@@ -477,6 +494,16 @@ of possible values.
 =item active
 
 Boolean valule indicating whether or not the field is active.
+	
+=item max_occurrence
+
+Specifies an upper limit to how many instances there may be of this field type.
+0 represents unlimited.
+
+=item min_occurrence
+
+Specifies a lower limit to how many instances there may be of this field type.
+0 indicates that it is not required.
 
 =back
 
@@ -748,42 +775,6 @@ sub my_meths {
                       maxlength => 8,
                   },
               },
-              required => {
-                  name     => 'required',
-                  get_meth => sub { shift->get_required() },
-                  get_args => [],
-                  set_meth => sub {
-                      my ($self, $req) = @_;
-                      $req = (defined $req && $req) ? 1 : 0;
-                      $self->set_required($req);
-                  },
-                  set_args => [],
-                  disp     => 'Required',
-                  search   => 1,
-                  len      => 1,
-                  type     => 'short',
-                  props    => {
-                      type      => 'checkbox',
-                  },
-              },
-              quantifier => {
-                  name     => 'quantifier',
-                  get_meth => sub { shift->get_quantifier() },
-                  get_args => [],
-                  set_meth => sub {
-                      # note: $rep is boolean
-                      my ($self, $rep) = @_;
-                      $rep = (defined $rep && $rep) ? 1 : 0;
-                      $self->set_quantifier($rep);
-                  },
-                  set_args => [],
-                  disp     => 'Repeatable',
-                  len      => 1,
-                  type     => 'short',
-                  props    => {
-                      type      => 'checkbox',
-                  },
-              },
               widget_type  => {
                   get_meth => sub { shift->get_widget_type(@_) },
                   get_args => [],
@@ -935,6 +926,38 @@ sub my_meths {
                   type     => 'short',
                   props    => {
                       type => 'checkbox',
+                  },
+              },
+              max_occurrence    => {
+                  name      => 'max_occurrence',
+                  get_meth  => sub { shift->get_max_occurrence() },
+                  get_args  => [],
+                  set_meth  => sub { shift->set_max_occurrence(@_) },
+                  set_args  => [],
+                  disp      => 'Maximum Occurrence',
+                  search    => 1,
+                  len       => 8,
+                  type      => 'short',
+                  props     => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
+                  },
+              },
+              min_occurrence    => {
+                  name      => 'min_occurrence',
+                  get_meth  => sub { shift->get_min_occurrence() },
+                  get_args  => [],
+                  set_meth  => sub { shift->set_min_occurrence(@_) },
+                  set_args  => [],
+                  disp      => 'Minimum Occurrence',
+                  search    => 1,
+                  len       => 8,
+                  type      => 'short',
+                  props     => {
+                      type      => 'text',
+                      length    => 8,
+                      maxlength => 8,
                   },
               },
           };
@@ -1113,6 +1136,46 @@ repeatable within the element.
 
 B<Throws:> NONE.
 
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $max = $field->get_max_occurrence()
+
+Return the maximum occurrence
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_max_occurrence($max)
+
+Sets the maximum occurrence this field type may occur.
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $min = $field->get_min_occurrence()
+
+Return the minimum occurrence
+
+B<Throws:> NONE.
+    
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $field = $field->set_min_occurrence($min)
+
+Sets the minimum occurrence this field type may occur.
+
+B<Throws:> NONE.
+    
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1350,8 +1413,6 @@ sub set_publishable  { shift }
 sub get_publishable  { 0 }
 
 # Boolean accessors.
-sub set_quantifier    { shift->_set(['quantifier']    => [shift() ? 1 : 0] ) }
-sub set_required      { shift->_set(['required']      => [shift() ? 1 : 0] ) }
 sub set_autopopulated { shift->_set(['autopopulated'] => [shift() ? 1 : 0] ) }
 sub set_multiple      { shift->_set(['multiple']      => [shift() ? 1 : 0] ) }
 
@@ -1656,11 +1717,11 @@ sub _do_list {
         cols            => 'cols',
         rows            => 'cols',
         length          => 'length',
+        max_occurrence  => 'max_occurrence',
+        min_occurrence  => 'min_occurrence',
     );
 
     my %bools = (
-        required      => 'required',
-        quantifier    => 'quantifier',
         autopopulated => 'autopopulated',
         active        => 'active',
         multiple      => 'multiple',

@@ -13,7 +13,7 @@
         name    => "$widget|lock_val_cb",
         value   => $element->get_id,
     &>
-    &nbsp;Lock Val: 
+    &nbsp;Lock Val:
     <& '/widgets/profile/checkbox.mc',
         name    => "$widget|lock_val_" . $element->get_id,
         checked => ($element->is_locked ? 1 : 0),
@@ -21,7 +21,7 @@
 </div>
 % }
 
-% unless ($no_del) {
+% if ($parent->get_field_occurrence($at_obj->get_key_name) > $at_obj->get_min_occurrence) {
     <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -30,7 +30,7 @@
         extension => 'png',
         globalImage => 1,
         js        => qq{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
-        useTable  => 0 
+        useTable  => 0
     &>
     </div>
 % }
@@ -39,6 +39,7 @@
 <%args>
 $widget
 $element
+$parent
 </%args>
 
 <%init>
@@ -58,7 +59,6 @@ my $vals = { props => {
 }};
 
 my $key =  $widget . '|' . $element->get_id;
-my $no_del = $at_obj->get_required && $element->get_object_order == 1;
 
 
 # Get the value.

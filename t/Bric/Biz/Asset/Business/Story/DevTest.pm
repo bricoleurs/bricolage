@@ -873,7 +873,7 @@ sub test_select_methods: Test(170) {
     is @$got, 2, 'Should have two stories';
 
     # Try subelement_id. First add a subelement to a couple of stories.
-    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'book_profile' }),
+    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'pull_quote' }),
         'Look up book profile';
     for my $i (1, 2) {
         ok my $elem = $story[$i]->get_element, "Get $i story element";
@@ -883,7 +883,7 @@ sub test_select_methods: Test(170) {
 
     # Now look them up.
     ok $got = class->list({ subelement_id => $et->get_id }),
-        'Get a list of stories with the book_profile subelement';
+        'Get a list of stories with the pull_quote subelement';
     is 2, @$got, 'There should be two stories';
     is_deeply [ @{$OBJ_IDS->{story}}[1,2] ],
               [ sort { $a <=> $b } map { $_->get_id } @$got ],
@@ -892,14 +892,14 @@ sub test_select_methods: Test(170) {
     # Now delete the subelement from one fo the stories.
     ok my $elem = $story[1]->get_element,
         'Get the element from the first story';
-    ok my $sub = $elem->get_container('book_profile'),
+    ok my $sub = $elem->get_container('pull_quote'),
         'Get the book profile subelement from the first story';
     ok $elem->delete_elements( [ $sub ] ), 'Delete the subelement';
     ok $elem->save, 'Save the element';
 
     # Now look up again.
     ok $got = class->list({ subelement_id => $et->get_id }),
-        'Get a list of stories with the book_profile subelement';
+        'Get a list of stories with the pull_quote subelement';
     is 1, @$got, 'There should now be only one story';
     is $OBJ_IDS->{story}[2], $got->[0]->get_id,
         'It should have the ID of the second story';

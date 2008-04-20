@@ -88,7 +88,7 @@ if (defined $id) {
     $m->comp('/widgets/wrappers/table_bottom.mc');
 
     # Output the Servers.
-    $m->comp('/widgets/wrappers/table_top.mc', 
+    $m->comp('/widgets/wrappers/table_top.mc',
              caption => '%n',
              object  => 'server',
              number => 5 );
@@ -103,7 +103,7 @@ if (defined $id) {
              alter => { active => $yes_no },
              select =>    $no_del ? undef : ['Delete', 'server|delete_cb'] );
     $m->comp('/widgets/wrappers/table_bottom.mc');
-    
+
     $m->comp('/widgets/profile/formButtons.mc',
 	     type => $type,
 	     section => $section,

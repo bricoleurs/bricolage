@@ -29,11 +29,11 @@ sub save : Callback {
         return;
     }
 
-    my $name = $param->{disp};
+    my $name = $ed->get_name;
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate;
-        $ed->set_required(0);
+        $ed->set_min_occurrence(0);
         log_event("$type\_rem", $elem, { Name => $name });
         log_event("$type\_deact", $ed);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
@@ -59,7 +59,7 @@ sub save : Callback {
             $set->($ed, defined $param->{$f} ? 1 : 0);
         };
 
-        for my $f (qw(max_length rows cols length precision)) {
+        for my $f (qw(max_length rows cols length precision min_occurrence max_occurrence)) {
             $set_meta_number->($ed, $f, $param);
         }
 
@@ -77,9 +77,14 @@ sub save : Callback {
             $set_meta_string->($ed, 'default_val', $param);
         }
 
-        for my $f (qw(multiple required quantifier)) {
+        for my $f (qw(multiple)) {
             $set_meta_boolean->($ed, $f, $param);
         }
+
+        # The occurrence specs are string variables
+        #for my $f (qw(min_occurrence max_occurrence)) {
+        #    $set_meta_string->($ed, $f, $param);
+        #}
 
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
         log_event("$type\_save", $ed);

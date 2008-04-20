@@ -35,7 +35,7 @@ my $value_sub = sub {
             $r eq '_MEMBER_SUBSYS' ? unshift @$role_opt, ['DEFAULT', 'Default']
               : push @$role_opt, [$r, $r];
         }
-        
+
         $m->scomp('/widgets/profile/select.mc',
             name => "$widget|contrib_role_" . $_[0]->get_id,
             disp => '',
@@ -67,7 +67,7 @@ my $value_sub = sub {
             value     => $_[0]->get_id,
             button    => 'delete_red',
             useTable  => 0,
-            js        => qq{onclick="deleteContrib(this); return false"} 
+            js        => qq{onclick="deleteContrib(this); return false"}
         );
     }
 };

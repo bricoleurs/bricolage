@@ -55,7 +55,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(137) {
+sub test_select_methods: Test(142) {
     my $self = shift;
     my $class = $self->class;
 
@@ -725,18 +725,32 @@ sub test_select_methods: Test(137) {
                           'Search on note "ANY(Note 1, Note 2)"';
     is @$got, 2, 'Should have two media';
 
-    # Try subelement_id. First add a subelement to a couple of stories.
-    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'book_profile' }),
+    # Try subelement_id. First add a subelement to a couple of media.
+    ok my $photo = Bric::Biz::ElementType->lookup({ key_name => 'photograph' }),
+        'Lok up photograph element type';
+    ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'pull_quote' }),
         'Look up book profile';
-    for my $i (1, 2) {
-        ok my $elem = $media[$i]->get_element, "Get $i media element";
-        ok $elem->add_container($et), "Add book profile subelement to $i media";
-        ok $elem->save, "Save $i media";
-    }
+    ok my $se = $photo->add_container($et), 'Add pull quote as subelement to photograph';
+    ok $photo->save, 'Save the photo element type';
+
+    eval {
+        for my $i (1, 2) {
+            $media[$i] = $class->lookup({ id => $media[$i]->get_id });
+            ok my $elem = $media[$i]->get_element, "Get $i media element";
+            ok $elem->add_container($et), "Add book profile subelement to $i media";
+            ok $elem->save, "Save $i media";
+        }
+    };
+
+    my $err = $@;
+    $photo = Bric::Biz::ElementType->lookup({ id => $photo->get_id });
+    ok $photo->del_containers( $se ), 'Remove pull quote from photo';
+    ok $photo->save, 'Save the photo element type';
+    die $err if $err;
 
     # Now look them up.
     ok $got = class->list({ subelement_id => $et->get_id }),
-        'Get a list of media with the book_profile subelement';
+        'Get a list of media with the pull_quote subelement';
     is 2, @$got, 'There should be two media';
     is_deeply [ @{$OBJ_IDS->{media}}[1,2] ],
               [ sort { $a <=> $b } map { $_->get_id } @$got ],
@@ -745,14 +759,14 @@ sub test_select_methods: Test(137) {
     # Now delete the subelement from one fo the media.
     ok my $elem = $media[1]->get_element,
         'Get the element from the first media';
-    ok my $sub = $elem->get_container('book_profile'),
+    ok my $sub = $elem->get_container('pull_quote'),
         'Get the book profile subelement from the first media';
     ok $elem->delete_elements( [ $sub ] ), 'Delete the subelement';
     ok $elem->save, 'Save the element';
 
     # Now look up again.
     ok $got = class->list({ subelement_id => $et->get_id }),
-        'Get a list of media with the book_profile subelement';
+        'Get a list of media with the pull_quote subelement';
     is 1, @$got, 'There should now be only one media';
     is $OBJ_IDS->{media}[2], $got->[0]->get_id,
         'It should have the ID of the second media';

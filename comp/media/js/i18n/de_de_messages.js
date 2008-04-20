@@ -25,3 +25,4 @@ var found_to = ' to character ';
 var replaced = 'Replaced ';
 var occurrence = ' occurrence';
 var occurrences = ' occurrences';
+var digits_only_msg = ' must be a positive number';

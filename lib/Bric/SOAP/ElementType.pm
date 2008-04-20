@@ -604,13 +604,22 @@ sub load_asset {
         # the same document.
         $edata->{subelement_types} ||= {subelement_type => []};
         foreach my $subdata (@{$edata->{subelement_types}{subelement_type}}) {
-            # get key_name
-            my $kn = ref $subdata ? $subdata->{content} : $subdata;
-
+            # get key_name and other attributes
+            my ($kn, $elem_min, $elem_max, $place);
+            if (ref $subdata && exists $subdata->{key_name}) {
+                ($kn, $elem_min, $elem_max, $place) = @{$subdata}
+                    {qw(key_name min_occur max_occur place)};
+            } else {
+                $kn = ref $subdata ? $subdata->{content} : $subdata;
+                # TODO Something smarter with the default place number
+                ($elem_min, $elem_max, $place) = (0, 0, 0);
+            }
+            
             # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
               unless exists $fixup{$edata->{key_name}};
-            push @{$fixup{$edata->{key_name}}}, $kn;
+            push @{$fixup{$edata->{key_name}}}, 
+                [ $kn, $elem_min, $elem_max, $place ];
         }
 
         # build hash of existing fields.
@@ -672,8 +681,8 @@ sub load_asset {
                 $data->set_key_name(    $field->{key_name});
                 $data->set_name(        $field->{name}        || $field->{label});
                 $data->set_description( $field->{description});
-                $data->set_required(    $field->{required});
-                $data->set_quantifier(  $field->{repeatable});
+                $data->set_min_occurrence( $field->{min_occur});
+                $data->set_max_occurrence( $field->{max_occur});
                 $data->set_sql_type(    $sql_type);
                 $data->set_place(       $place);
                 $data->set_max_length(  $field->{max_size});
@@ -696,8 +705,8 @@ sub load_asset {
                     key_name      => $field->{key_name},
                     name          => $field->{name}        || $field->{label},
                     description   => $field->{description},
-                    required      => $field->{required},
-                    quantifier    => $field->{repeatable},
+                    min_occurrence => $field->{min_occur},
+                    max_occurrence => $field->{max_occur},
                     sql_type      => $sql_type,
                     place         => $place,
                     max_length    => $field->{max_size},
@@ -748,17 +757,26 @@ sub load_asset {
     # run through fixup attaching subelement types
     foreach my $element_name (keys %fixup) {
         my ($element) = Bric::Biz::ElementType->list({key_name => $element_name});
-        my @sub_ids;
 
-        foreach my $sub_name (@{$fixup{$element_name}}) {
+        foreach my $sub_elem_array (@{$fixup{$element_name}}) {
+            my ($sub_name, $sub_min, $sub_max, $sub_place) = @$sub_elem_array;
             my ($sub_id) = Bric::Biz::ElementType->list_ids({key_name => $sub_name});
             throw_ap(error => __PACKAGE__ . " : no subelement type found matching "
                        . "(subelement_type => \"$sub_name\") "
                        . "for element type \"$element_name\".")
               unless defined $sub_id;
-            push @sub_ids, $sub_id;
+              $element->add_container($sub_id);
+              $element->save;
+              
+              # Now set the subelement stuff
+              # Note: We need to get it so a subelement is returned
+              my ($sub_elem) = $element->get_containers($sub_id);
+              $sub_elem->set_min_occurrence($sub_min);
+              $sub_elem->set_max_occurrence($sub_max);
+              $sub_elem->set_place($sub_place);
+              $sub_elem->save;
+              
         }
-        $element->add_containers(\@sub_ids);
         $element->save;
     }
 
@@ -835,7 +853,12 @@ sub serialize_asset {
     # output subelements
     $writer->startTag("subelement_types");
     foreach ($element->get_containers) {
-        $writer->dataElement(subelement_type => $_->get_key_name);
+        $writer->startTag("subelement_type");
+        $writer->dataElement(key_name => $_->get_key_name);
+        $writer->dataElement(min_occur => $_->get_min_occurrence);
+        $writer->dataElement(max_occur => $_->get_max_occurrence);
+        $writer->dataElement(place => $_->get_place);
+        $writer->endTag("subelement_type");
     }
     $writer->endTag("subelement_types");
 
@@ -849,8 +872,8 @@ sub serialize_asset {
         $writer->dataElement( key_name    => $data->get_key_name           );
         $writer->dataElement( name        => $data->get_name               );
         $writer->dataElement( description => $data->get_description        );
-        $writer->dataElement( required    => $data->get_required   ? 1 : 0 );
-        $writer->dataElement( repeatable  => $data->get_quantifier ? 1 : 0 );
+        $writer->dataElement( min_occur   => $data->get_min_occurrence     );
+        $writer->dataElement( max_occur   => $data->get_max_occurrence     );
         $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );

@@ -12,14 +12,9 @@ ALTER TABLE element_type ADD
     REFERENCES at_type(id) ON DELETE CASCADE;
 
 ALTER TABLE element_type ADD
-    CONSTRAINT fk_grp__element_type FOREIGN KEY (et_grp__id)
-    REFERENCES grp(id) ON DELETE CASCADE;
-
-ALTER TABLE element_type ADD
 	CONSTRAINT fk_class__element_type FOREIGN KEY (biz_class__id)
 	REFERENCES class(id) ON DELETE CASCADE;
 
-/* For future reference.
 -- -----------------------------------------------------------------------------
 -- Table: subelement_type
 
@@ -30,8 +25,6 @@ ALTER TABLE subelement_type ADD
 ALTER TABLE subelement_type ADD
     CONSTRAINT fkx_element_type__subelement__child_id FOREIGN KEY (child_id)
     REFERENCES element_type(id) ON DELETE CASCADE;
-
-*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element_type__output_channel

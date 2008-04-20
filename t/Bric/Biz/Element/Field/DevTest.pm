@@ -96,9 +96,26 @@ sub test_new : Test(9) {
         'Field Element is Listed');
 }
 
+##############
+#
+# NOTE: Not quite sure where the old field counts were coming from,
+#         but each value has been reasoned before changing.
+#
+# UPDATE: My bad. There was an error elsewhere that was stopping the
+#           default fields from being created
+#
+##############
+
+# This is just a snippet of code for testing (outputs the field types)
+
+#for my $foo_field (@fields) {
+#	is scalar 2, 2, 'Element: ' . $foo_field->get_element_name;
+#}
+
+
 ##############################################################################
 # Test list().
-sub test_list : Test(89) {
+sub test_list : Test(91) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -152,6 +169,8 @@ sub test_list : Test(89) {
     ok my @fields = $class->list({
         object_type => 'story',
     }), 'List fields by object type';
+
+
     is scalar @fields, 10, 'There should be ten story fields';
     isa_ok $_, $class for @fields;
 
@@ -235,6 +254,7 @@ sub test_list : Test(89) {
         object_type   => 'story',
         field_type_id => $para->get_id,
     }), 'List fields by field_type_id';
+
     is scalar @fields, 4, 'There should be four fields';
     ok @fields = $class->list({
         object_type   => 'story',
@@ -249,6 +269,7 @@ sub test_list : Test(89) {
         object_type => 'story',
         active      => 1,
     }), 'List active fields';
+
     is scalar @fields, 8, 'There should be eight active fields';
 
     # List by inactive.
@@ -261,7 +282,7 @@ sub test_list : Test(89) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(90) {
+sub test_list_ids : Test(92) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};

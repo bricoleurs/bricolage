@@ -212,7 +212,7 @@ element.
 =item object_order
 
 The order of this element relative to the other container elements based on
-the same Bric::Biz::AsetType object that are subelements of the parent
+the same Bric::Biz::AssetType object that are subelements of the parent
 element.
 
 =item parent_id
@@ -294,7 +294,16 @@ sub new {
 
     # Prepopulate from the element type object
     foreach my $ft ($init->{_element_type_obj}->get_field_types) {
-        $self->add_field($ft) if $ft->get_required;
+        if (my $min = $ft->get_min_occurrence) {
+            $self->add_field($ft) for 1..$min;
+        }
+    }
+
+    # Prepopulate the elements based on min occurrence
+    foreach my $subet ($init->{_element_type_obj}->get_containers) {
+        if (my $min = $subet->get_min_occurrence) {
+            $self->add_container($subet) for 1..$min;
+        }
     }
 
     $self->_set__dirty(1);
@@ -678,6 +687,44 @@ sub set_related_media_id {
 
 ################################################################################
 
+=item $container->get_elem_occurrence($subelement->get_key_name)
+
+Returns the number of subelements currently in this container
+which match the name passed in.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_elem_occurrence{
+    return scalar @{ shift->get_elements(@_) };
+}
+
+################################################################################
+
+=item $container->get_field_occurrence($field_type->get_key_name)
+
+Returns the number of fields currently in this container
+which match the field name passed in.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub get_field_occurrence{
+    return scalar @{ shift->get_fields(@_) };
+}
+
+################################################################################
+
 =item $container->set_related_story($story)
 
 Creates a relationship between the container element and a story document.
@@ -882,8 +929,8 @@ sub get_element_key_name { $_[0]->get_key_name }
 Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
 objects that define the types of data elements that can be subelements of this
 container element. This list would exclude any data elements that can only be
-added as subelements to this container element once, and have already been
-added.
+added as subelements to this container element a set number of times, and have
+already been added that many times. This is the max_occurrence of that FieldType.
 
 B<Throws:> NONE.
 
@@ -901,9 +948,10 @@ sub get_possible_field_types {
     my @parts;
 
     for my $data (@$current) {
-        my $atd = delete $at_info{$data->get_field_type_id};
-        # Add if this element is repeatable.
-        push @parts, $atd if $atd && $atd->get_quantifier;
+        if (my $atd = delete $at_info{$data->get_field_type_id}) {
+            my $max = $atd->get_max_occurrence;
+            push @parts, $atd if !$max || $max > $self->get_field_occurrence($atd->get_key_name);
+        }
     }
 
     # Add the container elements (the only things remaining in this hash)
@@ -916,13 +964,14 @@ sub get_possible_data { shift->get_possible_field_types(@_) }
 
 ################################################################################
 
-=item my @elements = $container->get_possible_containers
+=item my @elementtypes = $container->get_possible_containers
 
-Returns a list or anonymous array of the Bric::Biz::ElementType::Parts::FieldType
+Returns a list or anonymous array of the Bric::Biz::ElementType
 objects that define the types of data elements that can be subelements of this
 container element. This is synonymous with
-C<< $container->get_element_type->get_containers >>, since containers do not
-support occurence constraints.
+C<< $container->get_element_type->get_containers >>, with the exception that
+it will only return those containers that don't already have the max allowed
+according to the max_occurrence.
 
 B<Throws:> NONE.
 
@@ -935,7 +984,16 @@ B<Notes:> NONE.
 sub get_possible_containers {
     my $self = shift;
     my $at = $self->get_element_type or return;
-    $at->get_containers;
+    my $containers = $at->get_containers;
+    my @possible_cons;
+
+    for my $data (@$containers) {
+        my $max = $data->get_max_occurrence;
+        push @possible_cons, $data if !$max ||
+            $max > $self->get_elem_occurrence($data->get_key_name);
+    }
+
+    return wantarray ? @possible_cons : \@possible_cons;
 }
 
 ################################################################################
@@ -948,6 +1006,7 @@ Pass a Bric::Biz::ElementType::Parts::FieldType object and a value for a new fie
 element, and that new field element will be created and added as a subelement
 of the container element. An optional third argument specifies the C<place>
 for that field element in the order of subelements of this container element.
+This returns the field that was created/added.
 
 B<Throws:> NONE.
 
@@ -959,6 +1018,28 @@ B<Notes:> NONE.
 
 sub add_field {
     my ($self, $atd, $data, $place) = @_;
+    # Get the field type
+
+    if ($atd->get_max_occurrence &&
+        ($self->get_field_occurrence($atd->get_key_name) >=
+            $atd->get_max_occurrence)) {
+        my $field_name = $atd->get_key_name;
+        my $field_occurrence = $self->get_field_occurrence($field_name);
+        my $field_max_occur = $atd->get_max_occurrence;
+        # Throw an error
+        throw_invalid
+            error    => qq{Field "$field_name" cannot be added. There are already }
+                      . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
+            maketext => [
+                'Field "[_1]" cannot be added. There are already '
+              . '[_2] [quant,_2,field] of this type, with a max of [_3].',
+                $field_name,
+                $field_occurrence,
+                $field_max_occur,
+            ]
+        ;
+    }
+
     my $field = Bric::Biz::Element::Field->new({
         active             => 1,
         object_type        => $self->_get('object_type'),
@@ -994,6 +1075,41 @@ B<Notes:> NONE.
 
 sub add_container {
     my ($self, $atc) = @_;
+
+    my $elem_key_name = $atc->get_key_name;
+    my $parent_key_name = $self->get_key_name;
+    my @subets = $self->get_element_type->get_containers($elem_key_name);
+
+    # Throw an error if $subets[0] doesn't exist
+    if (!($subets[0])) {
+    throw_invalid
+        error    => qq{$elem_key_name cannot be a subelement }
+                  . qq{of $parent_key_name.},
+        maketext => [ '[_1] cannot be a subelement of [_2].',
+            $elem_key_name,
+            $parent_key_name,
+        ]
+    ;
+    }
+    my $max_occur = $subets[0]->get_max_occurrence;
+
+    if ($max_occur && ($self->get_elem_occurrence($atc->get_key_name) >=
+            $max_occur)) {
+        my $elem_name = $atc->get_key_name;
+        my $elem_occurrence = $self->get_elem_occurrence($elem_name);
+        # Throw an error
+        throw_invalid
+            error    => qq{Element "$elem_name" cannot be added. There are already }
+                      . qq{$elem_occurrence elements of this type, with a max of $max_occur.},
+            maketext => [
+                'Element "[_1]" cannot be added. There are already '
+              . '[_2] [quant,_2,element] of this type, with a max of [_3].',
+                $elem_name,
+                $elem_occurrence,
+                $max_occur,
+            ]
+        ;
+    }
 
     # create a new Container Object with this one as its parent
     my $container = Bric::Biz::Element::Container->new({
@@ -1346,7 +1462,7 @@ The ID of the element to be deleted.
 B<Throws:> NONE.
 
 B<Side Effects:> Will shift and reorder the remaining subelements to fit. So
-if telements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
+if elements with IDs of 2, 4, 7, 8, and 10 are contained and 4 and 8 are
 removed the new list of elements will be 2, 7, and 10
 
 B<Notes:> Doesn't actually do any deletions, just schedules them. Call
@@ -1390,44 +1506,99 @@ sub delete_elements {
     my $cont_order;
     my $data_order;
     my $new_list = [];
-    foreach (@$elements) {
+    my %delete_count;
+
+    for my $elem (@$elements) {
         my $delete = undef;
-        if ($_->is_container) {
-            if (exists $del_cont{$_->get_id}) {
-                push @$del_elements, $_;
-                $delete = 1;
+        if ($elem->is_container) {
+            if (exists $del_cont{$elem->get_id}) {
+                my $elem_name = $elem->get_element_type->get_key_name;
+                my $subelement_type = $self->get_element_type->get_containers($elem_name);
+
+                # Increase the deletion counter
+                $delete_count{$elem_name}++;
+
+                # Get the minimum occurrence for this parent/child relation
+                my $min_occur = $subelement_type->get_min_occurrence;
+
+                my $occur_diff = $self->get_elem_occurrence($elem_name) - $min_occur;
+
+                # Check if we've deleted too many
+                if ($delete_count{$elem_name} > $occur_diff) {
+                    # Throw an error if we have
+                    throw_invalid
+                        error    => qq{Element "$elem_name" cannot be deleted. }
+                                  . qq{There must be at least $min_occur elements of this type.},
+                        maketext => [
+                            'Element "[_1]" cannot be deleted. There must '
+                          . 'be at least [_2] [quant,_2,element] of this type.',
+                            $elem_name,
+                            $min_occur,
+                        ]
+                    ;
+                } else {
+                    # Schedule for deletion if we haven't
+                    push @$del_elements, $elem;
+                    $delete = 1;
+                }
             }
         } else {
-            if (exists $del_data{$_->get_id}) {
-                push @$del_elements, $_;
-                $delete = 1;
+            if (exists $del_data{$elem->get_id}) {
+                my $field_type = $elem->get_field_type;
+                my $field_name = $field_type->get_key_name;
+
+                # Increase the deletion counter
+                $delete_count{$field_name}++;
+
+                my $occur_diff = $self->get_field_occurrence($field_name) -
+                        $field_type->get_min_occurrence;
+
+                # Check if we've deleted too many
+                if ($delete_count{$field_name} > $occur_diff) {
+                    my $the_min_occur = $field_type->get_min_occurrence;
+                    # Throw an error if we have
+                    throw_invalid
+                        error    => qq{Field "$field_name" cannot be deleted. }
+                                  . qq{There must be at least $the_min_occur fields of this type.},
+                        maketext => [
+                            'Field "[_1]" cannot be deleted. There must '
+                          . 'be at least [_2] [quant,_2,field] of this type.',
+                            $field_name,
+                            $the_min_occur,
+                        ]
+                    ;
+                } else {
+                    # Schedule for deletion if we haven't
+                    push @$del_elements, $elem;
+                    $delete = 1;
+                }
             }
         }
 
         unless ($delete) {
             my $count;
-            $_->set_place($order);
-            if ($_->is_container()) {
-                if (exists $cont_order->{$_->get_element_type_id }) {
-                    $count = scalar @{ $cont_order->{$_->get_element_type_id } };
+            $elem->set_place($order);
+            if ($elem->is_container()) {
+                if (exists $cont_order->{$elem->get_element_type_id }) {
+                    $count = scalar @{ $cont_order->{$elem->get_element_type_id } };
                 } else {
                     $count = 0;
-                    $cont_order->{$_->get_element_type_id } = [];
+                    $cont_order->{$elem->get_element_type_id } = [];
                 }
-                $_->set_object_order($count);
+                $elem->set_object_order($count);
             } else {
-                if (exists $data_order->{ $_->get_field_type_id }) {
+                if (exists $data_order->{ $elem->get_field_type_id }) {
                     $count = scalar
-                      @{ $data_order->{$_->get_field_type_id } };
+                      @{ $data_order->{$elem->get_field_type_id } };
                 } else {
                     $count = 0;
-                    $data_order->{$_->get_field_type_id } = [];
+                    $data_order->{$elem->get_field_type_id } = [];
                 }
-                $_->set_object_order($count);
-                push @{ $data_order->{$_->get_field_type_id} },
-                  $_->get_id;
+                $elem->set_object_order($count);
+                push @{ $data_order->{$elem->get_field_type_id} },
+                  $elem->get_id;
             }
-            push @$new_list, $_;
+            push @$new_list, $elem;
             $order++;
         }
     }
@@ -1829,8 +2000,7 @@ sub _do_list {
         }
 
         elsif ($k eq 'related_media_id' || $k eq 'related_story_id') {
-	    my $col = $k;
-            $col =~ s/_id$/__id/;
+            ( my $col = $k ) =~ s/_id$/__id/;
             push @wheres, defined $v
                 ? any_where($v, "e.$col = ?", \@params)
                 : "e.$col IS NULL";
@@ -2196,6 +2366,41 @@ sub _deserialize_pod {
                             parent_id          => $id,
                         });
 
+                # Check for element occurrence violation
+                my $subelem_key_name = $subelem->get_key_name;
+                my $elem_key_name = $self->get_key_name;
+                my $subelem_occur = $self->get_elem_occurrence($subelem_key_name);
+                my @subets = $self->get_element_type->get_containers($subelem_key_name);
+
+                # Throw an error if $subets[0] doesn't exist
+                if (!($subets[0])) {
+                    throw_invalid
+                        error    => qq{$subelem_key_name cannot a subelement }
+                                  . qq{of $elem_key_name.},
+                        maketext => [ '[_1] cannot be a subelement of [_2].',
+                            $subelem_key_name,
+                            $elem_key_name,
+                        ]
+                    ;
+                }
+
+                my $subelem_max = $subets[0]->get_max_occurrence;
+
+                if ($subelem_max && ($subelem_max >= $subelem_occur)) {
+                    # Throw an error
+                    throw_invalid
+                        error    => qq{Element "$elem_key_name" cannot be added. There are already }
+                                  . qq{$subelem_occur elements of this type, with a max of $subelem_max.},
+                        maketext => [
+                          'Element "[_1]" cannot be added. There are already '
+                        . '[_2] [quant,_2,element] of this type, with a max of [_3].',
+                            $elem_key_name,
+                            $subelem_occur,
+                            $subelem_max,
+                        ]
+                    ;
+                }
+
                 $subelem->set_place(scalar @elems);
                 $subelem->set_object_order(++$elem_ord{$kn});
                 push @elems, $subelem;
@@ -2309,16 +2514,20 @@ sub _deserialize_pod {
                 }
 
                 # Make sure that it's okay if it's repeatable.
-                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
+                my $max_occur = $field_type->get_max_occurrence;
+                if ($field_ord{$kn} && $max_occur && $field_occurrence >= $max_occur) {
                     throw_invalid
-                        error    => qq{Non-repeatable field "$kn" appears more }
-                                  . qq{than once beginning at line $line_num. }
-                                  . qq{Please remove all but one.},
+                        error    => qq{Field "$kn" appears $field_occurrence }
+                                  . qq{times around line $line_num.}
+                                  . qq{Please remove all but $max_occur.},
                         maketext => [
-                            'Non-repeatable field "[_1]" appears more than once '
-                          . 'beginning at line [_2]. Please remove all but one.',
+                            'Field "[_1]" appears [_2] times around line [_3].'
+                          . 'Please remove all but [_4].',
                             $kn,
+                            $field_occurrence,
                             $line_num,
+                            $max_occur,
                         ]
                     ;
                 }
@@ -2360,16 +2569,20 @@ sub _deserialize_pod {
                 $kn = $def_field;
                 $field_type = $field_types{$kn}
                     || _bad_field(\%field_types, $kn, $line_num);
-                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
+                my $max_occur = $field_type->get_max_occurrence;
+                if ($field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
                     throw_invalid
-                        error    => qq{Non-repeatable field "$kn" appears more }
-                                  . qq{than once beginning at line $line_num. }
-                                  . qq{Please remove all but one.},
+                        error    => qq{Field "$kn" appears $field_occurrence }
+                                  . qq{times around line $line_num.}
+                                  . qq{Please remove all but $max_occur.},
                         maketext => [
-                            'Non-repeatable field "[_1]" appears more than once '
-                          . 'beginning at line [_2]. Please remove all but one.',
+                            'Field "[_1]" appears [_2] times around line [_3].'
+                          . 'Please remove all but [_4].',
                             $kn,
+                            $field_occurrence,
                             $line_num,
+                            $max_occur,
                         ]
                     ;
                 }
@@ -2538,4 +2751,3 @@ L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Element>
 
 =cut
-
