@@ -78,10 +78,9 @@ Container.updateOrder('element_<% $id %>');
 </fieldset>
 % }
 
-% unless ($top_level) {
-% my $parent = $element->get_parent;
-% my $sub_type = $parent->get_element_type->get_containers($element->get_key_name);
-% if ( $sub_type->get_min_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
+% if ( $parent && !$top_level) {
+%     my $sub_type = $parent->get_element_type->get_containers($element->get_key_name);
+%     if ( $sub_type->get_min_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
 <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -89,7 +88,7 @@ Container.updateOrder('element_<% $id %>');
         button    => 'delete',
         extension => 'png',
         globalImage => 1,
-        js        => qq|onclick="Container.deleteElement(| . $element->get_parent_id . qq|, '$name'); return false;"|,
+        js        => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
         useTable  => 0
     &>
 </div>
@@ -101,9 +100,10 @@ Container.updateOrder('element_<% $id %>');
 <%args>
 $widget
 $element
+$parent => undef
 </%args>
 
-<%init>
+<%init>;
 my $story = get_state_data('story_prof', 'story');
 my $type = $element->get_element_type;
 my $id   = $element->get_id;

@@ -255,7 +255,7 @@ sub test_field_occurrence : Test(80) {
 
 ##############################################################################
 # Test element occurrence.
-sub test_zelem_occurrence : Test(89) {
+sub test_zelem_occurrence : Test(93) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -337,14 +337,19 @@ sub test_zelem_occurrence : Test(89) {
     ], 'Should get the correct maketext array';
 
     # Try adding a few that are subelements of the story
-    ok my $cont1 = $elem->add_container($ets[0]), 'Add a subelement ' . $ets[0]->get_key_name;
-    ok my $cont2 = $elem->add_container($ets[0]), 'Add another ' . $ets[0]->get_key_name;
+    my $kn = $ets[0]->get_key_name;
+    ok my $cont1 = $elem->add_container($ets[0]), "Add a $kn subelement";
+    ok my $cont2 = $elem->add_container($ets[0]), "Add another $kn subelement";
 
     # Save it
     ok $elem->save, 'Make it so';
 
     # Delete them and add them again
+    is $elem->get_elem_occurrence, 2, 'There should be 2 subelements';
+    is $elem->get_elem_occurrence($kn), 2, "There should be 2 $kn subelements";
     ok $elem->delete_elements([ $cont1, $cont2 ]), 'Deleting the containers';
+    is $elem->get_elem_occurrence, 0, 'There should now be 0 subelements';
+    is $elem->get_elem_occurrence($kn), 0, "There should now be 0 $kn subelements";
     ok $elem->save, 'Make it so';
     ok $cont1 = $elem->add_container($ets[0]), 'Add a subelement ' . $ets[0]->get_key_name;
     ok $cont2 = $elem->add_container($ets[0]), 'Add another ' . $ets[0]->get_key_name;
