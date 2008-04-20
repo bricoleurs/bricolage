@@ -79,6 +79,9 @@ Container.updateOrder('element_<% $id %>');
 % }
 
 % unless ($top_level) {
+% my $parent = $element->get_parent;
+% my $sub_type = $parent->get_element_type->get_containers($element->get_key_name);
+% if ( $sub_type->get_min_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
 <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -90,6 +93,7 @@ Container.updateOrder('element_<% $id %>');
         useTable  => 0
     &>
 </div>
+%     }
 % }
 
 </div>
