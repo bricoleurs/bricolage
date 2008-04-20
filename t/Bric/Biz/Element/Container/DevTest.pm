@@ -189,11 +189,11 @@ sub test_field_occurrence : Test(80) {
     ok my $err = $@, 'Catch max occurrence violation exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
-        'Field "para" can not be added. There are already 4'
+        'Field "para" cannot be added. There are already 4'
       . ' fields of this type, with a max of 4.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Field "[_1]" can not be added. There are already'
+        'Field "[_1]" cannot be added. There are already'
       . ' [_2] [quant,_2,field] of this type, with a max of [_3].',
         'para',
         4,
@@ -363,11 +363,11 @@ sub test_zelem_occurrence : Test(89) {
     ok $err = $@, 'Catch max occurrence violation exception';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error,
-        'Element "' . $ets[0]->get_key_name . '" can not be added.'
+        'Element "' . $ets[0]->get_key_name . '" cannot be added.'
       . ' There are already 2 elements of this type, with a max of 2.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Element "[_1]" can not be added. There are already [_2]'
+        'Element "[_1]" cannot be added. There are already [_2]'
       . ' [quant,_2,element] of this type, with a max of [_3].',
         $ets[0]->get_key_name,
         2,

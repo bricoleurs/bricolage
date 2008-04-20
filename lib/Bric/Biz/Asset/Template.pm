@@ -1899,7 +1899,7 @@ sub cancel {
     my $dirty = $self->_get__dirty;
 
     if (not defined $self->get_user__id) {
-        # this is not checked out, it can not be deleted
+        # this is not checked out, it cannot be deleted
         my $msg = 'Cannot cancel an asset that is not checked out';
         throw_ap(error => $msg);
     }

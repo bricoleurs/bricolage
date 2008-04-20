@@ -2051,7 +2051,7 @@ sub cancel {
     # from the data base of this row
 
     if ( not defined $self->_get('user_id')) {
-        # this is not checked out, it can not be deleted
+        # this is not checked out, it cannot be deleted
         throw_gen "Cannot cancel a non checked out asset";
     }
     $self->_set( { '_delete' => 1});

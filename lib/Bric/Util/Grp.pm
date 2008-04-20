@@ -2233,7 +2233,7 @@ sub _get_attr_obj {
 =item $self = $self->_set_attr($param)
 
 Internal method which either sets the attribute upon the attribute object, or
-if we can not get one yet into a cached area.
+if we cannot get one yet into a cached area.
 
 B<Throws:> NONE.
 

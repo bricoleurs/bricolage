@@ -1028,10 +1028,10 @@ sub add_field {
         my $field_max_occur = $atd->get_max_occurrence;
         # Throw an error
         throw_invalid
-            error    => qq{Field "$field_name" can not be added. There are already }
+            error    => qq{Field "$field_name" cannot be added. There are already }
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
-                'Field "[_1]" can not be added. There are already '
+                'Field "[_1]" cannot be added. There are already '
               . '[_2] [quant,_2,field] of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,
@@ -1099,10 +1099,10 @@ sub add_container {
         my $elem_occurrence = $self->get_elem_occurrence($elem_name);
         # Throw an error
         throw_invalid
-            error    => qq{Element "$elem_name" can not be added. There are already }
+            error    => qq{Element "$elem_name" cannot be added. There are already }
                       . qq{$elem_occurrence elements of this type, with a max of $max_occur.},
             maketext => [
-                'Element "[_1]" can not be added. There are already '
+                'Element "[_1]" cannot be added. There are already '
               . '[_2] [quant,_2,element] of this type, with a max of [_3].',
                 $elem_name,
                 $elem_occurrence,
@@ -2389,10 +2389,10 @@ sub _deserialize_pod {
                 if ($subelem_max && ($subelem_max >= $subelem_occur)) {
                     # Throw an error
                     throw_invalid
-                        error    => qq{Element "$elem_key_name" can not be added. There are already }
+                        error    => qq{Element "$elem_key_name" cannot be added. There are already }
                                   . qq{$subelem_occur elements of this type, with a max of $subelem_max.},
                         maketext => [
-                          'Element "[_1]" can not be added. There are already '
+                          'Element "[_1]" cannot be added. There are already '
                         . '[_2] [quant,_2,element] of this type, with a max of [_3].',
                             $elem_key_name,
                             $subelem_occur,
