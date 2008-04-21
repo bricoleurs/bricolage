@@ -168,7 +168,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
 
 <& "/widgets/wrappers/table_top.mc",
     caption => "Contributors",
-    number  => $num++ 
+    number  => $num++
 &>
     <script type="text/javascript">
     function deleteContrib(button) {
@@ -190,7 +190,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
         contribs   => \@{ $story->get_contributors() }
     &>
     </div>
-    
+
     <div class="actions">
         <& '/widgets/profile/button.mc',
             disp    => $lang->maketext("Add"),
@@ -200,7 +200,7 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
             js      => qq{onclick="openWindow('/workflow/profile/story/contributors.html', undefined, { closeOnUnload: true }); return false"}
         &>
     </div>
-    
+
 <& "/widgets/wrappers/table_bottom.mc" &>
 
 

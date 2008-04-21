@@ -136,6 +136,22 @@ BEGIN {
     }
 }
 
+#if ( Bric::Config::ENCODE_OK && $SOAP::Lite::VERSION le '0.71.02' ) {
+if ( Bric::Config::ENCODE_OK ) {
+    # XXX Change the version number above as appropriate in response to the
+    # resolution of http://rt.cpan.org/Ticket/Display.html?id=35041.
+    package SOAP::Serializer;
+    no warnings 'redefine';
+    eval q{
+        my $xmlize = \&xmlize;
+        *xmlize = sub {
+            my $ret = $xmlize->(@_);
+            Encode::_utf8_off($ret) if Encode::is_utf8($ret);
+            return $ret;
+        }
+    };
+}
+
 my $commit = 1;
 
 # dispatch to $SERVER->handler()

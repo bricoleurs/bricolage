@@ -53,6 +53,8 @@ use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
 use Bric::Util::Priv::Parts::Const qw(:all);
+use URI;
+use URI::Escape;
 
 #==============================================================================#
 # Inheritance                          #
@@ -579,7 +581,7 @@ browser and to abort the request.
 
 B<Throws:> NONE.
 
-B<Side Effects:> Becuase C<redirect_onload()> executes immediately, if it is
+B<Side Effects:> Because C<redirect_onload()> executes immediately, if it is
 called from a callback, note that no further callbacks will be executed, not
 even post-callback request callbacks.
 
@@ -589,7 +591,14 @@ B<Notes:> NONE.
 
 sub redirect_onload {
     my $loc = shift or return;
-    my $js = qq{<script>location.href='$loc';</script>\n};
+
+    # escape the path+query part if necessary
+    my $uri = URI->new($loc);
+    my $pq = $uri->path_query;
+    $uri->path_query($pq);
+
+    my $js  = sprintf q{<script>location.href='%s';</script>\n},
+                      $uri;
 
     if (my $m = HTML::Mason::Request->instance) {
         # Use the Mason request object.
@@ -884,7 +893,7 @@ sub site_list {
 
 #--------------------------------------#
 
-=item my $select_options = eval_codeselect($code)
+=item my $select_options = eval_codeselect($code, $field)
 
 Returns a hash reference or reference to an array of arrays as returned by the
 code in C<$code>. If the code just returns a list, it will be converted to a
@@ -894,10 +903,11 @@ case an error message will be displayed.
 =cut
 
 sub eval_codeselect {
+    my ($code, $field) = @_;
     # XXX: This is very unsafe, but they need to be able
     # to do things like DBI queries; would that work with Safe?
     local $_;
-    my $res = eval shift;
+    my $res = eval $code;
 
     my $ref = ref $res;
     # Return a hashref.

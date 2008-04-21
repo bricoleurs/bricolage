@@ -51,7 +51,6 @@ while (my $del = <DATA>) {
 
 my @libs = qw(
     Bric::App::Callback::Profile::ElementData
-    Bric::App::Callback::Profile::ElementType
     Bric::App::Callback::Element
     Bric::SOAP::Element
     Bric::Util::Async

@@ -49,8 +49,8 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:auth :cookies);
-use Bric::Util::ApacheConst qw(:common);
+use Bric::Config qw(:auth :cookies :mod_perl);
+use Bric::Util::ApacheConst;
 use Bric::App::Session qw(:user);
 use Bric::App::Cache;
 use Bric::App::Util qw(:redir);
@@ -302,7 +302,7 @@ $make_cookie = sub {
 
     # note: I'm not sure why CGI::Cookie and Apache::Cookie were treated
     # differently, so I left this basically as is when converting to Bric::Util::Cookie
-    if ($ENV{MOD_PERL}) {
+    if (MOD_PERL) {
         my $cookie = Bric::Util::Cookie->new($r, @args);
         $cookie->bake($r);
         return 1;

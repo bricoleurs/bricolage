@@ -4,7 +4,7 @@ package Bric::Util::Language::ja;
 
 =head1 NAME
 
-Bric::Util::Language::de_de - Bricolage German translation
+Bric::Util::Language::ja - Bricolage Japanese translation
 
 =head1 VERSION
 
@@ -24,7 +24,7 @@ $LastChangedDate: 2006-01-23 15:34:28 -0800 (Mon, 23 Jan 2006) $
 
 =head1 DESCRIPTION
 
-Translation to German using Lang::Maketext.
+Translation to Japanese using Lang::Maketext.
 
 =cut
 
@@ -35,6 +35,12 @@ use base qw(Bric::Util::Language);
 use constant key => 'ja';
 
 =begin comment
+
+To translate:
+
+   'Shelve'
+   'and Shelve'
+   'and'
 
 our %Lexicon = (
 
@@ -735,7 +741,6 @@ our %Lexicon = (
   'No context for content beginning at line [_1].' => 'No context for content beginning at line [_1].',
   'No such field "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such field "[_1]" at line [_2]. Did you mean "[_3]"?',
   'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?' => 'No such subelement "[_1]" at line [_2]. Did you mean "[_3]"?',
-  'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.' => 'Non-repeatable field "[_1]" appears more than once beginning at line [_2]. Please remove all but one.',
   'Unknown tag "[_1]" at line [_2].' => 'Unknown tag "[_1]" at line [_2].',
   'No such site "[_1]" at line [_2].'=> 'No such site "[_1]" at line [_2].',
   'No such URI "[_1]" in site "[_2]" at line [_3].' => 'No such URI "[_1]" in site "[_2]" at line [_3].',
@@ -747,6 +752,16 @@ our %Lexicon = (
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
+  'Field "[_1]" cannot be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].' => 'Field "[_1]" cannot be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].',
+  'Element "[_1]" cannot be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].' => 'Element "[_1]" cannot be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].',
+  'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.' => 'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.',
+  'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.' => 'Element "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,element] of this type.',
+  'min_occurrence must be a positive number.' => 'min_occurrence must be a positive number.',
+  'max_occurrence must be a positive number.' => 'max_occurrence must be a positive number.',
+  'Min and max occurrence must be a positive numbers.' => 'Min and max occurrence must be a positive numbers.',
+  'place must be a positive number.' => 'place must be a positive number.',
+  'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
+  '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
   );
 
 =end comment

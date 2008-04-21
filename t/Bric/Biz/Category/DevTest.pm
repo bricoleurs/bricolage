@@ -4,6 +4,7 @@ use warnings;
 use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::Category;
+use Bric::Biz::Site;
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Priv::Parts::Const qw(:all);
 
@@ -78,7 +79,7 @@ sub test_lookup : Test(17) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(31) {
+sub test_list : Test(36) {
     my $self = shift;
 
     # Create a new category group.
@@ -86,12 +87,23 @@ sub test_list : Test(31) {
         ({ name => 'Test CatSet' }),
         "Create group" );
 
+    # Create a site.
+    ok( my $site = Bric::Biz::Site->new({
+        name => 'foo site',
+        domain_name => 'foo.com',
+    }), 'Create a new site');
+    ok $site->deactivate;
+    ok $site->save;
+    my $site_id = $site->get_id;
+    $self->add_del_ids([$site_id], 'site');
+
     # Create some test records.
     for my $n (1..5) {
         my %args = %cat;
         # Make sure the directory name is unique.
         $args{directory} .= $n;
         $args{name} .= $n if $n % 2;
+        $args{site_id} = $site_id unless $n %2;
         ok( my $cat = Bric::Biz::Category->new(\%args), "Create $args{name}" );
         ok( $cat->save, "Save $args{name}" );
         # Save the ID for deleting.
@@ -117,8 +129,13 @@ sub test_list : Test(31) {
     # Try site_id
     ok( @cats = Bric::Biz::Category->list({site_id => 100}),
         'Look up site with ID 100');
-    # We get 6 because of the default category
-    is( scalar @cats, 6, "Check for 6 categories" );
+    # We get 4 because of the default category
+    is( scalar @cats, 4, "Check for 4 categories" );
+
+    # Try active_sites.
+    ok( @cats = Bric::Biz::Category->list({active_sites => 1}),
+        'Look up categories associated with active sites');
+    is( scalar @cats, 4, "Check for 4 categories" );
 
     # Try a bogus site_id.
     @cats = Bric::Biz::Category->list({site_id => -1});

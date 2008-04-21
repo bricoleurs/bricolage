@@ -13,8 +13,8 @@ my %field = (
     name          => 'Test Paragraph',
     description   => 'Foo description',
     place         => 1,
-    required      => 1,
-    quantifier    => 1,
+    min_occurrence => 1,
+    max_occurrence => 0,
     autopopulated => 0,
     max_length    => 0,
     default_val  => '',
@@ -37,7 +37,6 @@ sub element_type {
         primary_oc_id => 1
     })->save;
     $self->add_del_ids([$elem->get_id], 'element_type');
-    $self->add_del_ids([$elem->get_at_grp__id], 'grp');
     return $elem;
 }
 
@@ -99,8 +98,8 @@ sub test_list : Test(86) {
         $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
-        $args{quantifier}    = 0 if $n % 2;
-        $args{required}      = 0 if $n % 2;
+        $args{max_occurrence}= $n % 2;
+        $args{min_occurrence}= $n % 2;
         $args{autopopulated} = 1 if $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
@@ -174,28 +173,28 @@ sub test_list : Test(86) {
     }), "Lookup place ANY(101, 102, 103)" );
     is( scalar @fields, 3, "Check for 3 fields" );
 
-    # Try quantifier.
+    # Try max_occurrence.
     ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
         element_type_id => $field{element_type_id},
-        quantifier => 1
-    }), "Lookup quantifier 1" );
+        max_occurrence => 0
+    }), "Lookup max_occurrence 0" );
     is( scalar @fields, 2, "Check for 2 fields" );
     ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
         element_type_id => $field{element_type_id},
-        quantifier => 0
-    }), "Lookup quantifier 0" );
+        max_occurrence => 1
+    }), "Lookup max_occurrence 1" );
     is( scalar @fields, 3, "Check for 3 fields" );
 
-    # Try required.
+    # Try min_occurrence.
     ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
         element_id => $field{element_type_id},
-        required   => 1
-    }), "Lookup required 1" );
+        min_occurrence   => 0
+    }), "Lookup min_occurrence 0" );
     is( scalar @fields, 2, "Check for 2 fields" );
     ok( @fields = Bric::Biz::ElementType::Parts::FieldType->list({
         element_type_id => $field{element_type_id},
-        required   => 0
-    }), "Lookup required 0" );
+        min_occurrence   => 1
+    }), "Lookup min_occurrence 1" );
     is( scalar @fields, 3, "Check for 3 fields" );
 
     # Try autopopulated.
@@ -311,8 +310,8 @@ sub test_list_ids : Test(86) {
         $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
-        $args{quantifier}    = 0 if $n % 2;
-        $args{required}      = 0 if $n % 2;
+        $args{max_occurrence}= $n % 2;
+        $args{min_occurrence}= $n % 2;
         $args{autopopulated} = 1 if $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
@@ -386,28 +385,28 @@ sub test_list_ids : Test(86) {
     }), "Lookup place ANY(101, 102, 103)" );
     is( scalar @field_ids, 3, "Check for 3 field IDs" );
 
-    # Try quantifier.
+    # Try max_occurrence.
     ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
         element_type_id => $field{element_type_id},
-        quantifier => 1
-    }), "Lookup quantifier 1" );
+        max_occurrence => 0
+    }), "Lookup max_occurrence 0" );
     is( scalar @field_ids, 2, "Check for 2 field IDs" );
     ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
         element_type_id => $field{element_type_id},
-        quantifier => 0
-    }), "Lookup quantifier 0" );
+        max_occurrence => 1
+    }), "Lookup max_occurrence 1" );
     is( scalar @field_ids, 3, "Check for 3 field IDs" );
 
-    # Try required.
+    # Try min_occurrence.
     ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
         element_type_id => $field{element_type_id},
-        required   => 1
-    }), "Lookup required 1" );
+        min_occurrence   => 0
+    }), "Lookup min_occurrence 0" );
     is( scalar @field_ids, 2, "Check for 2 field IDs" );
     ok( @field_ids = Bric::Biz::ElementType::Parts::FieldType->list_ids({
         element_type_id => $field{element_type_id},
-        required   => 0
-    }), "Lookup required 0" );
+        min_occurrence   => 1
+    }), "Lookup min_occurrence 1" );
     is( scalar @field_ids, 3, "Check for 3 field IDs" );
 
     # Try autopopulated.
@@ -523,8 +522,8 @@ sub href : Test(91) {
         $args{name}         .= $n;
         $args{description}  .= $n if $n % 2;
         $args{place}         = $n + 100;
-        $args{quantifier}    = 0 if $n % 2;
-        $args{required}      = 0 if $n % 2;
+        $args{max_occurrence}= $n % 2;
+        $args{min_occurrence}= $n % 2;
         $args{autopopulated} = 1 if $n % 2;
         $args{max_length}    = $n + 100;
         $args{sql_type}      = 'blob'     if $n % 2;
@@ -599,28 +598,28 @@ sub href : Test(91) {
     }), "Lookup place ANY(101, 102, 103)" );
     is( scalar keys %$fields, 3, "Check for 3 fields" );
 
-    # Try quantifier.
+    # Try max_occurrence.
     ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
         element_type_id => $field{element_type_id},
-        quantifier => 1
-    }), "Lookup quantifier 1" );
+        max_occurrence => 0
+    }), "Lookup max_occurrence 0" );
     is( scalar keys %$fields, 2, "Check for 2 fields" );
     ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
         element_type_id => $field{element_type_id},
-        quantifier => 0
-    }), "Lookup quantifier 0" );
+        max_occurrence => 1
+    }), "Lookup max_occurrence 1" );
     is( scalar keys %$fields, 3, "Check for 3 fields" );
 
-    # Try required.
+    # Try min_occurrence.
     ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
         element_type_id => $field{element_type_id},
-        required   => 1
-    }), "Lookup required 1" );
+        min_occurrence   => 0
+    }), "Lookup min_occurrence 0" );
     is( scalar keys %$fields, 2, "Check for 2 fields" );
     ok( $fields = Bric::Biz::ElementType::Parts::FieldType->href({
         element_type_id => $field{element_type_id},
-        required   => 0
-    }), "Lookup required 0" );
+        min_occurrence   => 1
+    }), "Lookup min_occurrence 1" );
     is( scalar keys %$fields, 3, "Check for 3 fields" );
 
     # Try autopopulated.

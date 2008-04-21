@@ -29,6 +29,7 @@
     <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
     <& 'container.mc',
         widget  => $widget,
+        parent  => $element,
         element => $dt
     &>
     </li>
@@ -36,6 +37,7 @@
     <li id="subelement_dat<% $dt->get_id %>" class="element clearboth">
     <& 'field.mc',
         widget  => $widget,
+        parent  => $element,
         element => $dt
     &>
     </li>
@@ -44,11 +46,11 @@
 </ul>
 <input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
 <script type="text/javascript">
-Sortable.create('element_<% $id %>', { 
-    onUpdate: function(elem) { 
-        Container.updateOrder(elem); 
-    }, 
-    handle: 'name' 
+Sortable.create('element_<% $id %>', {
+    onUpdate: function(elem) {
+        Container.updateOrder(elem);
+    },
+    handle: 'name'
 });
 Container.updateOrder('element_<% $id %>');
 </script>
@@ -76,7 +78,9 @@ Container.updateOrder('element_<% $id %>');
 </fieldset>
 % }
 
-% unless ($top_level) {
+% if ( $parent && !$top_level) {
+%     my $sub_type = $parent->get_element_type->get_containers($element->get_key_name);
+%     if ( $sub_type->get_min_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
 <div class="delete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
@@ -84,10 +88,11 @@ Container.updateOrder('element_<% $id %>');
         button    => 'delete',
         extension => 'png',
         globalImage => 1,
-        js        => qq|onclick="Container.deleteElement(| . $element->get_parent_id . qq|, '$name'); return false;"|,
-        useTable  => 0 
+        js        => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
+        useTable  => 0
     &>
 </div>
+%     }
 % }
 
 </div>
@@ -95,9 +100,10 @@ Container.updateOrder('element_<% $id %>');
 <%args>
 $widget
 $element
+$parent => undef
 </%args>
 
-<%init>
+<%init>;
 my $story = get_state_data('story_prof', 'story');
 my $type = $element->get_element_type;
 my $id   = $element->get_id;

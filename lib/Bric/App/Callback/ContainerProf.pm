@@ -7,6 +7,7 @@ use constant CLASS_KEY => 'container_prof';
 use strict;
 use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
+use Bric::Util::DBI qw(:trans);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
@@ -102,30 +103,30 @@ sub add_element : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-    
+
     my $widget = $self->class_key;
-    
+
     # get the element
     my $element = get_state_data($widget, 'element');
     my $key = $element->get_object_type();
-    
+
     # Get the container to which we will add the new subelement
     my $container_id = $param->{"$widget|add_element_cb"};
     my $field = $param->{"$widget|add_element_to_$container_id"};
-    
+
     # Find the right subelement to add the new element to
     $element = $self->_locate_subelement($element, $container_id) if $container_id;
     # Bail if we can't find the right subelement
     return unless $element;
-    
+
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
     if ($element->get_element_type()->get_top_level()) {
         $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
     }
-    
+
     my ($type, $id) = unpack('A5 A*', $field);
-    
+
     my $element_type;
     if ($type eq 'cont_') {
         $element_type = Bric::Biz::ElementType->lookup({ id => $id });
@@ -135,7 +136,7 @@ sub add_element : Callback {
         $element->add_field($element_type);
     }
     $element->save();
-    log_event($key.'_add_element', $a_obj, { Element => $element_type->get_key_name }) 
+    log_event($key.'_add_element', $a_obj, { Element => $element_type->get_key_name })
         if $a_obj;
 }
 
@@ -177,6 +178,7 @@ sub create_related_media : Callback {
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
+    clear_state($widget);
 
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
@@ -223,14 +225,20 @@ sub create_related_media : Callback {
     $element->set_related_media($mid);
 
     # Set up the original state for returning from the media profile.
-    $media_cb->save_and_stay(1);
     set_state_data(_profile_return => {
         state      => $state,
         type_state => $type_state,
         prof       => $asset,
         type       => $type,
         uri        => $self->apache_req->uri,
-        });
+    });
+
+    # We have to have the transactions here in case there is a failure
+    # in save_and_stay(). If there is, then $mid would be invalid, although
+    # our session wouldn't know that.
+    commit(1);
+    begin(1);
+    $media_cb->save_and_stay(1);
     # Edit the new media document.
     $self->set_redirect("/workflow/profile/media/new/$wf_id/$mid/");
 }
@@ -240,7 +248,7 @@ sub relate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-    
+
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_media_id($self->value);
 }
@@ -250,7 +258,7 @@ sub unrelate_media : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-    
+
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
     $element->set_related_media_id(undef);
 }
@@ -271,9 +279,9 @@ sub relate_story : Callback {
     $self->_drift_correction;
     my $param = $self->params;
     return if $param->{'_inconsistent_state_'};
-    
+
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
-    $element->set_related_story_id($self->value);
+    $element->set_related_story($self->value);
 }
 
 sub unrelate_story : Callback {
@@ -283,7 +291,7 @@ sub unrelate_story : Callback {
     return if $param->{'_inconsistent_state_'};
 
     my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
-    $element->set_related_story_id(undef);
+    $element->set_related_story(undef);
 }
 
 sub related_up : Callback {
@@ -334,11 +342,16 @@ sub save_and_up : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on.
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
-        $self->_pop_and_redirect;
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on.
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+            $self->_pop_and_redirect;
+        }
     }
 }
 
@@ -357,10 +370,15 @@ sub save_and_stay : Callback {
         # Do nothing.
         set_state_data($self->class_key, '__NO_SAVE__', undef);
     } else {
-        # Save the element we are working on
         my $element = get_state_data($self->class_key, 'element');
-        $element->save();
-        add_msg('Element "[_1]" saved.', $element->get_name);
+        my $widget  = $self->class_key;
+        if ( $param->{"$widget|file"} && !$element->get_related_media_id ) {
+            $self->create_related_media;
+        } else {
+            # Save the element we are working on
+            $element->save();
+            add_msg('Element "[_1]" saved.', $element->get_name);
+        }
     }
 }
 
@@ -531,15 +549,15 @@ sub _delete_element {
 sub _locate_subelement {
     my ($self, $element, $locate_id) = @_;
     $locate_id ||= $self->value;
-    
+
     {
         no warnings 'uninitialized';
         return $element if $element->get_id == $locate_id;
     }
-    
+
     foreach my $t ($element->get_elements) {
         next unless $t->is_container;
-            
+
         my $locate_element = $self->_locate_subelement($t, $locate_id);
         return $locate_element if $locate_element;
     }
@@ -547,25 +565,25 @@ sub _locate_subelement {
 
 sub _update_parts {
     my ($self, $param) = @_;
-    
-    my $widget = $self->class_key;    
+
+    my $widget = $self->class_key;
     my $element = get_state_data($widget, 'element');
-    
+
     $self->_update_subelements($element, $param);
-    
+
     set_state_data($widget, 'element', $element);
 }
 
 sub _update_subelements {
     my ($self, $element, $param) = @_;
-    
+
     # Bail out if we get to a container that doesn't exist
     return unless exists $param->{"container_prof|element_" . $element->get_id};
-    
+
     my (@curr_elements, @delete, $locate_element);
     my $widget = $self->class_key;
     my $object_type = $element->get_object_type;
-    
+
     # Don't delete unless either the 'Save...' or 'Delete' buttons were pressed
     # in the element profile or the document profile.
     my $do_delete = $param->{$widget.'|delete_cb'} ||
@@ -573,39 +591,39 @@ sub _update_subelements {
                     $param->{$widget.'|save_and_stay_cb'} ||
                     $param->{$object_type .'_prof|save_cb'} ||
                     $param->{$object_type .'_prof|save_and_stay_cb'};
-    
+
     # Build a map from element names to their order, making sure we don't include
     # deleted elements
     my $i = 1;
-    my %elements = map  { $_ => $i++ } 
+    my %elements = map  { $_ => $i++ }
                    grep { $_ ne $param->{$widget . '|delete_cb'} }
                    split ",", $param->{"container_prof|element_" . $element->get_id};
-    
+
     # Save data to elements and put them in a usable order
     foreach my $t ($element->get_elements) {
         my $id      = $t->get_id;
         my $is_cont = $t->is_container;
         my $name    = ($is_cont ? 'con' : 'dat') . $id;
         my $deleted = ($param->{$widget.'|delete_cb'} eq $name);
-            
-        # If the element isn't found, it was removed from the DOM and 
+
+        # If the element isn't found, it was removed from the DOM and
         # should be deleted.
         if ($do_delete && $deleted) {
             push @delete, $t;
             next;
         }
-        
+
         if (!$deleted) {
             my $order = $elements{$name};
             $curr_elements[$order]  = $t;
         }
-        
+
         if ($is_cont) {
             # Recursively update this container's subelements
             $self->_update_subelements($t, $param);
         }
-        
-        if (!$is_cont && 
+
+        if (!$is_cont &&
              (!$t->is_autopopulated or exists
               $param->{$widget . "|lock_val_$id"})) {
             my $val = $param->{$widget . "|$id"};

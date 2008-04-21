@@ -134,8 +134,13 @@ my $show_data_flags = sub {
     my $dt = shift;
     my @flags;
 
-    push @flags, 'required'   if $dt->get_required;
-    push @flags, 'repeatable' if $dt->get_quantifier;
+    if (my $min = $dt->get_min_occurrence) {
+        push @flags, "Minimum: $min";
+    }
+
+    if (my $max = $dt->get_max_occurrence) {
+        push @flags, "Maximum: $max";
+    }
     return '' unless @flags;
     return ' <span class="orangeLink">(' . join(', ', @flags) . ')</span>';
 };

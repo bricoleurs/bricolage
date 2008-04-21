@@ -8,7 +8,7 @@
     field      => 'name',
     req        => 1,
     objs       => \@elems,
-    useTable   => 0
+    useTable   => 0,
 &></td>
     <td><input type="file" name="<% $file_widget %>|file" /></td>
     <td align="right">
@@ -35,5 +35,6 @@ my @elems = grep { chk_authz($_, READ, 1) }
   Bric::Biz::ElementType->list({
       top_level => 1,
       media => 1,
+      site_id => $site_id,
   }) or return;
 </%init>

@@ -844,33 +844,21 @@ B<Notes:> NONE.
 
 =item $self = $src->set_description($description)
 
-Sets the description of this source.
+Sets the description of this source, converting any non-Unix line endings.
 
-B<Throws:>
-
-=over 4
-
-=item *
-
-Bad AUTOLOAD method format.
-
-=item *
-
-Cannot AUTOLOAD private methods.
-
-=item *
-
-Access denied: WRITE access for field 'description' required.
-
-=item *
-
-No AUTOLOAD method.
-
-=back
+B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =item my $expire = $src->get_expire
 

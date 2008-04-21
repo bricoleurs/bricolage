@@ -789,7 +789,7 @@ change into that directory.
 
 Build Bricolage:
 
-  make
+  perl Makefile.PL
 
 This step will check your system for all required packages.  It will
 also ask you questions regarding your installation.  In most cases the
@@ -917,6 +917,7 @@ to this directory.
 
 Install Bricolage (as root):
 
+  make
   make install
 
 =back
@@ -1126,13 +1127,13 @@ something other than the default (F</usr/local/bricolage>), e.g.:
 
 Next, stop the server:
 
-  bin/bric_apachectl stop
+  $BRICOLAGE_ROOT/bin/bric_apachectl stop
 
 Save copies of your F<bricolage.conf> and F<httpd.conf> files, so that you
 don't overwrite them:
 
-  cp conf/bricolage.conf conf/bricolage.conf.old
-  cp conf/httpd.conf conf/httpd.conf.old
+  cp $BRICOLAGE_ROOT/conf/bricolage.conf $BRICOLAGE_ROOT/conf/bricolage.conf.old
+  cp $BRICOLAGE_ROOT/conf/httpd.conf $BRICOLAGE_ROOT/conf/httpd.conf.old
 
 Install the latest Bundle::Bricolage from CPAN to make sure that you have all
 the needed modules (or read through the list of required modules above and do it
@@ -1140,7 +1141,7 @@ yourself).
 
 Delete all existing Mason object files and temporary files:
 
-  rm -rf data/obj/bric_ui/*
+  rm -rf $BRICOLAGE_ROOT/data/obj/bric_ui/*
   rm -rf /tmp/bricolage/*
 
 Run the upgrade scripts needed for upgrading to the new version. The upgrade
@@ -1150,13 +1151,13 @@ For example, to upgrade from 1.6.13 to 1.8.1, run each of the scripts in
 F<1.6.13/>, F<1.7.5/>, F<1.6.14/>, F<1.8.0/>, and F<1.8.1/> -- B<in that order>.
 Furthermore, the scripts within each directory are run in alphabetical order.
 
-Next, copy in the new sources from the distribution into your bricolage
+Next, copy in the new sources from the distribution into your Bricolage
 directory. Be sure B<not> to copy example templates, as they may overwrite
 your own templates. You're best off moving the contents of F<data/> out
 of the way.
 
   mv data /tmp/bric_data_tmp
-  cp -r /path/to/new/bricolage/* .
+  cp -r /path/to/new/bricolage/* $BRICOLAGE_ROOT/
   mv /tmp/bric_data_tmp data
 
 Now edit the new F<bricolage.conf> file to match your old settings using the
@@ -1167,7 +1168,7 @@ version. See the L<"CONFIGURATION"> section below for details.
 
 Now, start up Bricolage and enjoy the new features!
 
-  bin/bric_apachectl start
+  $BRICOLAGE_ROOT/bin/bric_apachectl start
 
 =head1 CONFIGURATION
 
@@ -1579,7 +1580,7 @@ will be changed at all.
 Furthermore, when you use LDAP authentication, the users must already exist in
 Bricolage with the same unique username as in the LDAP database. When you
 login to Bricolage with LDAP support enabled, the user object is first
-instantiated by looking it up the username. Then the authentication is sent to
+instantiated by looking it up by username. Then the authentication is sent to
 the LDAP server. If a user exists in the LDAP server but not in Bricolage,
 she will not be able to authenticate.
 
@@ -1835,12 +1836,23 @@ specified.
 
 =item *
 
-B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its database
-queries, rather than merely to search at the beginning of a string. Full
-sub-string searches are more expensive, since they cannot use database indexes,
-but that may not matter if there are few records in your database. Many users
-find the sub-string searches to be more intuitive, so enable it if you find the
-trade-off to be worth it. Defaults to "Off" if not specified.
+B<FULL_SEARCH:> Enables Bricolage to perform sub-string searches in its
+database queries, rather than merely to search at the beginning of a string.
+Full sub-string searches are more expensive, since they cannot use database
+indexes, but that may not matter if there are few records in your database.
+Many users find the sub-string searches to be more intuitive, so enable it if
+you find the trade-off to be worth it. Defaults to "Off" if not specified.
+
+=item *
+
+B<BLOB_SEARCH:> Allows the C<data_text> parameter to the C<list()> and friends
+methods of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story> and
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> to
+search large fields (such as paragraphs) as well as short fields (like
+headers). Note that this can make such searches much more expensive if you
+have more than a few thousand paragraph-type fields in your documents.
+Defaults to "Off" if not specified.
 
 =item *
 

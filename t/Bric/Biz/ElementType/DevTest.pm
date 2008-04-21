@@ -8,6 +8,7 @@ use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Biz::OutputChannel;
 use Bric::Util::DBI qw(:junction);
+use Bric::Biz::ElementType::Subelement;
 
 my %elem = (
     name          => 'Test Element',
@@ -94,13 +95,15 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(65) {
+sub test_list : Test(69) {
     my $self = shift;
 
     # Create a new element group.
     ok( my $grp = Bric::Util::Grp::ElementType->new({
         name => 'Test ElementGrp'
     }), "Create group" );
+
+
 
     # Create some test records.
     for my $n (1..5) {
@@ -120,7 +123,6 @@ sub test_list : Test(65) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -164,6 +166,7 @@ sub test_list : Test(65) {
     }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
     is( scalar @ets, 3, "Check for 3 element types" );
 
+
     # Try grp_id.
     my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
     ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
@@ -189,6 +192,18 @@ sub test_list : Test(65) {
     ok( @ets = Bric::Biz::ElementType->list({ grp_id => $grp_id }),
         "Look up grp_id $grp_id" );
     is( scalar @ets, 2, "Check for 2 element types" );
+
+    # Try parent_id.
+    my $et_id = 1;
+    ok( @ets = Bric::Biz::ElementType->list({ parent_id => $et_id }),
+        "Look up parent_id $et_id" );
+    is( scalar @ets, 2, "Check for 2 subelements" );
+
+    # Try child_id.
+    $et_id = 10;
+    ok( @ets = Bric::Biz::ElementType->list({ child_id => $et_id }),
+        "Look up child_id $et_id" );
+    is( scalar @ets, 3, "Check for 3 parents" );
 
     # Try active. There are 13 existing already.
     ok( @ets = Bric::Biz::ElementType->list({ active => 1 }),
@@ -271,7 +286,7 @@ sub test_my_meths : Test(11) {
 
 ##############################################################################
 # Test list_ids().
-sub test_list_ids : Test(62) {
+sub test_list_ids : Test(66) {
     my $self = shift;
 
     # Create a new element group.
@@ -297,7 +312,6 @@ sub test_list_ids : Test(62) {
         ok( $elem->save, "Save $args{name}" );
         # Save the ID for deleting.
         $self->add_del_ids([$elem->get_id]);
-        $self->add_del_ids([$elem->get_et_grp_id], 'grp');
         $grp->add_member({ obj => $elem }) if $n % 2;
     }
 
@@ -340,6 +354,18 @@ sub test_list_ids : Test(62) {
         description => ANY($elem{description}, "$elem{description}1")
     }), "Look up description ANY('$elem{description}', '$elem{description}1'" );
     is( scalar @et_ids, 3, "Check for 3 element type IDs" );
+
+    # Try parent_id.
+    my $et_id = 1;
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ parent_id => $et_id }),
+        "Look up parent_id $et_id" );
+    is( scalar @et_ids, 2, "Check for 2 subelements" );
+
+    # Try child_id.
+    $et_id = 10;
+    ok( @et_ids = Bric::Biz::ElementType->list_ids({ child_id => $et_id }),
+        "Look up child_id $et_id" );
+    is( scalar @et_ids, 3, "Check for 3 parents" );
 
     # Try grp_id.
     my $all_grp_id = Bric::Biz::ElementType::INSTANCE_GROUP_ID;
@@ -670,7 +696,7 @@ sub test_site : Test(26) {
 
 ##############################################################################
 # Make sure that subelement types and fields work properly.
-sub test_subelement_types : Test(39) {
+sub test_subelement_types : Test(57) {
     my $self = shift;
 
     # Create an output channel.
@@ -699,8 +725,8 @@ sub test_subelement_types : Test(39) {
     ok my $head = $story_type->new_field_type({
         key_name    => 'header',
         name        => 'Header',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -710,8 +736,8 @@ sub test_subelement_types : Test(39) {
     ok my $para = $story_type->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence  => 0,
+        max_occurrence  => 0,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -735,8 +761,8 @@ sub test_subelement_types : Test(39) {
     ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence    => 1,
+        max_occurrence  => 1,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -746,8 +772,8 @@ sub test_subelement_types : Test(39) {
     ok my $by = $pull_quote->new_field_type({
         key_name    => 'by',
         name        => 'By',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence    => 1,
+        max_occurrence  => 1,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -757,8 +783,8 @@ sub test_subelement_types : Test(39) {
     ok my $date = $pull_quote->new_field_type({
         key_name    => 'date',
         name        => 'Date',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence    => 1,
+        max_occurrence  => 1,
         sql_type    => 'date',
         place       => 3,
         max_length  => 0, # Unlimited
@@ -782,8 +808,8 @@ sub test_subelement_types : Test(39) {
     ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 0,
+        min_occurrence  => 0,
+        max_occurrence  => 1,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -810,13 +836,53 @@ sub test_subelement_types : Test(39) {
     is $fts[0]->get_key_name, 'header', '... The first should be header';
     is $fts[1]->get_key_name, 'para', '... The second should be paragraph';
 
+
     # Get its subelement container types.
     # XXX Eventually we should be able to order these.
-    ok my @conts = $story_type->get_containers,
-        'Get the storye type\'s containers';
+    # Test the get_containers with a ids specified
+    ok my @conts = $story_type->get_containers($pull_quote->get_id, $page->get_id),
+      'Get the story type\'s containers with the id\'s';
     is scalar @conts, 2, 'There should be two containers';
     my %subs = map { $_->get_key_name => $_} @conts;
-    ok $subs{_pull_quote_}, '... One shoudl be a pull quote';
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Test the get_containers with a single id specified
+    ok @conts = $story_type->get_containers($pull_quote->get_id),
+      'Get the story type\'s container with a single id';
+    is scalar @conts, 1, 'There should be one containers';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+
+
+    # Test the get_containers with the keyname specified
+    ok my $cont_et = $story_type->get_containers($page->get_key_name),
+      'Get the story type\'s container with the key name.';
+    is $cont_et->get_key_name, '_page_', "Make sure it's a page";
+
+    # Just get all of them
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 2, 'There should be two containers';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
+    ok $subs{_page_}, '... The other should be a page';
+
+    # Test deleting one of them
+    ok $story_type->del_containers($page->get_id), "Delete the page container";
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 1, 'There should be one container left';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... It should be a pull quote';
+
+    # Put it back
+    ok $story_type->add_containers($page->get_id), "Put the container back";
+    ok @conts = $story_type->get_containers,
+        'Get the story type\'s containers';
+    is scalar @conts, 2, 'There should be two containers';
+    %subs = map { $_->get_key_name => $_} @conts;
+    ok $subs{_pull_quote_}, '... One should be a pull quote';
     ok $subs{_page_}, '... The other should be a page';
 
     # Try the subelements' subelements.

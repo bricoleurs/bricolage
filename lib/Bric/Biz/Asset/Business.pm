@@ -1591,7 +1591,10 @@ sub get_publish_date { local_date($_[0]->_get('publish_date'), $_[1]) }
 
 =item (@objs || $objs) = $asset->get_related_objects
 
-Return all the related story or media objects for this business asset.
+Return all the related story or media objects for this business asset. If the
+asset is an alias of another asset, related objects will only be returned if
+they are in the same site as the asset, or if there are aliases in the asset's
+site for the related media associated with the aliased asset.
 
 B<Throws:>
 
@@ -1617,10 +1620,22 @@ sub _find_related {
     my @related;
 
     # Add this element's related assets
-    my $rmedia = $element->get_related_media;
-    my $rstory = $element->get_related_story;
-    push @related, $rmedia if $rmedia;
-    push @related, $rstory if $rstory;
+    for my $rel (
+        $element->get_related_media,
+        $element->get_related_story,
+    ) {
+        next unless $rel;
+        if ( $self->get_alias_id && $rel->get_site_id != $self->get_site_id ) {
+            # Try to find a local alias, instead. Skip it if there isn't one.
+            $rel = ref($rel)->lookup({
+                alias_id => $rel->get_id,
+                site_id => $self->get_site_id,
+            }) or next;
+            push @related, $rel;
+        } else {
+            push @related, $rel;
+        }
+    }
 
     # Check all the children for related assets.
     foreach my $c ($element->get_containers) {
@@ -2036,7 +2051,7 @@ sub cancel {
     # from the data base of this row
 
     if ( not defined $self->_get('user_id')) {
-        # this is not checked out, it can not be deleted
+        # this is not checked out, it cannot be deleted
         throw_gen "Cannot cancel a non checked out asset";
     }
     $self->_set( { '_delete' => 1});
@@ -2116,8 +2131,8 @@ sub checkout {
     $oc_coll->del_objs(@ocs);
     $oc_coll->add_new_objs(@ocs);
 
-    $self->_set([qw(user__id modifier version_id checked_out)] =>
-                [$param->{user__id}, $param->{user__id}, undef, 1]);
+    $self->_set([qw(user__id modifier version_id checked_out note)] =>
+                [$param->{user__id}, $param->{user__id}, undef, 1, undef]);
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
@@ -2514,7 +2529,7 @@ sub _construct_uri {
     my ($slug, $slash) = $self->key_name eq 'story' ? ($self->get_slug, '/')
                                                     : ('', '')
                                                     ;
-
+    $slug = '' unless defined $slug;
     $fmt =~ s{/%{categories}/?}{$category_uri}g;
     $fmt =~ s/%{slug}/$slug/g;
     unless ($fmt =~ s/%{uuid}/$self->get_uuid/ge) {

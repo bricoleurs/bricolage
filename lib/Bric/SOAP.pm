@@ -821,11 +821,14 @@ The XSD source:
            <xs:complexType>
              <xs:sequence>
                <xs:element name="subelement_type" minOccurs="0" maxOccurs="unbounded">
-                 <xs:simpleType>
-                   <xs:restriction base="xs:string">
-                     <xs:maxLength value="64"/>
-                   </xs:restriction>
-                 </xs:simpleType>
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element name="key_name" type="xs:string" />
+                     <xs:element name="min_occur" type="xs:int" minOccurs="0"/>
+                     <xs:element name="max_occur" type="xs:int" minOccurs="0"/>
+                     <xs:element name="place" type="xs:int" minOccurs="0"/>
+                   </xs:sequence>
+                 </xs:complexType>
                </xs:element>
              </xs:sequence>
            </xs:complexType>
@@ -851,7 +854,9 @@ The XSD source:
                      <xs:element name="rows" type="xs:int" minOccurs="0"/>
                      <xs:element name="cols" type="xs:int" minOccurs="0"/>
                      <xs:element name="precision" type="xs:int" minOccurs="0"/>
-                    <xs:element name="active" type="xs:boolean"/>
+                     <xs:element name="active" type="xs:boolean"/>
+                     <xs:element name="min_occur" type="xs:int" minOccurs="0"/>
+                     <xs:element name="max_occur" type="xs:int" minOccurs="0"/>
                    </xs:sequence>
                  </xs:complexType>
                </xs:element>

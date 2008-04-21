@@ -36,6 +36,7 @@ sub substr : Callback( priority => 7 ) {
     # Set the value that will repopulate the search box and clear the alpha
     $state->{crit_field}  = $param->{$val_fld};
     $state->{crit_letter} = '';
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
@@ -124,6 +125,7 @@ sub media : Callback {
     $state->{advanced_search} = ($self->value eq "advanced");
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
@@ -159,6 +161,7 @@ sub template : Callback {
     $state->{advanced_search} = ($self->value eq "advanced");
     $state->{criterion} = \@crit;
     $state->{field}     = \@field;
+    $state->{timestamp} = time();
     set_state_data($widget, $object => $state);
 }
 
@@ -299,6 +302,26 @@ sub _build_date_fields {
         # HACK. Adjust the end date to be inclusive by bumping it up
         # to 23:59:59.
         $v_end =~ s/00:00:00$/23:59:59/ if $v_end;
+
+        # check date fields
+        if ($v_start) {
+            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_start,0,4).
+                ', month=>'.CORE::substr($v_start,5,2).
+                ', day=>'.CORE::substr($v_start,8,2).')');
+            if ($@) {
+                add_msg("Invalid start date ".CORE::substr($v_start,0,10)." ($f)");
+                $v_start = '';
+            }
+        }
+        if ($v_end) {
+            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_end,0,4).
+                ', month=>'.CORE::substr($v_end,5,2).
+                ', day=>'.CORE::substr($v_end,8,2).')');
+            if ($@) {
+                add_msg("Invalid end date ".CORE::substr($v_end,0,10)." ($f)");
+                $v_end = '';
+            }
+        }
 
         # Save the value so we can repopulate the form.
         $state->{"$f\_start"} = $v_start;

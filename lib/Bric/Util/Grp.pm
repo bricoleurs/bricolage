@@ -238,7 +238,7 @@ sub new {
     my ($self, $init) = @_;
     $self = bless {}, $self unless ref $self;
     $init->{_active} = exists $init->{active} ? 0 : 1;
-    $init->{permanent} = exists $init->{permanent} ? 1 : 0;
+    $init->{permanent} = exists $init->{permanent} && $init->{permanent} ? 1 : 0;
     push @{$init->{grp_ids}}, INSTANCE_GROUP_ID;
     $init->{secret} = ! exists $init->{secret} ? $self->get_secret :
       $init->{secret} ? 1 : 0;
@@ -2233,7 +2233,7 @@ sub _get_attr_obj {
 =item $self = $self->_set_attr($param)
 
 Internal method which either sets the attribute upon the attribute object, or
-if we can not get one yet into a cached area.
+if we cannot get one yet into a cached area.
 
 B<Throws:> NONE.
 

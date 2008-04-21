@@ -16,7 +16,6 @@ use Bric::Util::Grp;
 my $type = CLASS_KEY;
 my $disp_name = 'User';
 my $class = 'Bric::Biz::Person::User';
-my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
 
 sub save : Callback {
@@ -39,7 +38,7 @@ sub save : Callback {
         add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
         # redirect_onload() prevents any other callbacks from executing.
         get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
-          : redirect_onload('http://' . $r->hostname . $port . last_page,
+          : redirect_onload(last_page,
                             $self);
         return;
     }
@@ -150,7 +149,7 @@ sub save : Callback {
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     # But note that because it executes right away, no more callbacks will execute!
     get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
-      : redirect_onload('http://' . $r->hostname . $port . last_page,
+      : redirect_onload(last_page,
                         $self);
 }
 

@@ -281,7 +281,7 @@ sub lookup {
 
 #------------------------------------------------------------------------------#
 
-=item @objs = list Bric::Biz::Category($crit);
+=item @objs = Bric::Biz::Category->list($crit);
 
 Return a list of category objects based on certain criteria
 
@@ -326,6 +326,10 @@ C<ANY> for a list of possible values.
 The ID of a Bric::Biz::Site object with which the category is associated. May
 use C<ANY> for a list of possible values.
 
+=item active_sites
+
+A boolean causing only categories associated with active sites to be returned.
+
 =back
 
 B<Throws:>
@@ -338,7 +342,7 @@ NONE
 
 B<Notes:>
 
-This is the default list constructor which should be overrided in all derived
+This is the default list constructor which should be overridden in all derived
 classes even if it just calls 'die'.
 
 =cut
@@ -526,7 +530,7 @@ sub my_meths {
                               set_args => [],
                               disp     => 'Name',
                               type     => 'short',
-                              len      => 64,
+                              len      => 128,
                               req      => 1,
                               props    => { type       => 'text',
                                             length     => 32,
@@ -1063,7 +1067,7 @@ NONE
 
 =item $self = $cat->set_description($desc);
 
-Sets the description of this category.
+Sets the description of this category, first converting non-Unix line endings.
 
 B<Throws:>
 
@@ -1078,6 +1082,12 @@ B<Notes:>
 NONE
 
 =cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 #------------------------------------------------------------------------------#
 
@@ -1602,6 +1612,10 @@ sub _do_list {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id "
               . " AND m2.active = '1' AND "
               . any_where($v, "m2.grp__id = ?", \@params);
+        } elsif ($k eq 'active_sites') {
+            next unless $v;
+            $tables .= ', site';
+            $wheres .= ' AND a.site__id = site.id AND site.active = TRUE';
         } else {
             # It's a simpler string comparison.
             $wheres .= ' AND '

@@ -17,8 +17,6 @@ sub save : Callback {
     return unless $self->has_perms;
 
     my $keyword = $self->obj;
-    my $name = $keyword->get_name;
-
     my $widget = $self->class_key;
     my $param = $self->params;
     my $is_saving = defined $param->{"$widget\_id"};
@@ -29,7 +27,7 @@ sub save : Callback {
         $keyword->save;
 
         log_event("$widget\_deact", $keyword);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        add_msg("$disp_name profile \"[_1]\" deleted.", $keyword->get_name);
     } else {
         # Roll in the changes. Assume it's active.
         foreach my $meth ($keyword->my_meths(1)) {
@@ -40,7 +38,7 @@ sub save : Callback {
         $keyword->save;
 
         log_event($widget . ($is_saving ? '_save' : '_new'), $keyword);
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        add_msg("$disp_name profile \"[_1]\" saved.", $keyword->get_name);
     }
     $self->set_redirect("/admin/manager/$widget");
     $param->{'obj'} = $keyword;

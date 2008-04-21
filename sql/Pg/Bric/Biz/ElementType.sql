@@ -16,13 +16,13 @@
 CREATE SEQUENCE seq_element_type START 1024;
 
 -- Unique IDs for the subelement table
---CREATE SEQUENCE seq_subelement_type START 1024;
+CREATE SEQUENCE seq_subelement_type START 1024;
 
 -- Unique IDs for element__output_channel
 CREATE SEQUENCE seq_element_type__output_channel START 1024;
 
 -- Unique IDs for element__language
---CREATE SEQUENCE seq_element__language START 1024;
+CREATE SEQUENCE seq_element__language START 1024;
 
 -- Unique IDs for element_type_member
 CREATE SEQUENCE seq_element_type_member START 1024;
@@ -60,30 +60,27 @@ CREATE TABLE element_type  (
     related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
     media           BOOLEAN        NOT NULL DEFAULT FALSE,
     biz_class__id   INTEGER        NOT NULL,
-    et_grp__id      INTEGER,
     type__id        INTEGER,
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 );
 
-/*
+
 -- -----------------------------------------------------------------------------
 -- Table: subelement_type
 --
 -- Description: A table that manages element type parent/child relationships.
--- Here for future reference.
+
 CREATE TABLE subelement_type  (
     id              INTEGER        NOT NULL
                                    DEFAULT NEXTVAL('seq_subelement_type'),
     parent_id       INTEGER        NOT NULL,
     child_id        INTEGER        NOT NULL,
     place           INTEGER        NOT NULL DEFAULT 1,
-    min             INTEGER        NOT NULL DEFAULT 0,
-    max             INTEGER        NOT NULL DEFAULT 0,
+    min_occurrence  INTEGER        NOT NULL DEFAULT 0,
+    max_occurrence  INTEGER        NOT NULL DEFAULT 0,
     CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
 );
-
-*/
 
 -- -----------------------------------------------------------------------------
 -- Table: element__site
@@ -122,7 +119,6 @@ CREATE TABLE element_type__output_channel (
 -- 
 -- Description: The link between element objects and member objects
 --
-
 CREATE TABLE element_type_member (
     id          INTEGER  NOT NULL
                          DEFAULT NEXTVAL('seq_element_type_member'),
@@ -186,15 +182,12 @@ CREATE TABLE attr_element_type_meta (
 --
 CREATE UNIQUE INDEX udx_element_type__key_name ON element_type(LOWER(key_name));
 CREATE INDEX fkx_et_type__element_type ON element_type(type__id);
-CREATE INDEX fkx_grp__element_type ON element_type(et_grp__id);
+
 CREATE INDEX fkx_class__element_type ON element_type(biz_class__id);
 
-/* Subelement_type indexes for future reference.
 CREATE INDEX fkx_element_type__subelement__parent_id ON subelement_type(parent_id);
 CREATE INDEX fkx_element_type__subelement__child_id ON subelement_type(child_id);
 CREATE UNIQUE INDEX udx_subelement_type__parent__child ON subelement_type(parent_id, child_id);
-
-*/
 
 CREATE UNIQUE INDEX udx_et_oc_id__et__oc_id ON element_type__output_channel(element_type__id, output_channel__id);
 CREATE INDEX fkx_output_channel__et_oc ON element_type__output_channel(output_channel__id);
@@ -204,7 +197,6 @@ CREATE INDEX fkx_element_type__et_member ON element_type_member(object_id);
 CREATE INDEX fkx_member__et_member ON element_type_member(member__id);
 
 CREATE UNIQUE INDEX udx_element_type__site on element_type__site(element_type__id, site__id);
-
 
 -- Unique index on subsystem/name pair
 CREATE UNIQUE INDEX udx_attr_et__subsys__name ON attr_element_type(subsys, name);

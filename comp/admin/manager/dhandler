@@ -171,8 +171,8 @@ $m->comp('/widgets/listManager/listManager.mc',
                 : $obj_key eq 'contrib_type' ? $ct_add_sub : $add_sub,
     select => $def->{$type}{select},
     constrain => $constrain || $def->{$type}{constrain},
-      field_titles => $def->{$type}{field_titles},
-      field_values => $def->{$type}{field_values},
+    field_titles => $def->{$type}{field_titles},
+    field_values => $def->{$type}{field_values},
     alter => $def->{$type}{alter},
     exclude => $def->{$type}{exclude} || $excl_sub,
     sortBy => $def->{$type}{sort_by} );
@@ -241,9 +241,9 @@ my $prefix = '';
 if ($type eq 'user') {
     # We'll probably need to redirect them to ssl if its enabled
     if (get_state_name('login') ne 'ssl') {
-    my ($http, $p) = SSL_ENABLE ? ('https://', $ssl_port)
-      : ('http://', $port);
-    $prefix = $http . $r->hostname . $p;
+        if (SSL_ENABLE) {
+            $prefix = 'https://' . $r->hostname . $ssl_port;
+        }
     }
 }
 
@@ -296,7 +296,7 @@ my $site_name = sub { my $s=Bric::Biz::Site->lookup({id => $_[0]});
                       return $s->get_name
                   };
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
-                  
+
 # And we'll use this coderef to determine whether the user can delete objects.
 my ($can_del, $users, $sel_label, $sel_widg, $ets);
 my $sel_sub = sub {
@@ -361,7 +361,6 @@ my $job_type_sub = sub {
 };
 
 # We'll use these variables for redirection relative to the user profiles.
-my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 # Define the look and feel for each type of manager.
@@ -489,7 +488,7 @@ my $def = {
         list_fields => [qw(uri site name)],
         behavior    => 'expand',
         srch_field  => 'uri',
-        constrain   => {},
+        constrain   => { active_sites => 1 },
         select      => $cat_sel_sub,
     },
     workflow => {

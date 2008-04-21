@@ -345,7 +345,15 @@ Get and set the address from which email will be sent. Optional.
 
 Get and set the address or addresses to which email will be sent. Multiple
 addresses should be separated by commas. Either C<to> or C<bcc> or both are
-required.
+required. The setter converts non-Unix line endings.
+
+=cut
+
+sub set_to {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'to' ] => [ $val ]);
+}
 
 =head3 cc
 
@@ -353,7 +361,16 @@ required.
   $action = $action->set_cc($cc);
 
 Get and set the address or addresses to which email will be Cc'd. Multiple
-addresses should be separated by commas. Optional.
+addresses should be separated by commas. Optional. The setter converts
+non-Unix line endings.
+
+=cut
+
+sub set_cc {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'cc' ] => [ $val ]);
+}
 
 =head3 bcc
 
@@ -362,7 +379,15 @@ addresses should be separated by commas. Optional.
 
 Get and set the address or addresses to which email will be Bcc'd. Multiple
 addresses should be separated by commas. Either C<to> or C<bcc> or both are
-required.
+required. The setter converts non-Unix line endings.
+
+=cut
+
+sub set_bcc {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'bcc' ] => [ $val ]);
+}
 
 =head3 subject
 

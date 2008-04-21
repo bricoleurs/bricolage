@@ -309,8 +309,8 @@ sub subclass_burn_test {
     ok my $head = $story_type->new_field_type({
         key_name    => 'header',
         name        => 'Header',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -320,8 +320,8 @@ sub subclass_burn_test {
     ok my $para = $story_type->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 1,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -342,12 +342,13 @@ sub subclass_burn_test {
     ok $pull_quote->save, "Save the subelement element";
     $self->add_del_ids($pull_quote->get_id, 'element_type');
 
+
     # Give it a paragraph field.
     ok my $pq_para = $pull_quote->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -357,8 +358,8 @@ sub subclass_burn_test {
     ok my $by = $pull_quote->new_field_type({
         key_name    => 'by',
         name        => 'By',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 1,
         sql_type    => 'short',
         place       => 2,
         max_length  => 0, # Unlimited
@@ -368,8 +369,8 @@ sub subclass_burn_test {
     ok my $date = $pull_quote->new_field_type({
         key_name    => 'date',
         name        => 'Date',
-        required    => 1,
-        quantifier  => 0,
+        min_occurrence => 1,
+        max_occurrence => 1,
         sql_type    => 'date',
         place       => 3,
         max_length  => 0, # Unlimited
@@ -389,12 +390,13 @@ sub subclass_burn_test {
         reference => 0, # No idea what this is.
     }), "Create a page subelement element";
 
+
     # Give it a paragraph field.
     ok my $page_para = $page->new_field_type({
         key_name    => 'para',
         name        => 'Paragraph',
-        required    => 0,
-        quantifier  => 0,
+        min_occurrence => 0,
+        max_occurrence => 0,
         sql_type    => 'short',
         place       => 1,
         max_length  => 0, # Unlimited
@@ -567,6 +569,10 @@ sub subclass_burn_test {
     ok $elem->add_data($head, "And then..."), "Add a header";
     ok $elem->add_data($para, 'Third paragraph'), "Add a third paragraph";
 
+    # Add the pull quote to valid subelements
+    ok $elem->get_element_type->add_container($pull_quote),
+        "Adding the temp subelement to the parent.";
+
     # Add a pull quote.
     ok my $pq = $elem->add_container($pull_quote), "Add a pull quote";
     ok $pq->get_field('para')->set_data(
@@ -665,6 +671,10 @@ sub subclass_burn_test {
     ok -e $prev_file, "File should now exist" or return "Failed to create $file!";
     file_contents_is($prev_file, $self->story_output,
                      "Check the preview file contents");
+
+    # Add the pull quote to valid subelements
+    ok $elem->get_element_type->add_container($page),
+        "Adding the temp subelement to the parent.";
 
     # Okay, cool. Let's just stick to burning and try adding a couple of
     # pages.

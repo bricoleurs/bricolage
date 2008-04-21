@@ -188,7 +188,9 @@ sub save : Callback(priority => 6) {
     # Clear the state and send 'em home.
     $self->clear_my_state;
 
-    if ($return eq 'search') {
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
+    } elsif ($return eq 'search') {
         my $url = $SEARCH_URL . $workflow_id . '/';
         $self->set_redirect($url);
     } elsif ($return eq 'active') {
@@ -284,6 +286,7 @@ sub checkin : Callback(priority => 6) {
         begin(1);
 
         # Use the desk callback to save on code duplication.
+        clear_authz_cache( $media );
         my $pub = Bric::App::Callback::Desk->new(
             cb_request => $self->cb_request,
             apache_req => $self->apache_req,
@@ -292,8 +295,13 @@ sub checkin : Callback(priority => 6) {
 
         # Clear the state out, set redirect, and publish.
         $self->clear_my_state;
-        $self->set_redirect('/');
         $pub->publish;
+        if (my $prev = get_state_data('_profile_return')) {
+            $self->return_to_other($prev);
+        } else {
+            $self->set_redirect('/');
+        }
+
 
     } else {
         # Look up the selected desk.
@@ -325,7 +333,11 @@ sub checkin : Callback(priority => 6) {
 
         # Clear the state out and set redirect.
         $self->clear_my_state;
-        $self->set_redirect('/');
+        if (my $prev = get_state_data('_profile_return')) {
+            $self->return_to_other($prev);
+        } else {
+            $self->set_redirect('/');
+        }
     }
 }
 
@@ -414,7 +426,11 @@ sub cancel : Callback(priority => 6) {
         add_msg('Media "[_1]" check out canceled.', $media->get_title);
     }
     $self->clear_my_state;
-    $self->set_redirect("/");
+    if (my $prev = get_state_data('_profile_return')) {
+        $self->return_to_other($prev);
+    } else {
+        $self->set_redirect('/');
+    }
 }
 
 ################################################################################
@@ -448,7 +464,11 @@ sub return : Callback(priority => 6) {
 
         # Clear the state and send 'em home.
         $self->clear_my_state;
-        $self->set_redirect($url);
+        if (my $prev = get_state_data('_profile_return')) {
+            $self->return_to_other($prev);
+        } else {
+            $self->set_redirect($url);
+        }
     }
 }
 
@@ -754,7 +774,7 @@ sub handle_upload {
     my $filename = $agent =~ /windows/i && $agent =~ /msie/i
         ? Bric::Util::Trans::FS->base_name($upload->filename, 'win32')
         : $upload->filename;
-    $media->upload_file($fh, $filename, $upload->type, $upload->size);
+    $media->upload_file($fh, $filename, undef, $upload->size);
     log_event('media_upload', $media);
     return $self;
 }

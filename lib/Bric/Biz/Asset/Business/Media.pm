@@ -239,10 +239,10 @@ use constant PARAM_WHERE_MAP => {
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND mct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
-      subelement_id         => 'i.id = sme.object_instance_id AND sme.element_type__id = ?',
+      subelement_id         => 'i.id = sme.object_instance_id AND sme.active = TRUE AND sme.element_type__id = ?',
       related_story_id      => 'i.id = mctrs.object_instance_id AND mctrs.related_story__id = ?',
       related_media_id      => 'i.id = mctrm.object_instance_id AND mctrm.related_media__id = ?',
-      data_text             => 'LOWER(md.short_val) LIKE LOWER(?) AND md.object_instance_id = i.id',
+      data_text             => '(LOWER(md.short_val) LIKE LOWER(?) OR LOWER(md.blob_val) LIKE LOWER(?)) AND md.object_instance_id = i.id',
       title                 => 'LOWER(i.name) LIKE LOWER(?)',
       description           => 'LOWER(i.description) LIKE LOWER(?)',
       version               => 'i.version = ?',
@@ -303,14 +303,14 @@ use constant PARAM_ANYWHERE_MAP => {
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
     subelement_key_name    => [ 'i.id = mct.object_instance_id AND mct.element_type__id = subet.id',
                                 'LOWER(subet.key_name) LIKE LOWER(?)' ],
-    subelement_id          => [ 'i.id = sme.object_instance_id',
+    subelement_id          => [ 'i.id = sme.object_instance_id AND sme.active = TRUE',
                                 'sme.element_type__id = ?' ],
     related_story_id       => [ 'i.id = mctrs.object_instance_id',
                                 'mctrs.related_story__id = ?' ],
     related_media_id       => [ 'i.id = mctrm.object_instance_id',
                                 'mctrm.related_media__id = ?' ],
     data_text              => [ 'md.object_instance_id = i.id',
-                                'LOWER(md.short_val) LIKE LOWER(?)' ],
+                                '(LOWER(md.short_val) LIKE LOWER(?) OR LOWER(md.short_val) LIKE LOWER(?))' ],
     output_channel_id      => [ 'i.id = moc.media_instance__id',
                                 'moc.output_channel__id = ?' ],
     category_uri           => [ 'i.category__id = c.id',
@@ -1215,6 +1215,9 @@ sub set_category__id {
         $uri = Bric::Util::Trans::FS->cat_uri
           ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
     }
+
+    # If we've changed the category we need to repreview it if on autopreview
+    $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
 
     $self->_set([qw(_category_obj category__id uri    grp_ids   _update_uri)] =>
                 [   $cat,         $cat_id,     $uri, \@grp_ids, $update_uri]);

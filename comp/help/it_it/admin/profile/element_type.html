@@ -1,68 +1,85 @@
 <help page="Element Type Profile">
 
-<p>
 <dl>
 
 <dt>Properties</dt>
-<dd>Enter the Element Type's name, key name, and a brief description.
-    The key name should be unique, one-word identifier. Choose
-    a type of Burner for your templates to use. When adding a new
-    Element Type, you can also select the Element Type Set.</dd>
+<dd>Enter the element type's name, key name, and a brief description. The key
+    name should be a unique, one-word identifier If the element type
+    represents a document page or is allowed to create a relationship with a
+    story or media document, select the appropriate checkbox. If the element
+    type is a story type or media type, and you want it to have a fixed URI
+    (usually meaning that only the category URI makes up the document URI),
+    select the <q>Fixed</q> checkbox. The <q>Type</q> indicates the type of
+    element type, which is one of <q>Story</q> for story types, <q>Media</q>
+    for media types, or <q>Subelement</q> for subelements. Media type elements
+    can also be one of three subtypes, available in a select
+    list: <q>Audio,</q> <q>Image,</q> <q>Video,</q> or <q>Other
+    Media.</q></dd>
 
 <dt>Group Memberships</dt>
-<dd>Groups determine the permission that users will have to
-    read, edit, or create Elements Types of this kind. Select a group
-    from the 'Available Groups' list and click the 'Add to List'
-    button to add it to the 'Current Groups'. You can remove a
-    group from the 'Current Groups' by selecting a group and
-    clicking 'Remove from List'. If you are creating a new Element Type,
-    click the Next button to continue. This will bring you to the
-    full Element Type Profile.</dd>
+<dd>Groups determine the permission that users will have to read, edit, or
+    create elements types of this kind. Select a group from the <q>Available
+    Groups</q> list and click the <em>Add to List</em> button to add it to the
+    <q>Current Groups.</q> You can remove a group from the <q>Current
+    Groups</q> by selecting a group and clicking <em>Remove from List.</em> If
+    you are creating a new element type, click the <em>Next</em> button to
+    continue. This will bring you to the full element type profile.</dd>
 
 <dt>Sites</dt>
-<dd>Top-level elements (story and media type elements) can be shared among several sites.
-    This section won't be present for non-top-level elements. The Sites
-    section allows you to add or delete sites from the element.
-    You can also select the Primary Output Channel for each site.</dd>
+<dd>Top-level element types (story and media type elements) can be shared
+    among several sites. This section won't be present for non-top-level
+    elements or if Bricolage manages only one site. The <q>Sites</q> section
+    allows you to add or delete sites from the element. You can also select
+    the primary output channel for each site—if there is more than one output
+    channel.</dd>
 
-<dt>Existing Subelements</dt>
-<dd>Elements are really containers for other elements as well as
-    data fields. To add subelements to an element, click
-    the 'Add Subelement' button to bring up
-    the 'Choose Subelements' screen. Use the Search box as usual
-    to select all or a subset of the available subelements. Naturally,
-    the elements you can select won't include top-level elements.
-    To add elements, check their corresponding 'Add to Element'
-    checkboxes, then click 'Add Elements'; if you decide you don't
-    want to add any subelements, just leave all the checkboxes blank
-    and click 'Add Elements'.
-    This will bring you back to the Element Type Profile.</dd>
+<dt>Existing Subelement Types</dt>
+<dd>
+  <p>Element types really define container elements that contain other
+     elements as well as fields. To add subelement types to an element type,
+     click the <em>Add Subelement</em> button to bring up the <q>Choose
+     Subelements</q> screen. Use the Search box as usual to select all or a
+     subset of the available subelement element types. Naturally, the element
+     types you can select won't include story or media element types. To add
+     subelement types, select their corresponding <q>Add to Element Type</q>
+     checkboxes, then click <em>Add Elements</em>; if you decide you don't
+     want to add any subelements element types, just leave all the checkboxes
+     unselected and click <em>Add Elements</em>. This will bring you back to
+     the element type profile.</p>
+  <p>Once back in the element type profile, you can specify the minimum and
+     maximum numbers of elements of each type that can be added to the
+     element. When a new element of this type is created, the minimum number
+     of subelements will automatically be created for it. The user will never
+     be able to add more than the maximum number of elements. If the
+     <q>Min</q> field is blank or <q>0</q> (the default), then there is no
+     minimum number. Likewise for the <q>Max</q> field: blank or 0 means that
+     there is no maximum number of subelements that can be added.</p>
+</dd>
 
 <dt>Custom Fields</dt>
-<dd>Fields are where data is stored. Along with subelements,
-    these define the structure of an element. In the Custom Fields
-    section you can edit the default value for the field. You can
-    reorder the elements by selecting a number from the popup menu.
-    To edit the field, click the Edit link. This will bring you
-    to the Field Profile, where you can change anything
-    about the field except its key name and type (text area,
-    checkbox, etc.). Finally, to delete a field, check the
-    'Delete' checkbox and click one of the Save buttons at
-    the bottom.</dd>
+<dd>Fields are where content is stored. Along with subelement element types,
+    these define the structure of an element type. In the <q>Custom Fields</q>
+    section you can edit the default value for the listed fields and reorder
+    them by selecting a number from the popup menus. To edit a field, click
+    the <em>Edit</em> link. This will bring you to
+    the <q><a href="field_type.html" title="Field Type Profile Help">Field
+    Type Profile</a>,</q> where you can change anything about the field except
+    its key name Finally, to delete a field, select the <q>Delete</q> checkbox
+    and click one of the <em>Save</em> buttons at the bottom of the
+    screen.</dd>
 
 <dt>Add New Field</dt>
-<dd>This is where you add new fields to the Custom Fields section.
-    First, choose the field type from the group of checkboxes on
-    the left. Through the magic of JavaScript, this will change
-    the available attributes on the right depending on which field
-    type you choose. The attributes are explained in detail on
-    the <a href="field_type.html">Field Type Profile Help Page</a></dd>
+<dd>This is where you add new fields to the Custom Fields section. First,
+    choose the widget you would like to use from the group of radio buttons on
+    the left. The fields required for the management of that widget will be
+    displayed in the rest of this section. These fields are explained in
+    detail on the <a href="field_type.html">Field Type Profile Help
+    Page</a></dd>
 
 </dl>
-</p>
 
-<p>When finished, click <em>Save</em>, or click <em>Save and Stay</em> to save but
-   continue editing the Element. Clicking <em>Return</em> will bring you
-   back to the Element Type Manager without saving your changes.</p>
+<p>When finished, click <em>Save</em>, or click <em>Save and Stay</em> to save
+   but continue editing the Element. Clicking <em>Return</em> will bring you
+   back to the <q>Element Type Manager</q> without saving your changes.</p>
 
 </help>

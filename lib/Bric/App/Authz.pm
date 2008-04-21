@@ -58,7 +58,7 @@ use Bric::Util::ApacheReq;
 use base qw(Exporter);
 
 # READ, EDIT, and CREATE are re-exported from Bric::Util::Priv::Parts::Const.
-our @EXPORT_OK = qw(chk_authz READ EDIT CREATE);
+our @EXPORT_OK = qw(chk_authz clear_authz_cache READ EDIT CREATE);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ################################################################################
@@ -164,6 +164,29 @@ sub chk_authz {
                                     obj => $obj);
 }
 
+##############################################################################
+
+=item clear_authz_cache( $obj )
+
+Clears the authz cache for an object as set by a call to C<chk_authz>. The
+cache is generally useful, as it lasts for the duration of a request, but
+sometimes group memberships change during the lifetime of a request. In such
+cases, the authorzation cache for that object should be cleared before the
+next call to C<chk_authz>.
+
+=cut
+
+sub clear_authz_cache {
+    my $obj = shift;
+    my $ref = ref $obj or return;
+    my $id = $obj->get_id;
+    $id = '' unless defined $id;
+    my $key = "_AUTHZ_:$ref:$id";
+    my $r = Apache::Request->instance(Apache->request);
+    $r->pnotes( $key, undef );
+    return $obj;
+}
+
 ################################################################################
 
 =back
@@ -197,7 +220,7 @@ David Wheeler <david@justatheory.com>
 
 =head1 SEE ALSO
 
-L<Bric|Bric>, 
+L<Bric|Bric>,
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>
 
 =cut

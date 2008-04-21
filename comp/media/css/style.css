@@ -18,6 +18,7 @@ button img { vertical-align: bottom; }
 form       { margin: 0; padding: 0; }
 input      { vertical-align: middle; }
 .textInput { font-family: Verdana, Helvetica, Arial, sans-serif; }
+.subelement .textInput { text-align: right; }
 textarea { 
     font-family: Verdana, Helvetica, Arial, sans-serif; 
     font-size: 1em;
@@ -678,6 +679,16 @@ div.autocomplete span.highlight { font-weight: bold; }
 .adminBox .tab.selected a {
   background: url("/media/images/box_tab_right.gif") bottom right no-repeat;
   padding: 6px 14px;
+}
+
+/***************************************************
+ * VIEW BOXES 
+***************************************************/
+
+pre {
+    white-space: pre-wrap;
+    word-break: normal;
+    white-space: -moz-pre-wrap;
 }
 
 /******************************************************

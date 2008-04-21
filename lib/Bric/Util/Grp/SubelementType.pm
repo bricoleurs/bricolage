@@ -215,7 +215,10 @@ NONE
 =cut
 
 sub get_supported_classes {
-    return { &PACKAGE => TABLE };
+    return {
+       &PACKAGE => TABLE,
+       'Bric::Biz::ElementType::Subelement' => TABLE,
+    };
 }
 
 ##############################################################################

@@ -799,11 +799,8 @@ sub load_asset {
         }
 
         # set simple fields
-        my @simple_fields = qw(description uri);
+        my @simple_fields = qw(description uri publish_status);
         $media->_set(\@simple_fields, [ @{$mdata}{@simple_fields} ]);
-
-        # avoid setting publish_status on create
-        $media->set_publish_status($mdata->{publish_status}) if $update;
 
         # remove all contributors if updating
         unless ($aliased) {

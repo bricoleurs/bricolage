@@ -11,7 +11,7 @@ Object.extend(Form.Element, {
         }
         return false;
     },
-    
+
     radioValue: function(form, name) {
         var val = $A(Form.getInputs(form, "radio", name)).find(function(radio) {
             return radio.checked;
@@ -30,18 +30,18 @@ Object.extend(Form.EventObserver.prototype, {
     }
 });
 
-Ajax.Autocompleter.prototype._onComplete = 
+Ajax.Autocompleter.prototype._onComplete =
   Ajax.Autocompleter.prototype.onComplete;
-Ajax.Autocompleter.prototype._onKeyPress = 
+Ajax.Autocompleter.prototype._onKeyPress =
   Ajax.Autocompleter.prototype.onKeyPress;
 Object.extend(Ajax.Autocompleter.prototype, {
   onKeyPress: function(event) {
       var originallyActive = this.active;
       this._onKeyPress(event);
-      
+
       // Catch <enter> keypresses
       if (event.keyCode == 13) {
-          
+
           // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
           // This makes the selection go to the end.
           if(navigator.appVersion.indexOf('AppleWebKit') > 0) {
@@ -49,20 +49,20 @@ Object.extend(Ajax.Autocompleter.prototype, {
               element.setSelectionRange(element.value.length, element.value.length);
               return false;
           }
-          
+
           // Don't submit the form when you click enter!
           Event.stop(event);
 
           if (!originallyActive && this.options.onEnter) {
               this.options.onEnter(this.element);
           }
-          
+
           return false;
       }
-      
+
       return true;
   },
-  
+
   // Extend Ajax.Autocompleter to add a callback when the returned list is empty
   // See http://dev.rubyonrails.org/ticket/5120
   onComplete: function(request) {
@@ -98,7 +98,7 @@ function wordCount(textbox, words, chars) {
     textbox = $(textbox);
     words   = $(words);
     chars   = $(chars);
-    
+
     // Remove POD tags and newlines.
     var text = textbox.value.replace(/=.*|\n+/g, ' ');
     var charCount = text.length;
@@ -107,7 +107,7 @@ function wordCount(textbox, words, chars) {
     for(var i = 0; i < text.length; i++) {
         if (text[i].length > 0) wordCount++;
     }
-    
+
     // Display the results.
     words.innerHTML = wordCount;
     chars.innerHTML = charCount;
@@ -160,7 +160,7 @@ function checkPasswords(obj1, obj2, passwd_length) {
     var pass2 = obj2.value;
 
     if (!newUser && pass1.length == 0) return true;
-    
+
     // No fewer than passwd_length characters.
     if (pass1.length < passwd_length) {
         alert(passwd_msg1 + passwd_length + passwd_msg2);
@@ -264,32 +264,32 @@ output: none.
 This function is called when a position drop down is changed in a story profile.
 */
 function reorder(obj, container) {
-    
+
     var container = $(container);
     var selects = $A(document.getElementsByClassName("reorder", container));
     var newIndex = obj.selectedIndex;
-    
+
     var order = $A();
     selects.each(function(select) {
         if (select != obj) order[select.selectedIndex] = select;
     });
-    
+
     var offset = 0;
     for (var i = 0; i < order.length; i++) {
         var curObj = order[i];
-        
+
         if (!(i in order)) {
             // This is the empty space left by the moving element; backshuffle
             offset--;
         } else {
             // Otherwise get the object and see if we need to update our offset
-            
-            // No shifting has been done if offset is 0 
+
+            // No shifting has been done if offset is 0
             if (i == newIndex && offset == 0) offset++;
-            
+
             // Special adjustment to make sure all necessary elems are shifted
             if (i == newIndex + 1 && offset == -1) offset = 0;
-            
+
             // Update the index.
             curObj.selectedIndex = curObj.selectedIndex + offset;
         }
@@ -335,8 +335,8 @@ function setDays (year, month, days, obj) {
     var curDay = daysObj.options[daysObj.selectedIndex].value;
     var numDays = 30;
     var opt;
-        
-    if (month == "01" || month == "03" || month == "05" || month == "07" || month == "08" || month == "10" || month == "12") {  
+
+    if (month == "01" || month == "03" || month == "05" || month == "07" || month == "08" || month == "10" || month == "12") {
         numDays = 31;
     } else if (month == "02") {
         if ( ! (year % 4) ) {
@@ -349,7 +349,7 @@ function setDays (year, month, days, obj) {
     // If the list is longer than num days, just truncate it.
     if (daysObj.options.length > numDays) {
         daysObj.options.length = numDays + 1;
-    } 
+    }
     // If its shorter than num days, add to it.
     else {
         for (var i=daysObj.options.length; i <= numDays; i++) {
@@ -379,7 +379,7 @@ formBuilder.submit = function(frm, mainform, action) {
     if (action == "add") {
         if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
-            
+
             main.submit();
         }
     } else {
@@ -391,9 +391,9 @@ formBuilder.submit = function(frm, mainform, action) {
             // It'll either save or save and stay.
             main.elements["formBuilder|" + action + "_cb"].value = 1;
         }
-        if ( confirmChanges(main) ) main.submit();  
+        if ( confirmChanges(main) ) main.submit();
     }
-    
+
     return false;
 };
 
@@ -416,7 +416,7 @@ formBuilder.confirm = function (frm) {
                     alert(data_msg);
                     obj.focus();
                     confirming = false // check this
-                        return false;                       
+                        return false;
                 }
             }
         }
@@ -433,27 +433,27 @@ formBuilder.switchType = function(type) {
     var labels = fb.getElementsByTagName("label");
     for (var i = 0; i < labels.length; i++) {
         var target = $(labels[i].htmlFor);
-        if (typeof this.labels[type] != "undefined" 
+        if (typeof this.labels[type] != "undefined"
             && typeof this.labels[type][target.name] != "undefined") {
-            
+
             // Save the default label before changing it
             if (typeof this.defaultLabels[target.name] == "undefined")
                 this.defaultLabels[target.name] = labels[i].innerHTML;
-            
+
             labels[i].innerHTML = this.labels[type][target.name] + ":";
 
         // Use the default if it exists and a new value doesn't
         } else if (typeof this.defaultLabels[target.name] != "undefined") {
-            labels[i].innerHTML = this.defaultLabels[target.name];        
+            labels[i].innerHTML = this.defaultLabels[target.name];
         }
-        
-        if (typeof this.values[type] != "undefined" 
+
+        if (typeof this.values[type] != "undefined"
             && typeof this.values[type][target.name] != "undefined") {
-            
+
             // Save the default value before changing it
             if (typeof this.defaultValues[target.name] == "undefined")
                 this.defaultValues[target.name] = target.value;
-            
+
             target.value = this.values[type][target.name];
         } else if (typeof this.defaultValues[target.name] != "undefined") {
             target.value = this.defaultValues[target.name];
@@ -476,7 +476,7 @@ var submitting = false
 function checkRequiredFields(form) {
     ret = true;
     Form.getElements(form).each(function(element) {
-        if (Element.hasClassName(element, "required") 
+        if (Element.hasClassName(element, "required")
                 && Element.visible(element) && $F(element) == '') {
             alert(empty_field_msg + Form.Element.label(element));
             element.focus();
@@ -507,10 +507,29 @@ function confirmChanges(obj) {
 
     // look for a delete checkbox and do an alert if it is checked...
     for (var i=0; i < document.forms.length; i++) {
-        var tmp = document.forms[i];    
-        for (var j=0; j < tmp.elements.length; j++) {   
-            if (tmp.elements[j].type == "checkbox" && tmp.elements[j].name.indexOf("delete") != -1) {                   
-                if (tmp.elements[j].checked && !confirmed) {
+        var tmp = document.forms[i];
+        for (var j=0; j < tmp.elements.length; j++) {
+            var field = tmp.elements[j];
+
+            // Check for validating class names.
+            // Note: This is a good way to simply add new validations. Just
+            // add create the proper class name to the field and set its title
+            // attribute. Then implement the handling of the validating class
+            // here.
+            if ( Element.hasClassName(field, 'validate-digits') ) {
+                if ( field.value.match( /\S/ ) && !field.value.match( /^\d+$/ ) ) {
+                    field.value = '';
+                    field.focus();
+                    field.style.background = '#f99';
+                    field.style.border     = '1px solid red';
+                    alert((field.title || field.name) + digits_only_msg);
+                    return confirming = false;
+                }
+            }
+
+            // Throw an alert for delete checkbox.
+            if (field.type == "checkbox" && field.name.indexOf("delete") != -1) {
+                if (field.checked && !confirmed) {
                     ret = confirmDeletions();
                     confirmed = true;
                 }
@@ -522,7 +541,7 @@ function confirmChanges(obj) {
 
     // if we get this far, we've got a live submission.
     // if there is a 2xLM,
-    // find the items that are new on the right, mark them 
+    // find the items that are new on the right, mark them
     // selected, and send it on.
     if (formObj) {
         // loop thru the array of 2xLM names
@@ -558,7 +577,7 @@ function confirmURIFormats(obj) {
         obj['uri_format'],
         obj['fixed_uri_format']
     ];
-        
+
     for (var i in formats) {
         var format = formats[i].value;
         if (!format.match(/%\{categories\}/)) {
@@ -574,7 +593,7 @@ function confirmURIFormats(obj) {
 
 var movedItems = new Array;
 
-// Originally by Saqib Khan - http://js-x.com/ 
+// Originally by Saqib Khan - http://js-x.com/
 // Modified (quite heavily) by Marshall Roch, 2005-03-14
 function move_item(formName, from, to) {
     var found;
@@ -641,7 +660,7 @@ Real time character counter for text areas
 */
 function textCount(which, maxLength) {
     var myObj= $(which);
-    if (myObj.value.length>maxLength) myObj.value=myObj.value.substring(0,maxLength); 
+    if (myObj.value.length > maxLength) myObj.value=myObj.value.substring(0,maxLength);
     $("textCountUp" + which).innerHTML = myObj.value.length;
     $("textCountDown" + which).innerHTML = maxLength-myObj.value.length;
 }
@@ -681,14 +700,14 @@ function openWindow(uri, name, opts) {
       resizable: 1,
       closeOnUnload: false
     }, opts || {});
-    
+
     if (options['closeOnUnload']) {
-      Event.observe(window, "unload", (function() { 
+      Event.observe(window, "unload", (function() {
         if (win && !win.closed) win.close()
       }).bindAsEventListener(this));
     }
     delete options['closeOnUnload'];
-    
+
     var win = window.open(
         uri,
         name || 'BricolagePopup',
@@ -699,7 +718,7 @@ function openWindow(uri, name, opts) {
     return win;
 }
 function openAbout() { return openWindow("/help/" + lang_key + "/about.html"); }
-function openHelp()  { 
+function openHelp()  {
     var uri = window.location.pathname.replace(/[\d\/]+$/g, '');
     if (uri.length == 0) uri = "/workflow/profile/workspace";
     else uri = uri.replace(/profile\/[^\/]+\/container/, 'profile/container');
@@ -923,7 +942,7 @@ function findNext (field) {
 
     var string = field.found.shift();
     var start = field.value.indexOf(string, field.lastFoundIndex);
-    
+
     if (start == -1) {
         alert(no_more_instances);
         delete field.lastFoundIndex;
@@ -955,7 +974,7 @@ function replaceAll (field) {
         field.value = chunks.join(replace);
         field.focus(); field.blur();
         closeDialog($('finddialog'));
-        alert(replaced + (chunks.length - 1) + chunks.length > 2 ? occurrence : occurrences);
+        alert((replaced) + (chunks.length - 1) + (chunks.length > 2 ? occurrences : occurrence));
     }
     return false;
 }
@@ -998,7 +1017,7 @@ function toggleMenu (el, id) {
 
 function alternateTableRows(element) {
     element = $(element);
-    $A(element.getElementsByTagName("tr")).select(function(row) { 
+    $A(element.getElementsByTagName("tr")).select(function(row) {
       return row.getElementsByTagName("td").length > 0 // Exclude header rows
     }).each(function(row, index) {
         if (index % 2 == 0) {
@@ -1022,14 +1041,14 @@ document.getParentByTagName = function(element, tagName) {
     element = $(element);
     while (element.parentNode && (!element.tagName ||
         (element.tagName.toUpperCase() != tagName.toUpperCase()))) {
-      element = element.parentNode;      
+      element = element.parentNode;
     }
     return element;
 }
 
 var Desk = {
     visibleMenu: '',
-    
+
     update: function(element, opts) {
         element = $(element);
         var options = Object.extend({
@@ -1039,7 +1058,7 @@ var Desk = {
         Desk.hideMenu();
         new Ajax.Updater(element, options.uri, { insertion: Element.replace, asynchronous: true, parameters: options.parameters });
     },
-    
+
     request: function(opts) {
         var options = Object.extend({
             uri: document.location,
@@ -1048,7 +1067,7 @@ var Desk = {
         Desk.hideMenu();
         new Ajax.Request(options.uri, { asynchronous: true, parameters: options.parameters });
     },
-    
+
     showMenu: function(button, event) {
         Desk.hideMenu();
         Desk.visibleMenu = button.id + "_desks";
@@ -1056,7 +1075,7 @@ var Desk = {
         Event.stop(event);
         Event.observe(document, "click", Desk.hideMenu);
     },
-    
+
     hideMenu: function() {
         if (Desk.visibleMenu != '') Element.hide(Desk.visibleMenu);
         Desk.visibleMenu = '';
@@ -1070,7 +1089,7 @@ var Desk = {
  *
  * Options:
  *  - autocomplete: determines whether an AJAX request will be made to list
- *        existing options for the user to choose from. 
+ *        existing options for the user to choose from.
  *        (default: true)
  *  - uri: the URI of the page that will return the autocompletion list
  *  - list: the ID or DOM object of the container list to which the new objects
@@ -1086,17 +1105,17 @@ FastAdd.prototype = {
         }, options || {});
         this.type = type;
         this.list = $(this.options.list);
-        
+
         if (this.options.autocomplete) {
           this.autocompleter = new Ajax.Autocompleter(
-            'add_' + this.type, 
-            'add_' + this.type + '_autocomplete', 
-            this.options.uri, 
+            'add_' + this.type,
+            'add_' + this.type + '_autocomplete',
+            this.options.uri,
             autocomplete_options
           );
         }
     },
-    
+
     add: function(element) {
         value = $F(element);
 
@@ -1120,11 +1139,11 @@ FastAdd.prototype = {
         if (!placed) {
             this.list.appendChild(item);
         }
-        
+
         $(element).value = '';
         if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
     },
-    
+
     remove: function(element) {
         Element.remove(element);
         if (this.options.autocomplete) this.autocompleter.options.defaultParams = Form.serialize(this.list);
@@ -1136,18 +1155,18 @@ Tabs.prototype = {
     initialize: function(tabGroup, pageGroup) {
         this.tabs = document.getElementsByClassName('tab', $(tabGroup));
         this.pages = document.getElementsByClassName('page', $(pageGroup));
-        
+
         var selected = this.tabs.first();
         this.tabs.each(function(tab) {
           Element.removeClassName(tab, "first");
           if (Element.hasClassName(tab, "selected")) selected = tab;
         })
         Element.addClassName(this.tabs.first(), "first");
-        
+
         // Select the first tab by default
         this.switchTab(selected);
     },
-    
+
     switchTab: function(newTab) {
         this.tabs.each(function(tab) {
             if (tab.id == newTab.id) {
@@ -1169,11 +1188,11 @@ Abstract.ListManager.prototype = {
         };
         Object.extend(this.options, options || {});
     },
-    
+
     updatePartial: function(uri, callback) {
         var extraParams = this.options.extraParameters.join("&");
         extraParams = extraParams ? "&" + extraParams : '';
-        
+
         new Ajax.Updater(this.element, uri, {
           parameters: Form.serialize(this.element) + extraParams,
           asynchronous: true,
@@ -1190,29 +1209,29 @@ AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
         this.setOptions(options);
         this.initializePrimaryRadios();
     },
-    
+
     initializePrimaryRadios: function() {
         var self = this;
         new Form.EventObserver(this.element, function() { self.updateDeletes(); } );
     },
-    
+
     updateList: function() {
-        this.updatePartial(this.options.uri, function() { 
+        this.updatePartial(this.options.uri, function() {
             this.updateDeletes();
         });
     },
-  
+
     add: function(element) {
         this.options.extraParameters.push($(element).id + "=" + $F(element));
         this.updateList();
         this.options.extraParameters.pop();
     },
-    
+
     remove: function(element) {
-        Element.remove(element); 
+        Element.remove(element);
         this.updateList();
     },
-    
+
     updateDeletes: function() {
         var deleteButtons = Form.getInputs(this.element, "image", "delete_" + this.options.type);
         var primary = Form.Element.radioValue(this.element, "primary_" + this.options.type + "_id");
@@ -1234,42 +1253,42 @@ var Container = {
         var options = Object.extend({
             extraParameters: ''
         }, opts || {});
-        
+
         var element = $('element_' + container_id + '_content');
-        
+
         var params = 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form"));
         if (options.extraParameters != '') {
             params = params + '&' + options.extraParameters;
         }
-        
-        new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', { 
+
+        new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', {
             parameters: params,
-            asynchronous: true, 
+            asynchronous: true,
             evalScripts: true,
-            onComplete: function(request) { 
+            onComplete: function(request) {
                 Container.updateOrder('element_' + container_id)
-            } 
+            }
         });
     },
-    
+
     updateOrder: function(list) {
         list = $(list);
 
         // We must do this so that new elements are sortable
-        Sortable.create(list, { 
-            onUpdate: function(elem) { 
-                Container.updateOrder(elem); 
-            }, 
+        Sortable.create(list, {
+            onUpdate: function(elem) {
+                Container.updateOrder(elem);
+            },
             handle: 'name'
         });
-        
+
         $('container_prof_' + list.id).value = Sortable.sequence(list);
     },
-    
+
     confirmDelete: function() {
         return confirm(warn_delete_msg);
     },
-    
+
     // Used to associate a story or media with an element, from a popup.  It returns the updated
     // partial, which is then inserted into the parent window.
     // Takes the container ID to which to add the asset and the ID of the asset to relate
@@ -1278,32 +1297,32 @@ var Container = {
           window.opener.document.getElementById('element_' + container_id + '_rel_' + type),
           '/widgets/container_prof/_related.html', {
               parameters: 'type=' + type + '&widget=' + widget + '&container_id=' + container_id + '&container_prof|' + action + '_' + type + '_cb=' + asset_id,
-              asynchronous: true, 
-              onComplete: function(request) { 
+              asynchronous: true,
+              onComplete: function(request) {
                   window.close();
               }
           }
         )
     },
-    
+
     relate: function(type, widget, container_id, asset_id) {
         return Container.update_related('relate', type, widget, container_id, asset_id);
     },
-    
+
     unrelate: function(type, widget, container_id, asset_id) {
         return Container.update_related('unrelate', type, widget, container_id, asset_id);
     },
-    
+
     addElement: function(container_id, element_id) {
-        Container.refresh(container_id, { 
+        Container.refresh(container_id, {
             extraParameters: 'container_prof|add_element_cb=' + container_id + '&container_prof|add_element_to_' + container_id + '=' + element_id
         });
     },
-    
+
     deleteElement: function(container_id, element_id) {
-        if (Container.confirmDelete()) { 
-            Container.refresh(container_id, { 
-                extraParameters: 'container_prof|delete_cb=' + element_id 
+        if (Container.confirmDelete()) {
+            Container.refresh(container_id, {
+                extraParameters: 'container_prof|delete_cb=' + element_id
             });
         }
     }

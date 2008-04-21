@@ -773,13 +773,22 @@ B<Notes:> NONE.
 
 =item $desc = $att->set_description($desc);
 
-Get/Set the description for this AT type.
+Get/Set the description for this AT type, first converting non-Unix line
+endings.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=cut
+
+sub set_description {
+    my ($self, $val) = @_;
+    $val =~ s/\r\n?/\n/g if defined $val;
+    $self->_set( [ 'description' ] => [ $val ]);
+}
 
 =item $topl = $att->get_top_level;
 

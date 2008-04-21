@@ -329,49 +329,55 @@ sub grant_permissions {
     my $dbh = DBI->connect(join(':','dbi',DBD,$dsn), $opt_u, $opt_p, ATTR);
 
     # Get a list of objects to grant permissions on.
-    my $sql = qq{
-        SELECT n.nspname || '.' || c.relname
-        FROM   pg_catalog.pg_class c
-               LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
-               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-        WHERE  c.relkind IN ('r', 'S')
-               AND u.usename = ?
-               AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
-               AND pg_catalog.pg_table_is_visible(c.oid)
-    };
-
-    my $objects;
-    eval {
-	my $sel = $dbh->prepare($sql);
-	$objects = $dbh->selectcol_arrayref($sel, undef, lc $opt_u);
-        $dbh->disconnect;
-	return 1 unless @$objects;
-    };
-
-    if ($@) {
-	warn "\nProblems executing sql:\n\n" unless $opt_q;
-	# Log this error;
-
-	if ($STOP) {
-	    warn "$sql\n\n$@\n\n";
-	    print "Continue (c), Go non-interactive (g), Quit (q): ";
-	    my $ans = <STDIN>;
-	    $STOP = 0  if $ans =~ /^g/i;
-	    exit if $ans =~ /^q/i;
-	}
-    }
-
-    $objects = join ', ', @$objects;
-
-    foreach my $user (@_) {
-	next unless $user;
-	$sql = qq{
-            GRANT SELECT, UPDATE, INSERT, DELETE
-            ON    $objects
-            TO    "$user"
+    for my $spec (
+        [ 'r', 'SELECT, UPDATE, INSERT, DELETE' ],
+        [ 'S', 'SELECT, UPDATE'                 ],
+    ) {
+        my ($kind, $grant) = @$spec;
+        my $sql = qq{
+            SELECT n.nspname || '.' || c.relname
+            FROM   pg_catalog.pg_class c
+                   LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
+                   LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE  c.relkind = ?
+                   AND u.usename = ?
+                   AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+                   AND pg_catalog.pg_table_is_visible(c.oid)
         };
-        exec_sql($sql);
+
+        my $objects;
+        eval {
+            my $sel = $dbh->prepare($sql);
+            $objects = $dbh->selectcol_arrayref($sel, undef, $kind, lc $opt_u);
+            return 1 unless @$objects;
+        };
+
+        if ($@) {
+            warn "\nProblems executing sql:\n\n" unless $opt_q;
+            # Log this error;
+
+            if ($STOP) {
+                warn "$sql\n\n$@\n\n";
+                print "Continue (c), Go non-interactive (g), Quit (q): ";
+                my $ans = <STDIN>;
+                $STOP = 0  if $ans =~ /^g/i;
+                exit if $ans =~ /^q/i;
+            }
+        }
+
+        $objects = join ', ', @$objects;
+
+        foreach my $user (@_) {
+            next unless $user;
+            $sql = qq{
+                GRANT $grant
+                ON    $objects
+                TO    "$user"
+            };
+            exec_sql($sql);
+        }
     }
+    $dbh->disconnect if $dbh;
 }
 
 1;
