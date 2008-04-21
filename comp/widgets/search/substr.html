@@ -1,9 +1,9 @@
 <div class="row">
 % $m->out(qq{<div class="label">By $disp_field:</div>}) if $disp_field;
     <div class="input">
-    <& '/widgets/profile/text.mc', 
+    <& '/widgets/profile/text.mc',
         name        => $widget.'|value',
-        value       => $crit_field,
+        value       => $state->{crit_field} || '',
         size        => 32,
         maxlength   => 100,
         useTable    => 0
@@ -27,8 +27,5 @@
 $widget
 $object
 $disp_field
+$state
 </%args>
-<%init>
-my $crit_field = get_state_data($widget, $object)->{crit_field};
-</%init>
-

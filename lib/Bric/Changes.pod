@@ -179,6 +179,12 @@ permissions. [Rolf Schaufelberger]
 Fixed the display of a field name when confirming changes to a field type.
 [David]
 
+=item *
+
+Fixed a bug in the subelement type search display where the last element type
+search term was displayed in the search box. It not properly displays the last
+subelement type search string, if any. [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)
