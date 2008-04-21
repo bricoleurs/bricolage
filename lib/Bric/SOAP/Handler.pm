@@ -23,7 +23,7 @@ $LastChangedDate$
     SetHandler perl-script
     PerlHandler Bric::SOAP::Handler
     PerlCleanupHandler Bric::App::CleanupHandler
-    PerlAccessHandler Apache::OK
+    PerlAccessHandler Apache::HTTP_OK
   </Location>
 
 =head1 DESCRIPTION
@@ -89,7 +89,6 @@ use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
 use Bric::Util::ApacheReq;
-use Bric::Util::ApacheConst qw(OK);
 use HTML::Entities;
 require Encode if ENCODE_OK;
 

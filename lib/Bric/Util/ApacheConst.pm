@@ -36,6 +36,8 @@ Scott Lanning <slanning@cpan.org>
 
 use strict;
 
+use constant DECLINED                   => -1;
+
 use constant HTTP_OK                    => 200;
 use constant HTTP_CREATED               => 201;
 use constant HTTP_ACCEPTED              => 202;
@@ -59,21 +61,27 @@ use constant HTTP_SERVICE_UNAVAILABLE   => 503;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
+    DECLINED
+
     HTTP_OK
+    HTTP_CREATED
+    HTTP_ACCEPTED
+    HTTP_NO_CONTENT
+
     HTTP_MOVED_TEMPORARILY
     HTTP_MOVED_PERMANENTLY
-    HTTP_METHOD_NOT_ALLOWED
+    HTTP_SEE_OTHER
     HTTP_NOT_MODIFIED
+
+    HTTP_BAD_REQUEST
     HTTP_UNAUTHORIZED
     HTTP_FORBIDDEN
     HTTP_NOT_FOUND
-    HTTP_BAD_REQUEST
+
     HTTP_INTERNAL_SERVER_ERROR
-    HTTP_NOT_ACCEPTABLE
-    HTTP_NO_CONTENT
-    HTTP_PRECONDITION_FAILED
+    HTTP_NOT_IMPLEMENTED
+    HTTP_BAD_GATEWAY
     HTTP_SERVICE_UNAVAILABLE
-    HTTP_VARIANT_ALSO_VARIES
 );
 
 1;

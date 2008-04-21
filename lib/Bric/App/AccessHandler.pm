@@ -58,7 +58,7 @@ use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
 use Bric::Config qw(:err :ssl :cookies);
-use Bric::Util::ApacheConst qw(:common :http);
+use Bric::Util::ApacheConst;
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
 use Bric::Util::ApacheReq qw(parse_args);
@@ -114,9 +114,9 @@ NONE.
 
 =item my $status = handler($r)
 
-Sets up the user session and checks authentication. If the authentication is current,
-it returns OK and the request continues. Otherwise, it caches the requested URI in
-the session and returns FORBIDDEN.
+Sets up the user session and checks authentication. If the authentication is
+current, it returns HTTP_OK and the request continues. Otherwise, it caches
+the requested URI in the session and returns HTTP_FORBIDDEN.
 
 B<Throws:> NONE.
 
@@ -133,9 +133,9 @@ sub handler {
         # Silently zap foolish user access to http when SSL is always required
         # by web master.
         if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
-            $r->custom_response(FORBIDDEN, 'https://'. $r->hostname .
+            $r->custom_response(HTTP_FORBIDDEN, 'https://'. $r->hostname .
                                 $ssl_port . '/logout');
-            return FORBIDDEN;
+            return HTTP_FORBIDDEN;
         }
 
         # Propagate SESSION and AUTH cookies if we switched server ports
@@ -168,7 +168,7 @@ sub handler {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
         my ($res, $msg) = auth($r);
-        return OK if $res;
+        return HTTP_OK if $res;
 
         # If we're here, the user needs to authenticate. Figure out where they
         # wanted to go so we can redirect them there after they've logged in.
@@ -185,11 +185,11 @@ sub handler {
 #        set_redirect('/');
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            $r->custom_response(FORBIDDEN, "https://$hostname$ssl_port/login");
+            $r->custom_response(HTTP_FORBIDDEN, "https://$hostname$ssl_port/login");
         } else {
-            $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
+            $r->custom_response(HTTP_FORBIDDEN, "http://$hostname$port/login");
         }
-        return FORBIDDEN;
+        return HTTP_FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -225,7 +225,7 @@ sub logout_handler {
             # if SSL and logging out of server #1, make sure and logout of
             # server #2
             if (scalar $r->args =~ /goodbye/) {
-                $r->custom_response(FORBIDDEN,
+                $r->custom_response(HTTP_FORBIDDEN,
                                     "https://$hostname$ssl_port/login");
             } elsif ($r->get_server_port == &SSL_PORT) {
                 $r->custom_response(HTTP_MOVED_TEMPORARILY,
@@ -237,9 +237,9 @@ sub logout_handler {
                 return HTTP_MOVED_TEMPORARILY;
             }
         } else {
-            $r->custom_response(FORBIDDEN, "/login");
+            $r->custom_response(HTTP_FORBIDDEN, "/login");
         }
-        return FORBIDDEN;
+        return HTTP_FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -264,7 +264,7 @@ sub okay {
     my $ret = eval {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
-        return OK;
+        return HTTP_OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -310,7 +310,7 @@ sub handle_err {
         "\n";
 
     # Return OK so that Mason can handle displaying the error element.
-    return OK;
+    return HTTP_OK;
 }
 
 ################################################################################
