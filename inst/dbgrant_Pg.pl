@@ -13,6 +13,7 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to postgres system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    $< = $DB->{system_user_uid};
     $> = $DB->{system_user_uid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
@@ -76,7 +77,7 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P tuples_only=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
