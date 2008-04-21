@@ -13,8 +13,8 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to postgres system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
-    $< = $DB->{system_user_uid};
     $> = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
 }
@@ -24,7 +24,7 @@ $ENV{PGUSER} = $DB->{root_user};
 $ENV{PGPASSWORD} = $DB->{root_pass};
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
 $ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
-$ERR_FILE = catfile tmpdir, '.db.stderr';
+BEGIN { $ERR_FILE = catfile tmpdir, '.db.stderr' }
 END { unlink $ERR_FILE }
 
 grant_permissions();

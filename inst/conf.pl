@@ -159,7 +159,6 @@ sub create_apache_conf {
     my $httpd = join '',<HTTPD>;
     close HTTPD;
 
-
     # lots of regexes to come
     study($httpd);
 
@@ -223,7 +222,7 @@ sub create_apache_conf {
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{apache_ssl};
 
-            if ($mod eq 'log_config'|| $mod eq 'config_log') {
+            if ($mod eq 'log_config' || $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t config_log_module " .
@@ -331,7 +330,7 @@ sub create_apache2_conf {
         my $dso_section = "# Load DSOs\n\n";
         # XXX: need to verify relevance of config_log, apache_ssl, and gzip
         # since there is no more AddModule; I imagine this can be simplified now.
-        foreach my $mod (qw(perl log_config config_log mime alias ssl apache_ssl gzip)) {
+        foreach my $mod (qw(perl apreq log_config config_log mime alias ssl gzip)) {
             # static modules need no load
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{$mod};
@@ -340,23 +339,18 @@ sub create_apache2_conf {
                 # I want to kill whoever decided this was a good idea
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t ${mod}_module " .
-                      $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                      $AP->{load_modules}{"${mod}_module"} . "\n";
                 }
             } elsif ($mod eq 'gzip') {
                 # Load optional module mod_gzip
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t ${mod}_module " .
-                        $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                        $AP->{load_modules}{"${mod}_module"} . "\n";
                 }
-            } elsif ($mod eq 'apache_ssl') {
-                next unless $AP->{ssl} =~ /apache_ssl/;
-                $dso_section .= "LoadModule \t ${mod}_module " .
-                    $AP->{load_modules}{"${mod}_module"} . "\n\n";
-                $dso_section .= "AddModule \t apache_ssl.c\n\n";
             } else {
                 next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
-                    $AP->{load_modules}{"${mod}_module"} . "\n\n";
+                    $AP->{load_modules}{"${mod}_module"} . "\n";
             }
         }
 

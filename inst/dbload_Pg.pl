@@ -35,7 +35,7 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
 
-print "\n\n==> Creating PostgreSql Bricolage Database <==\n\n";
+print "\n\n==> Creating PostgreSQL Bricolage Database <==\n\n";
 
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
@@ -64,7 +64,7 @@ create_user();
 # load data.
 load_db();
 
-print "\n\n==> Finished Creating PostgreSql Bricolage Database <==\n\n";
+print "\n\n==> Finished Creating PostgreSQL Bricolage Database <==\n\n";
 exit 0;
 
 sub exec_sql {

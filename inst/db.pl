@@ -43,8 +43,6 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 
 my $instdb;
 $instdb = "./inst/dbload_$DB->{db_type}.pl";
-do $instdb or die "Failed to launch $DB->{db_type} database loading script ($instdb)";    
+do $instdb or die "Failed to launch $DB->{db_type} database loading script ($instdb)";
 
 exit 0;
-
-

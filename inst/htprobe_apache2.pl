@@ -255,7 +255,7 @@ sub check_modules {
             # try modules specified in LoadModule
             # (note: removed add_module part)
             if ($AP{load_modules}{"${mod}_module"}
-                  and -e catfile($AP{HTTPD_ROOT}, 
+                  and -e catfile($AP{HTTPD_ROOT},
                                  $AP{load_modules}{"${mod}_module"}))
             {
                 $AP{$mod} = 1 if $mod =~ /ssl$/;
