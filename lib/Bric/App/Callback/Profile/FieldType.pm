@@ -29,7 +29,7 @@ sub save : Callback {
         return;
     }
 
-    my $name = $param->{disp};
+    my $name = $param->{name};
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate;
