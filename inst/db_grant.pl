@@ -64,9 +64,6 @@ sub grant_permissions {
 
         my $objects = join (', ', map { chomp; $_ } @objects);
 
-        # drop the row count if it was returned
-        $objects =~ s/, \(\d+ rows\)//;
-
         $sql = qq{
             GRANT $grant
             ON    $objects
@@ -87,7 +84,7 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$PG->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
+        @$res = `$PG->{psql} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P tuples_only=`;
         # Shift off the column headers.
         shift @$res;
         return unless $?;
