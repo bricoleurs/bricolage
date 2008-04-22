@@ -42,7 +42,7 @@ Options:
   --make-categories - if media archive contains categories that do not exist,
                       create them, otherwise place category-less media in /
 
-  --fatal-no-cat    - die if no category is given, rather than defaulting to /
+  --fatal-no-cat    - die if a category doesn't exist, rather than defaulting to /
                       (see --make-categories)
 
   --media-type            - import as this media type.  Defaults to 'Photograph',
