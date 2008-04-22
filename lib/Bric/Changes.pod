@@ -142,6 +142,10 @@ Added the new C<BLOB_SEARCH> F<bricolage.conf> directive, which enables data
 text searches to search paragraph-type fields as well as shorter header-type
 fields. [David]
 
+=item *
+
+Added --fatal-no-cat option to F<contrib/bric_media_upload>. [Scott]
+
 =back
 
 =head2 Bug Fixes
