@@ -367,6 +367,7 @@ END
 
     if ( $AP{ssl} ) {
         if (ask_yesno("Do you want to use SSL?", $use_ssl, $QUIET)) {
+            # Apache 2 only has mod_ssl, no Apache-SSL.
             $AP{ssl} = 'mod_ssl';
 
             # Get the key and cert files.
