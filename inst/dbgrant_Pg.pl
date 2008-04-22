@@ -57,6 +57,7 @@ sub grant_permissions {
     hard_fail("Failed to get list of objects. The database error was\n\n",
               "$err\n") if $err;
 
+    print @objects;
     my $objects = join (', ', map { chomp; $_ } @objects);
 
     $sql = qq{
@@ -79,8 +80,6 @@ sub exec_sql {
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
         @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P tuples_only=`;
-        # Shift off the column headers.
-        shift @$res;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
