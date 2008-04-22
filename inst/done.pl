@@ -36,7 +36,7 @@ do "./config.db" or die "Failed to read config.db : $!";
 our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
 
-my $url = "http://$AP->{server_name}" . 
+my $url = "http://$AP->{server_name}" .
     ($AP->{port} == 80 ? "" : ":$AP->{port}");
 
 my $ctl = "bric_apachectl";
@@ -82,12 +82,12 @@ and change the password.
 Pointers for documentation and lots of getting started advice are in
 the main README file in the unpacked distribution directory.
 
-=== IMPORTANT NOTE === 
+=== IMPORTANT NOTE ===
 
-For 1.10.3 the way the login page redirects was changed. Please send 
-a message to the bricolage users list if you cannot login. You should 
+For 1.10.3 the way the login page redirects was changed. Please send
+a message to the bricolage users list if you cannot login. You should
 also consider joining the list anyway since there is a lot of useful
-information and help available :  users\@lists.bricolage.cc 
+information and help available :  users\@lists.bricolage.cc
 
 =========================================================================
 =========================================================================

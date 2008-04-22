@@ -39,7 +39,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') ? 1 : '';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Probing Apache Configuration <==\n\n";
 

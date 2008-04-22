@@ -101,7 +101,7 @@ sub create_db {
         # There was an error. Offer to drop the database if it already exists.
         if ($err =~ /database exists/) {
             if (ask_yesno("Database named \"$DB->{db_name}\" already exists.  ".
-                          "Drop database?", 0)) {
+                          "Drop database?", $ENV{DEVELOPER}, $ENV{DEVELOPER})) {
                 # Drop the database.
                 if ($err = exec_sql(qq{DROP DATABASE "$DB->{db_name}"}, 0)) {
                     hard_fail("Failed to drop database.  The database error ",
@@ -137,7 +137,7 @@ sub create_user {
     if ($err) {
         if ($err =~ /failed/) {
             if (ask_yesno("User named \"$DB->{sys_user}\" already exists. "
-                          . "Continue with this user?", 1)) {
+                          . "Continue with this user?", 1, $ENV{DEVELOPER})) {
                 # Just use the existing user.
                 return;
             } elsif (ask_yesno("Well, shall we drop and recreate user? "

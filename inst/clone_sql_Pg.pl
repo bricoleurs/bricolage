@@ -53,6 +53,7 @@ if (my $sys_user = $PG->{system_user}) {
 
     # Become the user.
     $> = $PG->{system_user_uid};
+    $< = $DB->{system_user_uid};
     die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
         unless $> == $PG->{system_user_uid};
 }

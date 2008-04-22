@@ -196,6 +196,8 @@ install 	: install_files install_db done
 
 install_files	: all is_root cpan lib bin files
 
+install_dev_files	: all is_root cpan files
+
 install_db	: db db_grant
 
 install_with_hot_copy : install_files_with_hot_copy install_db done_with_hot_copy
@@ -305,7 +307,8 @@ rm_files	:
 dev_symlink :
 	$(PERL) inst/dev.pl
 
-dev			: inst/dist_sql install dev_symlink clean
+dev 		: export DEVELOPER = 1
+dev			: inst/dist_sql install_dev_files install_db dev_symlink clean
 
 ##########################
 # test rules             #

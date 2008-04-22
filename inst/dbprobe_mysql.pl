@@ -39,8 +39,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-my $QUIET = '';
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Probing MySQL Configuration <==\n\n";
 

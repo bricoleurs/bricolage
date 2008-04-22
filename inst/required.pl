@@ -16,7 +16,7 @@ $LastChangedDate$
 =head1 DESCRIPTION
 
 This script is called during "make" to probe for required software -
-Perl, Apache/Apache2, PostgreSQL/MySQL, and Expat currently. 
+Perl, Apache/Apache2, PostgreSQL/MySQL, and Expat currently.
 Output collected in "required.db".
 
 =head1 AUTHOR
@@ -57,10 +57,10 @@ use File::Spec::Functions;
 use Data::Dumper;
 use Config;
 
-our (%REQ, %RESULTS, %PROBES, $QUIET);
+our (%REQ, %RESULTS, %PROBES);
 
 # check to see whether we should ask questions or not
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 shift if $QUIET or $ARGV[0] eq 'STANDARD';
 
 # collect data - configuration requirements data go into %REQ,
@@ -91,11 +91,11 @@ unless (($RESULTS{PG} or $RESULTS{MYSQL}) and ($RESULTS{APACHE} or $RESULTS{APAC
             $RESULTS{PG}      ? "" :
             "\tPostgreSQL >= 7.3.0       (http://postgresql.org)\n",
             $RESULTS{MYSQL}   ? "" :
-            "\tMySQL client >= 4.1.0     (http://mysql.com)\n",	    
+            "\tMySQL client >= 4.1.0     (http://mysql.com)\n",
             $RESULTS{APACHE}  ? "" :
-            "\tApache >= 1.3.12 && < 2.0 (http://apache.org)\n",
+            "\tApache >= 1.3.12 && < 2.0 (http://httpd.apache.org)\n",
             $RESULTS{APACHE2} ? "" :
-            "\tApache >= 2.0.51          (http://apache.org)\n",
+            "\tApache >= 2.0.51          (http://httpd.apache.org)\n",
             $RESULTS{EXPAT}   ? "" :
             "\texpat >= 1.95.0           (http://expat.sourceforge.net)\n",
             "\nSee INSTALL for details.\n"
@@ -148,7 +148,7 @@ sub find_pg {
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     return soft_fail("Failed to parse PostgreSQL version from string ",
-                     "\"$version\".") 
+                     "\"$version\".")
         unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail("Found old version of Postgres: $x.$y.$z - ",
@@ -197,7 +197,7 @@ sub find_mysql {
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     return soft_fail("Failed to parse Mysql client version from string ",
-                     "\"$version\".") 
+                     "\"$version\".")
         unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail("Found old version of Mysql client: $x.$y.$z - ",
@@ -261,7 +261,7 @@ sub find_apache {
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+).(\d+)/;
     return soft_fail("Failed to parse Apache 1.3 version from string ",
-                     "\"$version\".") 
+                     "\"$version\".")
         unless defined $x and defined $y and defined $z;
 
     return soft_fail("Found unacceptable version of Apache: $x.$y.$z - ",
@@ -325,7 +325,7 @@ sub find_apache2 {
     chomp $version;
     my ($x, $y, $z) = $version =~ /(\d+)\.(\d+).(\d+)/;
     return soft_fail("Failed to parse Apache 2 version from string ",
-                     "\"$version\".") 
+                     "\"$version\".")
         unless defined $x and defined $y and defined $z;
 
     return soft_fail("Found unacceptable version of Apache: $x.$y.$z - ",
@@ -373,7 +373,7 @@ sub get_probes {
     }
 }
 
-# ask the user to choose a database or 
+# ask the user to choose a database or
 sub get_database {
     my $dbstring = join(', ', keys(%{ $PROBES{db} }));
     print "\n\n==> Selecting Database <==\n\n";

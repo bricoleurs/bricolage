@@ -65,7 +65,7 @@ rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}, $HOT_COPY) },
-       no_chdir => 1 }, './comp');
+       no_chdir => 1 }, './comp') unless $ENV{DEVELOPER};
 
 # Copy the contents of the bconf directory.
 find({ wanted   => sub { copy_files(catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
