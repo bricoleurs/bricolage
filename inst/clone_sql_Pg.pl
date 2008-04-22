@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-clone_sql_Pg.pl - installation script to clone an existing PG database 
+clone_sql_Pg.pl - installation script to clone an existing PG database
 
 =head1 VERSION
 
@@ -52,8 +52,9 @@ if (my $sys_user = $PG->{system_user}) {
         or die "Cannot chown $file to $PG->{system_user_uid} ($sys_user).\n";
 
     # Become the user.
+    require Config;
     $> = $PG->{system_user_uid};
-    $< = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
     die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
         unless $> == $PG->{system_user_uid};
 }

@@ -137,7 +137,7 @@ sub get_users {
 
     unless ($DB{host_name}) {
         $DB{system_user} = $DB{root_user};
-        while(!$QUIET) {
+        while(1) {
             ask_confirm("Postgres System Username", \$DB{system_user}, $QUIET);
             $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
             last if defined $DB{system_user_uid};

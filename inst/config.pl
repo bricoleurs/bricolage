@@ -156,7 +156,7 @@ sub confirm_settings {
       -e catfile($CONFIG{BRICOLAGE_ROOT}, "conf", "bricolage.conf")) {
       print "That directory already contains a Bricolage installation.\n";
       print "Consider running `make upgrade`, instead.\n";
-      exit 1 unless ask_yesno("Continue and overwrite existing installation?", 0);
+      exit 1 unless ask_yesno("Continue and overwrite existing installation?", $ENV{DEVELOPER}, $ENV{DEVELOPER});
   }
 
   # some prefs are based on BRICOLAGE_ROOT, need to eval them now

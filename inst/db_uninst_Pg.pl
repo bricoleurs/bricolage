@@ -14,7 +14,7 @@ $LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
 
 =head1 DESCRIPTION
 
-This script is called during C<make uninstall> to uninstall the 
+This script is called during C<make uninstall> to uninstall the
 PostgreSQL Bricolage database.
 
 =head1 AUTHOR
@@ -52,8 +52,9 @@ open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
 # Switch to postgres system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    require Config;
     $> = $DB->{system_user_uid};
-    $< = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
 }

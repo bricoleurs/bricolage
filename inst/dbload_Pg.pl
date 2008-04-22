@@ -43,8 +43,9 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to database system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    require Config;
     $> = $DB->{system_user_uid};
-    $< = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
 }
@@ -103,7 +104,7 @@ sub create_db {
         # There was an error. Offer to drop the database if it already exists.
         if ($err =~ /database "[^"]+" already exists/) {
             if (ask_yesno("Database named \"$DB->{db_name}\" already exists.  ".
-                          "Drop database?", 0)) {
+                          "Drop database?", $ENV{DEVELOPER}, $ENV{DEVELOPER})) {
                 # Drop the database.
                 if ($err = exec_sql(qq{DROP DATABASE "$DB->{db_name}"}, 0,
                                     $DBDEFDB)) {
@@ -140,7 +141,7 @@ sub create_user {
     if ($err) {
         if ($err =~ /(?:user|role)(?: name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$DB->{sys_user}\" already exists. "
-                          . "Continue with this user?", 1)) {
+                          . "Continue with this user?", 1, $ENV{DEVELOPER})) {
                 # Just use the existing user.
                 return;
             } elsif (ask_yesno("Well, shall we drop and recreate user? "
