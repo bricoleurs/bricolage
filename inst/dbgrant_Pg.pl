@@ -26,7 +26,7 @@ $ENV{PGPASSWORD} = $DB->{root_pass};
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
 $ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 BEGIN { $ERR_FILE = catfile tmpdir, '.db.stderr' }
-END { unlink $ERR_FILE }
+END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
 grant_permissions();
 

@@ -81,11 +81,11 @@ sub exec_sql {
         $exec .="-e \"$sql\" " if $sql;
         $exec .="-D $db " if $db;
         $exec .=" < $file " if !$sql;
-        system($exec)
-          or return;
+        system($exec) or return;
     }
 
     # We encountered a problem.
+    close STDERR;
     open ERR, "<$ERR_FILE" or die "Cannot open $ERR_FILE: $!\n";
     local $/;
     return <ERR>;
