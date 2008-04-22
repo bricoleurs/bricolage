@@ -58,7 +58,7 @@ use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(del_redirect add_msg get_pref);
-use Bric::Util::ApacheConst qw(HTTP_OK);
+use Bric::Util::ApacheConst qw(OK);
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 
@@ -378,7 +378,7 @@ sub handle_err {
     $r->pnotes('BRIC_MORE_ERR' => $more_err);
 
     $gah->handle_request($r);
-    return HTTP_OK;
+    return OK;
 }
 
 ##############################################################################

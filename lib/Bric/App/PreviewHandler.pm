@@ -46,7 +46,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Config qw(:prev :err);
-use Bric::Util::ApacheConst qw(DECLINED HTTP_OK);
+use Bric::Util::ApacheConst qw(DECLINED OK);
 use Bric::Util::Trans::FS;
 
 ################################################################################
@@ -173,11 +173,11 @@ sub fixup_handler {
         $r->no_cache(1);
         # Just return if it's an httpd content type.
         my $ctype = $r->content_type;
-        return HTTP_OK if $ctype =~ /^httpd/;
+        return OK if $ctype =~ /^httpd/;
         # Set the default handler if its content type is known and it's not
         # text/html.
         $r->handler('default-handler') if $ctype && $ctype ne 'text/html';
-        return HTTP_OK;
+        return OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -220,8 +220,8 @@ sub handle_err {
                 $err->trace->frames),
         "\n";
 
-    # Return HTTP_OK so that Mason can handle displaying the error element.
-    return HTTP_OK;
+    # Return OK so that Mason can handle displaying the error element.
+    return OK;
 }
 
 =back

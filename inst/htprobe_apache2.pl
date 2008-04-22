@@ -70,7 +70,6 @@ delete $AP{conf};
 open(OUT, ">apache.db") or die "Unable to open apache.db : $!";
 print OUT Data::Dumper->Dump([\%AP], ['AP']);
 close OUT;
-
 print "\n\n==> Finished Probing Apache Configuration <==\n\n";
 exit();
 
@@ -242,7 +241,7 @@ sub check_modules {
     my (@missing);
     # loop over required modules
  MOD:
-    foreach my $mod (qw(apreq perl log_config mime alias apache_ssl ssl)) {
+    foreach my $mod (qw(apreq expires perl log_config mime alias apache_ssl ssl)) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {

@@ -330,7 +330,7 @@ sub create_apache2_conf {
         my $dso_section = "# Load DSOs\n\n";
         # XXX: need to verify relevance of config_log, apache_ssl, and gzip
         # since there is no more AddModule; I imagine this can be simplified now.
-        foreach my $mod (qw(perl apreq log_config config_log mime alias ssl gzip)) {
+        foreach my $mod (qw(perl expires apreq log_config config_log mime alias ssl gzip)) {
             # static modules need no load
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{$mod};

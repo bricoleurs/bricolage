@@ -46,7 +46,6 @@ use Bric::Util::Class;
 use Bric::Util::Pref;
 use Bric::Util::ApacheReq;
 use HTML::Mason::Request;
-use Bric::Util::ApacheConst qw(HTTP_OK);
 use Bric::Util::ApacheUtil qw(escape_uri);
 use HTML::Entities;
 use Bric::Util::Language;

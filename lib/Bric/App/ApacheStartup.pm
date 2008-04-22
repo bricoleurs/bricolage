@@ -45,7 +45,7 @@ use Bric::Config qw(:mod_perl);
 # start Apache::DB if we're debugging.  This is done here so that
 # modules loaded below will get debugging symbols.
 our $DEBUGGING;
-BEGIN { 
+BEGIN {
     if (MOD_PERL_VERSION < 2) {
         if (eval{Apache->define('BRICOLAGE_DEBUG')}) {
             require Apache::DB;

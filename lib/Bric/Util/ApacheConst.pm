@@ -36,7 +36,8 @@ Scott Lanning <slanning@cpan.org>
 
 use strict;
 
-use constant DECLINED                   => -1;
+use constant OK                         =>   0;
+use constant DECLINED                   =>  -1;
 
 use constant HTTP_OK                    => 200;
 use constant HTTP_CREATED               => 201;
@@ -61,6 +62,7 @@ use constant HTTP_SERVICE_UNAVAILABLE   => 503;
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
+    OK
     DECLINED
 
     HTTP_OK

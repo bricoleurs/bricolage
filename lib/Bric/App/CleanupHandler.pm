@@ -54,7 +54,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Util::ApacheConst qw(HTTP_OK);
+use Bric::Util::ApacheConst qw(OK);
 use Bric::App::Session;
 use Bric::App::Event qw(commit_events);
 use Bric::Util::DBI qw(:trans);
@@ -150,7 +150,7 @@ sub handler {
     # hang and need to be rebooted.
     $r->log->error(ref $@ ? $@->as_text : $@) if $@;
     # Bail (this actually isn't required, but let's be consistent!).
-    return HTTP_OK;
+    return OK;
 }
 
 

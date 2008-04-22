@@ -115,7 +115,7 @@ NONE.
 =item my $status = handler($r)
 
 Sets up the user session and checks authentication. If the authentication is
-current, it returns HTTP_OK and the request continues. Otherwise, it caches
+current, it returns OK and the request continues. Otherwise, it caches
 the requested URI in the session and returns HTTP_FORBIDDEN.
 
 B<Throws:> NONE.
@@ -168,7 +168,7 @@ sub handler {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
         my ($res, $msg) = auth($r);
-        return HTTP_OK if $res;
+        return OK if $res;
 
         # If we're here, the user needs to authenticate. Figure out where they
         # wanted to go so we can redirect them there after they've logged in.
@@ -248,8 +248,8 @@ sub logout_handler {
 
 =item my $status = okay($r)
 
-This handler should B<only> be used for the '/login' location of the SSL virtual
-host. It simply sets up the user session and returns OK.
+This handler should B<only> be used for the '/login' location of the SSL
+virtual host. It simply sets up the user session and returns OK.
 
 B<Throws:> NONE.
 
@@ -264,7 +264,7 @@ sub okay {
     my $ret = eval {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
-        return HTTP_OK;
+        return OK;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -310,7 +310,7 @@ sub handle_err {
         "\n";
 
     # Return OK so that Mason can handle displaying the error element.
-    return HTTP_OK;
+    return OK;
 }
 
 ################################################################################
