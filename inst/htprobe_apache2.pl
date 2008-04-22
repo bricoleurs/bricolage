@@ -367,6 +367,7 @@ END
 
     if ( $AP{ssl} ) {
         if (ask_yesno("Do you want to use SSL?", $use_ssl, $QUIET)) {
+            $AP{ssl} = 'mod_ssl';
 
             # Get the key and cert files.
             $AP{ssl_key} = get_default('SSL_KEY') ||
