@@ -210,7 +210,6 @@ B<Notes:> NONE.
 
 sub logout_handler {
     my $r = shift;
-
     my $ret = eval {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
@@ -226,18 +225,18 @@ sub logout_handler {
             # server #2
             if (scalar $r->args =~ /goodbye/) {
                 $r->custom_response(HTTP_FORBIDDEN,
-                                    "https://$hostname$ssl_port/login");
+                                    "https://$hostname$ssl_port/login/");
             } elsif ($r->get_server_port == &SSL_PORT) {
                 $r->custom_response(HTTP_MOVED_TEMPORARILY,
                                     "/logout?goodbye");
                 return HTTP_MOVED_TEMPORARILY;
             } else {
                 $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "https://$hostname$ssl_port/logout?goodbye");
+                                    "https://$hostname$ssl_port/logout/?goodbye");
                 return HTTP_MOVED_TEMPORARILY;
             }
         } else {
-            $r->custom_response(HTTP_FORBIDDEN, "/login");
+            $r->custom_response(HTTP_FORBIDDEN, '/login/');
         }
         return HTTP_FORBIDDEN;
     };
