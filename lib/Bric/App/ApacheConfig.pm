@@ -380,6 +380,8 @@ do {
 
         # This will slow down every request; thus we recommend that previews
         # not be local.
+        # XXX This seriously breaks a number of pages. No idea why; need to
+        # figure that out.
 #        push @config,
 #          '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
 #          if PREVIEW_LOCAL;
