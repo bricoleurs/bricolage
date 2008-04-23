@@ -1212,7 +1212,9 @@ B<ALWAYS_USE_SSL:> With C<SSL_ENABLE> set to "mod_ssl" or "apache_ssl", this
 directive removes the choice of using SSL from the user's control and forces
 all access to the application server to use the https protocol. This approach
 may be valuable in those organizations that need to guarantee 100% encrypted
-access to Bricolage and can afford the overhead. Disabled by default.
+access to Bricolage and can afford the overhead. Disabled by default. If
+you're using Briciolage behind a reverse proxy server and using SSL, you will
+also have to enable B<ALWAYS_USE_SSL> so that recirects will work properly.
 
 =item *
 
