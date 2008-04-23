@@ -26,19 +26,19 @@ sub login : Callback {
     my $redir = del_redirect() || '';
     $redir = '/' if $redir =~ m|^/login|;
     if ($res) {
-	if ($param->{$self->class_key . '|ssl'}) {
-	    # They want to use SSL. Do a simple redirect.
-	    set_state_name($self->class_key, 'ssl');
+        if ($param->{$self->class_key . '|ssl'}) {
+            # They want to use SSL. Do a simple redirect.
+            set_state_name($self->class_key, 'ssl');
             $self->redirect($redir);
-	} else {
-	    # Redirect them back to port 80 if not using SSL.
-	    set_state_name($self->class_key, 'nossl');
+        } else {
+            # Redirect them back to port 80 if not using SSL.
+            set_state_name($self->class_key, 'nossl');
             # redirect_onload() prevents any other callbacks from executing.
-	    redirect_onload($redir, $self);
-	}
+            redirect_onload('http://' . $r->hostname . $port . $redir, $self);
+        }
     } else {
-	add_msg($msg);
-	$r->log_reason($msg);
+        add_msg($msg);
+        $r->log_reason($msg);
     }
 }
 

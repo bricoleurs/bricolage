@@ -434,9 +434,6 @@ BEGIN {
           "    PerlCleanupHandler  Bric::App::CleanupHandler$fix",
           '  </Location>';
 
-        # We might need to change this for SSL configuration.
-        my $loginref = \$locs[-1];
-
         # This URI will handle all non-Mason stuff that we serve (graphics, etc.).
         push @locs,
           '  <Location /media>',
@@ -559,30 +556,12 @@ BEGIN {
               '  SSLCertificateFile     ' . SSL_CERTIFICATE_FILE,
               '  SSLCertificateKeyFile  ' . SSL_CERTIFICATE_KEY_FILE;
 
-            # Replace the login location.
-            $loginref =
-              "<Location /login>\n" .
-              "    SetHandler          perl-script\n" .
-              "    PerlAccessHandler   Bric::App::AccessHandler::okay\n" .
-              "    PerlResponseHandler Bric::App::Handler\n" .
-              "    PerlCleanupHandler  Bric::App::CleanupHandler\n" .
-              "  </Location>\n";
+            push @config,'  SSLEngine              On';
 
-            # Apache::ReadConfig does not handle <IfModule>
-            if (MANUAL_APACHE) {
-                # is mod_ssl
-                push @config, '  SSLEngine              On';
-            } else {
-                push @config,
-                  '  <IfModule mod_ssl.c>',
-                  '    SSLEngine           On',
-                  '  </IfModule>';
-            }
-
-            push @vhosts, "\n",
-              "<VirtualHost " . NAME_VHOST . ':' . SSL_PORT . ">\n",
+            push @vhosts,
+              "<VirtualHost " . NAME_VHOST . ':' . SSL_PORT . '>',
               @config, @locs,
-              "</VirtualHost>\n";
+              '</VirtualHost>';
         }
 
         require Apache2::ServerUtil;

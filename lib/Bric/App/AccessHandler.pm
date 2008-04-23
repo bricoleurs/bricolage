@@ -57,7 +57,7 @@ use strict;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl :cookies);
+use Bric::Config qw(:err :ssl :cookies :mod_perl);
 use Bric::Util::ApacheConst;
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
@@ -231,19 +231,40 @@ sub logout_handler {
         # Redirect to the login page.
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            # if SSL and logging out of server #1, make sure and logout of
-            # server #2
-            if (scalar $r->args =~ /goodbye/) {
-                $r->custom_response(HTTP_FORBIDDEN,
-                                    "https://$hostname$ssl_port/login/");
-            } elsif ($r->get_server_port == &SSL_PORT) {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "/logout?goodbye");
-                return HTTP_MOVED_TEMPORARILY;
+            if (0) {
+                # if SSL and logging out of server #1, make sure and logout of
+                # server #2
+                # XXX I've no idea what this means, really, but it doesn't
+                # work with mod_perl 2: I get an error because the session has
+                # been expired, so when the `== SSL_PORT` bit below redirects
+                # to /logout/?goodbye it fails. I tried to look at the
+                # original patch, but that provided no more information. How
+                # can there be two servers?
+                # http://marc.info/?t=102590250200001
+                if (scalar $r->args =~ /goodbye/) {
+                    $r->custom_response(
+                        HTTP_FORBIDDEN,
+                        "https://$hostname$ssl_port/login/"
+                    );
+                } elsif ($r->get_server_port == SSL_PORT) {
+                    $r->custom_response(
+                        HTTP_MOVED_TEMPORARILY,
+                        "/logout/?goodbye"
+                    );
+                    return HTTP_MOVED_TEMPORARILY;
+                } else {
+                    $r->custom_response(
+                        HTTP_MOVED_TEMPORARILY,
+                        "https://$hostname$ssl_port/logout/?goodbye"
+                    );
+                    return HTTP_MOVED_TEMPORARILY;
+                }
             } else {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "https://$hostname$ssl_port/logout/?goodbye");
-                return HTTP_MOVED_TEMPORARILY;
+                $r->custom_response(
+                    HTTP_FORBIDDEN,
+                    "https://$hostname$ssl_port/login/"
+                );
+                return HTTP_FORBIDDEN;
             }
         } else {
             $r->custom_response(HTTP_FORBIDDEN, '/login/');
