@@ -128,20 +128,24 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
 
     my $ret = eval {
         # Silently zap foolish user access to http when SSL is always required
         # by web master.
         if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
-            $r->custom_response(HTTP_FORBIDDEN, 'https://'. $r->hostname .
-                                $ssl_port . '/logout');
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                'https://'. $r->hostname . $ssl_port . '/logout/'
+            );
             return HTTP_FORBIDDEN;
         }
 
+        my %cookies = Bric::Util::Cookie->fetch($r);
         # Propagate SESSION and AUTH cookies if we switched server ports
         my %qs = parse_args(scalar $r->args);
 
-        my %cookies = Bric::Util::Cookie->fetch($r);
         # work around multiple servers if login event
         if ( exists $qs{&AUTH_COOKIE} && ! $cookies{&AUTH_COOKIE} ) {
             foreach(&COOKIE, &AUTH_COOKIE) {
@@ -185,9 +189,15 @@ sub handler {
 #        set_redirect('/');
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            $r->custom_response(HTTP_FORBIDDEN, "https://$hostname$ssl_port/login");
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                "https://$hostname$ssl_port/login/"
+            );
         } else {
-            $r->custom_response(HTTP_FORBIDDEN, "http://$hostname$port/login");
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                "http://$hostname$port/login/"
+            );
         }
         return HTTP_FORBIDDEN;
     };

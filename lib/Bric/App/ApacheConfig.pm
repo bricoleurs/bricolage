@@ -51,9 +51,8 @@ use Bric::Config qw(:ui :ssl :mod_perl);
 use constant DEBUGGING => 0;
 
 
-#BEGIN {
+BEGIN {
 
-do {
     ### mod_perl 1.x ###
 
     if (MOD_PERL_VERSION < 2) {
@@ -380,11 +379,10 @@ do {
 
         # This will slow down every request; thus we recommend that previews
         # not be local.
-        # XXX This seriously breaks a number of pages. No idea why; need to
-        # figure that out.
-#        push @config,
-#          '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
-#          if PREVIEW_LOCAL;
+        use Apache2::Const -compile => 'DECLINED';
+        push @config,
+          '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
+          if PREVIEW_LOCAL;
 
         # Enable mod_gzip page compression
         if (ENABLE_GZIP) {
@@ -593,7 +591,7 @@ do {
 #        XXX For now we have to write out a file and let httpd.conf include it
 #        This is because I can't get mod_perl to load a configuration with a
 #        VirtualHost directive without it crashing. Watch this thread for
-#        details: http://marc.info/?l=apache-modperl-dev&m=120889386710310
+#        details: http://marc.info/?t=120889389400011
 
 #        if (MANUAL_APACHE) {
             # Write out a configuration file and include it.
@@ -613,10 +611,7 @@ do {
 #            $s->add_config([ @names, @vhosts ]);
 #        }
     }
-
-};
-
-#}   # BEGIN
+}   # BEGIN
 
 
 1;

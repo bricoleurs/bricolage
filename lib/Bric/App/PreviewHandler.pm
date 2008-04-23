@@ -125,6 +125,8 @@ B<Notes:> NONE.
 
 sub uri_handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return DECLINED if $r->main;
     my $ret = eval {
         # Decline the request unless it's coming from the preview directory.
         {

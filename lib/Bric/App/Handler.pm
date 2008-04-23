@@ -288,7 +288,8 @@ B<Notes:> NONE.
 =cut
 
 sub handler {
-    my ($r) = @_;
+    my $r = shift;
+
     # Handle the request.
     my $status;
     my $lang_name = get_pref('Language');
