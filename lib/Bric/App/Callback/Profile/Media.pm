@@ -84,9 +84,9 @@ sub update : Callback(priority => 1) {
         push @$new, $kw;
     }
     $media->add_keywords(@$new) if $new;
-    
+
     $self->_handle_contributors($media, $param, $widget);
-    
+
     # Set the dates.
     $media->set_cover_date($param->{cover_date})
       if exists $param->{cover_date};
@@ -781,9 +781,9 @@ sub handle_upload {
 
 sub _handle_contributors {
     my ($self, $media, $param, $widget) = @_;
-    
+
     my $existing = { map { $_->get_id => $_ } $media->get_contributors };
-    
+
     my $order = {};
     foreach my $contrib_id (@{ mk_aref($param->{'contrib_id'}) }) {
         if (defined $existing->{$contrib_id}) {
@@ -798,10 +798,10 @@ sub _handle_contributors {
         }
         $order->{$contrib_id} = $param->{$widget . '|contrib_order_' . $contrib_id};
     }
-    
+
     if (my @to_delete = keys %$existing) {
         $media->delete_contributors(\@to_delete);
-        
+
         my $contrib;
         foreach my $id (@to_delete) {
             $contrib = $existing->{$id}->{obj};
@@ -812,9 +812,9 @@ sub _handle_contributors {
         if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
         else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
     }
-    
+
     $media->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
-    
+
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
 }

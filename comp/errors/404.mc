@@ -3,7 +3,7 @@
 clear_msg();
 $m->clear_buffer;
 # Check to see if this is a preview screen.
-my $prev = $r->notes('burner.preview');
+my $prev = $r->pnotes('burner.preview');
 $m->comp('/widgets/wrappers/header.mc',
          title      => '404 NOT FOUND',
          context    => 'Invalid page request',

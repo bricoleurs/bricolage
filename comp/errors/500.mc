@@ -1,5 +1,5 @@
 % # Check to see if this is a preview screen.
-% my $prev = $r->notes('burner.preview');
+% my $prev = $r->pnotes('burner.preview');
 <& /widgets/wrappers/header.mc,
         title      => 'Error',
         useSideNav => !$prev,

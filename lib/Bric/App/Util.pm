@@ -667,9 +667,9 @@ sub _send_msg {
         my $r = $m->apache_req;
         my $old_autoflush = $m->autoflush;   # autoflush is restored below
         $m->autoflush(1);
-        
+
         $m->print(qq{<p class="statusMsg" style="margin-left: 40px;">});
-        
+
         unless ( $r->pnotes($key) ) {
             # We haven't called this thing yet. Throw up some initial information.
             $m->print("<br />\n" x 2);

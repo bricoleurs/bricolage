@@ -208,7 +208,7 @@ do {
           "  <Location /soap>\n" .
           "    SetHandler          perl-script\n" .
           "    PerlHandler         Bric::SOAP::Handler\n" .
-          "   PerlAccessHandler    Apache::OK\n" .
+          "    PerlAccessHandler   Apache::OK\n" .
           "  </Location>";
 
         if (ENABLE_DIST) {
@@ -370,11 +370,6 @@ do {
               'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
         );
 
-        # XXX: I can't get requests to actually go to Mason....
-        # Directory handing is apparently "special" in apache2. See:
-        # http://www.masonhq.com/?HandlingDirectoriesWithDhandlers
-
-
         # Setup Apache::DB handler if debugging
         push @config, '  PerlFixupHandler       Apache::DB' if DEBUGGING;
 
@@ -385,9 +380,9 @@ do {
 
         # This will slow down every request; thus we recommend that previews
         # not be local.
-        push @config,
-          '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
-          if PREVIEW_LOCAL;
+#        push @config,
+#          '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
+#          if PREVIEW_LOCAL;
 
         # Enable mod_gzip page compression
         if (ENABLE_GZIP) {
@@ -453,13 +448,13 @@ do {
         # Force JavaScript to the proper MIME type and always use Unicode.
         push @locs,
           '  <Location /media/js>',
-          '    ForceType           \'text/javascript; charset=utf-8\'',
+          '    ForceType           "text/javascript; charset=utf-8"',
           '  </Location>';
 
         # Force CSS to the proper MIME type.
         push @locs,
           '  <Location /media/css>',
-          '    ForceType           \'text/css\'',
+          '    ForceType           "text/css"',
           '  </Location>';
 
         # Enable CGI for spellchecker.
@@ -525,7 +520,7 @@ do {
                 # We need to take some special steps to ensure that Mason properly
                 # handles the request.
                 push @locs,
-                  '  <Location $prev_loc>' .
+                  "  <Location $prev_loc>",
                   '    SetHandler          perl-script',
                   '    PerlFixupHandler    Bric::App::PreviewHandler::fixup_handler',
                   '    PerlResponseHandler Bric::App::Handler',
@@ -534,10 +529,10 @@ do {
                 # This will ensure that the documents are not cached by the browser, so
                 # that the preview will always serve the most recently burned file.
                 push @locs,
-                  '  <Location $prev_loc>',
-                  '    ExpiresActive On',
-                  '    ExpiresDefault "now plus 0 seconds"',
-                  '    PerlFixupHandler   Apache2::Const::OK',
+                  "  <Location $prev_loc>",
+                  '    ExpiresActive       On',
+                  '    ExpiresDefault      "now plus 0 seconds"',
+                  '    PerlFixupHandler    Apache2::Const::OK',
                   '  </Location>';
             }
         }

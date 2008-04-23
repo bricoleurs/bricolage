@@ -126,24 +126,26 @@ B<Notes:> NONE.
 sub uri_handler {
     my $r = shift;
     my $ret = eval {
-    # Decline the request unless it's coming from the preview directory.
-    {
-        local $^W;
-        return DECLINED unless $r->headers_in->{'referer'} =~ m{$prev_qr};
-    }
-    # Grab the URI and break it up into its constituent parts.
-    my $uri = $r->uri;
-    my @dirs = $fs->split_uri($uri);
-    # Let the request continue if the file exists.
-    return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
-    # Let the request continue (with a 404) if the file doesn't exist in the
-    # preview directory.
-    return DECLINED
-      unless -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs);
-    # If we're here, it exists in the preview directory. Point the request to it.
-        $r->notes('burner.preview' => 1);
-    $r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
-    return DECLINED;
+        # Decline the request unless it's coming from the preview directory.
+        {
+            local $^W;
+            return DECLINED unless $r->headers_in->{'referer'} =~ $prev_qr;
+        }
+        # Grab the URI and break it up into its constituent parts.
+        my $uri = $r->uri;
+        my @dirs = $fs->split_uri($uri);
+        # Let the request continue if the file exists.
+        return DECLINED if -e $fs->cat_dir(MASON_COMP_ROOT->[0][1], @dirs);
+        # Let the request continue (with a 404) if the file doesn't exist in
+        # the preview directory.
+        return DECLINED unless -e $fs->cat_dir(
+            MASON_COMP_ROOT->[0][1], PREVIEW_LOCAL, @dirs
+        );
+        # If we're here, it exists in the preview directory. Point the request
+        # to it.
+        $r->pnotes('burner.preview' => 1);
+        $r->uri( $fs->cat_uri('/', PREVIEW_LOCAL, $uri) );
+        return DECLINED;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
