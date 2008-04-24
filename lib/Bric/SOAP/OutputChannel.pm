@@ -1,5 +1,7 @@
 package Bric::SOAP::OutputChannel;
 
+# $Id $
+
 use strict;
 use warnings;
 
@@ -25,17 +27,9 @@ require Data::Dumper if DEBUG;
 
 Bric::SOAP::OutputChannel - SOAP interface to Bricolage output channels
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

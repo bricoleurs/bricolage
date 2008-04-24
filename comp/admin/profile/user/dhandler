@@ -188,10 +188,6 @@ my $return = get_state_name('login') eq 'ssl' ? last_page
 
 /admin/profile/user/dhandler - User Profile.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

@@ -1,14 +1,12 @@
 package Bric::Biz::Asset::Business::Media::Image;
+
+# $Id $
 ################################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Media::Image - the media class that represents static
 images
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

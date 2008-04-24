@@ -4,10 +4,6 @@
 
 cpan.pl - installation script to install CPAN modules
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make install" to install Perl modules

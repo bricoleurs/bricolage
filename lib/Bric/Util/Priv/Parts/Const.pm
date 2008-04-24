@@ -1,12 +1,10 @@
 package Bric::Util::Priv::Parts::Const;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Priv::Parts::Const - Exports Bricolage Privilege Constants
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

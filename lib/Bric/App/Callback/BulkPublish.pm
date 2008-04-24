@@ -1,5 +1,7 @@
 package Bric::App::Callback::BulkPublish;
 
+# $Id $
+
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'bulk_publish';

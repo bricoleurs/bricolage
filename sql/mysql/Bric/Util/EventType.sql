@@ -1,7 +1,6 @@
 --
 -- ER/Studio 4.0 SQL Code Generation
 -- Project:      Bricolage Business API
--- VERSION: $LastChangedRevision$
 --
 -- $Id$
 -- Target DBMS : Oracle 8

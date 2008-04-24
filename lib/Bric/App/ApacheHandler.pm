@@ -1,12 +1,10 @@
 package Bric::App::ApacheHandler;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

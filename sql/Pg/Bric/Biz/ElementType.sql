@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 --
 -- This is the SQL that will create the element_type table.

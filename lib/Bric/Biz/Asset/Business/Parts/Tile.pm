@@ -1,13 +1,11 @@
 package Bric::Biz::Asset::Business::Parts::Tile;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Parts::Tile - Deprecated; use Bric::Biz::Element instead
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

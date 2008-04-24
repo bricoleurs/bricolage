@@ -1,4 +1,6 @@
 package Bric::SOAP::Category;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -23,10 +25,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Category - SOAP interface to Bricolage categories.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

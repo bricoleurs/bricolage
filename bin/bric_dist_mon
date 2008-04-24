@@ -1,12 +1,10 @@
 #!/usr/bin/perl -w
 
+# $Id $
+
 =head1 NAME
 
 bric_dist_mon - Bricolage distribution monitor
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =head1 SYNOPSIS
 

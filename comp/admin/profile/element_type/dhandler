@@ -487,10 +487,6 @@ my $occurrences_sub = sub {
 
 /admin/profile/element_type/dhandler - Container profile interface
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

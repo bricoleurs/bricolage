@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Member;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Member - Interface for managing collections of group members
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

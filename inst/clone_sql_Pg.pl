@@ -4,14 +4,6 @@
 
 clone_sql_Pg.pl - installation script to clone an existing PG database
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make clone" to clone the Bricolage

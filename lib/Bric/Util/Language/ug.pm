@@ -1,14 +1,12 @@
 package Bric::Util::Language::ug;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::ug - Bricolage Uyghur translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

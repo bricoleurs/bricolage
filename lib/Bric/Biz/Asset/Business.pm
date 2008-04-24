@@ -1,13 +1,11 @@
 package Bric::Biz::Asset::Business;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business - An object that houses the business Assets
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

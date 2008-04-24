@@ -1,4 +1,6 @@
 package Bric::SOAP::MediaType;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -23,10 +25,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::MediaType - SOAP interface to Bricolage media types
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

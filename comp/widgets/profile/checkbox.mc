@@ -3,10 +3,6 @@
 
 =head1 NAME
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/checkbox.mc",
          label_after => 0,

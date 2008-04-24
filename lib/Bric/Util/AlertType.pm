@@ -1,12 +1,10 @@
 package Bric::Util::AlertType;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::AlertType - Interface for Managing Types of Alerts
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

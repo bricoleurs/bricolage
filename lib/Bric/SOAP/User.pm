@@ -1,4 +1,6 @@
 package Bric::SOAP::User;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -25,10 +27,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::User - SOAP interface to Bricolage users
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

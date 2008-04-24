@@ -4,10 +4,6 @@
 
 db_uninstall.pl - installation script to launch apropriate database uninstall script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during C<make uninstall> to launch the apropriate 

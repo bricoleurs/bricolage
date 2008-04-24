@@ -1,5 +1,7 @@
 package Bric::App::ApacheConfig;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::ApacheConfig - Bricolage httpd.conf configuration
@@ -15,7 +17,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$Date$
+$Date: 2008-04-24 12:44:19 -0700 (Thu, 24 Apr 2008) $
 
 =head1 SYNOPSIS
 

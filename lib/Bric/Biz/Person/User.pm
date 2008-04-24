@@ -1,14 +1,12 @@
 package Bric::Biz::Person::User;
 
+# $Id $
+
 =pod
 
 =head1 NAME
 
 Bric::Biz::Person::User - Interface to Bricolage User Objects
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

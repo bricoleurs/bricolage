@@ -1,13 +1,11 @@
 package Bric::Biz::Workflow::Parts::Desk;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

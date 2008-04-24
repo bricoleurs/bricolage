@@ -1,13 +1,11 @@
 package Bric::Util::Grp;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp - A class for associating Bricolage objects
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

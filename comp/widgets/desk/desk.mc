@@ -4,10 +4,6 @@
 
 desk - A desk widget for displaying the contents of a desk.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/desk/desk.mc' &>

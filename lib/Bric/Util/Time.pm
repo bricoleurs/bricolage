@@ -1,14 +1,12 @@
 package Bric::Util::Time;
 
+# $Id $
+
 =pod
 
 =head1 NAME
 
 Bric::Util::Time - Bricolage Time & Date Functions
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

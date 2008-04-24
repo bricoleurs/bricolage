@@ -6,10 +6,6 @@
 getList.mc - generate an array of hashes to be displayed by /widgets/listManager.mc. Requires type, and optionally start /stop range values, sort field search type, and search text.
 
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 use Bric; our $VERSION = Bric->VERSION;

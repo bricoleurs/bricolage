@@ -3,10 +3,6 @@
 
 =head1 NAME
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 use Bric; our $VERSION = Bric->VERSION;

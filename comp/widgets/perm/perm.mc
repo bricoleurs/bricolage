@@ -9,10 +9,6 @@ $m->comp("display.html", %ARGS);
 
 perm - A widget for displaying permissions.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/perm/perm.mc',

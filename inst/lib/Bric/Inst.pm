@@ -4,10 +4,6 @@ package Bric::Inst;
 
 Bric::Inst - support library for installation system scripts
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 # XXX: using Bric doesn't work before Bric is installed

@@ -264,10 +264,6 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 /admin/profile/grp/dhandler - Group profile interface
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

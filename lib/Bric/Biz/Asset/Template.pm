@@ -1,13 +1,11 @@
 package Bric::Biz::Asset::Template;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Template - Template assets
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

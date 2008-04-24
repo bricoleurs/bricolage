@@ -1,5 +1,7 @@
 package Bric::Util::Language::zh_cn;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Language::zh_cn - Bricolage 简体中文翻译
@@ -14,7 +16,7 @@ our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
 =head1 DATE
 
-$Date$
+$Date: 2008-04-24 12:44:19 -0700 (Thu, 24 Apr 2008) $
 
 =head1 SYNOPSIS
 

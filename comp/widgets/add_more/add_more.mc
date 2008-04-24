@@ -124,10 +124,6 @@ unless ($use_vals) {
 
 /widgets/add_more/add_more.mc - The Add More Widget.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   my $contacts = $user->get_contacts;

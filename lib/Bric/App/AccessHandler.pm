@@ -1,12 +1,10 @@
 package Bric::App::AccessHandler;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::AccessHandler - Handles Authentication and Session setup during the Apache Access phase.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

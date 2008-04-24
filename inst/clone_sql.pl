@@ -5,10 +5,6 @@
 clone_sql.pl - installation script to clone an existing database by launching apropriate
 database clone script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make clone" to clone the Bricolage

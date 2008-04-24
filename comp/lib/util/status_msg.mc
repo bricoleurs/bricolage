@@ -27,10 +27,6 @@ $r->pnotes($key, 1);
 
 status_msg.mc - Sends messages to the browser in real-time
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 $m->comp('/lib/util/status_msg.mc', @msgs);

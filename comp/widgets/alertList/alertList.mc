@@ -63,10 +63,6 @@ $m->comp('/widgets/wrappers/table_bottom.mc');
 
 /widgets/alert/alertList.mc - The Alert List Widget.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/alertList/alertList.mc', mode => 'alert',

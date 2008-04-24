@@ -1,22 +1,16 @@
 package Bric::Util::Language::ru_ru;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::ru_ru - Bricolage Russian translation
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

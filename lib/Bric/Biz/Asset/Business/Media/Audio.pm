@@ -1,14 +1,12 @@
 package Bric::Biz::Asset::Business::Media::Audio;
+
+# $Id $
 ################################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Media::Audio - the media class that represents static
 audios
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

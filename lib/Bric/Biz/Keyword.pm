@@ -1,27 +1,15 @@
 package Bric::Biz::Keyword;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
-
-=head1 VITALS
-
-=over 4
-
-=item Version
-
-$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
-
-=item Subversion ID
-
-$Id$
-
-=back
 
 =head1 SYNOPSIS
 

@@ -5,14 +5,6 @@
 dist_sql.pl - script to create init scripts for the database sql files found 
 in sql directory depending in directory name
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make dist" to create the database init scripts

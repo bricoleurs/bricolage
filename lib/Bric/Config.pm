@@ -1,13 +1,11 @@
 package Bric::Config;
+
+# $Id $
 ################################################################################
 
 =head1 NAME
 
 Bric::Config - A class to hold configuration settings.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =head1 SYNOPSIS
 

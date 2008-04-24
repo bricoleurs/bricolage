@@ -95,10 +95,6 @@ my $pref_id = $ARGS{id};
 
 /admin/profile/user_pref/dhandler - Manages per-user preferences
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

@@ -109,10 +109,6 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 /admin/profile/desk/dhandler - Interface for managing desks.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

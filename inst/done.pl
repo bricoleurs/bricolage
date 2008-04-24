@@ -4,10 +4,6 @@
 
 done.pl - installation script to give the user some final instructions
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called at the end of "make install" to give the user some

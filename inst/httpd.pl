@@ -5,14 +5,6 @@
 httpd.pl - Apache selection script to choose Apache version (apache, apache2)
 and start the appropriate probing script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to ask the user to choose between

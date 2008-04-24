@@ -1,4 +1,6 @@
 package Bric::SOAP::Keyword;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -23,10 +25,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Keyword - SOAP interface to Bricolage keywords
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

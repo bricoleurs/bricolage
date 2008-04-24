@@ -1,5 +1,7 @@
 package Bric::App::Callback::Util::Contact;
 
+# $Id $
+
 use strict;
 use Bric::App::Util qw(:aref);
 

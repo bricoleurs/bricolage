@@ -2,10 +2,6 @@
 
 Bric::Security - Bricolage Security Guide
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This guide describes the security features of Bricolage. These features

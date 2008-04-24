@@ -33,10 +33,6 @@ chk_authz('Bric::Biz::Asset::Business::Media', CREATE, 0, $gid);
 
 new.html -- The Mason for creating new Media Assets
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

@@ -1,5 +1,7 @@
 package Bric::App::Callback::Profile::Template;
 
+# $Id $
+
 use base qw(Bric::App::Callback);    # not subclassing Profile
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'tmpl_prof';

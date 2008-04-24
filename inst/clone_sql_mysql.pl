@@ -4,14 +4,6 @@
 
 clone_sql_mysql.pl - installation script to clone an existing mysql database 
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make clone" to clone the Bricolage

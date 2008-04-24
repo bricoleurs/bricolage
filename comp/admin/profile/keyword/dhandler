@@ -76,10 +76,6 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 /admin/profile/keyword/dhandler - Interface for managing keywords.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

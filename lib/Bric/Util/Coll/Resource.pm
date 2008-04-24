@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Resource;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Resource - Interface for managing collections of resources.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

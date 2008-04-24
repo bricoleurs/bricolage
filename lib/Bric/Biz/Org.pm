@@ -1,13 +1,11 @@
 package Bric::Biz::Org;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Org - Bricolage Interface to Organizations
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

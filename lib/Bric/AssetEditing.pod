@@ -5,10 +5,6 @@
 Bric::AssetEditing - The creation of elements and putting them together into 
 assets
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 BACKGROUND
 
 This document describes the creation of elements and their uses in the 

@@ -4,14 +4,6 @@
 
 db.pl - installation script to launch the apropriate database user rights granting script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during C<make install> to grant the Bricolage user

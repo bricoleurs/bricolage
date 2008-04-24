@@ -1,13 +1,11 @@
 package Bric::Util::Grp::Asset;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp::Category - A module to group assets into categories.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

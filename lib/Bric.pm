@@ -1,18 +1,12 @@
 package Bric;
 
+# $Id $
+
 =head1 NAME
 
 Bric - The Bricolage base class.
 
-=head1 VITALS
-
-=over 4
-
-=item Version
-
-$LastChangedRevision$
-
-=item Release Version
+=head1 VERSION
 
 1.11.0 - Development Track for 2.0.0
 
@@ -22,12 +16,6 @@ $LastChangedRevision$
 BEGIN {
     our $VERSION = '1.11.0';
 }
-
-=item Subversion ID
-
-$Id$
-
-=back
 
 =head1 SYNOPSIS
 

@@ -1,12 +1,10 @@
 package Bric::Util::CharTrans;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

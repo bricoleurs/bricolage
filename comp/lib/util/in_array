@@ -5,19 +5,6 @@
 
 in_array.mc
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=cut
-
-our $VERSION = substr(q$LastChangedRevision$, 10, -1);
-
-
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 =head1 DESCRIPTION

@@ -1,12 +1,10 @@
 package Bric::App::Auth;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::Auth - Does the dirty work of authentication.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

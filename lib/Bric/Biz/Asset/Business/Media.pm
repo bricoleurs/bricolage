@@ -1,13 +1,11 @@
 package Bric::Biz::Asset::Business::Media;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Media - The parent class of all media objects
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

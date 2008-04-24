@@ -5,10 +5,6 @@
 required.pl - installation script to probe for required software
 and select database and Apache version
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to probe for required software -

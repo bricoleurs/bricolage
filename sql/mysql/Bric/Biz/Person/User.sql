@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- $Id$
 -- Target DBMS: PostgreSQL 7.2

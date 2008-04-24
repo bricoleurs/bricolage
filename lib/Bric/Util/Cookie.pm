@@ -1,20 +1,14 @@
 package Bric::Util::Cookie;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Cookie - Wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Cookie
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

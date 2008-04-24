@@ -2,10 +2,6 @@
 
 Bric::Admin - Bricolage System Administration Guide.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This guide is intended for the system administrator in charge of installing,

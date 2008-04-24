@@ -1,4 +1,6 @@
 package Bric::SOAP::Preference;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -25,17 +27,9 @@ require Data::Dumper if DEBUG;
 
 Bric::SOAP::Preference - SOAP interface to Bricolage preferences
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

@@ -1,4 +1,6 @@
 package Bric::SOAP::Workflow;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -50,10 +52,6 @@ my %wf_types = (
 =head1 NAME
 
 Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,13 +1,11 @@
 package Bric::Util::Coll::OCInclude;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

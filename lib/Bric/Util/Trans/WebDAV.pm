@@ -1,12 +1,10 @@
 package Bric::Util::Trans::WebDAV;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

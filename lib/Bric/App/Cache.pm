@@ -1,12 +1,10 @@
 package Bric::App::Cache;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::Cache - Object for managing Application-wide global data.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

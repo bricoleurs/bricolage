@@ -4,10 +4,6 @@
 
 container_prof - The container profile editor.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/container_prof/container_prof.mc', state => 'edit' &>

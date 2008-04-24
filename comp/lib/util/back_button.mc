@@ -12,10 +12,6 @@ $url ||= last_page();
 
 /lib/util/back_button.mc - Adds a self-contained back button to a page
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/lib/util/back_button.mc');

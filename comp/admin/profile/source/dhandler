@@ -136,10 +136,6 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 /admin/profile/source/dhandler - Interface for managing sources.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

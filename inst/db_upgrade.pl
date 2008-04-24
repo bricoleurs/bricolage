@@ -4,10 +4,6 @@
 
 db_upgrade.pl - installation script to run db upgrade scripts
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to run the database upgrade

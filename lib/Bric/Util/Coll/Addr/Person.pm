@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Addr::Person;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Addr::Person - Interface for managing collections of contacts.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

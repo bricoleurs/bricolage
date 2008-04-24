@@ -1,12 +1,10 @@
 #!/usr/bin/perl -w
 
+# $Id $
+
 =head1 NAME
 
 bric_pgimport - Builds a Bricolage Database
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =head1 SYNOPSIS
 

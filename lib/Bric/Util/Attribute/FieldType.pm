@@ -1,13 +1,11 @@
 package Bric::Util::Attribute::FieldType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Attribute::FieldType - Groups of Bric::Biz::ElementType::Parts::FieldType objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

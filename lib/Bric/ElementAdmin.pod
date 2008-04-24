@@ -2,10 +2,6 @@
 
 Bric::ElementAdmin - Bricolage Element Administration Guide.
 
-=head1 Version
-
-$LastChangedRevision$
-
 =head1 Description
 
 This guide covers the art and science of element type administration in

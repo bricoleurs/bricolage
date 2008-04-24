@@ -1,13 +1,11 @@
 package Bric::Util::Fault;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Fault - Bricolage Exceptions
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,4 +1,6 @@
 package Bric::SOAP::Auth;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -19,10 +21,6 @@ use constant DEBUG => 0;
 =head1 NAME
 
 Bric::SOAP::Auth - module to handle authentication for the SOAP interface
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

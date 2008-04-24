@@ -58,10 +58,6 @@ my $u = get_user_object();
 
 /workflow/profile/alerts/dhandler - Interface for "My Alerts"
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

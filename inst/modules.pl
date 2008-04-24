@@ -4,10 +4,6 @@
 
 modules.pl - installation script to probe for required Perl modules
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to probe for required Perl

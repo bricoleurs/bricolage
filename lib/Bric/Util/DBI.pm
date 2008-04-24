@@ -1,14 +1,12 @@
 package Bric::Util::DBI;
 
+# $Id $
+
 =pod
 
 =head1 NAME
 
 Bric::Util::DBI - The Bricolage Database Layer
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

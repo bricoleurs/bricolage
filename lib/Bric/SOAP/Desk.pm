@@ -1,4 +1,6 @@
 package Bric::SOAP::Desk;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -24,10 +26,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Desk - SOAP interface to Bricolage desks
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

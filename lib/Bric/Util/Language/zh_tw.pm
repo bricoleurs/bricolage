@@ -1,14 +1,12 @@
 package Bric::Util::Language::zh_tw;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

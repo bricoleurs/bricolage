@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Priv;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Priv - Interface for managing collections of privileges.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

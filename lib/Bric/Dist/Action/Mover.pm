@@ -1,12 +1,10 @@
 package Bric::Dist::Action::Mover;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Action::Mover - Actions that actually move resources.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,14 +1,12 @@
 package Bric::Util::Coll::ServerType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::ServerType - Interface for managing collections of servers
 types.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -2,10 +2,6 @@
 
 Bric::Alert - Bricolage Alert Management Guide.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This guide describes the Bricolage alerting system -- how it works and how to use it.

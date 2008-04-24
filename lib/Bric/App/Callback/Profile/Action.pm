@@ -1,5 +1,7 @@
 package Bric::App::Callback::Profile::Action;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::Callback::Profile::Action - Action callback class.

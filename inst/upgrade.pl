@@ -4,10 +4,6 @@
 
 upgrade.pl - installation script to gather upgrade information
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to prepare for an upgrade.

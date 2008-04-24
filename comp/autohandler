@@ -16,10 +16,6 @@ Bric::App::Callback::CharTrans->from_utf8($_[0]) if Bric::Config::ENCODE_OK;
 
 autohandler - The first Mason element to execute during a request.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

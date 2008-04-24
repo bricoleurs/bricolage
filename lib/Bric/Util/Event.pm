@@ -1,12 +1,10 @@
 package Bric::Util::Event;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Event - Interface to Bricolage Events
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

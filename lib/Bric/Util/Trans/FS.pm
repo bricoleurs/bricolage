@@ -1,14 +1,12 @@
 package Bric::Util::Trans::FS;
 
+# $Id $
+
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Trans::FS - Utility class for handling files, paths and filenames.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

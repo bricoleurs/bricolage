@@ -1,12 +1,10 @@
 package Bric::Util::Grp::Job;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::Job - Interface to Bric::Util::Job Groups
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

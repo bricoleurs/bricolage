@@ -1,14 +1,12 @@
 package Bric::Biz::Asset;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset - A base class of behaviours that all assets must exhibit. An
 asset is anything that goes through workflow
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

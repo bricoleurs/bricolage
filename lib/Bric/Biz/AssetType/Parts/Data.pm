@@ -1,13 +1,11 @@
 package Bric::Biz::AssetType::Parts::Data;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::AssetType::Parts::Data - Deprecated; use Bric::Biz::ElementType::Parts::FieldType instead
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
@@ -7,7 +6,6 @@
 -- -----------------------------------------------------------------------------
 -- Attribute.con
 --
--- VERSION: $LastChangedRevision$
 --
 
 /* Commented out because attr_person won't be used in production (in this version).

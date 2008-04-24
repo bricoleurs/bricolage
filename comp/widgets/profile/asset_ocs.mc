@@ -68,10 +68,6 @@ my $select_sub = sub {
 
 /widgets/profile/asset_ocs.mc - The Asset Output Channel display component
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/profile/asset_ocs.mc',

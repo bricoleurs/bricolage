@@ -6,10 +6,6 @@ package bric_upgrade;
 
 bric_upgrade - Library with functions to assist upgrading a Bricolage installation.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 # Grab the Version Number.

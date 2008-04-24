@@ -1,4 +1,6 @@
 package Bric::SOAP::Story;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -45,10 +47,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Story - SOAP interface to Bricolage stories.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

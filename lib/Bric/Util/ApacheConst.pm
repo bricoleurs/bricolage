@@ -1,20 +1,14 @@
 package Bric::Util::ApacheConst;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::ApacheConst - Common Apache and HTTP status code constants
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

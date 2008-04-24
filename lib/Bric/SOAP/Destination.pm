@@ -1,4 +1,6 @@
 package Bric::SOAP::Destination;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -30,17 +32,9 @@ require Data::Dumper if DEBUG;
 
 Bric::SOAP::Destination - SOAP interface to Bricolage destinations
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

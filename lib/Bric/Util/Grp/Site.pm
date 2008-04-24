@@ -1,27 +1,15 @@
 package Bric::Util::Grp::Site;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::Site - Interface to Bric::Biz::Site Groups
-
-=head1 VITALS
-
-=over 4
-
-=item Version
-
-$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
-
-=item Subversion ID
-
-$Id$
-
-=back
 
 =head1 SYNOPSIS
 

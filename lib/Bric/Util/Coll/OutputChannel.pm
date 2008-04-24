@@ -1,14 +1,12 @@
 package Bric::Util::Coll::OutputChannel;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::OutputChannel - Interface for managing collections of Output
 Channels.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

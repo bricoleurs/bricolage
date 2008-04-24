@@ -4,10 +4,6 @@
 
 story_prof.mc - The profile of stories widget
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/story_prof/story_prof.mc' &>

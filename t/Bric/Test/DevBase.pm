@@ -4,10 +4,6 @@ package Bric::Test::DevBase;
 
 Bric::Test::DevBase - Bricolage Development Testing Base Class
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 # Grab the Version Number.

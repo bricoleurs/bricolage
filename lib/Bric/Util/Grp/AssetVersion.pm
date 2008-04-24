@@ -1,4 +1,6 @@
 package Bric::Util::Grp::AssetVersion;
+
+# $Id $
 use strict;
 use base qw(Bric::Util::Grp);
 use constant CLASS_ID => 25;

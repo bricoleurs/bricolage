@@ -1,13 +1,11 @@
 package Bric::SOAP::Handler;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

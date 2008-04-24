@@ -1,4 +1,6 @@
 package Bric::SOAP::Util;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -42,10 +44,6 @@ use constant DEBUG => 0;
 =head1 NAME
 
 Bric::SOAP::Util - utility class for the Bric::SOAP classes
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

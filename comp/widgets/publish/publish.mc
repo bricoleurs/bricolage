@@ -4,10 +4,6 @@
 
 publish - A widget to display publish options.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/publish/publish.mc' &>

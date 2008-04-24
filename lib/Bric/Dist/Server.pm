@@ -1,13 +1,11 @@
 package Bric::Dist::Server;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Server - Interface for managing servers to which content will be
 distributed.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

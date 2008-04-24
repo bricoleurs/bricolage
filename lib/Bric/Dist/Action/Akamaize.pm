@@ -1,12 +1,10 @@
 package Bric::Dist::Action::Akamaize;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Action::Akamaize - Class to Akamaize resources
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

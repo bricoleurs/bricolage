@@ -6,10 +6,6 @@
 getAuthLevel.mc
 
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 use Bric; our $VERSION = Bric->VERSION;

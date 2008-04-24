@@ -5,10 +5,6 @@
 
 /widgets/profile/hidden.mc - Simple interface for creating hidden fields.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 $m->comp("/widgets/profile/hidden.mc",

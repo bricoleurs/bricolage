@@ -4,10 +4,6 @@
 
 grp_membership - Group membership widget
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/grp_membership/grp_membership.mc', 

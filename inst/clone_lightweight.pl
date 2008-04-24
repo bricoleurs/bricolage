@@ -4,14 +4,6 @@
 
 clone_lightweight.pl
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called by "make clone" after clone_files.pl to remove all

@@ -1,27 +1,15 @@
 package Bric::Util::DBD::mysql;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
-
-=head1 VITALS
-
-=over 4
-
-=item Version
-
-$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
-
-=item Subversion ID
-
-$Id$
-
-=back
 
 =head1 SYNOPSIS
 

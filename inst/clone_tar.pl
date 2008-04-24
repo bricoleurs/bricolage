@@ -4,10 +4,6 @@
 
 clone.pl - installation script to copy files for clone distributions
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make clone" to build the tar ball with the

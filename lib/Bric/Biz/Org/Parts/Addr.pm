@@ -1,13 +1,11 @@
 package Bric::Biz::Org::Parts::Addr;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Org::Parts::Addr - Organizational Addresses
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

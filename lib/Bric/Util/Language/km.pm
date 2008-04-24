@@ -1,14 +1,12 @@
 package Bric::Util::Language::km;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::km - Bricolage Khmer translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

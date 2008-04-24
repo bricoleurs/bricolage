@@ -1,5 +1,7 @@
 package Bric::App::Callback::Desk;
 
+# $Id $
+
 use base qw(Bric::App::Callback);
 # Note special name 'desk_asset' so it doesn't conflict
 # with 'desk' in Profile/Desk.pm

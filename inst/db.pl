@@ -4,10 +4,6 @@
 
 db.pl - installation script to launch the apropriate database instalation script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during C<make install> to install the Bricolage

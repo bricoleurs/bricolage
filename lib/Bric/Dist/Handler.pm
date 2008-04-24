@@ -1,12 +1,10 @@
 package Bric::Dist::Handler;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

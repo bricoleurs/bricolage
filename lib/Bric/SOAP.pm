@@ -1,5 +1,7 @@
 package Bric::SOAP;
 
+# $Id $
+
 require Bric; our $VERSION = Bric->VERSION;
 
 # load em' up
@@ -27,10 +29,6 @@ __END__
 =head1 NAME
 
 Bric::SOAP - The Bricolage SOAP interface
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =head1 SYNOPSIS
 

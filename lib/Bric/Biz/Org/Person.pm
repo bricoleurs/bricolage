@@ -1,13 +1,11 @@
 package Bric::Biz::Org::Person;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Org::Person - Manages Organizations Related to Persons
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

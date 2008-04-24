@@ -91,10 +91,6 @@ $m->comp('/widgets/profile/select.mc',
 
 /widgets/site_context/site_context.mc - Display and set Site Context
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/site_context/site_context.mc);

@@ -4,10 +4,6 @@
 
 select_time - A widget to facilitate time input.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/select_time/select_time.mc', style => $style &>

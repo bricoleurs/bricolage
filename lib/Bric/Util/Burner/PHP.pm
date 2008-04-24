@@ -1,21 +1,15 @@
 package Bric::Util::Burner::PHP;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Burner::PHP - Publish stories using PHP templates
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

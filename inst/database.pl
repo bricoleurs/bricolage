@@ -5,14 +5,6 @@
 database.pl - database selection script to choose database (mysql, postgresql) and
 start the appropriate probing script
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to ask the user to choose between

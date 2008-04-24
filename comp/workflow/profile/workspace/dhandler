@@ -37,10 +37,6 @@ my $id = get_user_id();
 
 dhandler -- Implement the user workspace.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

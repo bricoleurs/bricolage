@@ -1,4 +1,6 @@
 package Bric::SOAP::Template;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -43,10 +45,6 @@ use constant ALLOW_DUPLICATE_TEMPLATES => 0;
 =head1 NAME
 
 Bric::SOAP::Template - SOAP interface to Bricolage templates.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

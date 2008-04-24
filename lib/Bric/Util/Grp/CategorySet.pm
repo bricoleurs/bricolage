@@ -1,13 +1,11 @@
 package Bric::Util::Grp::CategorySet;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp::CategorySet - A module to hold sets of categories.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

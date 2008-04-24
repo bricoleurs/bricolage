@@ -1,13 +1,11 @@
 package Bric::Util::Class;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Class - A module to provide access to the class table
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

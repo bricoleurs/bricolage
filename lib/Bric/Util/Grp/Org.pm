@@ -1,12 +1,10 @@
 package Bric::Util::Grp::Org;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::Org - Interface to Bric::Biz::Org Groups
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

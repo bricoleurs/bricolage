@@ -6,10 +6,6 @@
 
 login - A login widget
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/login/login.mc' &>

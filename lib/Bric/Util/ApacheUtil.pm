@@ -1,20 +1,14 @@
 package Bric::Util::ApacheUtil;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::ApacheUtil - Wrapper around Apache::Util and Apache2::Util classes
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

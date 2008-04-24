@@ -4,14 +4,6 @@
 
 dev.pl - installs bricolage to run out of a Subversion checkout
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make dev" to modify a standard install to

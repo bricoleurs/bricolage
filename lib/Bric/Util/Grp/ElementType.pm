@@ -1,12 +1,10 @@
 package Bric::Util::Grp::ElementType;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::ElementType - Interface to Element Groups
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

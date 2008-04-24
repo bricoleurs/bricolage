@@ -1,12 +1,10 @@
 package Bric::Util::Attribute::Member;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Attribute::Member - Interface to Attributes of Bric::Util::Member objects
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

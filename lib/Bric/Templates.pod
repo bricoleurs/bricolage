@@ -4,10 +4,6 @@
 
 Bric::Templates - Producing Templates on the Bricolage System
 
-=head1 Version
-
-$LastChangedRevision$
-
 =head1 Background
 
 Before talking about templates, let's take a moment to discuss all the major

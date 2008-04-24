@@ -1,13 +1,11 @@
 package Bric::Biz::OutputChannel;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::OutputChannel - Bricolage Output Channels.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

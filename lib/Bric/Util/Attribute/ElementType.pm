@@ -1,13 +1,11 @@
 package Bric::Util::Attribute::ElementType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Attribute::ElementType - Groups of Bric::Biz::ElementType objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

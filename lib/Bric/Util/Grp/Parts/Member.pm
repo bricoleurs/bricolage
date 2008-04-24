@@ -1,15 +1,13 @@
 package Bric::Util::Grp::Parts::Member;
 
+# $Id $
+
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp::Parts::Member - A Class for associating Members of a
 Group with attribute with in the group
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

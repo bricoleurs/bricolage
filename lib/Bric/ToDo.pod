@@ -2,10 +2,6 @@
 
 Bric::ToDo - Bricolage To Do List
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This document lists the items on Bricolage's To Do list.

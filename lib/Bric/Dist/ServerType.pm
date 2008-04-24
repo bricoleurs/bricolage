@@ -1,13 +1,11 @@
 package Bric::Dist::ServerType;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::ServerType - Interface for managing types of servers to which to
 distribute content.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

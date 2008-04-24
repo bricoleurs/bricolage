@@ -311,10 +311,6 @@ $no_edit => 0
 
 /admin/profile/alert_type/dhandler - Manages Alert Types.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

@@ -1,13 +1,11 @@
 package Bric::Util::Attribute::Action;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Attribute::Action - Interface to Attributes of Bric::Util::Action
 objects
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

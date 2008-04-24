@@ -1,14 +1,12 @@
 package Bric::Util::Coll::Site;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Site - Interface for managing collections of
 Bric::Biz::Site objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

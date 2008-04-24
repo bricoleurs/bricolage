@@ -4,10 +4,6 @@
 
 listManager.mc - display a list of objects.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   <& /widgets/listManager/listManager.mc

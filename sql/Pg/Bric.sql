@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- Author: David Wheeler <david@justatheory.com>
 --

@@ -1,14 +1,12 @@
 package Bric::Util::Language::lo;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::lo - Bricolage Lao translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

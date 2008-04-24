@@ -1,13 +1,11 @@
 package Bric::App::Session;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::App::Session - A class to handle user sessions
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,13 +1,11 @@
 package Bric::App::Util;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::App::Util - A class to house general application functions.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

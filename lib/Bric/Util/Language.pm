@@ -1,4 +1,6 @@
 package Bric::Util::Language;
+
+# $Id $
 ###############################################################################
 
 =encoding utf8
@@ -6,10 +8,6 @@ package Bric::Util::Language;
 =head1 NAME
 
 Bric::Util::Language - Bricolage Localization
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,14 +1,12 @@
 package Bric::Util::DBD::Oracle;
 
+# $Id $
+
 =pod
 
 =head1 NAME
 
 Bric::Util::DBD::Oracle - The Bricolage Oracle Driver
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

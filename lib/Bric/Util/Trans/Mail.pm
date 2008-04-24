@@ -1,14 +1,12 @@
 package Bric::Util::Trans::Mail;
 
+# $Id $
+
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Trans::Mail - Utility class for sending email.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

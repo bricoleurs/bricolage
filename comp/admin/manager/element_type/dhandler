@@ -157,10 +157,6 @@ $m->comp('/widgets/wrappers/footer.mc', param => \%ARGS);
 
 /admin/manager/dhandler - Admin tools type manager
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

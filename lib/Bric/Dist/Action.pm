@@ -1,13 +1,11 @@
 package Bric::Dist::Action;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Action - Interface to actions that can be performed on resources
 for given server types.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

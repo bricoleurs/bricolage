@@ -4,14 +4,6 @@
 
 dbload_mysql.pl - installation script to install MySQL database
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during C<make install> to install the Bricolage

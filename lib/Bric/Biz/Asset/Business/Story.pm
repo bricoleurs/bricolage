@@ -1,13 +1,11 @@
 package Bric::Biz::Asset::Business::Story;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Story - The interface to the Story Object
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

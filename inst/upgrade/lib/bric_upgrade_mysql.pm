@@ -6,18 +6,10 @@ package bric_upgrade_mysql;
 
 bric_upgrade - Library with functions to assist upgrading a Bricolage installation.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 # Grab the Version Number.
 use Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

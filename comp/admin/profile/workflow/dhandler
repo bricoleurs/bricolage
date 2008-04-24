@@ -234,10 +234,6 @@ if ($new_desk) {
 
 /admin/profile/workflow/dhandler - Interface for managing workflows.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

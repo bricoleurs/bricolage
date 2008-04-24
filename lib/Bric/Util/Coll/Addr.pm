@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Addr;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Addr - Interface for managing collections of addresses.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -4,10 +4,6 @@
 
 runtests.pl - Runs Bricolage's Tests
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   # In Makefile:

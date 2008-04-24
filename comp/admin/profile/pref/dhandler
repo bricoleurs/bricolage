@@ -98,10 +98,6 @@ $id => undef
 
 /admin/profile/preferences/dhandler - Manages application global preferences.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

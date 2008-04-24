@@ -4,14 +4,6 @@
 
 dbprobe_pg.pl - installation script to probe PostgreSQL configuration
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to probe the PostgreSQL

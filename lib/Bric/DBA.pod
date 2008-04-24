@@ -2,10 +2,6 @@
 
 Bric::DBA - Bricolage Database Administration Guide.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This guide is intended for the database administrator in charge of maintaining

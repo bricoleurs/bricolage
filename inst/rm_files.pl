@@ -4,10 +4,6 @@
 
 rm_files.pl - installation script to remove directories and files
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during C<make uninstall> to remove all

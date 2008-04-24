@@ -275,8 +275,3 @@ appropriate side navigation bar.
 
 =cut
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-</%doc>

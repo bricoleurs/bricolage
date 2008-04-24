@@ -1,12 +1,10 @@
 package Bric::App::Authz;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::Authz - Exports functions for checking user authorization.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

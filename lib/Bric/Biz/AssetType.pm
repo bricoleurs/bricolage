@@ -1,13 +1,11 @@
 package Bric::Biz::AssetType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::AssetType - Deprecated; use Bric::Biz::ElementType instead
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

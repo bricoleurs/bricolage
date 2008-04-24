@@ -1,13 +1,11 @@
 package Bric::Util::Burner;
+
+# $Id $
 ##############################################################################
 
 =head1 NAME
 
 Bric::Util::Burner - Publishes stories and deploys templates
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

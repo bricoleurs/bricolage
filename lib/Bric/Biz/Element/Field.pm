@@ -1,13 +1,11 @@
 package Bric::Biz::Element::Field;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Element::Field - Data (Field) Element
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

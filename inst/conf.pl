@@ -4,10 +4,6 @@
 
 conf.pl - installation script to write configuration files in conf/
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make install" to write out configuration

@@ -1,4 +1,6 @@
 package Bric::SOAP::ContribType;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -42,17 +44,9 @@ my %FIELD_MAP = (
 
 Bric::SOAP::ContribType - SOAP interface to Bricolage contributor types
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

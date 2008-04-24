@@ -1,13 +1,11 @@
 package Bric::Util::Burner::Template;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Burner::Template - Publish stories using HTML::Template templates
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

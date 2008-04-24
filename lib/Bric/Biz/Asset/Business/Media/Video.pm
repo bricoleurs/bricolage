@@ -1,14 +1,12 @@
 package Bric::Biz::Asset::Business::Media::Video;
+
+# $Id $
 ################################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Business::Media::Video - the media class that represents static
 videos
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,14 +1,12 @@
 package Bric::Util::Language::ko_ko;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::ko_ko - Bricolage Korean translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

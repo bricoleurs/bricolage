@@ -4,14 +4,6 @@
 
 dbprobe_mysql.pl - installation script to probe MySQL configuration
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to probe the MySQL

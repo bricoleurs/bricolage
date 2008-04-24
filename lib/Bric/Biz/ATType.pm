@@ -1,13 +1,11 @@
 package Bric::Biz::ATType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::ATType - A class to represent ElementType types.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

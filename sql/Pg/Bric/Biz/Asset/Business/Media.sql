@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>

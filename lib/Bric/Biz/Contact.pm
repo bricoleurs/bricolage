@@ -1,12 +1,10 @@
 package Bric::Biz::Contact;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Biz::Contact - Interface to Contacts
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -146,10 +146,6 @@ $crumb = $crumb ? "&quot;$crumb&quot;" : 'New';
 
 /admin/profile/contrib_type/dhandler - Contributor Type profile interface
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

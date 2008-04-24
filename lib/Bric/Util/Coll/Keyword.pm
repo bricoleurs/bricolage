@@ -1,14 +1,12 @@
 package Bric::Util::Coll::Keyword;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Keyword - Interface for managing collections of
 Bric::Biz::Keyword objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

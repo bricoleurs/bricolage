@@ -1,14 +1,12 @@
 package Bric::Util::Trans::Jabber;
 
+# $Id $
+
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Trans::Jabber - Utility class for sending instant messages.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

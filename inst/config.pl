@@ -4,10 +4,6 @@
 
 config.pl - installation script to probe user configuration
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to ask the user questions about

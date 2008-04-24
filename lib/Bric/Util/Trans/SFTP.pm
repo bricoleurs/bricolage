@@ -1,12 +1,10 @@
 package Bric::Util::Trans::SFTP;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Trans::SFTP - SFTP Client interface for distributing resources.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

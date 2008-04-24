@@ -1,5 +1,7 @@
 package Bric::App::Callback::Profile::Category;
 
+# $Id $
+
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'category';

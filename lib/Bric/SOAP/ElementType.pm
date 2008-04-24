@@ -1,4 +1,6 @@
 package Bric::SOAP::ElementType;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -26,10 +28,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::ElementType - SOAP interface to Bricolage element type definitions.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

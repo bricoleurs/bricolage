@@ -4,10 +4,6 @@
 
 stop.pl - upgrade script to stop running Bricolage servers
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to stop running servers.  Also

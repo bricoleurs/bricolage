@@ -1,14 +1,12 @@
 package Bric::Util::Language::bo;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::bo - Bricolage Tibetan translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

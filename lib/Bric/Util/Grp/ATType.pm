@@ -1,21 +1,15 @@
 package Bric::Util::Grp::ATType;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::ATType - Interface to Bric::Biz::ATType Groups
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

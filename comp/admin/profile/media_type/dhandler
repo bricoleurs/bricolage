@@ -146,10 +146,6 @@ if (defined $mt && $mt->get_name) {
 
 /admin/profile/media_type/dhandler - Interface for managing media types.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

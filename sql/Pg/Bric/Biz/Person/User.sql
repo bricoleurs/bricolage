@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- Target DBMS: PostgreSQL 7.2
 -- Author: David Wheeler <david@justatheory.com>

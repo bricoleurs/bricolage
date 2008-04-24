@@ -1,13 +1,11 @@
 package Bric::Biz::ElementType::Parts::FieldType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::ElementType::Parts::FieldType - Bricolage Field Type management
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

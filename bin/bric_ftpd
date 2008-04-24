@@ -1,12 +1,10 @@
 #!/usr/bin/perl -w
 
+# $Id $
+
 =head1 NAME
 
 bric_ftpd - Bricolage virtual FTP server
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =head1 SYNOPSIS
 

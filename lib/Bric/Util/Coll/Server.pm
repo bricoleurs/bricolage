@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Server;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Server - Interface for managing collections of servers.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

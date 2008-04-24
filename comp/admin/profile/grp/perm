@@ -77,10 +77,6 @@ my $grp_name = $grp->get_name;
 
 /admin/profile/grp/perm - Group profile permissions interface
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

@@ -1,13 +1,11 @@
 package Bric::Util::Coll::Rule;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::Rule - Interface for managing collections of alert type rules.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

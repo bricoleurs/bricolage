@@ -4,14 +4,6 @@
 
 apache.pl - installation script to probe apache configuration
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to probe the Apache configuration.

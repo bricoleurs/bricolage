@@ -4,10 +4,6 @@
 
 summary - Displays a summary of asset objects.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/story_summary/story_summary.mc' &>

@@ -1,12 +1,10 @@
 package Bric::App::ApacheStartup;
 
+# $Id $
+
 =head1 NAME
 
 Bric::App::ApacheStartup - Bricolage httpd startup configuration
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

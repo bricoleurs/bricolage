@@ -4,10 +4,6 @@
 
 files.pl - installation script to create directories and copy files
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called during "make install" to create Bricolage's

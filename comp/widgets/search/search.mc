@@ -4,10 +4,6 @@
 
 search - A search widget
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/search/search.mc', type => $type, object => $object, field => $field &>

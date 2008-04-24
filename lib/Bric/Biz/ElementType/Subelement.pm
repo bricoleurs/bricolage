@@ -1,4 +1,6 @@
 package Bric::Biz::ElementType::Subelement;
+
+# $Id $
 #############################################################################
 
 =head1 NAME
@@ -6,17 +8,9 @@ package Bric::Biz::ElementType::Subelement;
 Bric::Biz::ElementType::Subelement - Maps a subelement ElementType
 to it's parent's Element Types with occurrence relations and place.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

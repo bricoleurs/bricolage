@@ -4,14 +4,6 @@
 
 db_uninst_Pg.pl - installation script to uninstall PostgeSQL database
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$Id$
-
 =head1 DESCRIPTION
 
 This script is called during C<make uninstall> to uninstall the

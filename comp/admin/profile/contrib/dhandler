@@ -303,10 +303,6 @@ my $stepOneOfTwo = sub {
 
 /admin/profile/contrib/dhandler - Contributor Profile.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

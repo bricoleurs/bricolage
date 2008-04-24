@@ -1,12 +1,10 @@
 package Bric::Util::Job::Pub;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

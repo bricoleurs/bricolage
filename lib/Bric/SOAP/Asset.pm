@@ -1,4 +1,6 @@
 package Bric::SOAP::Asset;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -33,10 +35,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Asset - base class for SOAP "asset" classes
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

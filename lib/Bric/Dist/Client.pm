@@ -1,13 +1,11 @@
 package Bric::Dist::Client;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Dist::Client - LWP Client for telling Bric::Dist::Handler to execute
 distribution jobs.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

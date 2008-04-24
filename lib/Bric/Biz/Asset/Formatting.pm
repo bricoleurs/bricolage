@@ -1,21 +1,15 @@
 package Bric::Biz::Asset::Formatting;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Asset::Formatting - Deprecated; use Bric::Biz::Asset::Template instead
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 DESCRIPTION
 

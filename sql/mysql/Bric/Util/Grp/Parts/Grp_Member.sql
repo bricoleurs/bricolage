@@ -1,5 +1,4 @@
 -- Project: Bricolage
--- VERSION: $LastChangedRevision$
 --
 -- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
@@ -8,7 +7,6 @@
 -- -----------------------------------------------------------------------------
 -- Member.sql
 -- 
--- VERSION: $LastChangedRevision$
 --
 -- The member table and the tables that map member back to their respective 
 -- objects. The member table contains an id and a group id. The table that 

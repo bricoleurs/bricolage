@@ -1,13 +1,11 @@
 package Bric::Util::Attribute;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Attribute - A module to manage attributes for various objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

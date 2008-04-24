@@ -41,10 +41,6 @@ if ($ARGS{id} or $ARGS{site_id}) {
 
 /admin/profile/category/dhandler - Interface for managing categories.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

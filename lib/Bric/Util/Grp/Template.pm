@@ -1,12 +1,10 @@
 package Bric::Util::Grp::Template;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::Template - Interface to Bric::Biz::Asset::Template Groups.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

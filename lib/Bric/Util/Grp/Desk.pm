@@ -1,13 +1,11 @@
 package Bric::Util::Grp::Desk;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp::Desk - A class to impliment desk groups
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,14 +1,12 @@
 package Bric::Util::Language::de_de;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::de_de - Bricolage German translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,13 +1,11 @@
 package Bric::Util::Grp::Parts::Member::Contrib;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::Grp::Parts::Member::Contrib - Manages Contributors (members of
 Bric::Util::Grp::Person groups, that is).
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

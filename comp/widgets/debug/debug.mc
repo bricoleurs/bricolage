@@ -4,10 +4,6 @@
 
 debug - Output some debugging information
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/debug/debug.mc' &>

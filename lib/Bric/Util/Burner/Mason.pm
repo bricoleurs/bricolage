@@ -1,13 +1,11 @@
 package Bric::Util::Burner::Mason;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Burner::Mason - Publish sturies using Mason templates
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

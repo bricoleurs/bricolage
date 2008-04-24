@@ -1,14 +1,12 @@
 package Bric::Util::Coll::OCElement;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Coll::OCElement - Interface for managing collections of
 Bric::Biz::OutputChannel::Element objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

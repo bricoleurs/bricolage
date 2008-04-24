@@ -1,13 +1,11 @@
 package Bric::Biz::Element::Container;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Element::Container - Container Element
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

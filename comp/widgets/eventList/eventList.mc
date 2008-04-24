@@ -5,10 +5,6 @@
 
 /widgets/event/eventList.mc - The Event List Widget.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/eventList/eventList.mc', object => 'user',

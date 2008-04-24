@@ -4,10 +4,6 @@
 
 select_object - Provide a select box listing all objects of a certain type.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/select_object/select_object.mc', object     => 'Keyword'

@@ -559,10 +559,6 @@ unless (Bric::Config::ENCODE_OK) {
 
 /admin/manager/dhandler - Admin tools type manager
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

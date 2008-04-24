@@ -1,13 +1,11 @@
 package Bric::Biz::OutputChannel::Element;
+
+# $Id $
 #############################################################################
 
 =head1 NAME
 
 Bric::Biz::OutputChannel::Element - Maps Output Channels to Element Types.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

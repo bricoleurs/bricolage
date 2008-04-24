@@ -1,13 +1,11 @@
 package Bric::Biz::ElementType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::ElementType - Bricolage element types
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

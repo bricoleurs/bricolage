@@ -1,14 +1,12 @@
 package Bric::Util::FTP::FileHandle;
 
+# $Id $
+
 =pod
 
 =head1 NAME
 
 Bric::Util::FTP::FileHandle - Virtual FTP Server FileHandle
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

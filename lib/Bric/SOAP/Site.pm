@@ -1,4 +1,6 @@
 package Bric::SOAP::Site;
+
+# $Id $
 ###############################################################################
 
 use strict;
@@ -23,10 +25,6 @@ require Data::Dumper if DEBUG;
 =head1 NAME
 
 Bric::SOAP::Site - SOAP interface to Bricolage sites
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

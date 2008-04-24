@@ -4,10 +4,6 @@
 
 media_prof.mc - Profile for media documents
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 SYNOPSIS
 
 <& '/widgets/media_prof/media_prof.mc' &>

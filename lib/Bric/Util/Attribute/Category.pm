@@ -1,13 +1,11 @@
 package Bric::Util::Attribute::Category;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Attribute::Category - Groups of Bric::Biz::Category objects.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

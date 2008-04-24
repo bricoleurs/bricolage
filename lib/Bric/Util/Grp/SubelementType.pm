@@ -1,13 +1,11 @@
 package Bric::Util::Grp::SubelementType;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Util::Grp::SubelementType - A group of ElementTypes.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

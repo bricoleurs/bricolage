@@ -1,6 +1,5 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
--- VERSION: $LastChangedRevision$
 --
 -- Author: David Wheeler <david@justatheory.com>
 --

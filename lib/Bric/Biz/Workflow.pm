@@ -1,13 +1,11 @@
 package Bric::Biz::Workflow;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
 
 Bric::Biz::Workflow - Controls the progress of an asset through a series of desks.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

@@ -1,4 +1,6 @@
 package Bric::Util::Coll::Subelement;
+
+# $Id $
 ###############################################################################
 
 =head1 NAME
@@ -6,17 +8,9 @@ package Bric::Util::Coll::Subelement;
 Bric::Util::Coll::Subelement - Interface for managing collections of
 Bric::Biz::ElementType::Subelement objects.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

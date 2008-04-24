@@ -1,14 +1,12 @@
 package Bric::Util::Language::it_it;
 
+# $Id $
+
 =encoding utf8
 
 =head1 NAME
 
 Bric::Util::Language::it_it - Bricolage Italian translation
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

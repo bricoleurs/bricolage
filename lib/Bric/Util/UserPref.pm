@@ -1,12 +1,10 @@
 package Bric::Util::UserPref;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::UserPref - Interface to Bricolage per-user preferences.
-
-=head1 VERSION
-
-$LastChangedRevision$
 
 =cut
 

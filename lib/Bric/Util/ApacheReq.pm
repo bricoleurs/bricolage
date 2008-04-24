@@ -1,20 +1,14 @@
 package Bric::Util::ApacheReq;
 
+# $Id $
+
 =head1 NAME
 
 Bric::Util::ApacheReq - Wrapper around Apache 1 and 2 Request classes
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =cut
 
 require Bric; our $VERSION = Bric->VERSION;
-
-=head1 DATE
-
-$Id$
 
 =head1 SYNOPSIS
 

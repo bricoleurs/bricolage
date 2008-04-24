@@ -54,10 +54,6 @@ my $wfname = '&quot;' . $wf->get_name . '&quot;';
 
 dhandler -- Desk display dhandler
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DATE
 
 $LastChangedDate$

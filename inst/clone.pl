@@ -4,10 +4,6 @@
 
 clone.pl - installation script to gather clone information
 
-=head1 VERSION
-
-$LastChangedRevision$
-
 =head1 DESCRIPTION
 
 This script is called by "make clone" to prepare for building a cloned
