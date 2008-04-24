@@ -784,12 +784,7 @@ require Bric; our $VERSION = Bric->VERSION;
              )
           : 0;
 
-    # Manual override if needed for testing
-    #make sure to comment everything else before it out
-    #use constant MOD_PERL_VERSION => 2;
-
     use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
-
 }
 
 #==============================================================================#
