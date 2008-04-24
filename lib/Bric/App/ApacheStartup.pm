@@ -54,7 +54,23 @@ BEGIN {
         }
     }
     else {
-        if (eval{Apache2::ServerUtil->exists_config_define('BRICOLAGE_DEBUG')}) {
+        require mod_perl2;
+        require APR;
+        require APR::Request;
+        require APR::Request::Apache2;
+        require APR::Table;
+        require Apache2::Access;
+        require Apache2::Connection;
+        require Apache2::Log;
+        require Apache2::Request;
+        require Apache2::RequestRec;
+        require Apache2::RequestUtil;
+        require Apache2::Response;
+        require Apache2::RequestIO;
+        require Apache2::ServerUtil;
+        require Apache2::SubRequest;
+        require Apache2::Upload;
+        if ( eval{ Apache2::ServerUtil->exists_config_define('BRICOLAGE_DEBUG') } ) {
             require Apache::DB;
             Apache::DB->init;
             $DEBUGGING = 1;
