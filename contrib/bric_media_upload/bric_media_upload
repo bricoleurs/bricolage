@@ -42,6 +42,9 @@ Options:
   --make-categories - if media archive contains categories that do not exist,
                       create them, otherwise place category-less media in /
 
+  --fatal-no-cat    - die if a category doesn't exist, rather than defaulting to /
+                      (see --make-categories)
+
   --media-type            - import as this media type.  Defaults to 'Photograph',
                       if exists.
 
@@ -126,6 +129,7 @@ BEGIN {
     our $target_password        = $ENV{BRICOLAGE_PASSWORD};
     our $VERBOSE                = 0;
     our $make_categories        = 0;
+    our $fatal_no_cat           = 0;
     our $media_info             = 0;
     our $temp_dir                    = catdir(tmpdir(), "bric_media_upload.$$");
     our $media_type             = 'Photograph';
@@ -142,6 +146,7 @@ BEGIN {
                "target-password=s"      => \$target_password,
                "temp-dir=s"             => \$temp_dir,
                "make-categories"        => \$make_categories,
+               "fatal-no-cat"           => \$fatal_no_cat,
                "media-type=s"           => \$media_type,
                "media-info"             => \$media_info,
                "timeout=s"              => \$timeout,
@@ -471,7 +476,7 @@ sub check_connect_soap {
 
 sub find_or_create_category {
     my ($category, $targ_url) = @_;
-    our ($timeout, $temp_dir, $make_categories, $site);
+    our ($timeout, $temp_dir, $make_categories, $site, $fatal_no_cat);
     my $write_to_root = 0;
     my $command = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url category list_ids --search path=".$category;
     $command .= " --search site='$site'" if $site;
@@ -490,6 +495,8 @@ sub find_or_create_category {
                 find_or_create_category( $parent, $targ_url );
             }
             create_category($category, $targ_url);
+        } elsif ($fatal_no_cat) {
+            die "There is no category '$category' and --fatal-no-cat was specified, so dying.\n";
         }else{
             print "\nCategory ".$category." does not exist. Will upload media to / category.\n" if $VERBOSE;
             $write_to_root = 1;

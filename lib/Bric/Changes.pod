@@ -149,6 +149,10 @@ fields. [David]
 
 =item *
 
+Added C<--fatal-no-cat> option to F<contrib/bric_media_upload>. [Scott]
+
+=item *
+
 When editing a field type, if a numeric value is set to an empty value, it
 will be set to 0 rather than remaining unchanged. [David]
 
