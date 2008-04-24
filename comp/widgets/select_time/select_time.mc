@@ -8,10 +8,6 @@ select_time - A widget to facilitate time input.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/select_time/select_time.mc', style => $style &>

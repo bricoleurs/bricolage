@@ -11,10 +11,6 @@ $LastChangedRevision$
 
 use Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 $m->comp("/widgets/profile/dumpRemainingFields.mc", objVals => $objVals,

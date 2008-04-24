@@ -8,10 +8,6 @@ runtests.pl - Runs Bricolage's Tests
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   # In Makefile:

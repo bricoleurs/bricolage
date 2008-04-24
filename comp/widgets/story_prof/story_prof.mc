@@ -8,10 +8,6 @@ story_prof.mc - The profile of stories widget
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/story_prof/story_prof.mc' &>

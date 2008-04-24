@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate: 2006-06-22 05:00:21 +0300 (Thu, 22 Jun 2006) $
+$Id$
 
 =head1 DESCRIPTION
 

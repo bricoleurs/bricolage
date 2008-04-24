@@ -8,10 +8,6 @@ bric_ftpd - Bricolage virtual FTP server
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   su nobody -c "bric_ftpd -S"

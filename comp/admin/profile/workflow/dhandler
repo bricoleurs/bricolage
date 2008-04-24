@@ -9,13 +9,13 @@ $m->comp('/widgets/profile/hidden.mc', value => $id, name => 'workflow_id')
   if defined $id;
 
 # Output the key properties.
-$m->comp("/widgets/wrappers/table_top.mc", 
+$m->comp("/widgets/wrappers/table_top.mc",
           caption => "Properties",
           number  => 1,
 );
-$m->comp('/widgets/profile/dumpRemainingFields.mc', 
+$m->comp('/widgets/profile/dumpRemainingFields.mc',
           objref => $wf,
-          readOnly => $no_edit, 
+          readOnly => $no_edit,
           fieldsUsed => { active => 1, type => 1, site => 1 },
 );
 # Output the Workflow type.
@@ -28,7 +28,7 @@ if (defined $id) {
     );
 } else {
     # It's a new workflow. Output a list of parent categories to choose from.
-    $m->comp('/widgets/profile/displayFormElement.mc', 
+    $m->comp('/widgets/profile/displayFormElement.mc',
               objref => $wf,
               key => 'type',
     );
@@ -74,15 +74,15 @@ if (defined $id) {
     # Grab a list of the desks.
     my $desks = $wf->allowed_desks;
     $start_id = $wf->get_head_desk_id;
-    
-    $m->comp('/widgets/wrappers/table_top.mc', 
+
+    $m->comp('/widgets/wrappers/table_top.mc',
              caption => '%n',
              object  => 'desk',
              number  => 2 );
     $m->comp('/widgets/listManager/listManager.mc',
              object         => 'desk',
              userSort       => 0,
-             addition       => $no_edit ? undef : ['Add', "/admin/profile/desk"],
+             addition       => $no_edit ? undef : ['Add', '/admin/profile/desk/'],
              objs           => $desks,
              fields         => [qw(name description publish start)],
              field_titles   => { start => 'Start Desk' },

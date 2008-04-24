@@ -2,7 +2,6 @@
 -- File:    ActionType.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Author:  David Wheeler <david@justatheory.com>
 
 INSERT INTO action_type ( id, name, description, active)

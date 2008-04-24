@@ -8,10 +8,6 @@ uninstall.pl - installation script to uninstall Bricolage
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called by "make uninstall" to uninstall Bricolage.

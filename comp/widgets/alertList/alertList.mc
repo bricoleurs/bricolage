@@ -67,10 +67,6 @@ $m->comp('/widgets/wrappers/table_bottom.mc');
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/alertList/alertList.mc', mode => 'alert',

@@ -8,10 +8,6 @@ check_dist.pl - checks to make sure we're ready for "make dist"
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called by "make dist" to check that everything is as it

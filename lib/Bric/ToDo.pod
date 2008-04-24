@@ -6,10 +6,6 @@ Bric::ToDo - Bricolage To Do List
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This document lists the items on Bricolage's To Do list.

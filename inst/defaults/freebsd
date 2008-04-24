@@ -1,6 +1,7 @@
 # Required programs.  PG_CONFIG_PATH is the location of PostgreSQL's pg_config 
-# script.  APACHE_PATH is the path to the Apache 1.3 executable.  APACHE_EXE is
-# the filename of the executable itself.  EXPAT_PATH is the path to the Expat 
+# script. MYSQL_CONFIG_PATH is the location of MySQL's mysql_config. APACHE_PATH
+# or APACHE2_PATH is the path to the Apache executable. APACHE_EXE or APACHE2_EXE
+# is the filename of the executable itself.   EXPAT_PATH is the path to the Expat 
 # library libexpat.so (also looks in library paths that Perl knows about), and
 # EXPAT_FILE is the filename of the library.
 
@@ -8,6 +9,8 @@ PG_CONFIG_PATH = /usr/local/pgsql/bin, /usr/local/postgres/bin, /usr/lib/postgre
 MYSQL_CONFIG_PATH = /usr/local/mysql/bin, /usr/lib/mysql/bin, /opt/mysql/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
 APACHE_PATH = /usr/local/apache/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
 APACHE_EXE  = httpd, httpsd, apache-perl, apache
+APACHE2_PATH = /usr/local/apache2/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
+APACHE2_EXE  = httpd2, httpsd2, apache2
 EXPAT_PATH  = /sw/lib
 EXPAT_FILE  = libexpat.so, libexpat.so.0, libexpat.so.0.0.1, libexpat.dylib, libexpat.0.dylib, libexpat.0.0.1.dylib, libexpat.a, libexpat.la
 
@@ -22,6 +25,14 @@ APACHE_GROUP    = www
 APACHE_PORT     = 80
 APACHE_SSL_PORT = 443
 # APACHE_HOSTNAME = localhost
+
+# Default apache version to use
+# (Note: just like the database stuff relies on naming conventions
+# (Pg, mysql) when selecting the DB_TYPE, for the web server we'll use
+# the names 'apache' and 'apache2'.)
+
+HTTPD_VERSION = apache
+
 
 # PostgreSQL settings.  POSTGRES_SUPERUSER is the username of the Postgres
 # superuser (typically "postgres").  POSTGRES_BRICUSER is the username that 

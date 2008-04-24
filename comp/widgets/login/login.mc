@@ -10,10 +10,6 @@ login - A login widget
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/login/login.mc' &>

@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate: 2006-06-14 14:40:10 +0200 (Wed, 14 Jun 2006) $
+$Id$
 
 =head1 DESCRIPTION
 
@@ -22,6 +22,8 @@ mysql_config and asking the user questions.  Output collected in
 =head1 AUTHOR
 
 Andrei Arsu <acidburn@asynet.ro>
+
+derived from code by Sam Tregar <stregar@about-inc.com>
 
 =head1 SEE ALSO
 
@@ -37,8 +39,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-our $QUIET;
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Probing MySQL Configuration <==\n\n";
 

@@ -13,10 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 See Bric::Util::Coll.
@@ -181,23 +177,23 @@ sub save {
             WHERE person__id = ?
                   AND contact_value__id = ?
         }, undef);
-	foreach my $c (values %$del_objs) {
-	    $c->deactivate;
-	    $c->save;
-	    execute($del, $pid, $c->get_id);
+	foreach my $con (values %$del_objs) {
+	    $con->deactivate;
+	    $con->save;
+	    execute($del, $pid, $con->get_id);
 	}
 	%$del_objs = ();
     }
 
-    foreach my $c (values %$objs) { $c->save }
+    foreach my $con (values %$objs) { $con->save }
     if (@$new_objs) {
 	my $ins = prepare_c(qq{
             INSERT INTO person__contact_value (person__id, contact_value__id)
             VALUES (?, ?)
         }, undef);
-	foreach my $c (@$new_objs) {
-	    $c->save;
-	    execute($ins, $pid, $c->get_id);
+	foreach my $con (@$new_objs) {
+	    $con->save;
+	    execute($ins, $pid, $con->get_id);
 	}
 	$self->add_objs(@$new_objs);
 	@$new_objs = ();

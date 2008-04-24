@@ -16,10 +16,6 @@ $url ||= last_page();
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   $m->comp('/lib/util/back_button.mc');

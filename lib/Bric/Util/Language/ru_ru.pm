@@ -16,7 +16,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate: 2004-09-14 18:17:46 -0700 (Tue, 14 Sep 2004) $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -721,6 +721,7 @@ To translate:
   'Shelve'
   'and Shelve'
   'and'
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
   'Slug required for non-fixed (non-cover) story type.' => 'Slug required for non-fixed (non-cover) story type.',
   '[_1] Site [_2] Permissions' => '[_1] Site [_2] Permissions', # Site Category Permissions
   'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.' => 'The URI "[_1]" is not unique. Please change the cover date, output channels, slug, or categories as necessary to make the URIs unique.'
@@ -774,5 +775,9 @@ Sergey Samoilenko <Sergey@Samoilenko.ru>
 =head1 SEE ALSO
 
 L<Bric::Util::Language|Bric::Util::Language>
+
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
 
 =cut

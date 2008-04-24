@@ -15,8 +15,7 @@ $DB->{exec} .= " -h $DB->{host_name} "
     if $DB->{host_name} && $DB->{host_name} ne 'localhost';
 $DB->{exec} .= " -P $DB->{host_port} " if $DB->{host_port} ne '';
 $ERR_FILE = catfile tmpdir, '.db.stderr';
-#END { unlink $ERR_FILE }
-
+END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
 print "\n\n==> Granting access rights to Bricolage Mysql user <==\n\n";
 

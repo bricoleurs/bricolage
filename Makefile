@@ -44,16 +44,19 @@ all 		: required.db modules.db apache.db database.db config.db \
 
 DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
 
+# Same idea as DATABASE_PROBES, but names are 'apache' or 'apache2'
+HTTPD_PROBES := $(shell find inst -name 'htprobe_*.pl')
+
 required.db	: inst/required.pl
-	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES)
+	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES) $(HTTPD_PROBES)
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 	$(PERL) inst/modules.pl $(INSTALL_VERBOSITY)
 
-apache.db	: inst/apache.pl required.db
-	$(PERL) inst/apache.pl $(INSTALL_VERBOSITY)
+apache.db	: inst/httpd.pl required.db $(HTTPD_PROBES)
+	$(PERL) inst/httpd.pl $(INSTALL_VERBOSITY)
 
-database.db 	: inst/database.pl  required.db $(DATABASE_PROBES)
+database.db 	: inst/database.pl required.db $(DATABASE_PROBES)
 	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
 
 config.db	: inst/config.pl required.db apache.db database.db
@@ -193,6 +196,8 @@ install 	: install_files install_db done
 
 install_files	: all is_root cpan lib bin files
 
+install_dev_files	: all is_root cpan files
+
 install_db	: db db_grant
 
 install_with_hot_copy : install_files_with_hot_copy install_db done_with_hot_copy
@@ -302,7 +307,8 @@ rm_files	:
 dev_symlink :
 	$(PERL) inst/dev.pl
 
-dev			: inst/dist_sql install dev_symlink clean
+dev 		: export DEVELOPER = 1
+dev			: inst/dist_sql install_dev_files install_db dev_symlink clean
 
 ##########################
 # test rules             #

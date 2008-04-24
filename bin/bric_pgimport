@@ -8,10 +8,6 @@ bric_pgimport - Builds a Bricolage Database
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   bric_pgimport [options]

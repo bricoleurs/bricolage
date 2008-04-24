@@ -8,10 +8,6 @@ debug - Output some debugging information
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/debug/debug.mc' &>

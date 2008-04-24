@@ -17,10 +17,6 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 In Bric::Util::DBI(1), just

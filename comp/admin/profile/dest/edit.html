@@ -79,11 +79,11 @@ if (defined $id) {
     $m->comp('/widgets/listManager/listManager.mc',
               object    => 'action',
               userSort  => 0,
-              addition  => $no_edit ? undef : ['Add', "/admin/profile/action?dest_id=$id"],
+              addition  => $no_edit ? undef : ['Add', "/admin/profile/action/?dest_id=$id"],
               constrain => { server_type_id => $id },
               fields    => [qw(ord type description)],
-              profile   => [ [$label, "/admin/profile/action"],
-                           ['Log', "/admin/events/action"] ],
+              profile   => [ [$label, '/admin/profile/action/'],
+                           ['Log', '/admin/events/action/'] ],
               select    => $no_del ? undef : ['Delete', 'action|delete_cb'] );
     $m->comp('/widgets/wrappers/table_bottom.mc');
 
@@ -95,11 +95,11 @@ if (defined $id) {
     $m->comp('/widgets/listManager/listManager.mc',
              userSort => 0,
              object => 'server',
-             addition => $no_edit ? undef : ['Add', "/admin/profile/server?dest_id=$id"],
+             addition => $no_edit ? undef : ['Add', "/admin/profile/server/?dest_id=$id"],
              constrain => { server_type_id => $id },
              fields => [qw(host_name os doc_root active)],
-             profile => [ [$label, "/admin/profile/server"],
-                        ['Log', "/admin/events/server"] ],
+             profile => [ [$label, '/admin/profile/server/'],
+                        ['Log', '/admin/events/server/'] ],
              alter => { active => $yes_no },
              select =>    $no_del ? undef : ['Delete', 'server|delete_cb'] );
     $m->comp('/widgets/wrappers/table_bottom.mc');
@@ -174,10 +174,6 @@ $dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 =head1 VERSION
 
 $LastChangedRevision$
-
-=head1 DATE
-
-$LastChangedDate$
 
 =head1 DESCRIPTION
 

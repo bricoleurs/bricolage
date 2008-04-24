@@ -6,10 +6,6 @@ Bric::ElementAdmin - Bricolage Element Administration Guide.
 
 $LastChangedRevision$
 
-=head1 Date
-
-$LastChangedDate$
-
 =head1 Description
 
 This guide covers the art and science of element type administration in

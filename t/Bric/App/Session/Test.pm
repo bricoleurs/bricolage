@@ -6,6 +6,13 @@ use Test::More;
 use Apache::FakeRequest;
 use Bric::App::Session;
 
+BEGIN {
+    package CGI::Cookie;
+    # Keep CGI::Cookie from ouputting stuff.
+    no warnings 'redefine';
+    sub bake { 1 };
+}
+
 ##############################################################################
 # Setup for tests.
 ##############################################################################

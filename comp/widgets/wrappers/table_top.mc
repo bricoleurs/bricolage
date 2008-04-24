@@ -7,10 +7,6 @@
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& "/widgets/wrappers/table_top.mc" &>

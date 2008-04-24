@@ -8,10 +8,6 @@ cpan.pl - installation script to install CPAN modules
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during "make install" to install Perl modules

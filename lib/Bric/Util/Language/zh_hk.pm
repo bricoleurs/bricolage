@@ -14,10 +14,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 In F<bricolage.conf>:
@@ -52,6 +48,10 @@ Kang-min Liu <gugod@gugod.org>
 L<Bric::Util::Language|Bric::Util::Language>
 
 L<Bric::Util::Language::zh_tw|Bric::Util::Language::zh_tw>
+
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
 
 =cut
 

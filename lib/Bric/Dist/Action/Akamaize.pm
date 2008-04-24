@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::Dist::Action::Akamaize;
@@ -1082,11 +1078,11 @@ B<Notes:> NONE.
 
 sub do_it {
     # Perform the akamaization.
-    my ($self, $res) = @_;
+    my ($self, $resources) = @_;
     my $types = $self->get_media_href;
-    foreach my $r (@$res) {
-	next unless $types->{$r->get_media_type};
-	my $path = $r->get_tmp_path || $r->get_path;
+    foreach my $res (@$resources) {
+	next unless $types->{$res->get_media_type};
+	my $path = $res->get_tmp_path || $res->get_path;
 	print STDERR "Akamaize $path here.\n";
     }
     print STDERR "\n";

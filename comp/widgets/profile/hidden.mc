@@ -9,10 +9,6 @@
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 $m->comp("/widgets/profile/hidden.mc",

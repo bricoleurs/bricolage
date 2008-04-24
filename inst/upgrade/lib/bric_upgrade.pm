@@ -15,10 +15,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 use Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   #!/usr/bin/perl -w

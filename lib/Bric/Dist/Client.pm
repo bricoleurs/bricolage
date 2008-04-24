@@ -14,10 +14,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::Dist::Client;
@@ -439,7 +435,7 @@ sub send {
         }
 
         # The request was successful, just return.
-    return $self;
+        return $self;
 
     };
 

@@ -86,17 +86,18 @@ sub save : Callback {
         };
 
         $used_ext = 0;
-        for (my $i = 0; $i < @{$param->{extension}}; $i++) {
+        my $exts = mk_aref( $param->{extension} );
+        for (my $i = 0; $i < @{ $exts }; $i++) {
             if (my $ext = $mtids->[$i]) {
                 my @delexts = @{[$ext]};
                 unless ($mt->del_exts(@delexts)) {
                     add_msg('Problem deleting "[_1]"', "@delexts");
                 }
-                my $extension = $param->{extension}[$i];
+                my $extension = $exts->[$i];
                 $used_ext += $addext_sub->($mt, $extension, $name);
             } else {
-                next unless $param->{extension}[$i];
-                my $extension = $param->{extension}[$i];
+                next unless $exts->[$i];
+                my $extension = $exts->[$i];
                 $used_ext += $addext_sub->($mt, $extension, $name);
             }
         }

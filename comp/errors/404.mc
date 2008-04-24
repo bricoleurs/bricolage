@@ -3,7 +3,7 @@
 clear_msg();
 $m->clear_buffer;
 # Check to see if this is a preview screen.
-my $prev = $r->notes('burner.preview');
+my $prev = $r->pnotes('burner.preview');
 $m->comp('/widgets/wrappers/header.mc',
          title      => '404 NOT FOUND',
          context    => 'Invalid page request',
@@ -16,5 +16,5 @@ $m->comp('/widgets/wrappers/header.mc',
 <p><% $lang->maketext('Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.')%></p>
 
 <& '/widgets/wrappers/footer.mc', param => \%ARGS &>
-% $r->status(Apache::Constants::HTTP_NOT_FOUND);
+% $r->status(HTTP_NOT_FOUND);
 % $m->abort;

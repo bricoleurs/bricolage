@@ -8,10 +8,6 @@ desk - A desk widget for displaying the contents of a desk.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/desk/desk.mc' &>

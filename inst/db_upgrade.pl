@@ -8,10 +8,6 @@ db_upgrade.pl - installation script to run db upgrade scripts
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to run the database upgrade

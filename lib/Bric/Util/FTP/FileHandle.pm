@@ -16,10 +16,6 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This module provides a file handle object for use by

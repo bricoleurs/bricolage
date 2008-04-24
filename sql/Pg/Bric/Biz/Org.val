@@ -3,7 +3,7 @@
 -- File:    Org.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO org (id, name)

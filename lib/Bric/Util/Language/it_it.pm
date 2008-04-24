@@ -14,10 +14,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 In F<bricolage.conf>:
@@ -483,6 +479,7 @@ To translate:
   'and Shelve'
   'and'
   'Slug required for non-fixed (non-cover) story type.'
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
 
   'Cannot both delete and make primary a single output channel.'
   'Media "[_1]" saved and shelved.'
@@ -610,7 +607,8 @@ Marco Ghezzi <marcog@metafora.it>
 
 L<Bric::Util::Language|Bric::Util::Language>
 
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
+
 =cut
-
-
-1;

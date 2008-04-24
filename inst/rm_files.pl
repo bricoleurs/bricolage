@@ -8,10 +8,6 @@ rm_files.pl - installation script to remove directories and files
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during C<make uninstall> to remove all

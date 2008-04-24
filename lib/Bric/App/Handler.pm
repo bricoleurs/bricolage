@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Perl>
@@ -58,8 +54,7 @@ use Bric::Util::DBI qw(:trans);
 use Bric::Util::Trans::FS;
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(del_redirect add_msg get_pref);
-use Apache::Constants qw(OK);
-use Apache::Log;
+use Bric::Util::ApacheConst qw(OK);
 use HTML::Mason '1.16';
 use HTML::Mason::ApacheHandler;
 
@@ -114,8 +109,10 @@ use MasonX::Interp::WithCallbacks;
     package HTML::Mason::Commands;
 
     # Load all modules to be used from elements.
-    use Apache::Cookie;
-    use Apache::Util qw(escape_uri);
+    use Bric::Util::Cookie;
+    use Bric::Util::ApacheConst qw(HTTP_INTERNAL_SERVER_ERROR HTTP_FORBIDDEN HTTP_NOT_FOUND);
+    # xxx: is escape_uri actually used anywhere under comp/ ?
+    use Bric::Util::ApacheUtil qw(escape_uri);
     use HTML::Entities (); *escape_html = \&HTML::Entities::encode_entities;
     use Bric::Config qw(:auth_len :admin :time :dist :ui :prev :ssl :qa :thumb :oc);
     use Bric::Biz::Asset::Business::Media;
@@ -287,7 +284,8 @@ B<Notes:> NONE.
 =cut
 
 sub handler {
-    my ($r) = @_;
+    my $r = shift;
+
     # Handle the request.
     my $status;
     my $lang_name = get_pref('Language');

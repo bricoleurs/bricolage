@@ -8,10 +8,6 @@ Bric::Templates - Producing Templates on the Bricolage System
 
 $LastChangedRevision$
 
-=head1 Date
-
-$LastChangedDate$
-
 =head1 Background
 
 Before talking about templates, let's take a moment to discuss all the major

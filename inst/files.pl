@@ -8,10 +8,6 @@ files.pl - installation script to create directories and copy files
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during "make install" to create Bricolage's
@@ -65,7 +61,7 @@ rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
 find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}, $HOT_COPY) },
-       no_chdir => 1 }, './comp');
+       no_chdir => 1 }, './comp') unless $ENV{DEVELOPER};
 
 # Copy the contents of the bconf directory.
 find({ wanted   => sub { copy_files(catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
@@ -111,7 +107,7 @@ sub copy_files {
     $targ = catdir($root, $targ);
 
     if (-d) {
-	mkpath([$targ], 1, 0755) unless -e $targ;
+        mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
       if ($link) {
         link($_, $targ) or die "Unable to link $_ to $targ : $!";

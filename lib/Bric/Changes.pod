@@ -2,10 +2,6 @@
 
 Bric::Changes - Bricolage Changes
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This document lists the Changes to Bricolage introduced with each release.
@@ -29,13 +25,18 @@ Technologies. [David]
 
 =item *
 
-Added support for MySQL, from Andrei Arsu's Google Summer of Code project.
+Added support for MySQL, from Andrei Arsu's Google Summer of Code 2006 project.
 
 =item *
 
 Added a C<NONE> function to Bric::Util::DBI. For any C<list> parameter where
 you could've used C<ANY> before, you can now use C<NONE> to return only
 objects that don't match. [Scott]
+
+=item *
+
+Added support for Apache 2. Updating to Apache 2 from a Bricolage install
+using Apache 1.3 is not currently supported. [Scott, Chris Heiland, David]
 
 =back
 
@@ -144,7 +145,17 @@ fields. [David]
 
 =item *
 
-Added --fatal-no-cat option to F<contrib/bric_media_upload>. [Scott]
+Added C<--fatal-no-cat> option to F<contrib/bric_media_upload>. [Scott]
+
+=item *
+
+When editing a field type, if a numeric value is set to an empty value, it
+will be set to 0 rather than remaining unchanged. [David]
+
+=item *
+
+The Expire information for sources is now localized in the list view (the
+Sources Manger). [David]
 
 =back
 

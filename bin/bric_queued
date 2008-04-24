@@ -190,17 +190,17 @@ GetOptions(
     "password=s" => \my $password,
 );
 
+require Pod::Usage && Pod::Usage::pod2usage("Missing required --username option.")
+  unless $username;
+require Pod::Usage && Pod::Usage::pod2usage("Missing required --password option.")
+  unless $password;
+
 if ($password eq '') {
     {
         $password = read_password('Password: ');
         redo unless $password;
     }
 }
-
-require Pod::Usage && Pod::Usage::pod2usage("Missing required --username option.")
-  unless $username;
-require Pod::Usage && Pod::Usage::pod2usage("Missing required --password option.")
-  unless $password;
 
 # do help if we got the help flag
 require Pod::Usage && Pod::Usage::pod2usage(1) if $HelpMode; # see Pod::Usage(8)
@@ -323,6 +323,7 @@ Returns a package name from which we will get jobs to run.
 ##############################################################################
 
 sub fork_to_dist {
+    my $reaper;
     $SIG{CHLD} = sub { wait; $SIG{CHLD} = $reaper; };
     defined ($DistPid = fork) or die "Can't fork: $!\n";
     if ($DistPid) {  # a non-zero pid means we are the parent

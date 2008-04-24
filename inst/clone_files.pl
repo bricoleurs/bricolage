@@ -8,10 +8,6 @@ clone.pl - installation script to copy files for clone distributions
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called by "make clone" to copy files from the target

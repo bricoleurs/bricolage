@@ -9,10 +9,6 @@ database clone script
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during "make clone" to clone the Bricolage

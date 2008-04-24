@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::App::Authz qw(:all);
@@ -50,8 +46,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
-use Apache;
-use Apache::Request;
+use Bric::Util::ApacheReq;
 
 ################################################################################
 # Inheritance
@@ -148,7 +143,7 @@ sub chk_authz {
         my $id = $obj->get_id;
         $id = '' unless defined $id;
         my $key = "_AUTHZ_:$ref:$id";
-        my $r = Apache::Request->instance(Apache->request);
+        my $r = Bric::Util::ApacheReq->instance;
         unless (defined ($perm = $r->pnotes($key))) {
             $perm = get_user_object()->what_can($obj, @gids);
             $r->pnotes($key, $perm);

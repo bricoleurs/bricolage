@@ -6,10 +6,6 @@ Bric::DBA - Bricolage Database Administration Guide.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This guide is intended for the database administrator in charge of maintaining

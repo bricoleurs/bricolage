@@ -379,7 +379,6 @@ formBuilder.submit = function(frm, mainform, action) {
     if (action == "add") {
         if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
-
             main.submit();
         }
     } else {
@@ -992,7 +991,7 @@ function toggleMenu (el, id) {
     // Update state stored in cookie
     // first make sure to have only the menus cookie
     var name = 'BRICOLAGE_MENUS';
-    var regex = new RegExp(name + '=([\\w:+]+);?');
+    var regex = new RegExp(name + '=([\\w:|]+);?');
     var val = regex.test(document.cookie) ? RegExp.$1 : '';
     if (val == '') {
         val = id + ':' + newclass;
@@ -1003,7 +1002,7 @@ function toggleMenu (el, id) {
             val = val.replace(regex, id + ':' + newclass);
         } else {
             // otherwise add the new menu
-            val += '+' + id + ':' + newclass;
+            val += '|' + id + ':' + newclass;
         }
     }
     document.cookie = name + '=' + val + '; path=/';

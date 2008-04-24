@@ -2,7 +2,6 @@
 -- File:    MediaType.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- I got these MIME types by using tools/dev/get_mime_types. I called it with

@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Perl>
@@ -49,13 +45,13 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Apache::Constants qw(:common);
-use Apache::Log;
-use Bric::Config qw(:auth :cookies);
+use Bric::Config qw(:auth :cookies :mod_perl);
+use Bric::Util::ApacheConst;
 use Bric::App::Session qw(:user);
 use Bric::App::Cache;
 use Bric::App::Util qw(:redir);
 use Bric::Biz::Person::User;
+use Bric::Util::Cookie;
 use Digest::MD5 qw(md5_hex);
 use URI::Escape;
 use base qw( Exporter );
@@ -85,16 +81,9 @@ use constant LOGIN_MARKER_REGEX => qr/${ \LOGIN_MARKER() }/;
 ################################################################################
 # Private Class Fields
 my $ap = 'Bric::Util::Fault::Exception::AP';
-my ($c, $cookie_class);
+my ($c);
 
 ################################################################################
-
-################################################################################
-# Instance Fields
-BEGIN {
-    $cookie_class = $ENV{MOD_PERL} ? 'Apache::Cookie' : 'CGI::Cookie';
-    eval "require $cookie_class";
-}
 
 ################################################################################
 # Class Methods
@@ -134,7 +123,7 @@ B<Notes:> NONE.
 
 sub auth {
     my $r = shift;
-    return &$fail($r) unless my %cookies = $cookie_class->fetch;
+    return &$fail($r) unless my %cookies = Bric::Util::Cookie->fetch($r);
     return &$fail($r) unless my $cookie = $cookies{&AUTH_COOKIE};
     my %val = $cookie->value;
      return &$fail($r) unless $val{exp} > time;
@@ -168,7 +157,7 @@ sub auth {
         Bric::App::Session::set_state_data('site_context', 'sites' => 0);
         $lul = time;
     }
-    &$make_cookie($r, $val{user}, $lul);
+    $make_cookie->($r, $val{user}, $lul);
 }
 
 ################################################################################
@@ -200,7 +189,7 @@ sub login {
     # Authentication succeeded. Set up session data and the authentication
     # cookie.
     set_user($r, $u);
-    my $cookie = &$make_cookie($r, $un, time);
+    my $cookie = $make_cookie->($r, $un, time);
     # Work around to redirect cookies to second server
     my $args = $r->args;
     return $cookie if defined $args and $args =~ LOGIN_MARKER_REGEX;
@@ -235,7 +224,7 @@ sub masquerade {
     my ($r, $u) = @_;
     # Set up session data and the authentication cookie.
     set_user($r, $u);
-    &$make_cookie($r, $u, time);
+    $make_cookie->($r, $u, time);
 }
 
 ################################################################################
@@ -254,12 +243,12 @@ B<Notes:> NONE.
 
 sub logout {
     my $r = shift;
-    my $cookie = $cookie_class->new($r,
+    my $cookie = Bric::Util::Cookie->new($r,
       -name    => AUTH_COOKIE,
       -expires => "-1d",
       -path    => '/',
       -value   => "logout");
-    $cookie->bake;
+    $cookie->bake($r);
     return 1;
 }
 
@@ -279,9 +268,9 @@ NONE.
 
 =over 4
 
-=item my $cookie = &$make_cookie($r, $username)
+=item my $cookie = $make_cookie->($r, $username)
 
-=item my $cookie = &$make_cookie($r, $username, $lul_time)
+=item my $cookie = $make_cookie->($r, $username, $lul_time)
 
 Bakes the authentication cookie.
 
@@ -306,13 +295,10 @@ $make_cookie = sub {
                                lmu => $lul
                              }
                );
-    if ($ENV{MOD_PERL}) {
-        my $cookie = $cookie_class->new($r, @args);
-        $cookie->bake;
-        return 1;
-    } else {
-        return $cookie_class->new(@args);
-    }
+
+    my $cookie = Bric::Util::Cookie->new($r, @args);
+    $cookie->bake($r) if MOD_PERL; # CGI::Cookie hasn't always had bake().
+    return $cookie;
 };
 
 =item my ($hash, $exp, $ip) = &$make_hash($r, $un)

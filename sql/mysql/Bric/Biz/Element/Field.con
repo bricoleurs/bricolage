@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate: 2005-09-24 02:42:51 +0300 (Sat, 24 Sep 2005) $
+-- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --

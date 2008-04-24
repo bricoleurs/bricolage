@@ -75,7 +75,7 @@ END
 use Bric::Config qw(:apachectl);
 
 # the httpd command
-my $httpd = APACHE_BIN . ' -f ' . APACHE_CONF;
+my @httpd = (APACHE_BIN, '-f', APACHE_CONF);
 
 # the pid file
 my $pid_file = PID_FILE;
@@ -107,7 +107,7 @@ if ($command eq 'start') {
     Bric::App::Cache->clear();
 
     print "bric_apachectl $command: starting httpd\n";
-    unless (system($httpd)) {
+    unless (system @httpd) {
         print "bric_apachectl $command: httpd started\n";
         exit;
     } else {
@@ -165,7 +165,7 @@ if ($command eq 'restart') {
 
     # start
     print "bric_apachectl $command: starting httpd\n";
-    unless (system($httpd)) {
+    unless (system @httpd) {
         print "bric_apachectl $command: httpd started\n";
         exit;
     } else {
@@ -188,7 +188,7 @@ if ($command eq 'single') {
 
     # use exec since with -X this command won't return till the server
     # is killed.
-    exec "$httpd -X";
+    exec "@httpd -X";
 }
 
 if ($command eq 'debug') {
@@ -205,7 +205,7 @@ if ($command eq 'debug') {
 
     # use exec since with -X this command won't return till the server
     # is killed.
-    exec "$httpd -X -D BRICOLAGE_DEBUG";
+    exec "@httpd -X -D BRICOLAGE_DEBUG";
 }
 
 usage();

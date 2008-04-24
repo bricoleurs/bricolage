@@ -8,10 +8,6 @@ publish - A widget to display publish options.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/publish/publish.mc' &>

@@ -13,10 +13,6 @@ perm - A widget for displaying permissions.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/perm/perm.mc',

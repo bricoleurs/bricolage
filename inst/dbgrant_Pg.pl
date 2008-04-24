@@ -13,7 +13,9 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to postgres system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    require Config;
     $> = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
 }
@@ -23,8 +25,8 @@ $ENV{PGUSER} = $DB->{root_user};
 $ENV{PGPASSWORD} = $DB->{root_pass};
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
 $ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
-$ERR_FILE = catfile tmpdir, '.db.stderr';
-END { unlink $ERR_FILE }
+BEGIN { $ERR_FILE = catfile tmpdir, '.db.stderr' }
+END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
 grant_permissions();
 
@@ -55,6 +57,7 @@ sub grant_permissions {
     hard_fail("Failed to get list of objects. The database error was\n\n",
               "$err\n") if $err;
 
+    print @objects;
     my $objects = join (', ', map { chomp; $_ } @objects);
 
     $sql = qq{
@@ -76,9 +79,7 @@ sub exec_sql {
     open STDERR, ">$ERR_FILE" or die "Cannot redirect STDERR to $ERR_FILE: $!\n";
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-        @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
-        # Shift off the column headers.
-        shift @$res;
+        @$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P tuples_only=`;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);

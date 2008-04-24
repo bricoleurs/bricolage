@@ -6,10 +6,6 @@ Bric::Admin - Bricolage System Administration Guide.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This guide is intended for the system administrator in charge of installing,
@@ -32,7 +28,7 @@ Install Perl 5.8.0 or greater.
 
 =item 2
 
-Install Apache 1.3.12 or greater with mod_perl, mod_log_config, mod_mime, and
+Install Apache 2.0.52 or greater with mod_perl, mod_log_config, mod_mime, and
 mod_alias. For SSL also install mod_ssl or apache-ssl.
 
 =item 3
@@ -139,13 +135,7 @@ START MODULE LIST
 
 =item Class::Container 0.09
 
-=item Apache::Request 1.0
-
-=item HTML::Mason 1.23
-
-=item DBD::Pg 1.22 (optional)
-
-=item DBD::mysql 3.0007 (optional)
+=item HTML::Mason 1.37
 
 =item DB_File
 
@@ -219,9 +209,7 @@ START MODULE LIST
 
 =item Test::Pod 0.95 (optional)
 
-=item Devel::Profiler 0.03 (optional)
-
-=item Apache::SizeLimit (optional)
+=item Apache2::SizeLimit (optional)
 
 =item Net::FTPServer (optional)
 
@@ -243,6 +231,33 @@ START MODULE LIST
 
 =back
 
+Note that you also have some required categories of modules, but you must pick
+from among them. Depending on your choice of database, you will need to install
+one of:
+
+=over
+
+=item DBD::Pg 1.22 (optional)
+
+=item DBD::mysql 3.0007 (optional)
+
+=back
+
+And depending on whether you're using Apache 1 or Apache 2, you'll need to
+install one of:
+
+=over
+
+=item Apache::Request (optional)
+
+=item Apache2::Request (optional)
+
+=back
+
+The fact that these are maked "(optional)" is just to help the installer
+determine CPAN dependencies. Trust us, one or the other of these B<is>
+required.
+
 =begin installation
 
 END MODULE LIST
@@ -251,11 +266,11 @@ END MODULE LIST
 
 =item *
 
-Apache 1.3.12
+Apache 2.0.52
 
 =item *
 
-mod_perl 1.25 - Apache/Perl Integration
+mod_perl 2.0.3 or mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 
@@ -986,10 +1001,10 @@ configure the httpd daemon. There is no httpd include file. If you wish to
 have Bricolage generate and use an httpd include file, or if you wish to
 manually configure your httpd daemon, set the C<MANUAL_APACHE> directive in
 F<conf/bricolage.conf>. This directive will force the startup process to write
-out the Bricolage configuration directives to
-F<C<$TEMP_DIR>/bricolage/bric_httpd.conf>, and then this file will be
+out the Bricolage virtual host configuration to
+F<C<$BRICOLAGE_ROOT>/conf/vhosts.conf>, and then this file will be
 automatically rewritten and included on each startup operation. If you change
-the line
+this line
 
   PerlModule Bric::App::ApacheConfig
 
@@ -1308,12 +1323,12 @@ B<Apache::SizeLimit> for more information.
 
 B<MANUAL_APACHE:> Choose the Apache configuration method. As of mod_perl 1.27,
 Bricolage uses Apache::ReadConfig to configure the httpd daemon. If you wish
-have Bricolage generate an F<httpd.conf> include file, or if you wish to
-manually configure your Apache server for Bricolage, set this directive to a
-true value. Doing so will cause Bricolage to generate
-F<C<$TEMP_DIR>/bricolage/bric_httpd.conf> to provide a tracefile or template
-for your own manual F<httpd.conf>. If no changes are made to
-F<C<$BRICOLAGE_ROOT]>/conf/httpd.conf>, then this file will be automatically
+have Bricolage generate an Apache configuration include file, or if you wish
+to manually configure your Apache server for Bricolage, set this directive to
+a true value. Doing so will cause Bricolage to generate
+F<C<$BRICOLAGE_ROOT>/conf/vhosts.conf> and include it in the configuration
+using the Apache C<Include> directive. If no changes are made to
+F<C<$BRICOLAGE_ROOT>/conf/httpd.conf>, then this file will be automatically
 included on each startup by the last line of the F<httpd.conf> file:
 
   PerlModule Bric::App::ApacheConfig
@@ -1322,13 +1337,20 @@ If this line is changed to
 
   PerlModule Bric::App::ApacheStartup
 
-then only the contents of the F<httpd.conf> specified by the C<Apache_CONF>
-directive will be passed to the httpd daemon.
+then only the contents of the F<httpd.conf> specified by the C<APACHE_CONF>
+directive will be passed to the httpd daemon -- Bricolage will do no dynamic
+configuration. In such a case, you'll want to either C<Include> the generated
+F<vhosts.conf> file (which you can edit as you wish), or incorporate its
+contents directly into your F<httpd.conf> file.
+
+Note that under Apache 2, the F<vhosts.conf> file is B<always> created,
+regardles of the setting of C<MANUAL_APACHE>.
 
 =item *
 
-B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache module
-installed and want it to compress the the UI pages.  Pages will be as much as
+B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache 1 module
+or the mod_deflate Apache 2 module installed and loaded in your F<httpd.conf>
+file and want it to compress the the UI pages. Pages will be as much as
 fifteen times smaller, with minimal extra server load, resulting in faster
 load times and less bandwidth consumption. Disabled by default.
 
@@ -1338,7 +1360,7 @@ load times and less bandwidth consumption. Disabled by default.
 
 The database configuration directives tell Bricolage where to find its data, and
 how to get it. Specifically, you want to assign to these directives the values
-you passed to the -d and -m arguments of C<pgimport> (see above).
+you passed to the C<-d> and C<-m> arguments of C<pgimport> (see above).
 
 =over 4
 

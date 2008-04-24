@@ -2,7 +2,6 @@
 -- Project: Bricolage Business API
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Author: David Wheeler <david@justatheory.com>
 
 

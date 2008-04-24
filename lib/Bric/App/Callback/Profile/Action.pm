@@ -58,7 +58,7 @@ sub save : Callback {
         $act->save;
         log_event('action_del', $act);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
-        $self->set_redirect("/admin/profile/dest?id=$param->{dest_id}");
+        $self->set_redirect("/admin/profile/dest/?id=$param->{dest_id}");
         return;
     }
 
@@ -72,7 +72,7 @@ sub save : Callback {
     $act->save;
     log_event('action_' . (defined $param->{action_id} ? 'save' : 'new'), $act);
     add_msg("$disp_name profile $name saved.");
-    $self->set_redirect("/admin/profile/dest?id=$param->{dest_id}");
+    $self->set_redirect("/admin/profile/dest/?id=$param->{dest_id}");
 
     return;
 }

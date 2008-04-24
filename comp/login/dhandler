@@ -1,6 +1,6 @@
-<& '/widgets/wrappers/header.mc', 
+<& '/widgets/wrappers/header.mc',
 	useSideNav => 0,
-        context => "Welcome to " . get_pref('Bricolage Instance Name') . ".",
+    context => "Welcome to " . get_pref('Bricolage Instance Name') . ".",
 	jsInit     => qq (if (typeof document.bricolage_login.elements["login|username"] != "undefined") document.bricolage_login.elements["login|username"].focus();)
 
  &>

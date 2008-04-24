@@ -8,10 +8,6 @@ upgrade.pl - installation script to gather upgrade information
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called by "make upgrade" to prepare for an upgrade.

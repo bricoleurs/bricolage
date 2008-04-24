@@ -109,7 +109,7 @@ $base_handler = sub {
             $obj->save();
             add_msg("$disp_name profile \"[_1]\" deleted.", $name);
             log_event("${key}_deact", $obj);
-            $self->set_redirect("/admin/manager/$key");
+            $self->set_redirect("/admin/manager/$key/");
         } else {
             if ($key eq 'contrib_type') {
                 $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
@@ -210,7 +210,7 @@ $do_contrib_type = sub {
             my $msg = defined $param->{"$key\_id"} ? "$key\_save" : "$key\_new";
             log_event($msg, $obj);
             # Redirect back to the manager.
-            $self->set_redirect("/admin/manager/$key");
+            $self->set_redirect("/admin/manager/$key/");
         }
     }
 
@@ -632,7 +632,7 @@ $save_element_type_etc = sub {
                 # Record a message and redirect if we're saving.
                 add_msg("$disp_name profile \"[_1]\" saved.", $name);
                 # return to profile if creating new object
-                $self->set_redirect("/admin/manager/$key") unless $cb_key eq 'save_n_stay';
+                $self->set_redirect("/admin/manager/$key/") unless $cb_key eq 'save_n_stay';
             }
         } elsif ($cb_key eq 'addElementType') {
             # redirect, and tack object id onto path

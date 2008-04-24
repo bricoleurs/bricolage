@@ -29,7 +29,7 @@ sub preview : Callback {
 
     # Note that we're previewing so that the error page will work correctly.
     if (my $ar = $self->apache_req) {
-        $ar->notes("burner.preview" => 1);
+        $ar->pnotes('burner.preview' => 1);
     }
 
     # Grab the story and media IDs from the session.

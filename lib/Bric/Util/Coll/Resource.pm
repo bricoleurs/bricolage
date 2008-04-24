@@ -13,10 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 See Bric::Util::Coll.
@@ -183,9 +179,9 @@ sub save {
             VALUES (?, ?)
         }, undef);
 
-        foreach my $r (@$new_objs) {
-            $r->save;
-            execute($ins, $job_id, $r->get_id);
+        foreach my $res (@$new_objs) {
+            $res->save;
+            execute($ins, $job_id, $res->get_id);
         }
         $self->add_objs(@$new_objs);
         @$new_objs = ();

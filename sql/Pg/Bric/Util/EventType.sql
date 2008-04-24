@@ -3,7 +3,6 @@
 -- Project:      Bricolage Business API
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Target DBMS : Oracle 8
 -- Author: David Wheeler <david@justatheory.com>
 

@@ -6,10 +6,6 @@ Bric::Security - Bricolage Security Guide
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This guide describes the security features of Bricolage. These features

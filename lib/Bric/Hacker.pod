@@ -6,10 +6,6 @@ Bric::Hacker - A guide for Bricolage hackers.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This document is designed to provide information useful to Bricolage
@@ -553,7 +549,7 @@ convention is that no one should ever commit changes to a tag after it has
 been created.
 
 Tags are stored in subdirectories of F<tags> based on the branch you are
-merging I<from>.  For example, if you are merging from rev_1_10 to Ftrunk,
+merging I<from>.  For example, if you are merging from rev_1_10 to trunk,
 the tag belongs in F<tags/rev_1_10/>.
 
 Tags are then named for the branch you are merging I<to> and the revision

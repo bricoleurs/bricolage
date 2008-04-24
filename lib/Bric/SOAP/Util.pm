@@ -51,10 +51,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::SOAP::Util qw(category_path_to_script)
@@ -683,61 +679,61 @@ sub _serialize_element {
 
 sub resolve_relations {
     my ($story_ids, $media_ids) = (shift, shift);
-    foreach my $r (@_) {
-        if ($r->{relative}) {
+    foreach my $rel (@_) {
+        if ($rel->{relative}) {
             # handle relative links
-            if ($r->{story_id}) {
+            if ($rel->{story_id}) {
                 throw_ap(error => __PACKAGE__ .
                            " : Unable to find related story by relative id " .
-                           "\"$r->{story_id}\"")
-                  unless exists $story_ids->{$r->{story_id}};
-                $r->{container}->
-                    set_related_story_id($story_ids->{$r->{story_id}});
+                           "\"$rel->{story_id}\"")
+                  unless exists $story_ids->{$rel->{story_id}};
+                $rel->{container}->
+                    set_related_story_id($story_ids->{$rel->{story_id}});
             }
-            if ($r->{media_id}) {
+            if ($rel->{media_id}) {
                 throw_ap(error => __PACKAGE__ .
                            " : Unable to find related media by relative id " .
-                           "\"$r->{media_id}\"")
-                  unless exists $media_ids->{$r->{media_id}};
-                $r->{container}->
-                    set_related_media($media_ids->{$r->{media_id}});
+                           "\"$rel->{media_id}\"")
+                  unless exists $media_ids->{$rel->{media_id}};
+                $rel->{container}->
+                    set_related_media($media_ids->{$rel->{media_id}});
             }
         } else {
             # handle absolute links
-            if ($r->{story_id}) {
-                throw_ap(error => __PACKAGE__ . " : related story_id \"$r->{story_id}\""
+            if ($rel->{story_id}) {
+                throw_ap(error => __PACKAGE__ . " : related story_id \"$rel->{story_id}\""
                            . " not found.")
                   unless Bric::Biz::Asset::Business::Story->list_ids({
-                      id => $r->{story_id}
+                      id => $rel->{story_id}
                   });
-                $r->{container}->set_related_story_id($r->{story_id});
-            } elsif ($r->{story_uri}) {
+                $rel->{container}->set_related_story_id($rel->{story_id});
+            } elsif ($rel->{story_uri}) {
                 my ($sid) = Bric::Biz::Asset::Business::Story->list_ids({
-                    primary_uri => $r->{story_uri},
-                    site_id     => $r->{site_id},
+                    primary_uri => $rel->{story_uri},
+                    site_id     => $rel->{site_id},
                 });
-                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$r->{story_uri}"}
-                           . qq{ not found in site "$r->{site_id}"}) unless $sid;
-                $r->{container}->set_related_story_id($sid);
+                throw_ap(error => __PACKAGE__ . qq{ : related story_uri "$rel->{story_uri}"}
+                           . qq{ not found in site "$rel->{site_id}"}) unless $sid;
+                $rel->{container}->set_related_story_id($sid);
             }
-            if ($r->{media_id}) {
-                throw_ap(error => __PACKAGE__ . " : related media_id \"$r->{media_id}\""
+            if ($rel->{media_id}) {
+                throw_ap(error => __PACKAGE__ . " : related media_id \"$rel->{media_id}\""
                            . " not found.")
                   unless Bric::Biz::Asset::Business::Media->list_ids({
-                      id => $r->{media_id}
+                      id => $rel->{media_id}
                   });
-                $r->{container}->set_related_media($r->{media_id});
-            } elsif ($r->{media_uri}) {
+                $rel->{container}->set_related_media($rel->{media_id});
+            } elsif ($rel->{media_uri}) {
                 my ($mid) = Bric::Biz::Asset::Business::Media->list_ids({
-                    uri     => $r->{media_uri},
-                    site_id => $r->{site_id},
+                    uri     => $rel->{media_uri},
+                    site_id => $rel->{site_id},
                 });
-                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$r->{media_uri}"}
-                           . qq{ not found in site "$r->{site_id}"}) unless $mid;
-                $r->{container}->set_related_media($mid);
+                throw_ap(error => __PACKAGE__ . qq{ : related media_uri "$rel->{media_uri}"}
+                           . qq{ not found in site "$rel->{site_id}"}) unless $mid;
+                $rel->{container}->set_related_media($mid);
             }
         }
-        $r->{container}->save;
+        $rel->{container}->save;
     }
 }
 

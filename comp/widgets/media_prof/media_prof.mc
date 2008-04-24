@@ -8,10 +8,6 @@ media_prof.mc - Profile for media documents
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/media_prof/media_prof.mc' &>

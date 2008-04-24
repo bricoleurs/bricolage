@@ -2,7 +2,7 @@
 -- File:    Contact.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO contact (id, type, description, alertable, active)

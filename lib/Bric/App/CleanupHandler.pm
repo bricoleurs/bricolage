@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Perl>
@@ -54,7 +50,7 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Apache::Constants qw(OK);
+use Bric::Util::ApacheConst qw(OK);
 use Bric::App::Session;
 use Bric::App::Event qw(commit_events);
 use Bric::Util::DBI qw(:trans);
@@ -120,6 +116,9 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
+
     eval {
         # Commit events (and send alerts).
         begin(1);

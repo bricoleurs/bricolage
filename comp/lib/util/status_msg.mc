@@ -31,10 +31,6 @@ status_msg.mc - Sends messages to the browser in real-time
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 $m->comp('/lib/util/status_msg.mc', @msgs);

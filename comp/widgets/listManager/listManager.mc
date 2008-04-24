@@ -8,10 +8,6 @@ listManager.mc - display a list of objects.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <& /widgets/listManager/listManager.mc

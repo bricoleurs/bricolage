@@ -14,10 +14,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::Util::Trans::Mail;
@@ -829,7 +825,7 @@ B<Notes:> NONE.
 
 sub send {
     my ($self, $debug) = @_;
-    my ($smtp, $to, $from, $fromre, $cc, $bcc, $ct, $sub, $msg, $res) =
+    my ($smtp, $to, $from, $fromre, $cc, $bcc, $ct, $sub, $msg, $resources) =
       $self->_get(qw(smtp to from _from_recip cc bcc content_type subject
                      message resources));
 
@@ -845,7 +841,7 @@ sub send {
                  Subject    => $sub );
     eval {
         my $top;
-        if ($res && @$res) {
+        if ($resources && @$resources) {
             # There are files to attach. Use multipart/mixed.
             $top = MIME::Entity->build( @args,
                                         Type => "multipart/mixed" );
@@ -854,9 +850,9 @@ sub send {
                           Type     => $ct,
                           Encoding => "quoted-printable");
             # Attach each file.
-            foreach my $r (@$res) {
-                $top->attach( Path => $r->get_tmp_path || $r->get_path,
-                              Type => $r->get_media_type);
+            foreach my $res (@$resources) {
+                $top->attach( Path => $res->get_tmp_path || $res->get_path,
+                              Type => $res->get_media_type);
             }
         } else {
             # Just make it a simple message using quoted-printable.

@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Perl>
@@ -54,12 +50,14 @@ use strict;
 
 ################################################################################
 # Programmatic Dependencies
-use Apache::Constants qw(:common :http);
-use Apache::Log;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl :cookies);
+use Bric::Config qw(:err :ssl :cookies :mod_perl);
+use Bric::Util::ApacheConst;
+use Bric::Util::Cookie;
+use Bric::Util::ApacheUtil qw(unescape_url);
+use Bric::Util::ApacheReq qw(parse_args);
 
 ################################################################################
 # Inheritance
@@ -112,9 +110,9 @@ NONE.
 
 =item my $status = handler($r)
 
-Sets up the user session and checks authentication. If the authentication is current,
-it returns OK and the request continues. Otherwise, it caches the requested URI in
-the session and returns FORBIDDEN.
+Sets up the user session and checks authentication. If the authentication is
+current, it returns OK and the request continues. Otherwise, it caches
+the requested URI in the session and returns HTTP_FORBIDDEN.
 
 B<Throws:> NONE.
 
@@ -126,25 +124,29 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
 
     my $ret = eval {
         # Silently zap foolish user access to http when SSL is always required
         # by web master.
         if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
-            $r->custom_response(FORBIDDEN, 'https://'. $r->hostname .
-                                $ssl_port . '/logout');
-            return FORBIDDEN;
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                'https://'. $r->hostname . $ssl_port . '/logout/'
+            );
+            return HTTP_FORBIDDEN;
         }
 
+        my %cookies = Bric::Util::Cookie->fetch($r);
         # Propagate SESSION and AUTH cookies if we switched server ports
-        my %qs = $r->args;
-        my %cookies = Apache::Cookie->fetch;
+        my %qs = parse_args(scalar $r->args);
+
         # work around multiple servers if login event
         if ( exists $qs{&AUTH_COOKIE} && ! $cookies{&AUTH_COOKIE} ) {
             foreach(&COOKIE, &AUTH_COOKIE) {
                 if (exists $qs{$_} && $qs{$_}) {
-                    # hmmm.... Apache is in @INC or we would not have $r
-                    my $cook = Apache::unescape_url($qs{$_});
+                    my $cook = unescape_url($qs{$_});
                     $cookies{$_} = $cook;           # insert / overwrite value
                     # propagate this particular cookie back to the browser with
                     # all properties
@@ -158,7 +160,7 @@ sub handler {
                 $v = (split('; ',$v))[0];
                 $http_cook .= $k .'='. $v;
             }
-            $r->header_in('Cookie', $http_cook);
+            $r->headers_in->{'Cookie'} = $http_cook;
             # Replacement HTTP_COOKIE string
         }
         # Continue, the session is not the wiser about inserted cookies IN.
@@ -183,11 +185,17 @@ sub handler {
 #        set_redirect('/');
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            $r->custom_response(FORBIDDEN, "https://$hostname$ssl_port/login");
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                "https://$hostname$ssl_port/login/"
+            );
         } else {
-            $r->custom_response(FORBIDDEN, "http://$hostname$port/login");
+            $r->custom_response(
+                HTTP_FORBIDDEN,
+                "http://$hostname$port/login/"
+            );
         }
-        return FORBIDDEN;
+        return HTTP_FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -208,7 +216,6 @@ B<Notes:> NONE.
 
 sub logout_handler {
     my $r = shift;
-
     my $ret = eval {
         # Set up the user's session data.
         Bric::App::Session::setup_user_session($r);
@@ -220,24 +227,45 @@ sub logout_handler {
         # Redirect to the login page.
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            # if SSL and logging out of server #1, make sure and logout of
-            # server #2
-            if (scalar $r->args =~ /goodbye/) {
-                $r->custom_response(FORBIDDEN,
-                                    "https://$hostname$ssl_port/login");
-            } elsif ($r->get_server_port == &SSL_PORT) {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "/logout?goodbye");
-                return HTTP_MOVED_TEMPORARILY;
+            if (0) {
+                # if SSL and logging out of server #1, make sure and logout of
+                # server #2
+                # XXX I've no idea what this means, really, but it doesn't
+                # work with mod_perl 2: I get an error because the session has
+                # been expired, so when the `== SSL_PORT` bit below redirects
+                # to /logout/?goodbye it fails. I tried to look at the
+                # original patch, but that provided no more information. How
+                # can there be two servers?
+                # http://marc.info/?t=102590250200001
+                if (scalar $r->args =~ /goodbye/) {
+                    $r->custom_response(
+                        HTTP_FORBIDDEN,
+                        "https://$hostname$ssl_port/login/"
+                    );
+                } elsif ($r->get_server_port == SSL_PORT) {
+                    $r->custom_response(
+                        HTTP_MOVED_TEMPORARILY,
+                        "/logout/?goodbye"
+                    );
+                    return HTTP_MOVED_TEMPORARILY;
+                } else {
+                    $r->custom_response(
+                        HTTP_MOVED_TEMPORARILY,
+                        "https://$hostname$ssl_port/logout/?goodbye"
+                    );
+                    return HTTP_MOVED_TEMPORARILY;
+                }
             } else {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "https://$hostname$ssl_port/logout?goodbye");
-                return HTTP_MOVED_TEMPORARILY;
+                $r->custom_response(
+                    HTTP_FORBIDDEN,
+                    "https://$hostname$ssl_port/login/"
+                );
+                return HTTP_FORBIDDEN;
             }
         } else {
-            $r->custom_response(FORBIDDEN, "/login");
+            $r->custom_response(HTTP_FORBIDDEN, '/login/');
         }
-        return FORBIDDEN;
+        return HTTP_FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
 }
@@ -246,8 +274,8 @@ sub logout_handler {
 
 =item my $status = okay($r)
 
-This handler should B<only> be used for the '/login' location of the SSL virtual
-host. It simply sets up the user session and returns OK.
+This handler should B<only> be used for the '/login' location of the SSL
+virtual host. It simply sets up the user session and returns OK.
 
 B<Throws:> NONE.
 

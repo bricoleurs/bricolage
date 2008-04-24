@@ -95,10 +95,6 @@ $m->comp('/widgets/profile/select.mc',
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   $m->comp('/widgets/site_context/site_context.mc);

@@ -23,10 +23,10 @@ use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
 
-my $STORY_URL  = '/workflow/profile/story';
-my $STORY_CONT = '/workflow/profile/story/container';
-my $MEDIA_URL  = '/workflow/profile/media';
-my $MEDIA_CONT = '/workflow/profile/media/container';
+my $STORY_URL  = '/workflow/profile/story/';
+my $STORY_CONT = '/workflow/profile/story/container/';
+my $MEDIA_URL  = '/workflow/profile/media/';
+my $MEDIA_CONT = '/workflow/profile/media/container/';
 
 my $regex = {
     "\n"   => qr/\s*\n\n|\r\r\s*/,

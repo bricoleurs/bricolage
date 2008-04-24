@@ -8,10 +8,6 @@ container_prof - The container profile editor.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/container_prof/container_prof.mc', state => 'edit' &>

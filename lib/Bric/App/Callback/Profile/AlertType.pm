@@ -27,21 +27,21 @@ sub save : Callback {
 
     my $name = $param->{name} ? $param->{name} : '';
     if ($param->{delete}) {
-	# Remove it.
-	$at->remove;
-	$at->save;
-	log_event("${type}_del", $at);
+        # Remove it.
+        $at->remove;
+        $at->save;
+        log_event("${type}_del", $at);
         add_msg("$disp_name profile \"[_1]\" deleted.", $name);
-	$self->set_redirect('/admin/manager/alert_type');
+        $self->set_redirect('/admin/manager/alert_type');
     } else {
-	# Just save it.
-	my $ret = &$save($param, $at, $name, $self);
+        # Just save it.
+        my $ret = &$save($param, $at, $name, $self);
         if ($ret) {
             $param->{'obj'} = $ret;
             return;
         }
         add_msg("$disp_name profile \"[_1]\" saved.", $name);
-	$self->set_redirect('/admin/manager/alert_type');
+        $self->set_redirect('/admin/manager/alert_type');
     }
 }
 
@@ -109,60 +109,64 @@ $save = sub {
     $at->set_name($param->{name});
     $at->set_owner_id($param->{owner_id});
     if (defined $param->{alert_type_id}) {
-	# Set the subject and the message.
+        # Set the subject and the message.
         $at->set_subject($param->{subject});
-	$at->set_message($param->{message});
+        $at->set_message($param->{message});
 
-	# Set the active flag.
-	my $act = $at->is_active;
-	if (exists $param->{active} && !$act) {
-	    # They want to activate it. Do so.
-	    $at->activate;
-	    log_event("${type}_act", $at);
-	} elsif ($act && !exists $param->{active}) {
-	    # Deactivate it.
-	    $at->deactivate;
-	    log_event("${type}_deact", $at);
-	}
+        # Set the active flag.
+        my $act = $at->is_active;
+        if (exists $param->{active} && !$act) {
+            # They want to activate it. Do so.
+            $at->activate;
+            log_event("${type}_act", $at);
+        } elsif ($act && !exists $param->{active}) {
+            # Deactivate it.
+            $at->deactivate;
+            log_event("${type}_deact", $at);
+        }
 
-	# Update the rules.
-	my $rids = mk_aref($param->{alert_type_rule_id});
-	for (my $i = 0; $i < @{$param->{attr}}; $i++) {
-	    if (my $id = $rids->[$i]) {
-		my ($r) = $at->get_rules($id);
-		$r->set_attr($param->{attr}[$i]);
-		$r->set_operator($param->{operator}[$i]);
-		$r->set_value($param->{value}[$i]);
-	    } else {
-		next unless $param->{attr}[$i];
-		my $r = $at->new_rule($param->{attr}[$i], $param->{operator}[$i],
-				      $param->{value}[$i]);
-	    }
-	}
-	$at->del_rules(@{ mk_aref($param->{del_alert_type_rule})} )
-	  if $param->{del_alert_type_rule};
+    # Update the rules.
+        my $rids  = mk_aref($param->{alert_type_rule_id});
+        my $attrs = mk_aref( $param->{attr} );
+        my $ops   = mk_aref( $param->{operator} );
+        my $vals  = mk_aref( $param->{value} );
+        for (my $i = 0; $i < @{ $attrs }; $i++) {
+            if (my $id = $rids->[$i]) {
+                my ($rule) = $at->get_rules($id);
+                $rule->set_attr($attrs->[$i]);
+                $rule->set_operator($ops->[$i]);
+                $rule->set_value($vals->[$i]);
+            } else {
+                next unless $attrs->[$i];
+                my $rule = $at->new_rule( $attrs->[$i], $ops->[$i], $vals->[$i] );
+            }
+        }
+        $at->del_rules(@{ mk_aref($param->{del_alert_type_rule})} )
+            if $param->{del_alert_type_rule};
     } else {
-	if (defined $param->{event_type_id}) {
-	    $at->set_event_type_id($param->{event_type_id});
-	    if ($at->name_used) {
+        if (defined $param->{event_type_id}) {
+            $at->set_event_type_id($param->{event_type_id});
+            if ($at->name_used) {
                 add_msg("The name \"[_1]\" is already used by another $disp_name.", $name);
-	    } else {
-		$at->save;
-		log_event($type . '_new', $at);
-	    }
-	}
-	return $at;
+            } else {
+                $at->save;
+                log_event($type . '_new', $at);
+            }
+        }
+        return $at;
     }
 
     # Make sure the name isn't already in use.
     if ($at->name_used) {
         add_msg("The name \"[_1]\" is already used by another $disp_name.", $name);
-	return $at;
+        return $at;
     }
 
     $at->save;
-    log_event($type . (defined $param->{alert_type_id} ? '_save' : '_new'),
-	      $at);
+    log_event(
+        $type . (defined $param->{alert_type_id} ? '_save' : '_new'),
+        $at
+    );
     return;
 };
 

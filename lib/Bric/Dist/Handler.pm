@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Location /dist>
@@ -42,13 +38,13 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
+use Bric::Config qw(:mod_perl);
 use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(log_event clear_events);
 use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Bric::Util::Time qw(:all);
-use Apache::Constants qw(HTTP_OK);
-use Apache::Log;
+use Bric::Util::ApacheConst qw(OK);
 
 ################################################################################
 # Inheritance
@@ -146,8 +142,8 @@ sub handler {
     my $r = shift;
     eval {
         $r->content_type('text/plain');
-        $r->header_out(BricolageDist => 1);
-        $r->send_http_header;
+        $r->headers_out->{BricolageDist} = 1;
+        $r->send_http_header if MOD_PERL_VERSION < 2;
 
         # Set up the language object and handle the request.
         Bric::Util::Language->get_handle(get_pref('Language'));
@@ -167,7 +163,7 @@ sub handler {
     # Log any errors.
     log_err($r, $@, "Error processing jobs") if $@;
 
-    return HTTP_OK;
+    return OK;
 }
 
 ##############################################################################

@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate: 2006-06-20 01:00:31 +0300 (Tue, 20 Jun 2006) $
+$Id$
 
 =head1 DESCRIPTION
 
@@ -37,8 +37,7 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-our $QUIET;
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Probing PostgreSQL Configuration <==\n\n";
 
@@ -138,7 +137,7 @@ sub get_users {
 
     unless ($DB{host_name}) {
         $DB{system_user} = $DB{root_user};
-        while(!$QUIET) {
+        while(1) {
             ask_confirm("Postgres System Username", \$DB{system_user}, $QUIET);
             $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
             last if defined $DB{system_user_uid};

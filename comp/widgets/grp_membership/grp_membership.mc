@@ -8,10 +8,6 @@ grp_membership - Group membership widget
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/grp_membership/grp_membership.mc', 

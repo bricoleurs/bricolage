@@ -7,10 +7,6 @@
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/checkbox.mc",
          label_after => 0,

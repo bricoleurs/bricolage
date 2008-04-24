@@ -8,10 +8,6 @@ search - A search widget
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/search/search.mc', type => $type, object => $object, field => $field &>

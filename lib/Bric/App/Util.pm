@@ -13,10 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::App::Util;
@@ -44,11 +40,10 @@ use Bric::App::Session qw(:state :user);
 use Bric::Config qw(:cookies :mod_perl);
 use Bric::Util::Class;
 use Bric::Util::Pref;
-use Apache;
-use Apache::Request;
+use Bric::Util::ApacheReq;
 use HTML::Mason::Request;
-use Apache::Constants qw(HTTP_OK);
-use Apache::Util qw(escape_html);
+use Bric::Util::ApacheUtil qw(escape_uri);
+use HTML::Entities;
 use Bric::Util::Language;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::App::Authz qw(:all);
@@ -492,7 +487,7 @@ sub del_redirect {
     # cookies to 2nd server build hash of cookies from blessed reference into
     # Apache::Tables
     my %cookies;
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = Bric::Util::ApacheReq->instance;
     $r->err_headers_out->do(sub {
         my($k,$v) = @_;     # foreach key matching Set-Cookie
         ($k,$v) = split('=',$v,2);
@@ -502,13 +497,12 @@ sub del_redirect {
 
     # get the current authorization cookie
     return $rv unless $cookies{&AUTH_COOKIE};
-    my $qsv = AUTH_COOKIE .'='. URI::Escape::uri_escape($cookies{&AUTH_COOKIE});
+    my $qsv = AUTH_COOKIE .'='. escape_uri($cookies{&AUTH_COOKIE});
     # Add current session ID which should not need to be escaped. For now, the
     # path is always "/", since that's what AccessHandler sets it to. If that
     # changes in the future, we'll need to change it here, too, by adding code
     # to attach the proper query string to the URI.
-    $qsv .= '&'. COOKIE .'='. $session->{_session_id} .
-        URI::Escape::uri_escape('; path=/');
+    $qsv .= '&'. COOKIE .'='. $session->{_session_id} . escape_uri('; path=/');
     $rv =~ s/$login_marker/$qsv/;
     return $rv;
 }
@@ -609,7 +603,9 @@ sub redirect_onload {
     } elsif (my $cbh = shift) {
         # Use the callback handler object.
         my $r = $cbh->apache_req;
-        $r->send_http_header unless $r->header_out("Content-type");
+        if (MOD_PERL_VERSION < 2) {
+            $r->send_http_header unless $r->headers_out->{'Content-type'};
+        }
         $r->print($js);
         $cbh->abort;
     } else {
@@ -641,7 +637,7 @@ B<Notes:> NONE.
 
 sub status_msg {
     if (MOD_PERL) {
-        _send_msg(escape_html(Bric::Util::Language->instance->maketext(@_)));
+        _send_msg(encode_entities(Bric::Util::Language->instance->maketext(@_)));
     } else {
         print STDERR Bric::Util::Language->instance->maketext(@_);
     }
@@ -650,7 +646,7 @@ sub status_msg {
 sub severe_status_msg {
     if (MOD_PERL) {
     _send_msg('<span style="font-weight: bold; font-color: red;">' .
-              escape_html(Bric::Util::Language->instance->maketext(@_)) .
+              encode_entities(Bric::Util::Language->instance->maketext(@_)) .
               "</span>");
     } else {
         print STDERR "##################################################\n\n";
@@ -667,9 +663,9 @@ sub _send_msg {
         my $r = $m->apache_req;
         my $old_autoflush = $m->autoflush;   # autoflush is restored below
         $m->autoflush(1);
-        
+
         $m->print(qq{<p class="statusMsg" style="margin-left: 40px;">});
-        
+
         unless ( $r->pnotes($key) ) {
             # We haven't called this thing yet. Throw up some initial information.
             $m->print("<br />\n" x 2);
@@ -707,7 +703,7 @@ sub log_history {
     my $session = Bric::App::Session->instance();
     my $history = $session->{'_history'};
 
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = Bric::Util::ApacheReq->instance;
     my $curr = $r->uri;
 
     # Only push this URI onto the stack if it is different than the top value

@@ -2,7 +2,7 @@
 -- File:    Grp.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate: 2005-09-21 03:48:20 +0300 (Wed, 21 Sep 2005) $
+-- $Id$
 
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES ('0', NULL, '6', 'Root Group', 'The mother of all groups.', '1', '1');

@@ -17,10 +17,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=item Date
-
-$LastChangedDate$
-
 =item Subversion ID
 
 $Id$
@@ -88,8 +84,7 @@ use constant IGNORE => 3;
 ################################################################################
 # Instance Fields
 BEGIN {
-    Bric::register_fields
-      ({
+    Bric::register_fields({
         # Public Fields.
         from         => Bric::FIELD_READ,
         to           => Bric::FIELD_READ,
@@ -100,7 +95,7 @@ BEGIN {
         content_type => Bric::FIELD_READ,
         handle_text  => Bric::FIELD_READ,
         handle_other => Bric::FIELD_READ,
-       });
+    });
 }
 
 ##############################################################################
@@ -186,8 +181,8 @@ Determines how non-text resources are to be handled.
     # We don't got 'em. So get 'em!
     my ($meths, @ord);
     foreach my $meth (__PACKAGE__->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+        $meths->{$meth->{name}} = $meth;
+        push @ord, $meth->{name};
     }
 
     push @ord, qw(from to cc bcc subject content_type handle_text
@@ -336,7 +331,8 @@ Bric::Dist::Action.
   my $from = $action->get_from;
   $action = $action->set_from($from);
 
-Get and set the address from which email will be sent. Optional.
+Get and set the address from which email will be sent. Optional. The setter
+converts non-Unix line endings.
 
 =head3 to
 
@@ -347,14 +343,6 @@ Get and set the address or addresses to which email will be sent. Multiple
 addresses should be separated by commas. Either C<to> or C<bcc> or both are
 required. The setter converts non-Unix line endings.
 
-=cut
-
-sub set_to {
-    my ($self, $val) = @_;
-    $val =~ s/\r\n?/\n/g if defined $val;
-    $self->_set( [ 'to' ] => [ $val ]);
-}
-
 =head3 cc
 
   my $cc = $action->get_cc;
@@ -363,14 +351,6 @@ sub set_to {
 Get and set the address or addresses to which email will be Cc'd. Multiple
 addresses should be separated by commas. Optional. The setter converts
 non-Unix line endings.
-
-=cut
-
-sub set_cc {
-    my ($self, $val) = @_;
-    $val =~ s/\r\n?/\n/g if defined $val;
-    $self->_set( [ 'cc' ] => [ $val ]);
-}
 
 =head3 bcc
 
@@ -381,20 +361,13 @@ Get and set the address or addresses to which email will be Bcc'd. Multiple
 addresses should be separated by commas. Either C<to> or C<bcc> or both are
 required. The setter converts non-Unix line endings.
 
-=cut
-
-sub set_bcc {
-    my ($self, $val) = @_;
-    $val =~ s/\r\n?/\n/g if defined $val;
-    $self->_set( [ 'bcc' ] => [ $val ]);
-}
-
 =head3 subject
 
   my $subject = $action->get_subject;
   $action = $action->set_subject($subject);
 
-Get and set the subject to be used when emails are sent. Optional.
+Get and set the subject to be used when emails are sent. Optional. The setter
+converts non-Unix line endings.
 
 =head3 content_type
 
@@ -403,7 +376,7 @@ Get and set the subject to be used when emails are sent. Optional.
 
 Get and set the content type to be used when emails are sent. If not
 specified, Bric::Dist::Action::Email will use the media type of the first text
-file it uses for the email message.
+file it uses for the email message. The setter converts non-Unix line endings.
 
 =head3 handle_text
 
@@ -484,31 +457,31 @@ B<Thows:>
 =cut
 
 sub do_it {
-    my ($self, $res) = @_;
+    my ($self, $resources) = @_;
     my $handle_txt = $self->$get_attr('handle_text');
     my $handle_oth = $self->$get_attr('handle_other');
     my $content_type = $self->$get_attr('content_type');
     my (@attach);
     my $msg = '';
 
-    foreach my $r (@$res) {
-        if ($r->get_media_type =~ /^text\//) {
+    foreach my $res (@$resources) {
+        if ($res->get_media_type =~ /^text\//) {
             # It's a text file. Grab the content type if it hasn't been set
             # explicitly. First one in wins.
-            $content_type ||= $r->get_media_type;
+            $content_type ||= $res->get_media_type;
             if ($handle_txt == INLINE) {
                 # Make it part of the message.
-                $msg .= $r->get_contents;
+                $msg .= $res->get_contents;
             } elsif ($handle_txt == ATTACH) {
                 # We'll attach it.
-                push @attach, $r;
+                push @attach, $res;
             } else {
                 # Ignore it.
                 next;
             }
         } else {
             # It's something other than a text file.
-            push @attach, $r if $handle_oth == ATTACH;
+            push @attach, $res if $handle_oth == ATTACH;
         }
     }
 
@@ -595,13 +568,18 @@ $get_attr = sub {
     my ($self, $key) = (shift, shift);
     my $attr = $self->_get_attr;
     if (@_) {
-	$attr->set_attr({ name     => $key,
-                          subsys   => 'EmailAction',
-			  sql_type => 'blob',
-                          value    => shift });
+        (my $val = shift) =~ s/\r\n?/\n/g;
+        $attr->set_attr({
+            name     => $key,
+            subsys   => 'EmailAction',
+            sql_type => 'blob',
+            value    => $val,
+        });
     } else {
-	return $attr->get_attr({ name   => $key,
-                                 subsys => 'EmailAction' });
+        return $attr->get_attr({
+            name   => $key,
+            subsys => 'EmailAction',
+        });
     }
     return $self;
 };

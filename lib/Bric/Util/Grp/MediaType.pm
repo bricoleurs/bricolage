@@ -17,10 +17,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=item Date
-
-$LastChangedDate$
-
 =item Subversion ID
 
 $Id$

@@ -1,5 +1,5 @@
 % # Check to see if this is a preview screen.
-% my $prev = $r->notes('burner.preview');
+% my $prev = $r->pnotes('burner.preview');
 <& /widgets/wrappers/header.mc,
         title      => 'Error',
         useSideNav => !$prev,
@@ -69,7 +69,7 @@
 % }
 
 <& '/widgets/wrappers/footer.mc' &>
-% $r->status(Apache::Constants::HTTP_INTERNAL_SERVER_ERROR);
+% $r->status(HTTP_INTERNAL_SERVER_ERROR);
 % $m->abort;
 <%init>;
 # Clear out messages - they're likely irrelevant now.

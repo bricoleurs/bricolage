@@ -13,10 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 The functionality of this class has been moved to

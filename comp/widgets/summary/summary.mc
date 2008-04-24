@@ -8,10 +8,6 @@ summary - Displays a summary of asset objects.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/story_summary/story_summary.mc' &>

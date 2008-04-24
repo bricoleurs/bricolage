@@ -56,23 +56,33 @@ if ($element->get_object_type eq 'media') {
 
 my $field_values = sub {
     my ($o, $field) = @_;
-    
+
     if ($field eq 'thumb') {
-        
+
         # If we get a thumbnail URI, we have an image. Otherwise, simply return
         # a space to fill the column properly because we aren't an image object
         # but USE_THUMBNAILS is on.
         my $thumb_uri = $o->thumbnail_uri or return '&nbsp;';
         return qq{ <img src="$thumb_uri" />};
-        
+
     } elsif ($field eq 'action') {
-        
+
         if ($relate_id == $o->get_id) {
-            return qq{<a href="#" class="redLink" onclick="Container.unrelate('media', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Un-relate</a>};            
+            return qq{<a href="#" class="redLink" onclick="Container.unrelate('media', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Un-relate</a>};
         } else {
             return qq{<a href="#" class="redLink" onclick="Container.relate('media', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Relate</a>};
         }
-        
+
     }
 };
 </%init>
+<%once>;
+my $related_profile = sub {
+    my ($o,$flags) = @_;
+    unless ($flags->{featured}) {
+        return ['Relate', $r->uri, "container_prof|relate_media_cb=".$o->get_id];
+    } else {
+        return ['Un-relate', $r->uri, "container_prof|unrelate_media_cb=".$o->get_id];
+    }
+};
+</%once>

@@ -2,7 +2,6 @@
 -- File:    AlertType.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- No initial values for alert types.

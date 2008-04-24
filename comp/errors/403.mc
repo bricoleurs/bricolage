@@ -3,7 +3,7 @@
 clear_msg();
 $m->clear_buffer;
 # Check to see if this is a preview screen.
-my $prev = $r->notes('burner.preview');
+my $prev = $r->pnotes('burner.preview');
 $m->comp('/widgets/wrappers/header.mc',
          title      => 'Permission Denied',
          context    => '',
@@ -32,7 +32,7 @@ $m->out('<p>',
         "</p>\n");
 $m->comp('/widgets/wrappers/footer.mc');
 $m->flush_buffer;
-$r->status(Apache::Constants::HTTP_FORBIDDEN);
+$r->status(HTTP_FORBIDDEN);
 $m->abort;
 </%perl>
 <%args>

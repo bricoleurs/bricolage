@@ -73,10 +73,6 @@ $LastChangedRevision$
 
 use Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,

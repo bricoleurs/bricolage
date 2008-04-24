@@ -8,10 +8,6 @@ Bric::AdvTemplates - Template Producing: Advanced Topics
 
 $LastChangedRevision$
 
-=head1 Date
-
-$LastChangedDate$
-
 =head1 Introduction
 
 This document discusses some templating techniques that require existing

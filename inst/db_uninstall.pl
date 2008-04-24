@@ -8,10 +8,6 @@ db_uninstall.pl - installation script to launch apropriate database uninstall sc
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during C<make uninstall> to launch the apropriate 

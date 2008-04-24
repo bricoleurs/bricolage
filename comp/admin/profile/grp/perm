@@ -5,10 +5,11 @@
  &>
 <form method="post" action="<% $r->uri %>" name="perm_profile">
 <%perl>;
-$m->comp('/widgets/profile/hidden.mc',
-         value => $id,
-	 name => 'grp_id'
-	) if defined $id;
+$m->comp(
+    '/widgets/profile/hidden.mc',
+    value => $id,
+    name => 'grp_id'
+) if defined $id;
 
 $m->comp('/widgets/perm/perm.mc',
          grp => $grp,

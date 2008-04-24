@@ -11,10 +11,6 @@ $LastChangedRevision$
 
 use Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 Perform text or alpha (match first letter of a field) searching for an input type.
@@ -46,13 +42,13 @@ $pkgType = "Bric::Biz::Person";
 @fields = ('fname', 'lname');
 
 my @tmp = $pkgType->list();
-	
+
 foreach my $field (@fields) {
 	for (my $i=0; $i < $#tmp; $i++) {
-		
+
 		# this needs to be more sophisticated
 		my $meth = "get_$field";
-		
+
 		if ( lc ( $tmp[$i]->$meth() )  =~ /^$what/i  ) {
 			push @objs, $tmp[$i];
 		}

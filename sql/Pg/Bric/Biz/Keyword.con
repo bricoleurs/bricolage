@@ -1,8 +1,8 @@
 -- Project: Bricolage
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
 -- Author: David Wheeler <david@kineticode.com>
+
 
 ALTER TABLE    keyword_member
 ADD CONSTRAINT fk_keyword__keyword_member FOREIGN KEY (object_id)

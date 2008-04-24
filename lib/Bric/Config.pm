@@ -9,10 +9,6 @@ Bric::Config - A class to hold configuration settings.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   # import all configuration constants
@@ -161,6 +157,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MANUAL_APACHE
                     ALLOW_WORKFLOW_TRANSFER
                     MOD_PERL
+                    MOD_PERL_VERSION
                     ALLOW_ALL_SITES_CX
                     RELATED_MEDIA_UPLOAD
                     ALLOW_SLUGLESS_NONFIXED
@@ -333,7 +330,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      CHECK_FREQUENCY
                                      MIN_SHARE_SIZE
                                      MAX_UNSHARED_SIZE)],
-                    mod_perl  => [qw(MOD_PERL)],
+                    mod_perl  => [qw(MOD_PERL
+                                     MOD_PERL_VERSION)],
                     uri       => [qw(STORY_URI_WITH_FILENAME)],
                     l10n      => [qw(LOAD_LANGUAGES
                                      ENCODE_OK
@@ -769,8 +767,20 @@ require Bric; our $VERSION = Bric->VERSION;
     # Set the MOD_PERL constant.
     use constant MOD_PERL => $ENV{MOD_PERL};
 
-    use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
+    # if not in MOD_PERL environment, set to 0,
+    # if bricolage.conf sets HTTPD_VERSION to 'apache2' and we seem
+    # to have mod_perl2, set to 2;
+    # otherwise, set to 1
+    use constant MOD_PERL_VERSION => $ENV{MOD_PERL}
+          ? ( ($config->{HTTPD_VERSION} eq 'apache2'
+                 and exists($ENV{MOD_PERL_API_VERSION})
+                 and $ENV{MOD_PERL_API_VERSION} >= 2)
+                ? 2
+                : 1
+             )
+          : 0;
 
+    use constant CACHE_DEBUG_MODE => $ENV{BRIC_CACHE_DEBUG_MODE} || 0;
 }
 
 #==============================================================================#

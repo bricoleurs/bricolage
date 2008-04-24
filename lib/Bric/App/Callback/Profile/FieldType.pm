@@ -50,8 +50,11 @@ sub save : Callback {
         my $set_meta_number = sub {
             my ($ed, $f, $param) = @_;
             my $set = $meths->{$f}->{set_meth};
-            $set->($ed, $param->{$f})
-                if defined $param->{$f} && $param->{$f} =~ $numregex;
+            my $val = $param->{$f};
+            return unless defined $val;
+            $val = 0 if $val eq '';
+            return unless $val =~ $numregex;
+            $set->($ed, $val );
         };
         my $set_meta_boolean = sub {
             my ($ed, $f, $param) = @_;

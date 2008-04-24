@@ -13,10 +13,6 @@ $LastChangedRevision$
 # XXX: using Bric doesn't work before Bric is installed
 # use Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   #!/usr/bin/perl -w
@@ -107,13 +103,14 @@ quiet mode at all.
 sub ask_yesno {
     my ($question, $default, $quiet_mode) = @_;
     my $tries = 1;
+    $default = $default ? 1 : 0;
     local $| = 1;
     while (1) {
         print $question;
-        print " [" . (($default == 1) ? "yes" : "no") . "] "; # Append the default
+        print ' [', ( $default ? 'yes' : 'no' ), '] '; # Append the default
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
-        print "\n" if $quiet_mode;
+        print $default ? "yes\n" : "no\n" if $quiet_mode;
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;
@@ -125,7 +122,6 @@ sub ask_yesno {
         print "And quit screwing around.\n" if ++$tries > 3;
     }
 }
-
 
 =item ask_confirm($description, $ref_to_setting, $quiet_mode)
 
@@ -149,9 +145,9 @@ sub ask_confirm {
     local $| = 1;
     while (1) {
         print $desc, " [", $$ref, "] ";
-        # just print a newline after the question to keep
+        # just print the dfault and a newline after the question to keep
         # output tidy, if we are in quiet mode
-        print "\n" if $quiet_mode;
+        print "$$ref\n" if $quiet_mode;
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;
@@ -235,7 +231,7 @@ sub ask_choice {
         print $desc, " [", $default, "] ";
         # just print a newline after the question to keep
         # output tidy, if we are in quiet mode
-        print "\n" if $quiet_mode;
+        print "$default\n" if $quiet_mode;
         my $answer= '';
         # do not wait for user input if we are in quiet mode
         $answer = <STDIN> unless $quiet_mode;
@@ -299,9 +295,14 @@ BEGIN {
 }
 
 sub get_default {
-    my ($key) = @_;
-
-    return $defaults->{uc $key};
+    my $key = uc shift;
+    (my $env_key = $key) =~ s/^BRICOLAGE_//;
+    my $ret = exists $ENV{"BRICOLAGE_$env_key"}
+        ? $ENV{"BRICOLAGE_$env_key"}
+        : $defaults->{$key};
+    print "BRICOLAGE_$env_key => ", (defined $ret ? $ret : ''), "\n"
+        if $ENV{DEVELOPER};
+    return $ret;
 }
 
 =back

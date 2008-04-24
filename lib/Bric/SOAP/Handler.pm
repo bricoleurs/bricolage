@@ -13,17 +13,13 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   <Location /soap>
     SetHandler perl-script
     PerlHandler Bric::SOAP::Handler
     PerlCleanupHandler Bric::App::CleanupHandler
-    PerlAccessHandler Apache::OK
+    PerlAccessHandler Apache::HTTP_OK
   </Location>
 
 =head1 DESCRIPTION
@@ -88,10 +84,8 @@ use Bric::Util::Fault qw(:all);
 use Bric::App::Event qw(clear_events);
 use Bric::App::Util qw(:pref);
 use Exception::Class 1.12;
-use Apache;
-use Apache::Request;
-use Apache::Constants qw(OK);
-use Apache::Util qw(escape_html);
+use Bric::Util::ApacheReq;
+use HTML::Entities;
 require Encode if ENCODE_OK;
 
 use constant SOAP_CLASSES => [qw(
@@ -132,7 +126,7 @@ BEGIN {
     {
         $ec =~ s/::/__/g;
         eval qq{sub SOAP::Serializer::as_$ec {
-            [ \$_[2], \$_[4], escape_html(\$_[1]->error) ];
+            [ \$_[2], \$_[4], encode_entities(\$_[1]->error) ];
         }};
     }
 }
@@ -164,7 +158,7 @@ sub handler {
         # Start the database transactions.
         begin(1);
 
-        my $action = $r->header_in('SOAPAction') || '';
+        my $action = $r->headers_in->{'SOAPAction'} || '';
 
         print STDERR __PACKAGE__ . "::handler called : $action.\n" if DEBUG;
 
@@ -243,7 +237,7 @@ sub handle_err {
     clear_events();
 
     # Send the error(s) to the apache error log.
-    my $log = Apache->server->log;
+    my $log = Bric::Util::ApacheReq->server->log;
     $log->error($err->full_message);
     $log->error($more_err) if $more_err;
 
@@ -261,7 +255,7 @@ sub handle_soap_err {
     my $caller = (caller(2))[3];
     $caller = (caller(3))[3] if $caller =~ /eval/;
     chomp(my $msg = join ' ', grep { defined } @_);
-    my $log = Apache->server->log;
+    my $log = Bric::Util::ApacheReq->server->log;
     my $err = Bric::Util::Fault::Exception->new("$caller: $msg");
     handle_err(0, 0, $err);
 }

@@ -13,10 +13,6 @@ $LastChangedRevision$
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::App::Session;
@@ -57,13 +53,13 @@ use strict;
 
 #--------------------------------------#
 # Programmatic Dependencies
-use Bric::Config qw(:sys_user :admin :temp :cookies);
+use Bric::Config qw(:sys_user :admin :temp :cookies :mod_perl);
 use Bric::Util::Fault qw(:all);
 use Apache::Session::File;
 use Bric::Util::Trans::FS;
+use Bric::Util::Cookie;
 
 use File::Path qw(mkpath);
-use Apache::Cookie;
 
 #==============================================================================#
 # Inheritance                          #
@@ -244,7 +240,7 @@ sub setup_user_session {
     my ($r, $new) = @_;
     return if !$new && tied %HTML::Mason::Commands::session;
     # Grab the existing cookie.
-    my %cookies = Apache::Cookie->fetch;
+    my %cookies = Bric::Util::Cookie->fetch($r);
     my $cookie = $cookies{&COOKIE} unless $new;
 
     # Try to tie the session variable to a session file.
@@ -270,13 +266,13 @@ sub setup_user_session {
 
     # Create a new cookie if one doesn't exist.
     unless ($cookie) {
-        my $cookie = Apache::Cookie->new($r,
+        my $cookie = Bric::Util::Cookie->new($r,
                          -name    => COOKIE,
                          -value   => $HTML::Mason::Commands::session{_session_id},
                          -path    => '/');
 
         # Send this cookie out with the headers.
-        $cookie->bake;
+        $cookie->bake($r);
     }
 }
 
@@ -355,14 +351,14 @@ sub expire_session {
       if $@;
 
     # Expire the session cookie.
-    my $cookie = Apache::Cookie->new($r,
+    my $cookie = Bric::Util::Cookie->new($r,
                      -name    => COOKIE,
                      -expires => "-1d",
                      -value   => 'Expired',
                      -path    => '/');
 
     # Send this cookie out with the headers.
-    $cookie->bake;
+    $cookie->bake($r);
     return 1;
 }
 

@@ -13,10 +13,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   use Bric::Util::Trans::WebDAV
@@ -140,7 +136,7 @@ B<Notes:> Uses HTTP::DAV internally.
 =cut
 
 sub put_res {
-    my ($pkg, $res, $st) = @_;
+    my ($pkg, $resources, $st) = @_;
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
@@ -175,10 +171,10 @@ sub put_res {
 
         # Now, put each file on the remote server.
         my %dirs;
-        foreach my $r (@$res) {
+        foreach my $res (@$resources) {
             # Get the source and destination paths for the resource.
-            my $src = $r->get_tmp_path || $r->get_path;
-            my $dest = $fs->cat_uri($doc_root, $r->get_uri);
+            my $src = $res->get_tmp_path || $res->get_path;
+            my $dest = $fs->cat_uri($doc_root, $res->get_uri);
             # Create the destination directory if it doesn't exist and we haven't
             # created it already.
             my $dest_dir = $fs->uri_dir_name($dest);
@@ -265,7 +261,7 @@ B<Notes:> See put_res(), above.
 =cut
 
 sub del_res {
-    my ($pkg, $res, $st) = @_;
+    my ($pkg, $resources, $st) = @_;
     foreach my $s ($st->get_servers) {
     # Skip inactive servers.
         next unless $s->is_active;
@@ -298,9 +294,9 @@ sub del_res {
           || throw_gen(error => "Unable to login to remote server '$hn'.",
                        payload => $d->message);
 
-        foreach my $r (@$res) {
+        foreach my $res (@$resources) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $file = $fs->cat_uri($doc_root, $res->get_uri);
 
             my $resource = $d->propfind( -url => $file);
             if ($resource && $resource->get_property("getcontentlength") > -1) {

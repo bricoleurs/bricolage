@@ -8,10 +8,6 @@ select_object - Provide a select box listing all objects of a certain type.
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
 <& '/widgets/select_object/select_object.mc', object     => 'Keyword'

@@ -55,7 +55,7 @@ my $printLink = sub {
 my $admin_links = sub {
     my $uri = shift;
     $m->print(
-        '<li>', $printLink->("/admin/manager/$_->[0]", $uri, $_->[2], 1),
+        '<li>', $printLink->("/admin/manager/$_->[0]/", $uri, $_->[2], 1),
         "</li>\n"
     ) for
         sort { $a->[1] cmp $b->[1] }
@@ -67,7 +67,7 @@ my $admin_links = sub {
 
 my $get_cookie = sub {
     my ($cookie, $name) = @_;
-    my %cookies = map { split /:/ } split /\+/, $cookie;
+    my %cookies = map { split /:/ } split /[|]/, $cookie;
     return exists($cookies{$name}) ? $cookies{$name} : '';
 };
 </%once>\
@@ -112,7 +112,7 @@ unless ($workflows) {
     $c->set('__WORKFLOWS__'. $site_id, $workflows);
 }
 
-my %cookies = Apache::Cookie->fetch;
+my %cookies = Bric::Util::Cookie->fetch($r);
 my $cookie = exists($cookies{BRICOLAGE_MENUS})
   ? $cookies{BRICOLAGE_MENUS}->value
   : '';
@@ -234,7 +234,7 @@ $admin_links->($uri, qw(category contrib_type contrib element_type keyword
 
 $m->print(
     qq{<li style="padding-top: 1em;">},
-    $printLink->('/admin/control/publish', $uri, 'Bulk Publish'),
+    $printLink->('/admin/control/publish/', $uri, 'Bulk Publish'),
     qq{</li></ul></li>}
 );
 # End publishing submenus
@@ -278,9 +278,5 @@ appropriate side navigation bar.
 =head1 VERSION
 
 $LastChangedRevision$
-
-=head1 DATE
-
-$LastChangedDate$
 
 </%doc>

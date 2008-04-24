@@ -128,10 +128,6 @@ unless ($use_vals) {
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 SYNOPSIS
 
   my $contacts = $user->get_contacts;

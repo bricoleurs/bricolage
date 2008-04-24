@@ -8,10 +8,6 @@ config.pl - installation script to probe user configuration
 
 $LastChangedRevision$
 
-=head1 DATE
-
-$LastChangedDate$
-
 =head1 DESCRIPTION
 
 This script is called during "make" to ask the user questions about
@@ -37,14 +33,10 @@ use Config;
 use Cwd;
 
 # check whether questions should be asked
-our $QUIET;
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Gathering User Configuration <==\n\n";
 our %CONFIG;
-
-# our $REQ;
-# do "./required.db" or die "Failed to read required.db : $!";
 
 our $AP;
 do "./apache.db" or die "Failed to read apache.db : $!";
@@ -129,15 +121,16 @@ END
     }
 } else {
     # use QUIET defaults
-    $CONFIG{BRICOLAGE_ROOT}   = get_default("BRICOLAGE_ROOT_DIR");
-    $CONFIG{TEMP_DIR}         = get_default("BRICOLAGE_TMP_DIR");
-    $CONFIG{MODULE_DIR}       = get_default("BRICOLAGE_PERL_DIR");
-    $CONFIG{BIN_DIR}          = get_default("BRICOLAGE_BIN_DIR");
-    $CONFIG{MAN_DIR}          = get_default("BRICOLAGE_MAN_DIR");
-    $CONFIG{LOG_DIR}          = get_default("BRICOLAGE_LOG_DIR");
-    $CONFIG{PID_FILE}         = get_default("BRICOLAGE_PID");
-    $CONFIG{MASON_COMP_ROOT}  = get_default("BRICOLAGE_COMP_DIR");
-    $CONFIG{MASON_DATA_ROOT}  = get_default("BRICOLAGE_DATA_DIR");
+    $CONFIG{set}              = 'm';
+    $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT_DIR');
+    $CONFIG{TEMP_DIR}         = get_default('BRICOLAGE_TMP_DIR');
+    $CONFIG{MODULE_DIR}       = get_default('BRICOLAGE_PERL_DIR');
+    $CONFIG{BIN_DIR}          = get_default('BRICOLAGE_BIN_DIR');
+    $CONFIG{MAN_DIR}          = get_default('BRICOLAGE_MAN_DIR');
+    $CONFIG{LOG_DIR}          = get_default('BRICOLAGE_LOG_DIR');
+    $CONFIG{PID_FILE}         = get_default('BRICOLAGE_PID');
+    $CONFIG{MASON_COMP_ROOT}  = get_default('BRICOLAGE_COMP_DIR');
+    $CONFIG{MASON_DATA_ROOT}  = get_default('BRICOLAGE_DATA_DIR');
 }
 }
 
@@ -154,13 +147,12 @@ sub confirm_settings {
       return confirm_settings();
   }
 
-
   # make sure this directory doesn't already house a Bricolage install
   if (-e $CONFIG{BRICOLAGE_ROOT} and
       -e catfile($CONFIG{BRICOLAGE_ROOT}, "conf", "bricolage.conf")) {
       print "That directory already contains a Bricolage installation.\n";
       print "Consider running `make upgrade`, instead.\n";
-      exit 1 unless ask_yesno("Continue and overwrite existing installation?", 0);
+      exit 1 unless ask_yesno("Continue and overwrite existing installation?", $ENV{DEVELOPER}, $ENV{DEVELOPER});
   }
 
   # some prefs are based on BRICOLAGE_ROOT, need to eval them now

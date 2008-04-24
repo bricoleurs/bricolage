@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate: 2006-03-18 03:10:10 +0200 (Sat, 18 Mar 2006) $
+$Id$
 
 =head1 DESCRIPTION
 
@@ -35,7 +35,7 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
 
-print "\n\n==> Creating PostgreSql Bricolage Database <==\n\n";
+print "\n\n==> Creating PostgreSQL Bricolage Database <==\n\n";
 
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
@@ -43,7 +43,9 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 # Switch to database system user
 if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
+    require Config;
     $> = $DB->{system_user_uid};
+    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
     die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
         unless $> == $DB->{system_user_uid};
 }
@@ -64,7 +66,7 @@ create_user();
 # load data.
 load_db();
 
-print "\n\n==> Finished Creating PostgreSql Bricolage Database <==\n\n";
+print "\n\n==> Finished Creating PostgreSQL Bricolage Database <==\n\n";
 exit 0;
 
 sub exec_sql {
@@ -75,9 +77,7 @@ sub exec_sql {
 
     if ($res) {
         my @args = $sql ? ('-c', qq{"$sql"}) : ('-f', $file);
-	@$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P footer=`;
-        # Shift off the column headers.
-        shift @$res;
+	@$res = `$DB->{exec} --variable ON_ERROR_STOP=1 -q @args -d $db -P format=unaligned -P pager= -P tuples_only=`;
         return unless $?;
     } else {
         my @args = $sql ? ('-c', $sql) : ('-f', $file);
@@ -102,7 +102,7 @@ sub create_db {
         # There was an error. Offer to drop the database if it already exists.
         if ($err =~ /database "[^"]+" already exists/) {
             if (ask_yesno("Database named \"$DB->{db_name}\" already exists.  ".
-                          "Drop database?", 0)) {
+                          "Drop database?", $ENV{DEVELOPER}, $ENV{DEVELOPER})) {
                 # Drop the database.
                 if ($err = exec_sql(qq{DROP DATABASE "$DB->{db_name}"}, 0,
                                     $DBDEFDB)) {
@@ -139,7 +139,7 @@ sub create_user {
     if ($err) {
         if ($err =~ /(?:user|role)(?: name)? "[^"]+" already exists/) {
             if (ask_yesno("User named \"$DB->{sys_user}\" already exists. "
-                          . "Continue with this user?", 1)) {
+                          . "Continue with this user?", 1, $ENV{DEVELOPER})) {
                 # Just use the existing user.
                 return;
             } elsif (ask_yesno("Well, shall we drop and recreate user? "
@@ -176,7 +176,7 @@ sub load_db {
         hard_fail($errmsg);
     }
 
-    print "Loading Bricolage PgSql Database (this may take a few minutes).\n";
+    print "Loading Bricolage Pg Database (this may take a few minutes).\n";
     my $err = exec_sql(0, $db_file);
     hard_fail("Error loading database. The database error was\n\n$err\n")
       if $err;

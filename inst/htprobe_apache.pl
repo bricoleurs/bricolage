@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 =head1 DESCRIPTION
 
@@ -37,13 +37,11 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 # check whether questions should be asked
-our $QUIET;
-$QUIET = 1 if $ARGV[0] and $ARGV[0] eq 'QUIET';
+my $QUIET = ($ARGV[0] and $ARGV[0] eq 'QUIET') || $ENV{DEVELOPER};
 
 print "\n\n==> Probing Apache Configuration <==\n\n";
 
-our %AP;
-our $REQ;
+our (%AP, $REQ);
 do "./required.db" or die "Failed to read required.db : $!";
 
 # setup some defaults.
@@ -135,7 +133,7 @@ sub read_modules {
     hard_fail("Unable to extract static modules from `$REQ->{APACHE_EXE} -l`.")
         unless exists $AP{static_modules}{http_core};
 
-    # set dso flag of mod_so.c is compiled in
+    # set dso flag if mod_so.c is compiled in
     $AP{dso} = exists $AP{static_modules}{mod_so} ? 1 : 0;
     print "Your Apache ", $AP{dso} ? "supports" : "doesn't support",
         " loadable modules (DSOs).\n";
@@ -292,7 +290,7 @@ sub confirm {
     print <<END;
 ====================================================================
 
-Your Apache configuration suggested the following defaults.  Press
+Your Apache configuration suggested the following defaults. Press
 [return] to confirm each item or type an alternative.  In most cases
 the default should be correct.
 
@@ -302,23 +300,31 @@ END
     ask_confirm("Apache Group:\t\t\t", \$AP{group}, $QUIET);
     ask_confirm("Apache Port:\t\t\t",  \$AP{port}, $QUIET);
     ask_confirm("Apache Server Name:\t\t",  \$AP{server_name}, $QUIET);
+    my $have_ssl = $AP{ssl} || $AP{apache_ssl} ? 1 : 0;
+    my $use_ssl = get_default('SSL');
+    $use_ssl = $have_ssl unless defined $use_ssl;
 
-    # install fails if this is wrong
-    $AP{ssl_key} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.key", "server.key");
-    $AP{ssl_cert} = catfile($AP{HTTPD_ROOT}, "conf", "ssl.crt","server.crt");
+    if ($have_ssl) {
+        # Get the key and cert files.
+        if (ask_yesno("Do you want to use SSL?", $use_ssl, $QUIET)) {
+            $AP{ssl_key} = get_default('SSL_KEY') ||
+                catfile($AP{HTTPD_ROOT}, 'conf', 'ssl.key', 'server.key');
+            $AP{ssl_cert} = get_default('SSL_CERT') ||
+                catfile($AP{HTTPD_ROOT}, 'conf', 'ssl.crt','server.crt');
 
-    if ($AP{ssl} or $AP{apache_ssl}) {
-        if (ask_yesno("Do you want to use SSL?", 0, $QUIET)) {
             if ($AP{ssl} and $AP{apache_ssl}) {
-                $AP{ssl} = ask_choice("Which SSL module do you use? " .
-                                      "(apache_ssl or mod_ssl) ",
-                                      [ 'mod_ssl', 'apache_ssl' ], 'mod_ssl');
+                $AP{ssl} = ask_choice(
+                    'Which SSL module do you use? (apache_ssl or mod_ssl) ',
+                    [ 'mod_ssl', 'apache_ssl' ],
+                    'mod_ssl',
+                    $QUIET
+                );
             } else {
                 $AP{ssl} = $AP{ssl} ? 'mod_ssl' : 'apache_ssl';
             }
-            ask_confirm("SSL certificate file location", \$AP{ssl_cert});
-            ask_confirm("SSL certificate key file location", \$AP{ssl_key});
-            ask_confirm("Apache SSL Port:\t\t",     \$AP{ssl_port});
+            ask_confirm("Apache SSL Port:\t\t",     \$AP{ssl_port}, $QUIET);
+            ask_confirm("SSL certificate file\t\t", \$AP{ssl_cert}, $QUIET);
+            ask_confirm("SSL certificate key file\t", \$AP{ssl_key}, $QUIET);
         } else {
             $AP{ssl} = 0;
         }
