@@ -608,6 +608,7 @@ To translate:
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
+  'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
 
 =end comment
 

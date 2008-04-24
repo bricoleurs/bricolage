@@ -197,6 +197,13 @@ instead (I've suggested this in L<Bric::Admin|Bric::Admin>, too). [David]
 Fixed C<make clean> so that it cleans out F<bin>. It was leaving junk in
 there! [David]
 
+=item *
+
+The code that handles note editing is now more careful to check that the user
+has the relevant document checked out before applying the note to it, and uses
+a smarter algorithm for caching the document in the user's session. This is an
+attempt to fix a bug reported by David Beaudet (Bug # 1265). [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

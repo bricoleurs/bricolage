@@ -292,7 +292,7 @@ our %Lexicon = (
   'Separator String' => 'String de Separador',
   'Simple Search' => 'Pesquisa Simples',
   'Site Profile' => 'Características do Site',
-  'Sites' => 'Sites', 
+  'Sites' => 'Sites',
   'Site'  => 'Site',
   'Slug' => 'Identificador',
   'Source' => 'Fonte',
@@ -747,13 +747,14 @@ To translate:
    'and Shelve'
    'and'
 	'EXISTING NOTES' => 'NOTAS EXISTENTES',
-	'Primary URI' => 'Endereço URI', 
+	'Primary URI' => 'Endereço URI',
 	'Story Trail' => 'Histórico do Artigo',
 	'Triggered ' => 'Activado por',
 	'Attributes' => 'Atributos',
 	'Logged in as' => 'Ligado como',
 	'Clone' => 'Clonar',
 	'Last Published' => 'Última Publicação',
+    'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
 
 =end comment
 
