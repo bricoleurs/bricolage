@@ -266,8 +266,10 @@ sub send_jobs {
         log_err($msg) if $msg;
 
 	# Create a client and load the Job IDs.
-	my $client = Bric::Dist::Client->new({ url => $opt_U,
-                                               cookie => $cookie->as_string });
+	my $client = Bric::Dist::Client->new({
+        url => $opt_U,
+        cookie => $cookie->as_string,
+    });
 #	$client->load_ids;
 
 	# Send debugging info, if necessary.

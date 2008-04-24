@@ -302,7 +302,7 @@ $make_cookie = sub {
 
     my $cookie = Bric::Util::Cookie->new($r, @args);
     $cookie->bake($r) if MOD_PERL; # CGI::Cookie hasn't always had bake().
-    return 1;
+    return $cookie;
 };
 
 =item my ($hash, $exp, $ip) = &$make_hash($r, $un)

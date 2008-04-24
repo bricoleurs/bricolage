@@ -48,7 +48,7 @@ use Bric::App::Event qw(log_event clear_events);
 use Bric::App::Util qw(:pref);
 use Bric::Util::Job;
 use Bric::Util::Time qw(:all);
-use Bric::Util::ApacheConst qw(HTTP_OK);
+use Bric::Util::ApacheConst qw(OK);
 
 ################################################################################
 # Inheritance
@@ -167,7 +167,7 @@ sub handler {
     # Log any errors.
     log_err($r, $@, "Error processing jobs") if $@;
 
-    return HTTP_OK;
+    return OK;
 }
 
 ##############################################################################

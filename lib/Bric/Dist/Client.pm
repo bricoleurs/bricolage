@@ -439,7 +439,7 @@ sub send {
         }
 
         # The request was successful, just return.
-    return $self;
+        return $self;
 
     };
 
