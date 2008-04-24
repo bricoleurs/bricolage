@@ -55,7 +55,7 @@ my $printLink = sub {
 my $admin_links = sub {
     my $uri = shift;
     $m->print(
-        '<li>', $printLink->("/admin/manager/$_->[0]", $uri, $_->[2], 1),
+        '<li>', $printLink->("/admin/manager/$_->[0]/", $uri, $_->[2], 1),
         "</li>\n"
     ) for
         sort { $a->[1] cmp $b->[1] }
@@ -67,7 +67,7 @@ my $admin_links = sub {
 
 my $get_cookie = sub {
     my ($cookie, $name) = @_;
-    my %cookies = map { split /:/ } split /\+/, $cookie;
+    my %cookies = map { split /:/ } split /[|]/, $cookie;
     return exists($cookies{$name}) ? $cookies{$name} : '';
 };
 </%once>\

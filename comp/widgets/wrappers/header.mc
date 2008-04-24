@@ -148,7 +148,7 @@ if ($useSideNav) {
 % if ($useSideNav) {
         <div class="buttons">
             <& "/widgets/buttons/help.mc", context => $context, page => $title &>
-            <a href="/workflow/profile/alerts" title="My Alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" alt="My Alerts" /></a>
+            <a href="/workflow/profile/alerts/" title="My Alerts"><img src="/media/images/<% $lang_key %>/my_alerts_orange.gif" alt="My Alerts" /></a>
             <a href="/logout" title="Logout"><img src="/media/images/<% $lang_key %>/logout.gif" alt="Logout" /></a>
         </div>
 % }
