@@ -380,42 +380,17 @@ BEGIN {
 
         # This will slow down every request; thus we recommend that previews
         # not be local.
-        use Apache2::Const -compile => 'DECLINED';
         push @config,
           '  PerlTransHandler       Bric::App::PreviewHandler::uri_handler'
           if PREVIEW_LOCAL;
 
         # Enable mod_gzip page compression
         if (ENABLE_GZIP) {
-            # XXX Come back to this. It's mod_deflate.
             push @config,
-              "<IfModule mod_gzip.c>\n" .
-              "  mod_gzip_on                   Yes\n" .
-              "  mod_gzip_can_negotiate        Yes\n" .
-              "  mod_gzip_static_suffix        .gz\n" .
-              "  AddEncoding gzip              .gz\n" .
-              "  mod_gzip_update_static        No\n" .
-              "  mod_gzip_keep_workfiles       No\n" .
-              "  mod_gzip_minimum_file_size    500\n" .
-              "  mod_gzip_maximum_file_size    500000\n" .
-              "  mod_gzip_maximum_inmem_size   60000\n" .
-              "  mod_gzip_min_http             1000\n" .
-              "  mod_gzip_handle_methods       GET POST\n" .
-              "  mod_gzip_dechunk              Yes\n" .
-              "  mod_gzip_add_header_count     Yes\n" .
-              "  mod_gzip_send_vary            Yes\n" .
-              "  mod_gzip_item_include         file \\.html\$\n" .
-              "  mod_gzip_item_include         file \\.htm\$\n" .
-              "  mod_gzip_item_include         file \\.shtml\$\n" .
-              "  mod_gzip_item_include         file \\.shtm\$\n" .
-              "  mod_gzip_item_include         file \\.pl\$\n" .
-              "  mod_gzip_item_include         mime ^text/.*\n" .
-              "  mod_gzip_item_include         mime ^httpd/unix-directory\$\n" .
-              "  mod_gzip_item_include         handler ^perl-script\$\n" .
-              "  mod_gzip_item_exclude         file \\.css\$\n" .
-              "  mod_gzip_item_exclude         file \\.js\$\n" .
-              "  mod_gzip_item_exclude         mime ^image/.*\n" .
-              "</IfModule>";
+                '  <IfModule mod_deflate.c>',
+                '    SetOutputFilter      DEFLATE',
+                '    SetEnvIfNoCase       Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary',
+                '  </IfModule>';
         }
 
         # This URI will handle logging users out.

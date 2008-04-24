@@ -1331,8 +1331,9 @@ regardles of the setting of C<MANUAL_APACHE>.
 
 =item *
 
-B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache module
-installed and want it to compress the the UI pages.  Pages will be as much as
+B<ENABLE_GZIP:> Turn on this feature if you have the mod_gzip Apache 1 module
+or the mod_deflate Apache 2 module installed and loaded in your F<httpd.conf>
+file and want it to compress the the UI pages. Pages will be as much as
 fifteen times smaller, with minimal extra server load, resulting in faster
 load times and less bandwidth consumption. Disabled by default.
 
@@ -1342,7 +1343,7 @@ load times and less bandwidth consumption. Disabled by default.
 
 The database configuration directives tell Bricolage where to find its data, and
 how to get it. Specifically, you want to assign to these directives the values
-you passed to the -d and -m arguments of C<pgimport> (see above).
+you passed to the C<-d> and C<-m> arguments of C<pgimport> (see above).
 
 =over 4
 
