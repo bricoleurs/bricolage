@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'search';
 use strict;
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:all);
-use Bric::Config qw(FULL_SEARCH :mod_perl);
+use Bric::Config qw(FULL_SEARCH);
 use Bric::Util::DBI qw(ANY);
 use Bric::Util::ApacheReq;
 
@@ -59,9 +59,9 @@ sub alpha : Callback {
 
 sub story : Callback {
     my $self = shift;
-    
+
     my (@field, @crit);
-    
+
     if ($self->value eq "simple") {
         _build_fields($self, \@field, \@crit, ['simple']);
     } else {
@@ -79,10 +79,10 @@ sub story : Callback {
             [qw(cover_date publish_date expire_date)],
         );
     }
-    
+
     # Display no results for an empty search.
     return unless @field;
-    
+
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
@@ -95,18 +95,18 @@ sub story : Callback {
 
 sub media : Callback {
     my $self = shift;
-    
+
     my (@field, @crit);
-    
+
     if ($self->value eq "simple") {
         _build_fields($self, \@field, \@crit, ['simple']);
     } else {
         _build_fields(
-            $self, \@field, \@crit, 
+            $self, \@field, \@crit,
             [qw(name uri data_text)]
         );
         _build_id_fields(
-            $self, \@field, \@crit, 
+            $self, \@field, \@crit,
             [qw(element_type_id site_id)]
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
@@ -115,10 +115,10 @@ sub media : Callback {
             [qw(cover_date publish_date expire_date)]
         );
     }
-    
+
     # Display no results for an empty search.
     return unless @field;
-    
+
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
@@ -131,18 +131,18 @@ sub media : Callback {
 
 sub template : Callback {
     my $self = shift;
-    
+
     my (@field, @crit);
-    
+
     if ($self->value eq "simple") {
         _build_fields($self, \@field, \@crit, ['simple']);
     } else {
         _build_fields(
-            $self, \@field, \@crit, 
+            $self, \@field, \@crit,
             [qw(name file_name)]
         );
         _build_id_fields(
-            $self, \@field, \@crit, 
+            $self, \@field, \@crit,
             [qw(site_id output_channel_id)]
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
@@ -151,7 +151,7 @@ sub template : Callback {
             [qw(cover_date publish_date expire_date)]
         );
     }
-    
+
     # Display no results for an empty search.
     return unless @field;
 
@@ -191,7 +191,7 @@ sub generic : Callback {
     while ($i >= 0) {
 	# Remove any criteria from the list who's value is the null string or
 	# the string '_all'.
-    	if (($crit->[$i] eq '_all') or ($crit->[$i] eq '')) {
+	if (($crit->[$i] eq '_all') or ($crit->[$i] eq '')) {
 	    splice @$fields, $i, 1;
 	    splice @$crit,   $i, 1;
         }
