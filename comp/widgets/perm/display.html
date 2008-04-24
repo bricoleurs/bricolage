@@ -39,7 +39,7 @@ if ($is_user) {
          'name' => 'perm_type',
          'value' => $perm_type,
     );
-    
+
     $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 
     # $is_user means $perm_type is one of
@@ -204,7 +204,7 @@ if ($perm_type eq 'usrgrp' || $perm_type eq 'all') {
     foreach my $ugrp ($usr_grp_pkg->list) {
         my $gid = $ugrp->get_id;
         next if $gid == ADMIN_GRP_ID;
-        
+
         $odd_row = !$odd_row;
         $m->comp($row_comp,
                  grp          => $ugrp,
@@ -366,7 +366,7 @@ return if $max_perm == DENY;
 %         } else {
 %             # They can set this permission.
     <td class="radio">
-        <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
+        <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked="checked"' : '' %> />
     </td>
 %         } # if
 %     } # foreach
@@ -477,4 +477,3 @@ $perms
 </%perl>
 </%def>
 %#--- Log History ---#
-
