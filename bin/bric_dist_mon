@@ -204,9 +204,9 @@ if ($opt_U) {
     # used by Bric::App::Auth.
     package FakeConn;
     unless ($opt_a) {
-	require Sys::Hostname;
-	$opt_a = sprintf "%vd", scalar gethostbyname(Sys::Hostname::hostname())
-	  || die "Unable to determine IP address.";
+    require Sys::Hostname;
+    $opt_a = sprintf "%vd", scalar gethostbyname(Sys::Hostname::hostname())
+      || die "Unable to determine IP address.";
     }
     sub new { bless {} }
     sub remote_ip { $opt_a }
@@ -223,8 +223,8 @@ sub reaper {
     my $zombie;
     $zombies = 0;
     while (($zombie = waitpid(-1,WNOHANG)) != -1) {
-	# Log it in debug mode.
-	log_msg("Reaped process $zombie.") if $opt_d;
+        # Log it in debug mode.
+        log_msg("Reaped process $zombie.") if $opt_d;
     }
 }
 
@@ -238,20 +238,20 @@ if ($opt_c) {
     # We're in forking mode. Run forever.
     my $i = 0;
     while ($opt_f ? $i < $opt_f : 1) {
-	# Increment if we're only doing this a few times.
-	$i++ if $opt_f;
-	log_msg("Forking new process.") if $opt_d;
-	my $pid;
-	if ($pid = fork) {
-	    # Parent process - take a nap.
-	    sleep $opt_i;
-	} else {
-	    # It's the child process.
-	    send_jobs();
-	    exit;
-	}
-	# Reap any dead children.
-	reaper() if $zombies;
+        # Increment if we're only doing this a few times.
+        $i++ if $opt_f;
+        log_msg("Forking new process.") if $opt_d;
+        my $pid;
+        if ($pid = fork) {
+            # Parent process - take a nap.
+            sleep $opt_i;
+        } else {
+            # It's the child process.
+            send_jobs();
+            exit;
+        }
+        # Reap any dead children.
+        reaper() if $zombies;
     }
 }
 
@@ -260,29 +260,31 @@ if ($opt_c) {
 sub send_jobs {
     log_msg("Checking for new jobs.") if $opt_d;
     eval {
-	# Create the authentication cookie.
-	my $r = Apache::FakeRequest->new(connection => FakeConn->new);
-	my ($cookie, $msg) = Bric::App::Auth::login($r, $opt_u, $opt_p);
+        # Create the authentication cookie.
+        my $r = Apache::FakeRequest->new(connection => FakeConn->new);
+        my ($cookie, $msg) = Bric::App::Auth::login($r, $opt_u, $opt_p);
         log_err($msg) if $msg;
 
-	# Create a client and load the Job IDs.
-	my $client = Bric::Dist::Client->new({
-        url => $opt_U,
-        cookie => $cookie->as_string,
-    });
-#	$client->load_ids;
+        # Create a client and load the Job IDs.
+        my $client = Bric::Dist::Client->new({
+            url => $opt_U,
+            cookie => $cookie->as_string,
+        });
+#        $client->load_ids;
 
-	# Send debugging info, if necessary.
-	if ($opt_d) {
-#	    my $exec = $client->get_exec_ids;
-#	    $exec = !@$exec ? 'no Job IDs' : $#$exec > 0 ? "Job ID @$exec" :
-#	      "Job IDs @$exec";
-#	    local $" = ', ';
-#	    log_msg("Sending $exec for execution.");
+        # Send debugging info, if necessary.
+        if ($opt_d) {
+
+#            my $exec = $client->get_exec_ids;
+#            $exec = !@$exec ? 'no Job IDs' : $#$exec > 0 ? "Job ID @$exec" :
+#                "Job IDs @$exec";
+#            local $" = ', ';
+#            log_msg("Sending $exec for execution.");
+
             log_msg("Sending execution request.");
-	}
-	# Send the Job IDs.
-	$client->send;
+        }
+        # Send the Job IDs.
+        $client->send;
     };
     # Log any errors.
     log_err($@) if $@;
@@ -294,25 +296,25 @@ sub log_msg {
     my ($err) = @_;
     # Log the error to the system log.
     if ($opt_d) {
-	# Log more stuff and to STDERR for debugging.
-	openlog($prog, LOG_PID | LOG_PERROR, LOG_USER);
-	if (ref $err) {
-	    syslog(LOG_ERR, "Debug: %s (%s line %d). %s",
-		   $err->get_msg, $err->get_pkg, $err->get_line,
-		   $err->get_payload || '');
-	} else {
-	    syslog(LOG_ERR, "Debug: %s", $err);
-	}
+        # Log more stuff and to STDERR for debugging.
+        openlog($prog, LOG_PID | LOG_PERROR, LOG_USER);
+        if (ref $err) {
+            syslog(LOG_ERR, "Debug: %s (%s line %d). %s",
+                   $err->get_msg, $err->get_pkg, $err->get_line,
+                   $err->get_payload || '');
+        } else {
+            syslog(LOG_ERR, "Debug: %s", $err);
+        }
     } else {
-	# Just to regular logging.
-	openlog($prog, LOG_PID, LOG_USER);
-	if (ref $err) {
-	    syslog(LOG_ERR, "Error: %s: %s. Consult the Apache " .
-                   "error log for more details", $err->get_msg,
-		   $err->get_payload || '');
-	} else {
-	    syslog(LOG_ERR, "Error: %s", $err);
-	}
+        # Just to regular logging.
+        openlog($prog, LOG_PID, LOG_USER);
+        if (ref $err) {
+            syslog(LOG_ERR, "Error: %s: %s. Consult the Apache " .
+                       "error log for more details", $err->get_msg,
+                   $err->get_payload || '');
+        } else {
+            syslog(LOG_ERR, "Error: %s", $err);
+        }
     }
     closelog();
     # Identifier: LOG_PID   0x01    /* log the pid with each message */
