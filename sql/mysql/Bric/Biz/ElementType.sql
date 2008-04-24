@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate: 2005-10-29 06:42:46 +0300 (Sat, 29 Oct 2005) $
+-- $Id$
 --
 -- This is the SQL that will create the element_type table.
 -- It is related to the Bric::ElementType class.

@@ -2,7 +2,7 @@
 -- File:    Server.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+-- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- No default values for Server.

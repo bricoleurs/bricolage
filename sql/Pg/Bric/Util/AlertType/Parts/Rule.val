@@ -2,7 +2,7 @@
 -- File:    Rule.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+-- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- No initial values for alert type rules.

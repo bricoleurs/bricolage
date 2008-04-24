@@ -1,7 +1,7 @@
 -- Project: Bricolage
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+-- $Id$
 -- Target DBMS: PostgreSQL 7.2
 -- Author: David Wheeler <david@justatheory.com>
 

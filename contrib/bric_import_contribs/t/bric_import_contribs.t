@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: bric_media_dump.t 5554 2004-05-25 01:17:44Z theory $
+# $Id$
 
 use strict;
 use File::Spec::Functions 'catfile';

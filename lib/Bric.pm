@@ -25,7 +25,7 @@ BEGIN {
 
 =item Date
 
-$LastChangedDate: 2008-04-21 12:06:53 -0700 (Mon, 21 Apr 2008) $
+$Id$
 
 =item Subversion ID
 

@@ -15,7 +15,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate: 2004-11-19 03:55:15 -0500 (Fri, 19 Nov 2004) $
+$Id$
 
 =head1 SYNOPSIS
 

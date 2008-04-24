@@ -19,7 +19,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =item Date
 
-$LastChangedDate: 2004-09-13 17:48:55 -0700 (Mon, 13 Sep 2004) $
+$Id$
 
 =item Subversion ID
 

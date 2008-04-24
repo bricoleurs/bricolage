@@ -10,7 +10,7 @@ $LastChangedRevision$
 
 =head1 Date
 
-$LastChangedDate$
+$Id$
 
 =head1 Introduction
 

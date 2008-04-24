@@ -9,7 +9,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 =head1 SYNOPSIS
 $m->comp("/widgets/profile/buttonBar.mc",

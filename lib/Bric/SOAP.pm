@@ -34,7 +34,7 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 =head1 SYNOPSIS
 

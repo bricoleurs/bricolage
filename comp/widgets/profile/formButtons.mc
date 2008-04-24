@@ -75,7 +75,7 @@ use Bric; our $VERSION = Bric->VERSION;
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 =head1 SYNOPSIS
 

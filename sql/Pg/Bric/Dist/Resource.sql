@@ -2,7 +2,7 @@
 -- File:    Resource.sql
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+-- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 --
 

@@ -4,7 +4,7 @@ Bric::Changes - Bricolage Changes
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 =head1 DESCRIPTION
 

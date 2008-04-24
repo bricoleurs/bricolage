@@ -281,6 +281,6 @@ $LastChangedRevision$
 
 =head1 DATE
 
-$LastChangedDate$
+$Id$
 
 </%doc>

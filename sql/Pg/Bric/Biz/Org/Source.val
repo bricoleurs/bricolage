@@ -2,7 +2,7 @@
 -- File:    Source.val
 -- VERSION: $LastChangedRevision$
 --
--- $LastChangedDate$
+-- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO source (id, org__id, name, description, expire, active)
