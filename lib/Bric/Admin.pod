@@ -139,13 +139,7 @@ START MODULE LIST
 
 =item Class::Container 0.09
 
-=item Apache2::Request (FIXME - need both old and new)
-
 =item HTML::Mason 1.37
-
-=item DBD::Pg 1.22 (optional)
-
-=item DBD::mysql 3.0007 (optional)
 
 =item DB_File
 
@@ -241,6 +235,33 @@ START MODULE LIST
 
 =back
 
+Note that you also have some required categories of modules, but you must pick
+from among them. Depending on your choice of database, you will need to install
+one of:
+
+=over
+
+=item DBD::Pg 1.22 (optional)
+
+=item DBD::mysql 3.0007 (optional)
+
+=back
+
+And depending on whether you're using Apache 1 or Apache 2, you'll need to
+install one of:
+
+=over
+
+=item Apache::Request (optional)
+
+=item Apache2::Request (optional)
+
+=back
+
+The fact that these are maked "(optional)" is just to help the installer
+determine CPAN dependencies. Trust us, one or the other of these B<is>
+required.
+
 =begin installation
 
 END MODULE LIST
@@ -253,7 +274,7 @@ Apache 2.0.52
 
 =item *
 
-mod_perl 2.0.3 - Apache/Perl Integration
+mod_perl 2.0.3 or mod_perl 1.25 - Apache/Perl Integration
 
 =item *
 

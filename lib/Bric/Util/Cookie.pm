@@ -2,7 +2,7 @@ package Bric::Util::Cookie;
 
 =head1 NAME
 
-Bric::Util::Cookie - wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Cookie
+Bric::Util::Cookie - Wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Cookie
 
 =head1 VERSION
 
@@ -19,12 +19,14 @@ $Id$
 =head1 SYNOPSIS
 
   use Bric::Util::Cookie;
-  xxx
+  my $cookie = Bric::Util::Cookie->new($r);
+  $cookie->bake;
 
 =head1 DESCRIPTION
 
-This package subclasses the C<Apache::Cookie>, C<Apache2::Cookie>, or C<CGI::Cookie>
-classes so that Bricolage doesn't have to care about which version of Apache is running.
+This package subclasses the C<Apache::Cookie>, C<Apache2::Cookie>, or
+C<CGI::Cookie> class so that Bricolage doesn't have to care about which
+version of Apache is running, or whether it is running at all.
 
 =cut
 
@@ -120,6 +122,5 @@ sub bake {
 Scott Lanning <slanning@cpan.org>
 
 =cut
-
 
 1;

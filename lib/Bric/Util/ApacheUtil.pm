@@ -2,7 +2,7 @@ package Bric::Util::ApacheUtil;
 
 =head1 NAME
 
-Bric::Util::ApacheUtil - wrapper around Apache::Util and Apache2::Util classes
+Bric::Util::ApacheUtil - Wrapper around Apache::Util and Apache2::Util classes
 
 =head1 VERSION
 
@@ -22,8 +22,9 @@ $Id$
 
 =head1 DESCRIPTION
 
-This package encapsulates the C<Apache::Util> and C<Apache2::Util>
-classes so that Bricolage doesn't have to care about which version of Apache is running.
+This package encapsulates the L<Apache::Util|Apache::Util> and
+L<Apache2::Util|Apache2::Util> classes so that Bricolage doesn't have to care
+about which version of Apache is running.
 
 =cut
 
@@ -85,6 +86,5 @@ sub escape_uri {
 Scott Lanning <slanning@cpan.org>
 
 =cut
-
 
 1;

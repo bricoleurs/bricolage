@@ -2,7 +2,7 @@ package Bric::Util::ApacheConst;
 
 =head1 NAME
 
-Bric::Util::ApacheConst - wrapper around Apache 1 and 2 constants classes
+Bric::Util::ApacheConst - Common Apache and HTTP status code constants
 
 =head1 VERSION
 
@@ -19,14 +19,13 @@ $Id$
 =head1 SYNOPSIS
 
   use Bric::Util::ApacheConst qw(:common);
-  use Bric::Util::ApacheConst qw(DECLINED OK);
+  use Bric::Util::ApacheConst;
 
 =head1 DESCRIPTION
 
-This package encapsulates the C<Apache::Constants> and C<Apache2::Const>
-classes so that Bricolage doesn't have to care about which version of Apache
-is running. It should work as a drop-in replacement for either of those
-modules.
+This package implements common constants used by mod_perl handlers for return
+values and HTTP status codes so that Bricolage doesn't have to care about
+which version of Apache is running.
 
 =head1 AUTHOR
 

@@ -2,7 +2,7 @@ package Bric::Util::ApacheReq;
 
 =head1 NAME
 
-Bric::Util::ApacheReq - wrapper around Apache 1 and 2 Request classes
+Bric::Util::ApacheReq - Wrapper around Apache 1 and 2 Request classes
 
 =head1 VERSION
 
@@ -23,9 +23,10 @@ $Id$
 
 =head1 DESCRIPTION
 
-This package encapsulates the C<Apache::Request> and C<Apache2::RequestUtil>
-classes so that Bricolage doesn't have to care about which version of Apache is running.
-So instead of doing this:
+This package encapsulates the L<Apache::Request|Apache::Request> and
+L<Apache2::RequestUtil|Apache2::RequestUtil> classes so that Bricolage doesn't
+have to care about which version of Apache is running. So instead of doing
+this:
 
   use Bric::Config qw(MOD_PERL_VERSION);
   BEGIN {
@@ -36,11 +37,14 @@ So instead of doing this:
           require Apache2::Request::Util;
       }
   }
-  my $r = (MOD_PERL_VERSION < 2 ? Apache::Request->instance(Apache->request) : Apache2::RequestUtil->request);
+  my $r = (MOD_PERL_VERSION < 2
+      ? Apache::Request->instance(Apache->request)
+      : Apache2::RequestUtil->request);
 
 you do what's shown in the SYNOPSIS.
 
-It also adds the C<server> method from C<Apache> and C<Apache2::ServerUtil>.
+It also adds the C<server> method from L<Apache|Apache> or
+L<Apache2::ServerUtil|Apache2::ServerUtil>, as appropriate.
 
 =cut
 
@@ -157,6 +161,5 @@ sub parse_args {
 Scott Lanning <slanning@cpan.org>
 
 =cut
-
 
 1;

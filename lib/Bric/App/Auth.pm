@@ -161,7 +161,7 @@ sub auth {
         Bric::App::Session::set_state_data('site_context', 'sites' => 0);
         $lul = time;
     }
-    &$make_cookie($r, $val{user}, $lul);
+    $make_cookie->($r, $val{user}, $lul);
 }
 
 ################################################################################
@@ -193,7 +193,7 @@ sub login {
     # Authentication succeeded. Set up session data and the authentication
     # cookie.
     set_user($r, $u);
-    my $cookie = &$make_cookie($r, $un, time);
+    my $cookie = $make_cookie->($r, $un, time);
     # Work around to redirect cookies to second server
     my $args = $r->args;
     return $cookie if defined $args and $args =~ LOGIN_MARKER_REGEX;
@@ -228,7 +228,7 @@ sub masquerade {
     my ($r, $u) = @_;
     # Set up session data and the authentication cookie.
     set_user($r, $u);
-    &$make_cookie($r, $u, time);
+    $make_cookie->($r, $u, time);
 }
 
 ################################################################################
@@ -272,9 +272,9 @@ NONE.
 
 =over 4
 
-=item my $cookie = &$make_cookie($r, $username)
+=item my $cookie = $make_cookie->($r, $username)
 
-=item my $cookie = &$make_cookie($r, $username, $lul_time)
+=item my $cookie = $make_cookie->($r, $username, $lul_time)
 
 Bakes the authentication cookie.
 
@@ -300,15 +300,9 @@ $make_cookie = sub {
                              }
                );
 
-    # note: I'm not sure why CGI::Cookie and Apache::Cookie were treated
-    # differently, so I left this basically as is when converting to Bric::Util::Cookie
-    if (MOD_PERL) {
-        my $cookie = Bric::Util::Cookie->new($r, @args);
-        $cookie->bake($r);
-        return 1;
-    } else {
-        return Bric::Util::Cookie->new($r, @args);
-    }
+    my $cookie = Bric::Util::Cookie->new($r, @args);
+    $cookie->bake($r) if MOD_PERL; # CGI::Cookie hasn't always had bake().
+    return 1;
 };
 
 =item my ($hash, $exp, $ip) = &$make_hash($r, $un)
