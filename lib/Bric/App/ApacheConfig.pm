@@ -361,10 +361,11 @@ BEGIN {
             "  ServerName             $hostname",
             '  DefaultType            "text/html; charset=utf-8"',
             '  AddDefaultCharset      utf-8',
-            '  SetHandler             perl-script',
+            '  SetHandler             modperl',
             '  PerlResponseHandler    Bric::App::Handler',
             '  PerlAccessHandler      Bric::App::AccessHandler',
             '  PerlCleanupHandler     Bric::App::CleanupHandler',
+            '  PerlOptions            +GlobalRequest',
             '  RedirectMatch          ' .
               'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
         );
@@ -428,7 +429,7 @@ BEGIN {
         # This URI will handle logging users in.
         push @locs,
           '  <Location /login>',
-          '    SetHandler          perl-script',
+          '    SetHandler          modperl',
           '    PerlAccessHandler   Bric::App::AccessHandler::okay',
           '    PerlResponseHandler Bric::App::Handler',
           "    PerlCleanupHandler  Bric::App::CleanupHandler$fix",
@@ -485,7 +486,7 @@ BEGIN {
         # This will run the SOAP server.
         push @locs,
           '  <Location /soap>',
-          '    SetHandler          perl-script',
+          '    SetHandler          modperl',
           '    PerlResponseHandler Bric::SOAP::Handler',
           '    PerlAccessHandler   Apache2::Const::OK',
           '  </Location>';
@@ -494,7 +495,7 @@ BEGIN {
             require Bric::Dist::Handler;
             push @locs,
               '  <Location /dist>',
-              '    SetHandler          perl-script',
+              '    SetHandler          modperl',
               '    PerlResponseHandler Bric::Dist::Handler',
               '  </Location>';
         }
@@ -504,7 +505,7 @@ BEGIN {
             push @config, '  PerlWarn               On';
             push @locs,
               '  <Location /perl-status>',
-              '    SetHandler          perl-script',
+              '    SetHandler          modperl',
               '    PerlResponseHandler Apache2::Status',
               '    PerlAccessHandler   Apache2::Const::OK',
               "    PerlCleanupHandler  Apache2::Const::OK$fix",
@@ -518,7 +519,7 @@ BEGIN {
                 # handles the request.
                 push @locs,
                   "  <Location $prev_loc>",
-                  '    SetHandler          perl-script',
+                  '    SetHandler          modperl',
                   '    PerlFixupHandler    Bric::App::PreviewHandler::fixup_handler',
                   '    PerlResponseHandler Bric::App::Handler',
                   '  </Location>';

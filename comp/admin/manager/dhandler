@@ -252,7 +252,7 @@ my $prof_sub = sub {
     # Get the object ID.
     my $id = $_[0]->get_id;
     # Assume user can edit the profile.
-    my $edit = ($type eq "contrib")
+    my $edit = $type eq 'contrib'
       ? ['Edit', "/admin/profile/$type/edit/$id", '']
       : ['Edit', "$prefix/admin/profile/$type/$id", ''];
     # Change the label to "Edit" if they can edit it.
@@ -448,6 +448,10 @@ my $def = {
         behavior    => 'narrow',
         constrain   => {},
         select      => $sel_sub,
+        field_values => sub {
+            return unless $_[1] eq 'expire';
+            return $lang->maketext('[quant,_1,Day]', shift->get_expire);
+        },
     },
     contrib_type => {
         list_fields => [qw(name description)],

@@ -715,6 +715,7 @@ To translate:
   'Milliseconds' => 'Milliseconds',
   'Microseconds' => 'Microseconds',
   'Not defined.' => 'Not defined.',
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
   "You do not have sufficient permission to create a media document for this site" => "You do not have sufficient permission to create a media document for this site"
   'The primary category cannot be deleted.' => 'The primary category cannot be deleted.',
   'Cannot make a dissociated category the primary category.' => 'Cannot make a dissociated category the primary category.'
@@ -777,6 +778,10 @@ Kang-min Liu <gugod@gugod.org>, Jimmy <jimmybric@tp4.us>.
 =head1 SEE ALSO
 
 L<Bric::Util::Language|Bric::Util::Language>
+
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
 
 =cut
 

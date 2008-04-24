@@ -234,7 +234,7 @@ $admin_links->($uri, qw(category contrib_type contrib element_type keyword
 
 $m->print(
     qq{<li style="padding-top: 1em;">},
-    $printLink->('/admin/control/publish', $uri, 'Bulk Publish'),
+    $printLink->('/admin/control/publish/', $uri, 'Bulk Publish'),
     qq{</li></ul></li>}
 );
 # End publishing submenus

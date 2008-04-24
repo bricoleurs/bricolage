@@ -379,7 +379,6 @@ formBuilder.submit = function(frm, mainform, action) {
     if (action == "add") {
         if (formBuilder.confirm(main)) { // verify data
             main.elements["formBuilder|add_cb"].value = 1;
-
             main.submit();
         }
     } else {

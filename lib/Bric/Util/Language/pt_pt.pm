@@ -753,6 +753,7 @@ To translate:
 	'Logged in as' => 'Ligado como',
 	'Clone' => 'Clonar',
 	'Last Published' => 'Última Publicação',
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
   'Field "[_1]" cannot be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].' => 'Field "[_1]" cannot be added. There are already [_2] [quant,_2,field] of this type, with a max of [_3].',
   'Element "[_1]" cannot be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].' => 'Element "[_1]" cannot be added. There are already [_2] [quant,_2,element] of this type, with a max of [_3].',
   'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.' => 'Field "[_1]" cannot be deleted. There must be at least [_2] [quant,_2,field] of this type.',
@@ -780,6 +781,10 @@ Pedro Custódio <pecus@co.sapo.pt>
 
 =head1 SEE ALSO
 
-NONE
+L<Bric::Util::Language|Bric::Util::Language>
+
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
 
 =cut

@@ -568,6 +568,7 @@ To translate:
   'Shelve'
   'and Shelve'
   'and'
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
   '[_1] Site [_2] Permissions' => '[_1] [_2] Permissions', # Site Category Permissions
   'All Categories' => 'All Categories',
   'All' => 'All',
@@ -639,6 +640,10 @@ Kang-min Liu <gugod@gugod.org>, Gang Luo <lgjut@sohu.com>
 =head1 SEE ALSO
 
 L<Bric::Util::Language|Bric::Util::Language>
+
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
 
 =cut
 

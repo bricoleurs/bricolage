@@ -47,7 +47,8 @@ our %Lexicon = (
   '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
- _AUTO => 1
+  '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
+  _AUTO => 1
 );
 
 1;

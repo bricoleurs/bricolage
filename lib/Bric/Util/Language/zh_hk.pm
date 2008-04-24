@@ -53,6 +53,10 @@ L<Bric::Util::Language|Bric::Util::Language>
 
 L<Bric::Util::Language::zh_tw|Bric::Util::Language::zh_tw>
 
+L<Bric::Util::Language::en_us|Bric::Util::Language::en_us>
+
+L<Bric::Util::Language::de_de|Bric::Util::Language::de_de>
+
 =cut
 
 
