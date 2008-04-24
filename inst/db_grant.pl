@@ -13,10 +13,11 @@ do $PGCONF or die "Failed to read $PGCONF : $!";
 # Switch to postgres system user
 if (my $sys_user = $PG->{system_user}) {
     print "Becoming $sys_user...\n";
-    $< = $PG->{system_user_uid};
+    require Config;
     $> = $PG->{system_user_uid};
-    die "Failed to switch EUID and RUID to $PG->{system_user_uid} ($sys_user).\n"
-        unless $> == $PG->{system_user_uid} and $< == $PG->{system_user_uid};
+    $< = $PG->{system_user_uid} if $Config::Config{d_setruid};
+    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
+        unless $> == $PG->{system_user_uid};
 }
 
 # Set environment variables for psql.
