@@ -185,10 +185,17 @@ Fixed a bug in the subelement type search display where the last element type
 search term was displayed in the search box. It not properly displays the last
 subelement type search string, if any. [David]
 
+=item *
+
 Reverted the change in the login redirect originally submitted to fix Bug #
 1267. It turns out that this change is effectively the same as just setting
 the C<ALWAYS_USE_SSL> F<bricolage.conf> directive to true. So just do that
 instead (I've suggested this in L<Bric::Admin|Bric::Admin>, too). [David]
+
+=item *
+
+Fixed C<make clean> so that it cleans out F<bin>. It was leaving junk in
+there! [David]
 
 =back
 
