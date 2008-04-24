@@ -111,7 +111,7 @@ sub copy_files {
     $targ = catdir($root, $targ);
 
     if (-d) {
-	mkpath([$targ], 1, 0755) unless -e $targ;
+        mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
       if ($link) {
         link($_, $targ) or die "Unable to link $_ to $targ : $!";

@@ -47,12 +47,12 @@ directory to @INC by using Makefile.PL. Just a thought.
 
 use strict;
 use Bric::App::ApacheStartup;
-use Bric::Config qw(:ui :ssl :mod_perl);
+use Bric::Config qw(:ui :ssl :mod_perl :apachectl);
+use Bric::Util::Trans::FS;
 use constant DEBUGGING => 0;
 
-
 BEGIN {
-
+    my $fs = Bric::Util::Trans::FS->new;
     ### mod_perl 1.x ###
 
     if (MOD_PERL_VERSION < 2) {
@@ -260,10 +260,9 @@ BEGIN {
             $config = join "\n",
                 "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
                 '  ServerName             ' . VHOST_SERVER_NAME,
-                "RedirectPermanent / $ssl_url",
+                "  RedirectPermanent      / $ssl_url",
                 '</VirtualHost>';
-        }
-        else {
+        } else {
             $config = join "\n",
                 "<VirtualHost " . NAME_VHOST . ':' . LISTEN_PORT . ">",
                     @config, @locs,
@@ -318,9 +317,10 @@ BEGIN {
 
         if (MANUAL_APACHE) {
             # Write out a configuration file and include it.
-            require Bric::Util::Trans::FS;
-            my $conffile = Bric::Util::Trans::FS->cat_dir(TEMP_DIR, 'bricolage',
-                                                          'bric_httpd.conf');
+            my $conffile = $fs->cat_file(
+                $fs->dir_name(APACHE_CONF),
+                'vhosts.conf'
+            );
             open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
             print CONF $names, $config;
             close CONF;
@@ -541,7 +541,7 @@ BEGIN {
             push @vhosts,
               '<VirtualHost ' . NAME_VHOST . ':' . LISTEN_PORT . '>',
               '  ServerName             ' . VHOST_SERVER_NAME,
-              "RedirectPermanent / $ssl_url",
+              "  RedirectPermanent      / $ssl_url",
               '</VirtualHost>';
         } else {
             push @vhosts,
@@ -574,11 +574,9 @@ BEGIN {
 
 #        if (MANUAL_APACHE) {
             # Write out a configuration file and include it.
-            require Bric::Util::Trans::FS;
-            my $conffile = Bric::Util::Trans::FS->cat_dir(
-                TEMP_DIR,
-                'bricolage',
-                'bric_httpd.conf'
+            my $conffile = $fs->cat_file(
+                $fs->dir_name(APACHE_CONF),
+                'vhosts.conf'
             );
             open my $cfh, ">$conffile"
                 or die "Cannot open $conffile for output: $!";

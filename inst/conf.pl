@@ -93,7 +93,7 @@ sub create_bricolage_conf {
     set_bric_conf_var(\$conf, SSL_CERTIFICATE_KEY_FILE  => $AP->{ssl_key});
     set_bric_conf_var(\$conf, SYS_USER        => $AP->{user});
     set_bric_conf_var(\$conf, SYS_GROUP       => $AP->{group});
-    set_bric_conf_var(\$conf, DB_TYPE         => $DB->{db_type});    
+    set_bric_conf_var(\$conf, DB_TYPE         => $DB->{db_type});
     set_bric_conf_var(\$conf, DB_NAME         => $DB->{db_name});
     set_bric_conf_var(\$conf, DBI_USER        => $DB->{sys_user});
     set_bric_conf_var(\$conf, DBI_PASS        => $DB->{sys_pass});
@@ -205,7 +205,7 @@ sub create_apache_conf {
 
     } elsif ($AP->{ssl} =~ /mod_ssl/) {
 
-        set_httpd_var(\$httpd, SSLSessionCache => "dbm:" . 
+        set_httpd_var(\$httpd, SSLSessionCache => "dbm:" .
                       catfile($log, "ssl_scache"));
         set_httpd_var(\$httpd, SSLMutex        => "file:" .
                       catfile($log, "ssl_mutex"));
@@ -270,7 +270,6 @@ sub create_apache2_conf {
     my $httpd = join '', <HTTPD>;
     close HTTPD;
 
-
     # lots of regexes to come
     study($httpd);
 
@@ -284,6 +283,7 @@ sub create_apache2_conf {
     my $root    = $CONFIG->{BRICOLAGE_ROOT};
     my $ap_root = $AP->{HTTPD_ROOT};
     my $log     = $CONFIG->{LOG_DIR};
+    my $vconf   = catfile $root, 'conf', 'vhosts.conf';
 
     set_httpd_var(\$httpd, ServerRoot      => $ap_root);
     set_httpd_var(\$httpd, TypesConfig     => $AP->{types_config} ||
@@ -293,6 +293,7 @@ sub create_apache2_conf {
     set_httpd_var(\$httpd, ErrorLog        => catfile($log, "error_log"));
     set_httpd_var(\$httpd, CustomLog       => catfile($log,
                                                       "access_log combined"));
+    set_httpd_var(\$httpd, Include         => $vconf);
 
     # httpsd must listen on another port
 
@@ -316,7 +317,7 @@ sub create_apache2_conf {
 
     } elsif ($AP->{ssl} =~ /mod_ssl/) {
 
-        set_httpd_var(\$httpd, SSLSessionCache => "dbm:" . 
+        set_httpd_var(\$httpd, SSLSessionCache => "dbm:" .
                       catfile($log, "ssl_scache"));
         set_httpd_var(\$httpd, SSLMutex        => "file:" .
                       catfile($log, "ssl_mutex"));
@@ -365,6 +366,11 @@ sub create_apache2_conf {
     print HTTPD $httpd;
     close HTTPD;
     copy $file, "$file.def";
+
+    # Create a placeholder vhosts.conf.
+    $file = catfile 'bconf', 'vhosts.conf';
+    open VCONF, ">$file" or die "Cannot open $file: $!";
+    close VCONF;
 }
 
 # changes the setting of multiple or single httpd vars in $$httpd

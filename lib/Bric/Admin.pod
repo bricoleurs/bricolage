@@ -984,10 +984,10 @@ configure the httpd daemon. There is no httpd include file. If you wish to
 have Bricolage generate and use an httpd include file, or if you wish to
 manually configure your httpd daemon, set the C<MANUAL_APACHE> directive in
 F<conf/bricolage.conf>. This directive will force the startup process to write
-out the Bricolage configuration directives to
-F<C<$TEMP_DIR>/bricolage/bric_httpd.conf>, and then this file will be
+out the Bricolage virtual host configuration to
+F<C<$BRICOLAGE_ROOT>/conf/vhosts.conf>, and then this file will be
 automatically rewritten and included on each startup operation. If you change
-the line
+this line
 
   PerlModule Bric::App::ApacheConfig
 
@@ -1306,12 +1306,12 @@ B<Apache::SizeLimit> for more information.
 
 B<MANUAL_APACHE:> Choose the Apache configuration method. As of mod_perl 1.27,
 Bricolage uses Apache::ReadConfig to configure the httpd daemon. If you wish
-have Bricolage generate an F<httpd.conf> include file, or if you wish to
-manually configure your Apache server for Bricolage, set this directive to a
-true value. Doing so will cause Bricolage to generate
-F<C<$TEMP_DIR>/bricolage/bric_httpd.conf> to provide a tracefile or template
-for your own manual F<httpd.conf>. If no changes are made to
-F<C<$BRICOLAGE_ROOT]>/conf/httpd.conf>, then this file will be automatically
+have Bricolage generate an Apache configuration include file, or if you wish
+to manually configure your Apache server for Bricolage, set this directive to
+a true value. Doing so will cause Bricolage to generate
+F<C<$BRICOLAGE_ROOT>/conf/vhosts.conf> and include it in the configuration
+using the Apache C<Include> directive. If no changes are made to
+F<C<$BRICOLAGE_ROOT>/conf/httpd.conf>, then this file will be automatically
 included on each startup by the last line of the F<httpd.conf> file:
 
   PerlModule Bric::App::ApacheConfig
@@ -1320,8 +1320,14 @@ If this line is changed to
 
   PerlModule Bric::App::ApacheStartup
 
-then only the contents of the F<httpd.conf> specified by the C<Apache_CONF>
-directive will be passed to the httpd daemon.
+then only the contents of the F<httpd.conf> specified by the C<APACHE_CONF>
+directive will be passed to the httpd daemon -- Bricolage will do no dynamic
+configuration. In such a case, you'll want to either C<Include> the generated
+F<vhosts.conf> file (which you can edit as you wish), or incorporate its
+contents directly into your F<httpd.conf> file.
+
+Note that under Apache 2, the F<vhosts.conf> file is B<always> created,
+regardles of the setting of C<MANUAL_APACHE>.
 
 =item *
 
