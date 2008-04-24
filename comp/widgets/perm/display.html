@@ -28,20 +28,15 @@ if ($is_user) {
        caption => $lang->maketext('Filter by Permission Type'),
        search  => 1
     );
-
     $m->comp('/widgets/profile/select.mc',
              'disp' => 'Permission Type',
              'options' => $perm_sel,
              'value' => $perm_type,
-             'js' => qq{onchange="location.href='} . $r->uri .
-                     "?perm_type=' + " .
-                     qq{escape(this.options[this.selectedIndex].value)"},
+             'name' => 'perm_type',
+             'js' => q{onchange="location.href='} . $r->uri .
+                     q{?perm_type=' + } .
+                     q{escape(this.options[this.selectedIndex].value)"},
     );
-    $m->comp('/widgets/profile/hidden.mc',
-         'name' => 'perm_type',
-         'value' => $perm_type,
-    );
-
     $m->comp('/widgets/wrappers/table_bottom.mc');
 
     # $is_user means $perm_type is one of
@@ -373,7 +368,7 @@ return if $max_perm == DENY;
 %         } else {
 %             # They can set this permission.
     <td class="radio">
-        <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked' : '' %> />
+        <input type="radio" value="<% $v->[0] %>" name="<% "$type|$gid" %>"<% $v->[0] == $val ? ' checked="checked"' : '' %> />
     </td>
 %         } # if
 %     } # foreach
