@@ -20,7 +20,7 @@ my $prof_sub = sub {
 # This coderef determines whether to include an Add link or not.
 my $add_sub = sub {
     return chk_authz($pkg_name, CREATE, 1) ?
-        ['Add', "/admin/profile/$key"] : undef;
+        ['Add', "/admin/profile/$key/"] : undef;
 };
 </%once>
 <%init>;

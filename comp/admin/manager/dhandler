@@ -276,12 +276,12 @@ my $prof_sub = sub {
 # or not.
 my $add_sub = sub {
     return chk_authz($_[0], CREATE, 1) ?
-        ['Add', "$prefix/admin/profile/$type"] : undef;
+        ['Add', "$prefix/admin/profile/$type/"] : undef;
 };
 
 my $ct_add_sub = sub {
     return chk_authz($_[0], CREATE, 1) ?
-        ['Add', "$prefix/admin/profile/$type", 'Contributor Group'] : undef;
+        ['Add', "$prefix/admin/profile/$type/", 'Contributor Group'] : undef;
 };
 
 # Check where we were last.
