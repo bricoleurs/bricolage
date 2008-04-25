@@ -28,28 +28,41 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
 
-print "\n\n==> Creating Bricolage MySQL Database <==\n\n";
-
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
-# Set variables for mysql
-$DB->{exec} .= " -u $DB->{root_user} ";
-$DB->{exec} .= "-p$DB->{root_pass} " if $DB->{root_pass};
-$DB->{exec} .= "-h $DB->{host_name} "
-    if $DB->{host_name} && $DB->{host_name} ne 'localhost';
-$DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
+my $verb = $DB->{create_db} ? 'Creating' : 'Initializing';
+print "\n\n==> $verb Bricolage MySQL Database <==\n\n";
 
-$ERR_FILE = catfile tmpdir, '.db.stderr';
+$ERR_FILE = catfile tmpdir, '.initdb.stderr';
 END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
-create_db();
-create_user();
+if ($DB->{create_db}) {
+    # Set variables for mysql
+    $DB->{exec} .= " -u $DB->{root_user} ";
+    $DB->{exec} .= "-p$DB->{root_pass} " if $DB->{root_pass};
+    $DB->{exec} .= "-h $DB->{host_name} "
+    if $DB->{host_name} && $DB->{host_name} ne 'localhost';
+        $DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
+
+    $ERR_FILE = catfile tmpdir, '.db.stderr';
+    END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
+
+    create_db();
+    create_user();
+}
+
+# Set variables for mysql user
+$DB->{exec} .= " -u $DB->{sys_user} ";
+$DB->{exec} .= "-p$DB->{sys_pass} " if $DB->{sys_pass};
+$DB->{exec} .= "-h $DB->{host_name} "
+if $DB->{host_name} && $DB->{host_name} ne 'localhost';
+    $DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
 
 # load data.
 load_db();
 
-print "\n\n==> Finished Creating Bricolage MySQL Database <==\n\n";
+print "\n\n==> Finished $verb Bricolage MySQL Database <==\n\n";
 exit 0;
 
 sub exec_sql {

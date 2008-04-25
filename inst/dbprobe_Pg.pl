@@ -43,7 +43,7 @@ our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
 # setup some defaults
-$DB{db_type}  = $REQ->{DB_TYPE};
+$DB{db_type}   = $REQ->{DB_TYPE};
 $DB{root_user} = get_default('PG_SUPERUSER') || 'postgres';
 $DB{root_pass} = $ENV{PG_SUPERPASS} || get_default( 'PG_SUPERPASS') || '';
 $DB{sys_user}  = get_default('PG_BRICUSER') || 'bric';
@@ -121,18 +121,27 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    ask_confirm("Postgres Root Username", \$DB{root_user}, $QUIET);
-    ask_password("Postgres Root Password (leave empty for no password)",
-        \$DB{root_pass}, $QUIET);
+    print "Should the installer create the database user and database?\n";
+    $DB{create_db} = ask_yesno(
+        'This requires `make install` to be run as root.',
+        get_default('CREATE_DB') || 1,
+        $QUIET
+    );
+    if ($DB{create_db}) {
+        print "\n";
+        ask_confirm('Postgres Root Username', \$DB{root_user}, $QUIET);
+        ask_password('Postgres Root Password (leave empty for no password)',
+                     \$DB{root_pass}, $QUIET);
 
-    unless ($DB{host_name}) {
-        $DB{system_user} = $DB{root_user};
-        while(1) {
-            ask_confirm("Postgres System Username", \$DB{system_user}, $QUIET);
-            $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
-            last if defined $DB{system_user_uid};
-            print "User \"$DB{system_user}\" not found!  This user must exist ".
-                "on your system.\n";
+        unless ($DB{host_name}) {
+            $DB{system_user} = $DB{root_user};
+            while(1) {
+                ask_confirm('Postgres System Username', \$DB{system_user}, $QUIET);
+                $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
+                last if defined $DB{system_user_uid};
+                print "User \"$DB{system_user}\" not found!  This user must exist ".
+                    "on your system.\n";
+            }
         }
     }
 

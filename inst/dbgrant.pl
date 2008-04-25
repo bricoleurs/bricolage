@@ -28,6 +28,9 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF);
 
+# If we didn't create the databse, we can't grant permissions.
+exit 0 unless $DB->{create_db};
+
 print "\n\n==> Granting access rights to the Bricolage user <==\n\n";
 
 $DBCONF = './database.db';
@@ -35,8 +38,6 @@ do $DBCONF or die "Failed to read $DBCONF : $!";
 
 my $instdb;
 $instdb = "./inst/dbgrant_$DB->{db_type}.pl";
-do $instdb or die "Failed to launch $DB->{db_type} access granting script ($instdb)$!";    
+do $instdb or die "Failed to launch $DB->{db_type} access granting script ($instdb)$!";
 
 exit 0;
-
-

@@ -161,6 +161,13 @@ The path to the database config program. This would an implmentation of
 C<pg_config> for PostgreSQL or C<mysql_config> for MySQL. Bricolage will try
 to find the appropriate one to use for the default.
 
+=item * BRICOLAGE_CREATE_DB
+
+A boolean indicating whether or not the databse should be created. Defaults to
+true. If you set this to a false value, the database should already exist and
+the Bricolage database user will need to have permission to create objects in
+it (tables, indexes, sequences, etc.).
+
 =item * BRICOLAGE_PG_SUPERUSER
 
 The name of the PostgreSQL super user. Defaults to "postgres".

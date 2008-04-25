@@ -27,38 +27,47 @@ use File::Find qw(find);
 
 our ($DB, $DBCONF, $DBDEFDB, $ERR_FILE);
 
-print "\n\n==> Creating PostgreSQL Bricolage Database <==\n\n";
-
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
-# Switch to database system user
-if (my $sys_user = $DB->{system_user}) {
-    print "Becoming $sys_user...\n";
-    require Config;
-    $> = $DB->{system_user_uid};
-    $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
-    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
-        unless $> == $DB->{system_user_uid};
-}
-
-# Set environment variables for psql.
-$ENV{PGUSER} = $DB->{root_user};
-$ENV{PGPASSWORD} = $DB->{root_pass};
-$ENV{PGHOST} = $DB->{host_name} if ( $DB->{host_name} ne "localhost" );
-$ENV{PGPORT} = $DB->{host_port} if ( $DB->{host_port} ne "" );
+my $verb = $DB->{create_db} ? 'Creating' : 'Initializing';
+print "\n\n==> $verb Bricolage PostgreSQL Database <==\n\n";
 
 $ERR_FILE = catfile tmpdir, '.db.stderr';
 END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
-$DBDEFDB = 'template1';
-create_db();
-create_user();
+# Set environment variables for psql.
+$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name} ne 'localhost';
+$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port} ne '';
+
+if ($DB->{create_db}) {
+    # Switch to database system user
+    if (my $sys_user = $DB->{system_user}) {
+        print "Becoming $sys_user...\n";
+        require Config;
+        $> = $DB->{system_user_uid};
+        $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
+        die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
+            unless $> == $DB->{system_user_uid};
+    }
+
+    # Set environment variables for psql.
+    $ENV{PGUSER} = $DB->{root_user};
+    $ENV{PGPASSWORD} = $DB->{root_pass};
+
+    $DBDEFDB = 'template1';
+    create_db();
+    create_user();
+} else {
+    # Set environment variables for psql.
+    $ENV{PGUSER} = $DB->{sys_user};
+    $ENV{PGPASSWORD} = $DB->{sys_pass};
+}
 
 # load data.
 load_db();
 
-print "\n\n==> Finished Creating PostgreSQL Bricolage Database <==\n\n";
+print "\n\n==> Finished $verb PostgreSQL Bricolage Database <==\n\n";
 exit 0;
 
 sub exec_sql {

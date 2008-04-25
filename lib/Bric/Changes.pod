@@ -177,6 +177,12 @@ They're documented in L<Bric::Admin|Bric::Admin>/F<INSTALL>, and are most
 useful when used in combination with either C<INSTALL_VERBOSITY=QUIET> or
 C<make dev>. [David]
 
+=item *
+
+The installer's C<make install> target no longer necessarily has to be run by
+the super user, as long as the user does not have to create the database.
+[Brian Smith]
+
 =back
 
 =head2 Bug Fixes

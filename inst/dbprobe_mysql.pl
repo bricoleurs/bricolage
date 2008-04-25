@@ -55,8 +55,6 @@ $DB{host_name} = $ENV{MYSQL_HOSTNAME} || '';
 $DB{host_port} = $ENV{MYSQL_HOSTPASS} || '';
 $DB{version} = '';
 
-
-
 get_bin_dir();
 get_mysql();
 get_version();
@@ -103,17 +101,26 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    ask_password("MySQL Root Password (leave empty for no password)",
-        \$DB{root_pass}, $QUIET);
+    print "Should the installer create the database user and database?\n";
+    $DB{create_db} = ask_yesno(
+        'This requires `make install` to be run as root.',
+        get_default('CREATE_DB') || 1,
+        $QUIET
+    );
 
-    unless ($DB{host_name}) {
-        $DB{system_user} = $DB{root_user};
-        while(1) {
-            ask_confirm("MySQL System Username", \$DB{system_user}, $QUIET);
-            $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
-            last if defined $DB{system_user_uid};
-            print "User \"$DB{system_user}\" not found!  This user must exist ".
-                "on your system.\n";
+    if ($DB{create_db}) {
+        ask_password("MySQL Root Password (leave empty for no password)",
+            \$DB{root_pass}, $QUIET);
+
+        unless ($DB{host_name}) {
+            $DB{system_user} = $DB{root_user};
+            while(1) {
+                ask_confirm("MySQL System Username", \$DB{system_user}, $QUIET);
+                $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
+                last if defined $DB{system_user_uid};
+                print "User \"$DB{system_user}\" not found!  This user must exist ".
+                    "on your system.\n";
+            }
         }
     }
 
@@ -148,8 +155,15 @@ sub get_host {
 # ask for host specifics
 sub get_server_version {
     print "\n";
-    my $cmd = "$DB{exec} -u $DB{root_user} ";
-    $cmd .= "-p$DB{root_pass} " if $DB{root_pass};
+    my $cmd = "$DB{exec} ";
+    if ($DB{create_db}) {
+        $cmd .= "-u $DB{root_user} ";
+        $cmd .= "-p$DB{root_pass} " if $DB{root_pass};
+    }
+    else {
+        $cmd .= "-u $DB{sys_user} ";
+        $cmd .= "-p$DB{sys_pass} " if $DB{sys_pass};
+    }
     $cmd .= "-h $DB{host_name} " if $DB{host_name};
     $cmd .= "-P $DB{host_port} " if $DB{host_port};
     my $data = `$cmd -e status | grep 'Server version:'`;
