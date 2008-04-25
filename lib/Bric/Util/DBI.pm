@@ -79,7 +79,7 @@ use strict;
 ##############################################################################
 # DBI Error Handling.
 ##############################################################################
-use Bric::Config qw(:dbi);
+use Bric::Config qw(:dbi :mod_perl);
 use Bric::Util::DBD::Pg qw(:all); # Required for our DB platform.
 use Bric::Util::Fault qw(throw_da);
 use DBI qw(looks_like_number);
@@ -554,7 +554,7 @@ B<Notes:> NONE.
 
 sub begin {
     return 1 unless TRANSACTIONAL;
-    return 1 if $ENV{MOD_PERL} && !$_[0];
+    return 1 if MOD_PERL && !$_[0];
     my $dbh = _connect();
 
     # Turn off AutoCommit. We can switch to begin_work() once DBD::Pg supports
@@ -604,7 +604,7 @@ B<Notes:> NONE.
 
 sub commit {
     return 1 unless TRANSACTIONAL;
-    return 1 if $ENV{MOD_PERL} && !$_[0];
+    return 1 if MOD_PERL && !$_[0];
     my $dbh = _connect();
 
     # Commit the transaction.
@@ -661,7 +661,7 @@ B<Notes:> NONE.
 
 sub rollback {
     return 1 unless TRANSACTIONAL;
-    return 1 if $ENV{MOD_PERL} && !$_[0];
+    return 1 if MOD_PERL && !$_[0];
     my $dbh = _connect();
 
     # Rollback the transaction.
