@@ -25,7 +25,8 @@ Technologies. [David]
 
 =item *
 
-Added support for MySQL, from Andrei Arsu's Google Summer of Code 2006 project.
+Added support for MySQL 5.0.3 or later, from Andrei Arsu's 2006 Google Summer
+of Code project. [Andrei Arsu]
 
 =item *
 
@@ -38,6 +39,18 @@ objects that don't match. [Scott]
 Added support for Apache 2. Updating to Apache 2 from a Bricolage install
 using Apache 1.3 is not currently supported. [Scott, Chris Heiland, David]
 
+=item *
+
+Added element occurrence specification, from Christian Muise's 2006 Google
+Summer of Code project. Element types and field types can now have required
+minimum and maxium numbers of times they appear in a document. For example, if
+a "pull quote" element type has a minimum of 2 and a maximum of 4, when a new
+story is created it will be pre-populated with 2 pull quote elments. The user
+can add up to two more, but no more. If either min or max are 0, then there is
+no minimum or maximum. For backwards compatibility, the upgrade will set
+existing element types and field types to have min and max set to 0.
+[Christian Muise]
+
 =back
 
 =head2 Improvements
@@ -47,7 +60,7 @@ using Apache 1.3 is not currently supported. [Scott, Chris Heiland, David]
 =item *
 
 JavaScript is now being used more extensively throughout the UI to improve
-performance and usability:
+performance and usability.
 
 =over
 
@@ -57,9 +70,9 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =over
 
-=item * Fields and subelements in the story, media and category profiles
+=item * Fields and subelements in the story, media, and category profiles
 
-=item * Keywords in the story, media and category profiles
+=item * Keywords in the story, media, and category profiles
 
 =item * Categories in the story profile
 
@@ -67,7 +80,7 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item * Organizations in the source profile
 
-=item * Add More sections in the User, Contributor, Media, and Alert Type profiles
+=item * Add More sections in the user, contributor, media, and alert type profiles
 
 =item * Roles in the contributor profile
 
@@ -75,43 +88,43 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item *
 
-Fields and subelements in the story and media profiles are displayed 
-recursively, so a story's entire contents can be edited from one screen, as 
+Fields and subelements in the story and media profiles are displayed
+recursively, so a story's entire contents can be edited from one screen, as
 opposed to one screen per subelement as it was previously.
 
 =item *
 
-The right side of desk items has been redesigned.  Icons are used because they
+The right side of desk items has been redesigned. Icons are used because they
 save space, which finally allows assets to be moved between desks from the
-Workspace, and assets to be checked in to any desk from the Desk view.  The
-"and Publish" and "and Shelve" options have also been added.  Additionally, you
+Workspace, and assets to be checked in to any desk from the Desk view. The
+"and Publish" and "and Shelve" options have also been added. Additionally, you
 have the option to publish assets on PUBLISH desks immediately, or schedule
 them for later.
 
 =item *
 
-Desks now use Javascript to execute actions immediately. Where you previously
-had to choose an action from a select list and scroll all the way to the bottom
-to execute it, you can now check in, move, check out or delete an asset in
-one click, without a full page refresh.
+Desks now use JavaScript to execute actions immediately. Where you previously
+had to choose an action from a select list and scroll all the way to the
+bottom to execute it, you can now check in, move, check out or delete an asset
+in one click, without a full page refresh.
 
 =item *
 
 The event log and trail have been merged and improved. The trail was a subset
-of the event log that only showed desk moves. You can now filter the log by 
+of the event log that only showed desk moves. You can now filter the log by
 any event type, and there's a dedicated link to choose the right event types
 to recreate the trail.
 
 =item *
 
 Error details (including oft-requested stack traces) are now viewable directly
-from the 500 error page, instead of having to check the error_log or view the
-error page's source.  To avoid scaring lay people, the details are only shown
-(via Javascript) when the new "View Error Details" link is clicked.
+from the 500 error page, instead of having to check the F<error_log> or view
+the error page's source. To avoid scaring lay people, the details are only
+shown (via JavaScript) when the new "View Error Details" link is clicked.
 
 =item *
 
-When more than 3 error messages need to be displayed, the first three are 
+When more than 3 error messages need to be displayed, the first three are
 shown, along with a (more) link, which expands to show the remaining messages.
 
 =back
@@ -120,12 +133,12 @@ shown, along with a (more) link, which expands to show the remaining messages.
 
 =item *
 
-The left nav menu no longer uses an C<< <iframe> >>. Javascript and cookies
+The left nav menu no longer uses an C<< <iframe> >>. JavaScript and cookies
 are used instead, making the left nav faster. [Scott, Marshall, David]
 
 =item *
 
-Moved the templates in F<comp/widgets/wrappers/sharky/> to
+Moved the Mason UI components in F<comp/widgets/wrappers/sharky/> to
 F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
 
 =item *
