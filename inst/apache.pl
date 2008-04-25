@@ -233,6 +233,7 @@ sub check_modules {
                               "/usr/lib/apache/1.3",
                               "/usr/lib/apache/modules",
                               "/usr/lib/apache/libexec",
+                              '/usr/lib/httpd',
                               "/usr/local/lib/apache/modules",
                               "/usr/local/lib/apache/libexec",
                              ) {
