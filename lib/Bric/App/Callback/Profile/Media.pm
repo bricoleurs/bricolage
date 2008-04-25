@@ -435,9 +435,9 @@ sub return : Callback(priority => 6) {
     my $version_view = get_state_data($widget, 'version_view');
     my $media = get_state_data($widget, 'media');
 
-    if ($version_view) {
-        my $media_id = $media->get_id();
-        $self->clear_my_state;
+    if ($version_view || $self->value eq 'diff') {
+        my $media_id = $media->get_id;
+        $self->clear_my_state if $version_view;
         $self->set_redirect("/workflow/profile/media/$media_id/?checkout=1");
     } else {
         my $state = get_state_name($widget);

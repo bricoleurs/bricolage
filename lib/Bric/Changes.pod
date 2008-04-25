@@ -204,6 +204,12 @@ has the relevant document checked out before applying the note to it, and uses
 a smarter algorithm for caching the document in the user's session. This is an
 attempt to fix a bug reported by David Beaudet (Bug # 1265). [David]
 
+=item *
+
+Clicking "Return" when viewing a diff now properly returns the user to the
+document or template profile, rather than My Workspace. Thanks to Matt Rolf
+for the spot (Bug #1327)! [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

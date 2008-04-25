@@ -192,6 +192,7 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 % }
 <& '/widgets/profile/button.mc',
     disp      => $lang->maketext("Return"),
+    value     => $param->{diff} ? 'diff' : undef,
     widget    => $widget,
     cb        => 'return_cb',
     button    => 'return_dgreen',

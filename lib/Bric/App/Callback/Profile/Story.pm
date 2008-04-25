@@ -330,9 +330,9 @@ sub return : Callback(priority => 6) {
 
     my $story = get_state_data($widget, 'story');
 
-    if ($version_view) {
-        my $story_id = $story->get_id();
-        $self->clear_my_state;
+    if ($version_view || $self->value eq 'diff') {
+        my $story_id = $story->get_id;
+        $self->clear_my_state if $version_view;
         $self->set_redirect("/workflow/profile/story/$story_id/?checkout=1");
     } else {
         my $url;
