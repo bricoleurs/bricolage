@@ -81,6 +81,17 @@ C<publish_status> is false, or vice versa, rather than waiting for an
 exception from the database constraint. Suggested by Scott (Bug # 1326).
 [David]
 
+=item *
+
+Template code submitted via the template profile now has non-Unix line endings
+converted to Unix line endings. [David]
+
+=item *
+
+The select lists for viewing diffs now set the default "from version" to the
+previous version instead of the current version. The current version is still
+the default for the "to version". [David]
+
 =back
 
 =head2 Bug Fixes

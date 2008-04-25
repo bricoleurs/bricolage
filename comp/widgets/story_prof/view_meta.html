@@ -174,7 +174,7 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
     name    => 'from_version',
     disp    => 'From Version',
     options => $versions,
-    value   => $param->{from_version} || $story->get_version,
+    value   => $param->{from_version} || ($story->get_version - 1),
 &>
 <& '/widgets/profile/select.mc',
     name    => 'to_version',

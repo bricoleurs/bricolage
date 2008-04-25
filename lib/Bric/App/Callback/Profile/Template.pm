@@ -425,6 +425,8 @@ $save_meta = sub {
     if ($param->{"$widget|upload_file"}) {
         $handle_upload->($self, $fa);
     } else {
+        # Normalize line-endings.
+        $param->{"$widget|code"} =~ s/\r\n?/\n/g;
         $fa->set_data($param->{"$widget|code"});
     }
     if (exists $param->{category_id}) {
