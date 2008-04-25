@@ -44,16 +44,14 @@ do "./required.db" or die "Failed to read required.db : $!";
 
 # setup some defaults
 $DB{db_type}  = $REQ->{DB_TYPE};
-$DB{root_user} = get_default("POSTGRES_SUPERUSER") || 'postgres';
-$DB{root_pass} = $ENV{POSTGRES_SUPERPASS} || '';
-$DB{sys_user}  = get_default("POSTGRES_BRICUSER") || 'bric';
+$DB{root_user} = get_default('PG_SUPERUSER') || 'postgres';
+$DB{root_pass} = $ENV{PG_SUPERPASS} || get_default( 'PG_SUPERPASS') || '';
+$DB{sys_user}  = get_default('PG_BRICUSER') || 'bric';
 $DB{sys_pass}  = $QUIET ? $randpassword : 'NONE';
-$DB{db_name}   = get_default("POSTGRES_DB") || 'bric';
-$DB{host_name} = $ENV{POSTGRES_HOSTNAME} || '';
-$DB{host_port} = $ENV{POSTGRES_HOSTPASS} || '';
+$DB{db_name}   = get_default('PG_DB') || 'bric';
+$DB{host_name} = $ENV{PG_HOSTNAME} || get_default('PG_HOSTNAME') || '';
+$DB{host_port} = $ENV{PG_HOSTPASS} || get_default('PG_HOSTPASS') || '';
 $DB{version} = '';
-
-
 
 get_include_dir();
 get_lib_dir();

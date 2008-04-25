@@ -34,33 +34,32 @@ APACHE_SSL_PORT = 443
 HTTPD_VERSION = apache
 
 
-# PostgreSQL settings.  POSTGRES_SUPERUSER is the username of the Postgres
-# superuser (typically "postgres").  POSTGRES_BRICUSER is the username that 
-# Bricolage will use when connecting to the database.  This can be anything 
-# you want, but "bric" is typical. POSTGRES_DB is the name of the database 
-# Bricolage will use.
+# PostgreSQL settings. PG_SUPERUSER is the username of the Postgres superuser
+# (typically "postgres"). PG_BRICUSER is the username that Bricolage will use
+# when connecting to the database. This can be anything you want, but "bric"
+# is typical. PG_DB is the name of the database Bricolage will use.
 #
-# In most installations, Postgres allows local users to access the
-# server without a username.  If your server requires a password, pass the
-# POSTGRES_SUPERPASS environment variable during "make," e.g.:
+# In most installations, Postgres allows local users to access the server
+# without a username. If your server requires a password, pass the
+# PG_SUPERPASS environment variable during "make," e.g.:
 #
-#    make POSTGRES_SUPERPASS=abcdef
+#    make PG_SUPERPASS=abcdef
 #
 # The Bricolage Postgres Password (the password used by Bricolage to
 # connect to the database) is randomly generated during a silent install.  If
 # you need it, it'll be in bricolage.conf after installation.
 #
 # If PostgreSQL is running on a separate box, you must pass a host name or 
-# IP address to "make" through the POSTGRES_HOSTNAME environment variable.
+# IP address to "make" through the PG_HOSTNAME environment variable.
 # If it's running on a port other than the default port (5432), pass the 
-# appropriate port number with POSTGRES_HOSTPORT.
+# appropriate port number with PG_HOSTPORT.
 
-POSTGRES_SUPERUSER   = pgsql
-POSTGRES_BRICUSER    = bric
-POSTGRES_DB          = bric
+PG_SUPERUSER   = pgsql
+PG_BRICUSER    = bric
+PG_DB          = bric
 
 
-# MySQL settings.  MYSQL_SUPERUSER is the username of the Mysql
+# MySQL settings.  MYSQL_SUPERUSER is the username of the MySQL
 # superuser (typically "root").  MYSQL_BRICUSER is the username that 
 # Bricolage will use when connecting to the database.  This can be anything 
 # you want, but "bric" is typical. MYSQL_DB is the name of the database 
@@ -72,7 +71,7 @@ POSTGRES_DB          = bric
 #
 #    make MYSQL_SUPERPASS=abcdef
 #
-# The Bricolage Mysql Password (the password used by Bricolage to
+# The Bricolage MySQL Password (the password used by Bricolage to
 # connect to the database) is randomly generated during a silent install.  If
 # you need it, it'll be in bricolage.conf after installation.
 #
@@ -92,7 +91,8 @@ DB_TYPE          = Pg
 
 # Installation locations.
 
-BRICOLAGE_ROOT_DIR = /usr/local/bricolage       # Bricolage Root Directory
+INSTALL_STYLE      = m                          # How Files are to be installed
+BRICOLAGE_ROOT     = /usr/local/bricolage       # Bricolage Root Directory
 BRICOLAGE_TMP_DIR  = /usr/local/bricolage/tmp   # Temporary Directory
 BRICOLAGE_PERL_DIR = /usr/local/bricolage/lib   # Perl Module Directory
 BRICOLAGE_BIN_DIR  = /usr/local/bricolage/bin   # Executable Directory

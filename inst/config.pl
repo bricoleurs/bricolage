@@ -49,10 +49,10 @@ print "\n\n==> Finished Gathering User Configuration <==\n\n";
 exit 0;
 
 sub choose_defaults {
+    $CONFIG{set} = get_default('INSTALL_STYLE') || 'm';
 
-if (!$QUIET) {
-
-    print <<END;
+    if (!$QUIET) {
+        print <<END;
 ========================================================================
 
 Bricolage comes with two sets of defaults.  You'll have the
@@ -68,18 +68,27 @@ probably save you the trouble.  Your choices are:
 
 END
 
-    $CONFIG{set} = ask_choice("Your choice?", [ "s", "m" ], "m", $QUIET);
+        $CONFIG{set} = ask_choice(
+            'Your choice?',
+            [ 's', 'm' ],
+            $CONFIG{set},
+            $QUIET
+        );
+    }
 
     # setup the default
     if ($CONFIG{set} eq 's') {
         # single system defaults
-        $CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
+        $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT')
+            || '/usr/local/bricolage';
         $CONFIG{TEMP_DIR}        = tmpdir();
         $CONFIG{MODULE_DIR}      = $Config{sitelib};
         $CONFIG{BIN_DIR}         = $Config{scriptdir};
         $CONFIG{MAN_DIR}         = $Config{man3dir};
-        $CONFIG{MASON_COMP_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/comp';
-        $CONFIG{MASON_DATA_ROOT} = '$CONFIG{BRICOLAGE_ROOT}/data';
+        $CONFIG{MASON_COMP_ROOT} = get_default('BRICOLAGE_COMP_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/comp';
+        $CONFIG{MASON_DATA_ROOT} = get_default('BRICOLAGE_DATA_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/data';
 
         # remove man3 trailer
         $CONFIG{MAN_DIR} =~ s!/man3!!;
@@ -103,31 +112,26 @@ END
 
     } else {
         # multi system defaults
-        $CONFIG{BRICOLAGE_ROOT}  = '/usr/local/bricolage';
-
-        # evaluated after BRICOLAGE_ROOT is set
-        $CONFIG{TEMP_DIR}         = '$CONFIG{BRICOLAGE_ROOT}/tmp';
-        $CONFIG{MODULE_DIR}       = '$CONFIG{BRICOLAGE_ROOT}/lib';
-        $CONFIG{BIN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/bin';
-        $CONFIG{MAN_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/man';
-        $CONFIG{LOG_DIR}          = '$CONFIG{BRICOLAGE_ROOT}/log';
-        $CONFIG{PID_FILE}         = '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
-        $CONFIG{MASON_COMP_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/comp';
-        $CONFIG{MASON_DATA_ROOT}  = '$CONFIG{BRICOLAGE_ROOT}/data';
+        # These values will be eval'd after the user has made her choice.
+        $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT')
+            || '/usr/local/bricolage';
+        $CONFIG{TEMP_DIR}         = get_default('BRICOLAGE_TMP_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/tmp';
+        $CONFIG{MODULE_DIR}       = get_default('BRICOLAGE_PERL_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/lib';
+        $CONFIG{BIN_DIR}          = get_default('BRICOLAGE_BIN_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/bin';
+        $CONFIG{MAN_DIR}          = get_default('BRICOLAGE_MAN_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/man';
+        $CONFIG{LOG_DIR}          = get_default('BRICOLAGE_LOG_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/log';
+        $CONFIG{PID_FILE}         = get_default('BRICOLAGE_PID')
+            || '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
+        $CONFIG{MASON_COMP_ROOT}  = get_default('BRICOLAGE_COMP_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/comp';
+        $CONFIG{MASON_DATA_ROOT}  = get_default('BRICOLAGE_DATA_DIR')
+            || '$CONFIG{BRICOLAGE_ROOT}/data';
     }
-} else {
-    # use QUIET defaults
-    $CONFIG{set}              = 'm';
-    $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT_DIR');
-    $CONFIG{TEMP_DIR}         = get_default('BRICOLAGE_TMP_DIR');
-    $CONFIG{MODULE_DIR}       = get_default('BRICOLAGE_PERL_DIR');
-    $CONFIG{BIN_DIR}          = get_default('BRICOLAGE_BIN_DIR');
-    $CONFIG{MAN_DIR}          = get_default('BRICOLAGE_MAN_DIR');
-    $CONFIG{LOG_DIR}          = get_default('BRICOLAGE_LOG_DIR');
-    $CONFIG{PID_FILE}         = get_default('BRICOLAGE_PID');
-    $CONFIG{MASON_COMP_ROOT}  = get_default('BRICOLAGE_COMP_DIR');
-    $CONFIG{MASON_DATA_ROOT}  = get_default('BRICOLAGE_DATA_DIR');
-}
 }
 
 sub confirm_settings {

@@ -157,6 +157,13 @@ will be set to 0 rather than remaining unchanged. [David]
 The Expire information for sources is now localized in the list view (the
 Sources Manger). [David]
 
+=item *
+
+Added support for a bunch of environment variables during installation.
+They're documented in L<Bric::Admin|Bric::Admin>/F<INSTALL>, and are most
+useful when used in combination with either C<INSTALL_VERBOSITY=QUIET> or
+C<make dev>. [David]
+
 =back
 
 =head2 Bug Fixes
