@@ -37,6 +37,9 @@ manifypods:
 # Write out the Makefile
 WriteMakefile(NAME           => 'Bric',
               PM             => \%PM,
+              ( exists $CONFIG->{BRICOLAGE_ROOT} ?
+                ( PREFIX => $CONFIG->{BRICOLAGE_ROOT} ) :
+                ()),
               ( exists $CONFIG->{MODULE_DIR} ?
                 ( INSTALLSITELIB => $CONFIG->{MODULE_DIR} ) :
                 ()),

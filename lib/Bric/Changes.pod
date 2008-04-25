@@ -275,6 +275,12 @@ the default for the "to version". [David]
 
 Added another directory to search for Apache 1.3. [Brian Smith]
 
+=item *
+
+Made the Perl program and library installers (F<lib/Makefile.PL> and
+F<bin/Makefile.PL> more intelligent in their support of the C<$BRICOALGE_ROOT>
+configuration variable. [Brian Smith]
+
 =back
 
 =head2 Bug Fixes
