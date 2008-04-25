@@ -31,7 +31,6 @@ my $DESK_URL   = '/workflow/profile/desk/';
 
 my ($save_contrib, $save_category, $handle_delete);
 
-
 sub update : Callback(priority => 1) {
     my $self = shift;
     my $widget = $self->class_key;

@@ -141,8 +141,11 @@ sub diff : Callback {
     my $tmpl   = get_state_data($widget, 'template');
     my $id     = $tmpl->get_id;
 
-    # Tell the return button to return to the edit view.
-    set_state_data($widget, version_view => 1);
+    # Save any changes to the template to the session.
+    $save_object->($self, $self->params)
+        if get_state_name($widget) eq 'edit'
+        && $tmpl->get_checked_out
+        && $tmpl->get_user__id == get_user_id;
 
     # Find the from and to version numbers.
     my $from = $params->{"$widget|from_version"}
