@@ -37,6 +37,7 @@ if ($is_user) {
                      q{?perm_type=' + } .
                      q{escape(this.options[this.selectedIndex].value)"},
     );
+
     $m->comp('/widgets/wrappers/table_bottom.mc');
 
     # $is_user means $perm_type is one of
@@ -479,4 +480,3 @@ $perms
 </%perl>
 </%def>
 %#--- Log History ---#
-

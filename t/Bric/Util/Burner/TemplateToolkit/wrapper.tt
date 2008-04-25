@@ -4,3 +4,4 @@
 [% content -%]
 [% INCLUDE testing/sub/util.tt license = 'BSD' -%]
 </body></html>
+[% CALL burner.set_burn_again(1) UNLESS burner.get_page -%]

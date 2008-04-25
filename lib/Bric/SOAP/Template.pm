@@ -640,11 +640,17 @@ sub load_asset {
         # mix in dates
         for my $name qw(expire_date deploy_date) {
             my $date = $tdata->{$name};
-            next unless $date; # skip missing date
-            my $db_date = xs_date_to_db_date($date);
-            throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
-                unless defined $db_date;
-            $init{$name} = $db_date;
+            if ($date) {
+                throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
+                    unless $tdata->{deploy_status} or $name ne 'deploy_date';
+                my $db_date = xs_date_to_db_date($date);
+                throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
+                    unless defined $db_date;
+                $init{$name} = $db_date;
+            } else {
+                throw_ap error => __PACKAGE__ . "::create : $name must be defined if deploy_status is true"
+                    if $tdata->{deploy_status} && $name eq 'deploy_date';
+            }
         }
 
         # setup simple fields

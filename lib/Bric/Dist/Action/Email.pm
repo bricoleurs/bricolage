@@ -275,11 +275,11 @@ Determines how non-text resources are to be handled.
                               len      => 256,
                               req      => 1,
                               type     => 'short',
-			      props    => { type => 'select',
-					    vals => [[INLINE, 'Inline'],
-						     [ATTACH, 'Attach'],
-						     [IGNORE, 'Ignore']],
-					  }
+                  props    => { type => 'select',
+                        vals => [[INLINE, 'Inline'],
+                             [ATTACH, 'Attach'],
+                             [IGNORE, 'Ignore']],
+                      }
                             };
 
     $meths->{handle_other} = { get_meth => sub { shift->get_handle_other(@_) },
@@ -393,6 +393,8 @@ Ignore text resources.
 
 =back
 
+The setter converts non-Unix line endings.
+
 =head3 handle_other
 
   my $handle_other = $action->get_handle_other;
@@ -414,6 +416,8 @@ Ignore text resources. The default value.
 Attach all text files to the email message.
 
 =back
+
+The setter converts non-Unix line endings.
 
 =cut
 
@@ -475,16 +479,16 @@ sub do_it {
 
     # Just bail if there's nothing to send.
     return $self unless $msg || @attach;
-    my $mailer = Bric::Util::Trans::Mail->new
-      ({ to           => [ $self->$get_attr('to') ],
-         from         => $self->$get_attr('from'),
-         cc           => [ $self->$get_attr('cc') ],
-         bcc          => [ $self->$get_attr('bcc') ],
-         content_type => $content_type,
-         subject      => $self->$get_attr('subject'),
-         message      => $msg,
-         resources    => \@attach,
-       });
+    my $mailer = Bric::Util::Trans::Mail->new({
+        to           => [ $self->$get_attr('to') ],
+        from         => $self->$get_attr('from'),
+        cc           => [ $self->$get_attr('cc') ],
+        bcc          => [ $self->$get_attr('bcc') ],
+        content_type => $content_type,
+        subject      => $self->$get_attr('subject'),
+        message      => $msg,
+        resources    => \@attach,
+    });
 
     $mailer->send;
     return $self;
@@ -614,7 +618,7 @@ each destination for which resources are to be distributed.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003 Kineticode, Inc. See L<Bric::License|Bric::License> for
-complete license terms and conditions.
+Copyright (c) 2003-2008 Kineticode, Inc. See L<Bric::License|Bric::License>
+for complete license terms and conditions.
 
 =cut

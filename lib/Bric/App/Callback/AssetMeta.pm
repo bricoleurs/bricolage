@@ -7,7 +7,7 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'asset_meta';
 
 use strict;
-use Bric::App::Session qw(:state);
+use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:msg :history);
 use Bric::Biz::Asset::Template;
 use Bric::Biz::Asset::Business::Media;
@@ -27,16 +27,25 @@ sub add_note : Callback {
 
     my $obj = get_state_data($self->class_key, 'obj');
     my $note = $param->{$key};
-    $obj->add_note($note);
+
+    unless ($obj->get_checked_out && $obj->get_user__id == get_user_id) {
+        # Protect the user from herself.
+        add_msg(
+            'You cannot add a note to "[_1]" because it is not checked out to you',
+            $obj->get_title
+        );
+        $self->set_redirect(last_page());
+        return;
+    }
+
+    # Set the note.
+    $obj->set_note($note);
     set_state_data($self->class_key, 'obj');
 
     # Cache the object in the session if it's the current object.
     my $type = $obj->key_name;
     if (my $c_obj = get_state_data($types{$type} => $type)) {
-        my $cid = $c_obj->get_id;
-        my $id = $obj->get_id;
-        if ((!defined $cid && !defined $id) ||
-            (defined $cid && defined $id && $id == $cid)) {
+        if ($obj->get_uuid eq $c_obj->get_uuid) {
             # It's the same object. Put it in the cache with the new note.
             set_state_data($types{$type}, $type, $obj);
         } else {

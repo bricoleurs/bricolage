@@ -232,6 +232,25 @@ correspond to the limits set by the UI (think of the character counter in the
 story profile for the description field). Reported by Matt Rolf (Bug #1318).
 [David]
 
+=item *
+
+Added code to the SOAP interface for creating and updating stories, media, and
+templates to throw an exception if publish dates are set when
+C<publish_status> is false, or vice versa, rather than waiting for an
+exception from the database constraint. Suggested by Scott (Bug # 1326).
+[David]
+
+=item *
+
+Template code submitted via the template profile now has non-Unix line endings
+converted to Unix line endings. [David]
+
+=item *
+
+The select lists for viewing diffs now set the default "from version" to the
+previous version instead of the current version. The current version is still
+the default for the "to version". [David]
+
 =back
 
 =head2 Bug Fixes
@@ -317,9 +336,49 @@ subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
 
 =item *
 
-F<inst/cpan.pl> now explicitly loads L<CPAN::Queue|CPAN::Queue>, since it
-appears that some newer versions of L<CPAN|CPAN> may not load it themselves.
-Reported by Jean-Michel Caricand. [David]
+Fixed a compatibility issue in the intsaller with newer versions of
+L<CPAN|CPAN>. Reported by Jean-Michel Caricand. [David]
+
+=item *
+
+Fixed the fix for the "ident" authentication issue when granting database
+permissions. [Rolf Schaufelberger]
+
+=item *
+
+Fixed the display of a field name when confirming changes to a field type.
+[David]
+
+=item *
+
+Fixed a bug in the subelement type search display where the last element type
+search term was displayed in the search box. It not properly displays the last
+subelement type search string, if any. [David]
+
+=item *
+
+Reverted the change in the login redirect originally submitted to fix Bug #
+1267. It turns out that this change is effectively the same as just setting
+the C<ALWAYS_USE_SSL> F<bricolage.conf> directive to true. So just do that
+instead (I've suggested this in L<Bric::Admin|Bric::Admin>, too). [David]
+
+=item *
+
+Fixed C<make clean> so that it cleans out F<bin>. It was leaving junk in
+there! [David]
+
+=item *
+
+The code that handles note editing is now more careful to check that the user
+has the relevant document checked out before applying the note to it, and uses
+a smarter algorithm for caching the document in the user's session. This is an
+attempt to fix a bug reported by David Beaudet (Bug # 1265). [David]
+
+=item *
+
+Clicking "Return" when viewing a diff now properly returns the user to the
+document or template profile, rather than My Workspace. Thanks to Matt Rolf
+for the spot (Bug #1327)! [David]
 
 =back
 
@@ -479,7 +538,8 @@ elements, groups, media, and templates. [Matt Rolf and Michael Herring]
 
 =item *
 
-Patch from Alex Krohn to hopefully really fix "ident" authentication this time.
+Yet another fix for the "ident" authentication issue, this time for granting
+database permissions. [Alex Krohn]
 
 =back
 

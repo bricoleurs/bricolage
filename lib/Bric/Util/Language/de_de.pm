@@ -774,7 +774,7 @@ To Translate:
   'place must be a positive number.' => 'place must be a positive number.',
   'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].' => 'Field "[_1]" appears [_2] times around line [_3].Please remove all but [_4].',
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
-
+  'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
 
 =end comment
 

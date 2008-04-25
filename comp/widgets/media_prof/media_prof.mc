@@ -118,7 +118,6 @@ if ($id) {
         }
     }
 
-    set_state_data($widget, 'version_view', 1) if defined $version;
     my $state_name = 'view';
     if (defined $version || $param->{diff}) {
         set_state_data($widget, 'version_view', 1) if defined $version;

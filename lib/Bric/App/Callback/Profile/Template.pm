@@ -144,8 +144,11 @@ sub diff : Callback {
     my $tmpl   = get_state_data($widget, 'template');
     my $id     = $tmpl->get_id;
 
-    # Tell the return button to return to the edit view.
-    set_state_data($widget, version_view => 1);
+    # Save any changes to the template to the session.
+    $save_object->($self, $self->params)
+        if get_state_name($widget) eq 'edit'
+        && $tmpl->get_checked_out
+        && $tmpl->get_user__id == get_user_id;
 
     # Find the from and to version numbers.
     my $from = $params->{"$widget|from_version"}
@@ -278,9 +281,9 @@ sub return : Callback(priority => 6) {
     my $version_view = get_state_data($widget, 'version_view');
     my $fa = get_state_data($widget, 'template');
 
-    if ($version_view) {
+    if ($version_view || $self->value eq 'diff') {
         my $fa_id = $fa->get_id;
-        clear_state($widget);
+        clear_state($widget) if $version_view;
         $self->set_redirect("/workflow/profile/template/$fa_id/?checkout=1");
     } else {
         my $url;
@@ -426,6 +429,8 @@ $save_meta = sub {
     if ($param->{"$widget|upload_file"}) {
         $handle_upload->($self, $fa);
     } else {
+        # Normalize line-endings.
+        $param->{"$widget|code"} =~ s/\r\n?/\n/g;
         $fa->set_data($param->{"$widget|code"});
     }
     if (exists $param->{category_id}) {

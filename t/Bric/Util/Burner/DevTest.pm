@@ -623,23 +623,34 @@ sub subclass_burn_test {
     $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
       Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
 
-    # Make sure that the file doesn't already exist.
-    $file = $fs->cat_file(TEMP_DIR, 'base',
-                          $fs->uri_to_dir($story->get_primary_uri), '',
-                          $oc->get_filename . '.' . $oc->get_file_ext);
-    ok !-e $file, "File should not yet exist";
+    # Make sure that the files don't already exist.
+    $file = $fs->cat_dir(
+        TEMP_DIR,
+        'base',
+        $fs->uri_to_dir($story->get_primary_uri),
+        '',
+        $oc->get_filename . '.' . $oc->get_file_ext
+    );
+    (my $file1 = $file) =~ s/index/index1/;
+    ok !-e $file, 'File should not yet exist';
+    ok !-e $file1, 'File1 should not yet exist';
 
     # Now burn it!
     ok my ($res) = $burner->burn_one($story, $oc, $subcat), "Burn the story";
     is $res->get_path, $file, "Check the file location";
 
     # Now we should have a file!
-    ok -e $file, "File should now exist" or return "Failed to create $file!";
+    ok -e $file, 'File should now exist' or return "Failed to create $file!";
+    unless ($burner_type == Bric::Biz::OutputChannel::BURNER_TEMPLATE) {
+        ok -e $file1, 'Second file should now exist'
+            or return "Failed to create $file!";
+    }
 
     # So now let's take a look at that bad boy.
     file_contents_is($file, $self->story_output, "Check the file contents");
     # Clean up our mess.
     unlink $file;
+    unlink $file1;
 
     # Now we'll try a preview, just for the heck of it.
     my $prev_root = $fs->cat_dir(TEMP_DIR, 'comp');
@@ -651,7 +662,9 @@ sub subclass_burn_test {
         $fs->uri_to_dir($story->get_primary_uri), '',
         $oc->get_filename . '.' . $oc->get_file_ext
     );
-    ok !-e $prev_file, "The preview file should not yet exist";
+    (my $prev_file1 = $prev_file) =~ s/index/index1/;
+    ok !-e $prev_file, 'The preview file should not yet exist';
+    ok !-e $prev_file1, 'The second preview file should not yet exist';
 
     # Set up to listen in to the status messages.
     $self->trap_stderr;
@@ -668,7 +681,13 @@ sub subclass_burn_test {
       'Writing files to "Test XHTML" Output Channel.Distributing files.',
       "The status message should be correct";
 
-    ok -e $prev_file, "File should now exist" or return "Failed to create $file!";
+    ok -e $prev_file, 'Preview file should now exist'
+        or return "Failed to create $prev_file!";
+    unless ($burner_type == Bric::Biz::OutputChannel::BURNER_TEMPLATE) {
+        ok -e $prev_file1, 'Second preview file should now exist'
+            or return "Failed to create $prev_file!";
+    }
+
     file_contents_is($prev_file, $self->story_output,
                      "Check the preview file contents");
 
@@ -688,6 +707,7 @@ sub subclass_burn_test {
       "Add a paragraph to the second page";
     ok $pg->add_data($page_para, 'Another page two paragraph'),
       "Add another paragraph to the second page";
+    ok $pg = $elem->add_container($page), "Add another page";
     ok $elem->save, "Save the story element";
 
     # Now that we've done a preview, the OC will be a part of the path,
@@ -695,24 +715,27 @@ sub subclass_burn_test {
     $file = $fs->cat_file(TEMP_DIR, 'burn', 'stage', 'oc_' . $oc->get_id,
                           $fs->uri_to_dir($story->get_primary_uri), '',
                           $oc->get_filename . '.' . $oc->get_file_ext);
-    (my $p2_file = $file) =~ s/index/index1/;
-    ok !-e $p2_file, "Second page file should not yet exist";
+    ($file1 = $file) =~ s/index/index1/;
+    (my $file2 = $file) =~ s/index/index2/;
+    ok !-e $file2, 'Third page file should not yet exist';
 
     # Now burn it with pages.
     ok my @reses = $burner->burn_one($story, $oc, $subcat),
       "Burn the paginated story";
-    is @reses, 2, "We should have two resources";
+    is @reses, 3, "We should have two resources";
     is $reses[0]->get_path, $file, "Check the first file location";
-    is $reses[1]->get_path, $p2_file, "Check the second file location";
-    ok -e $file, "First page file should still exist";
-    ok -e $p2_file, "Second page file should now exist, too";
+    is $reses[1]->get_path, $file1, "Check the second file location";
+    is $reses[2]->get_path, $file2, "Check the third file location";
+    ok -e $file, 'First page file should still exist';
+    ok -e $file1, 'Second page file should still exist';
+    ok -e $file2, 'Third page file should now exist, too';
 
     # Check their contents.
-    file_contents_is($file, $self->story_page1, "Check page 1 contents");
-    file_contents_is($p2_file, $self->story_page2, "Check page 2 contents");
+    file_contents_is($file, $self->story_page1, 'Check page 1 contents');
+    file_contents_is($file1, $self->story_page2, 'Check page 2 contents');
 
     # Clean up our mess.
-    unlink $file, $p2_file, $prev_file;
+    unlink $file, $file1, $file2, $prev_file, $prev_file1;
 }
 
 ##############################################################################

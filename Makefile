@@ -333,5 +333,7 @@ clean 		:
 	-rm -rf lib/Makefile.old
 	-rm -rf lib/auto
 	-rm -rf inst/db_tmp
+	cd bin ; $(PERL) Makefile.PL ; $(MAKE) clean
+	-rm -rf bin/Makefile.old
 
 .PHONY 		: clean

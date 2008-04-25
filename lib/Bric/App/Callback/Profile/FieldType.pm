@@ -31,7 +31,7 @@ sub save : Callback {
         return;
     }
 
-    my $name = $ed->get_name;
+    my $name = $param->{name};
     if ($param->{delete}) {
         # Deactivate it.
         $ed->deactivate;

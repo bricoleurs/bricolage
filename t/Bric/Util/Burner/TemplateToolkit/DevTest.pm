@@ -6,7 +6,7 @@ use warnings;
 use base qw(Bric::Util::Burner::DevTest);
 use Test::More;
 
-sub test_burn : Test(121) {
+sub test_burn : Test(124) {
     my $self = shift;
     return "Template Toolkit not installed" unless eval { require Template };
     return "Template Toolkit not version 2.14 or later"

@@ -4,3 +4,4 @@
 % $burner->chain_next(%ARGS);
 <& /testing/sub/util.mc, license => 'BSD' &>
 </body></html>
+% $burner->set_burn_again(1) unless $burner->get_page;
