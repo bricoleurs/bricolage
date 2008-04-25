@@ -6,7 +6,7 @@ use warnings;
 use base qw(Bric::Util::Burner::DevTest);
 use Test::More;
 
-sub test_burn : Test(115) {
+sub test_burn : Test(122) {
     my $self = shift;
     return "PHP::Interpreter not installed"
       unless eval { require PHP::Interpreter };

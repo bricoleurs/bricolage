@@ -7,7 +7,7 @@ use base qw(Bric::Util::Burner::DevTest);
 use File::Basename;
 use Test::More;
 
-sub test_burn : Test(127) {
+sub test_burn : Test(132) {
     my $self = shift;
     return "HTML::Template not installed"
       unless eval { require HTML::Template };
@@ -226,6 +226,10 @@ sub story_page1 {
 
 
 
+
+
+
+
 <div class="page">
 <p>Wee, page one paragraph</p>
 <p>Another page one paragraph</p>
@@ -310,6 +314,10 @@ sub story_page2 {
 <p>So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself -- nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.</p>
 <p>--Franklin D. Roosevelt, 1933.03.04</p>
 </blockquote>
+
+
+
+
 
 
 
