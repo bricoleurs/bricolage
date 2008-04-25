@@ -220,11 +220,12 @@ sub check_modules {
             # potential paths for modules
             foreach my $path (catdir($AP{HTTPD_ROOT}, "modules"),
                               catdir($AP{HTTPD_ROOT}, "libexec"),
-                              "/usr/lib/apache/1.3",
-                              "/usr/lib/apache/modules",
-                              "/usr/lib/apache/libexec",
-                              "/usr/local/lib/apache/modules",
-                              "/usr/local/lib/apache/libexec",
+                              '/usr/lib/apache/1.3',
+                              '/usr/lib/apache/modules',
+                              '/usr/lib/apache/libexec',
+                              '/usr/lib/httpd',
+                              '/usr/local/lib/apache/modules',
+                              '/usr/local/lib/apache/libexec',
                              ) {
 
                 # perl uses libfoo.so format filenames

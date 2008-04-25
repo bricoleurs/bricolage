@@ -271,6 +271,10 @@ The select lists for viewing diffs now set the default "from version" to the
 previous version instead of the current version. The current version is still
 the default for the "to version". [David]
 
+=item *
+
+Added another directory to search for Apache 1.3. [Brian Smith]
+
 =back
 
 =head2 Bug Fixes
