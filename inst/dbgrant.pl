@@ -29,6 +29,7 @@ use File::Find qw(find);
 our ($DB, $DBCONF);
 
 # If we didn't create the databse, we can't grant permissions.
+$DB = do './database.db';
 exit 0 unless $DB->{create_db};
 
 print "\n\n==> Granting access rights to the Bricolage user <==\n\n";

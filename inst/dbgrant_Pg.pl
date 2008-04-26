@@ -57,7 +57,6 @@ sub grant_permissions {
     hard_fail("Failed to get list of objects. The database error was\n\n",
               "$err\n") if $err;
 
-    print @objects;
     my $objects = join (', ', map { chomp; $_ } @objects);
 
     $sql = qq{
