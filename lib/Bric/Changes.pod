@@ -279,12 +279,12 @@ the default for the "to version". [David]
 
 =item *
 
-Added another directory to search for Apache 1.3. [Brian Smith]
+Added another directory to search for Apache. [Brian Smith]
 
 =item *
 
 Made the Perl program and library installers (F<lib/Makefile.PL> and
-F<bin/Makefile.PL> more intelligent in their support of the C<$BRICOALGE_ROOT>
+F<bin/Makefile.PL> more intelligent in their support of the C<$BRICOLAGE_ROOT>
 configuration variable. [Brian Smith]
 
 =back
@@ -372,7 +372,7 @@ subelement. Thanks to Chris Schults for the spot (Bug #1316). [David]
 
 =item *
 
-Fixed a compatibility issue in the intsaller with newer versions of
+Fixed a compatibility issue in the installer with newer versions of
 L<CPAN|CPAN>. Reported by Jean-Michel Caricand. [David]
 
 =item *
@@ -415,6 +415,12 @@ attempt to fix a bug reported by David Beaudet (Bug # 1265). [David]
 Clicking "Return" when viewing a diff now properly returns the user to the
 document or template profile, rather than My Workspace. Thanks to Matt Rolf
 for the spot (Bug #1327)! [David]
+
+=item *
+
+Fixed logout exception (hardly noticeable, but there nonetheless) when the
+C<ALWAYS_USE_SSL> F<bricolage.conf> directive is enabled, or when a user
+checks the "Use SSL" checkbox and logs in. [David]
 
 =back
 

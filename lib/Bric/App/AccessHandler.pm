@@ -225,40 +225,24 @@ sub logout_handler {
         # Redirect to the login page.
         my $hostname = $r->hostname;
         if (SSL_ENABLE) {
-            if (0) {
-                # if SSL and logging out of server #1, make sure and logout of
-                # server #2
-                # XXX I've no idea what this means, really, but it doesn't
-                # work with mod_perl 2: I get an error because the session has
-                # been expired, so when the `== SSL_PORT` bit below redirects
-                # to /logout/?goodbye it fails. I tried to look at the
-                # original patch, but that provided no more information. How
-                # can there be two servers?
-                # http://marc.info/?t=102590250200001
-                if (scalar $r->args =~ /goodbye/) {
-                    $r->custom_response(
-                        HTTP_FORBIDDEN,
-                        "https://$hostname$ssl_port/login/"
-                    );
-                } elsif ($r->get_server_port == SSL_PORT) {
-                    $r->custom_response(
-                        HTTP_MOVED_TEMPORARILY,
-                        "/logout/?goodbye"
-                    );
-                    return HTTP_MOVED_TEMPORARILY;
-                } else {
-                    $r->custom_response(
-                        HTTP_MOVED_TEMPORARILY,
-                        "https://$hostname$ssl_port/logout/?goodbye"
-                    );
-                    return HTTP_MOVED_TEMPORARILY;
-                }
-            } else {
+            # if SSL and logging out of server #1, make sure and logout of
+            # server #2
+            if (ALWAYS_USE_SSL) {
+                # Just need to log out.
+                $r->custom_response(HTTP_FORBIDDEN, '/login/');
+            } elsif (scalar $r->args =~ /goodbye/) {
+                # Logged out of both ports.
                 $r->custom_response(
                     HTTP_FORBIDDEN,
                     "https://$hostname$ssl_port/login/"
                 );
-                return HTTP_FORBIDDEN;
+            } else {
+                # Need to lot out of the other port.
+                my $url = $r->get_server_port == &SSL_PORT
+                    ? "http://$hostname$port/logout?goodbye"
+                    : "https://$hostname$ssl_port/logout?goodbye";
+                $r->custom_response( HTTP_MOVED_TEMPORARILY, $url );
+                return HTTP_MOVED_TEMPORARILY;
             }
         } else {
             $r->custom_response(HTTP_FORBIDDEN, '/login/');
