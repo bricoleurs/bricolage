@@ -120,7 +120,7 @@ BEGIN {
     # Always use the Bric::Config and Bric::Util::DBI from the sources.
     unshift @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib';
     require Bric::Config;
-    Bric::Config->import(qw(DBI_USER));
+    Bric::Config->import(qw(DBI_USER DBD_TYPE));
     require Bric::Util::DBI;
     Bric::Util::DBI->import(qw(:all));
 }
