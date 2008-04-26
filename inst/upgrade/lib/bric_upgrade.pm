@@ -123,9 +123,13 @@ BEGIN {
     Bric::Config->import(qw(DBI_USER));
     require Bric::Util::DBI;
     Bric::Util::DBI->import(qw(:all));
-    eval "require bric_upgrade_".DBD_TYPE;
+}
+
+BEGIN {
+    my $mod = 'bric_upgrade_' . DBD_TYPE;
+    eval "require $mod";
     die $@ if $@;
-    ('bric_upgrade_'.DBD_TYPE)->import(qw(:all));
+    $mod->import(qw(:all));
     shift @INC;
 
     # use $BRICOLAGE_ROOT/lib if exists
