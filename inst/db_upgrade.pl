@@ -97,7 +97,7 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
         # Pass through abnormal exits so that `make` will be halted.
         exit $ret / 256 if $ret;
     }
-    system $perl, catfile($FindBin::Bin, 'db_grant.pl'), @ARGV and die;
+    system $perl, catfile($FindBin::Bin, 'dbgrant.pl'), @ARGV and die;
 }
 
 print "\n\n==> Finished Database Upgrade <==\n\n";
