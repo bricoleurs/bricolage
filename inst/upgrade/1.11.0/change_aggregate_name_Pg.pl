@@ -10,7 +10,7 @@ exit if test_aggregate('group_concat');
 
 do_sql
 
-  "DROP AGGREGATE id_list INTEGER",
+  'DROP AGGREGATE id_list (INTEGER)',
 
   "CREATE AGGREGATE group_concat (
 	SFUNC 	 = append_id,
