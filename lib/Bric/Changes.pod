@@ -231,6 +231,12 @@ Clicking "Return" when viewing a diff now properly returns the user to the
 document or template profile, rather than My Workspace. Thanks to Matt Rolf
 for the spot (Bug #1327)! [David]
 
+=item *
+
+Fixed logout exception (hardly noticable, but there nonetheless) when the
+C<ALWAYS_USE_SSL> F<bricolage.conf> directive is enabled, or when a user
+checks the "Use SSL" checkbox and logs in. [David]
+
 =back
 
 =head1 VERSION 1.10.4 (2008-03-09)

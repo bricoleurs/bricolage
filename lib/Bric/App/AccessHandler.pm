@@ -222,20 +222,25 @@ sub logout_handler {
         if (SSL_ENABLE) {
             # if SSL and logging out of server #1, make sure and logout of
             # server #2
-            if (scalar $r->args =~ /goodbye/) {
-                $r->custom_response(FORBIDDEN,
-                                    "https://$hostname$ssl_port/login");
-            } elsif ($r->get_server_port == &SSL_PORT) {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "/logout?goodbye");
-                return HTTP_MOVED_TEMPORARILY;
+            if (ALWAYS_USE_SSL) {
+                # Just need to log out.
+                $r->custom_response(FORBIDDEN, '/login/');
+            } elsif (scalar $r->args =~ /goodbye/) {
+                # Logged out of both ports.
+                $r->custom_response(
+                    FORBIDDEN,
+                    "https://$hostname$ssl_port/login/"
+                );
             } else {
-                $r->custom_response(HTTP_MOVED_TEMPORARILY,
-                                    "https://$hostname$ssl_port/logout?goodbye");
+                # Need to lot out of the other port.
+                my $url = $r->get_server_port == &SSL_PORT
+                    ? "http://$hostname$port/logout?goodbye"
+                    : "https://$hostname$ssl_port/logout?goodbye";
+                $r->custom_response( HTTP_MOVED_TEMPORARILY, $url );
                 return HTTP_MOVED_TEMPORARILY;
             }
         } else {
-            $r->custom_response(FORBIDDEN, "/login");
+            $r->custom_response(FORBIDDEN, '/login/');
         }
         return FORBIDDEN;
     };
