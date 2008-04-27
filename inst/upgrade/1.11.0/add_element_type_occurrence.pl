@@ -3,10 +3,9 @@
 use strict;
 use File::Spec::Functions qw(catdir updir);
 use FindBin;
-use Bric::Util::DBI qw(:all);
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
-
+use Bric::Util::DBI qw(:all);
 
 # Modify tables for subelement occurrence
 exit if test_column 'subelement_type', 'parent_id';

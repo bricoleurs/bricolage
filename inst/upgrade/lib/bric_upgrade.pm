@@ -105,7 +105,8 @@ use Cache::FileCache;
 use Getopt::Std;
 our ($opt_u, $opt_p, $opt_i, $opt_s);
 
-BEGIN{
+BEGIN {
+    local @ARGV = @ARGV;
     getopts('u:p:i:s');
     # Set the db admin user and password to some reasonable defaults.
     $ENV{BRIC_DBI_PASS} ||= $opt_p ||= 'postgres';

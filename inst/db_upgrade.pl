@@ -61,7 +61,6 @@ $ENV{PERL5LIB} = $CONFIG->{MODULE_DIR};
 # setup database type in order to use apropriate upgrade scripts
 # the database type has to be in the script name (Pg, mysql)
 my ($x,$y,$z);
-my $req_db=$DB->{db_type};
 
 # run the upgrade scripts
 foreach my $v (@{$UPGRADE->{TODO}}) {
@@ -71,12 +70,12 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
     next unless -d $dir;
 
     opendir(DIR, $dir) or die "can't opendir $dir: $!";
-    
+
 # check for different database types starting with version 1.10.2
     my @scripts;
     if (($x > 1) or ($x == 1 and $y > 10) or ($x == 1 and $y== 10 and $z > 2)) {
-        @scripts = grep { -f $_ and $_ =~ /\.pl$/ and $_ =~ /$req_db/ }
-        map { catfile($dir, $_) } sort readdir(DIR); 
+        @scripts = grep { -f $_ and $_ =~ /\.pl$/ }
+        map { catfile($dir, $_) } sort readdir(DIR);
     }
     else {
         @scripts = grep { -f $_ and $_ =~ /\.pl$/}
