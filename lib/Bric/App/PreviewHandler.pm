@@ -121,6 +121,7 @@ sub uri_handler {
     my $r = shift;
     # Do nothing to subrequests.
     return DECLINED if $r->main;
+
     my $ret = eval {
         # Decline the request unless it's coming from the preview directory.
         {
@@ -149,9 +150,9 @@ sub uri_handler {
 =item my $status = fixup_handler()
 
 Runs after the MIME-checking request phase so that, if the content-type is not
-text/html. Only used when both the PREVIEW_LOCAL and PREVIEW_MASON directives
-have been set to true, as it will prevent Mason from munging non-Mason files
-such as images.
+text/html. Only used when both the C<PREVIEW_LOCAL> and C<PREVIEW_MASON>
+directives have been enabled, as it will prevent Mason from munging non-Mason
+files such as images.
 
 B<Throws:> NONE.
 
@@ -166,6 +167,9 @@ B<Notes:> NONE.
 
 sub fixup_handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
+
     my $ret = eval {
         # Start by disabling browser caching.
         $r->no_cache(1);
