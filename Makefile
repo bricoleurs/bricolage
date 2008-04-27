@@ -38,25 +38,16 @@ BRIC_VERSION = `$(PERL) -ne '/VERSION.*?([\d\.]+)/ and print $$1 and exit' < lib
 all 		: required.db modules.db apache.db database.db config.db \
                   bconf/bricolage.conf build_done
 
-# This scans for dbprobe_*.pl files and passes them to required.pl to let
-# the user choose the database he wants (database names should conform to
-# DBD:: package name, ex: dbprobe_Pg for PostgresSQL)
-
-DATABASE_PROBES := $(shell find inst -name 'dbprobe_*.pl')
-
-# Same idea as DATABASE_PROBES, but names are 'apache' or 'apache2'
-HTTPD_PROBES := $(shell find inst -name 'htprobe_*.pl')
-
 required.db	: inst/required.pl
-	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) $(DATABASE_PROBES) $(HTTPD_PROBES)
+	$(PERL) inst/required.pl $(INSTALL_VERBOSITY) inst/dbprobe_*.pl inst/htprobe_*.pl
 
 modules.db 	: inst/modules.pl lib/Bric/Admin.pod
 	$(PERL) inst/modules.pl $(INSTALL_VERBOSITY)
 
-apache.db	: inst/httpd.pl required.db $(HTTPD_PROBES)
+apache.db	: inst/httpd.pl required.db
 	$(PERL) inst/httpd.pl $(INSTALL_VERBOSITY)
 
-database.db 	: inst/database.pl required.db $(DATABASE_PROBES)
+database.db 	: inst/database.pl required.db
 	$(PERL) inst/database.pl $(INSTALL_VERBOSITY)
 
 config.db	: inst/config.pl required.db apache.db database.db
