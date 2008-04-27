@@ -247,7 +247,7 @@ done_with_hot_copy : bconf/bricolage.conf db files_with_hot_copy bin lib cpan
 # upgrade rules          #
 ##########################
 
-upgrade		: upgrade.db required.db modules.db database.db bconf/bricolage.conf \
+upgrade		: upgrade.db required.db modules.db database.db apache.db bconf/bricolage.conf \
 	          is_root cpan stop db_upgrade lib bin  \
 	          upgrade_files upgrade_conf upgrade_done
 

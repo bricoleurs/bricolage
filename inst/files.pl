@@ -94,13 +94,14 @@ sub copy_files {
     return if /\.$/;
     return if /.svn/;
     return if $UPGRADE and m!/data/!; # Don't upgrade data files.
-    return if $UPGRADE and /bconf/ and /\.conf$/; # Don't upgrade .conf files.
 
     # construct target by lopping off ^./foo/ and appending to $root
     my $targ;
     ($targ = $_) =~ s!^\./\w+/?!!;
     return unless length $targ;
     $targ = catdir($root, $targ);
+    # Don't upgrade .conf files.
+    return if $UPGRADE and /bconf/ and /\.conf$/ && -f $targ;
 
     if (-d) {
         mkpath([$targ], 1, 0755) unless -e $targ;
@@ -108,8 +109,7 @@ sub copy_files {
       if ($link) {
         link($_, $targ) or die "Unable to link $_ to $targ : $!";
       } else {
-        copy($_, $targ)
-          or die "Unable to copy $_ to $targ : $!";
+        copy($_, $targ) or die "Unable to copy $_ to $targ : $!";
         chmod((stat($_))[2], $targ)
           or die "Unable to copy mode from $_ to $targ : $!";
       }
