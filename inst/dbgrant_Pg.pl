@@ -21,10 +21,10 @@ if (my $sys_user = $DB->{system_user}) {
 }
 
 # Set environment variables for psql.
-$ENV{PGUSER} = $DB->{root_user};
-$ENV{PGPASSWORD} = $DB->{root_pass};
-$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
-$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
+$ENV{DBUSER} = $DB->{root_user};
+$ENV{DBPASSWORD} = $DB->{root_pass};
+$ENV{DBHOST} = $DB->{host_name} if $DB->{host_name};
+$ENV{DBPORT} = $DB->{host_port} if $DB->{host_port};
 BEGIN { $ERR_FILE = catfile tmpdir, '.db.stderr' }
 END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
@@ -34,39 +34,46 @@ sub grant_permissions {
     # assign all permissions to SYS_USER
     print "Granting privileges...\n";
 
-    # get a list of all tables and sequences that don't start with pg
-    my $sql = $DB->{version} ge '7.3'
-      ? qq{
-        SELECT n.nspname || '.' || c.relname
-        FROM   pg_catalog.pg_class c
-               LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
-               LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-        WHERE  c.relkind IN ('r', 'S')
-               AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
-               AND pg_catalog.pg_table_is_visible(c.oid)
-      }
-      : qq{
-        SELECT relname
-        FROM   pg_class
-        WHERE  relkind IN ('r', 'S')
-               AND relname NOT LIKE 'pg%';
-      };
+    for my $spec (
+        [ 'r', 'SELECT, UPDATE, INSERT, DELETE' ],
+        [ 'S', 'SELECT, UPDATE'                 ],
+    ) {
+        my ($type, $grant) = @$spec;
 
-    my @objects;
-    my $err = exec_sql($sql, 0, 0, \@objects);
-    hard_fail("Failed to get list of objects. The database error was\n\n",
-              "$err\n") if $err;
+        # get a list of all tables and sequences that don't start with pg
+        my $sql = $DB->{version} ge '7.3'
+            ? qq{
+            SELECT n.nspname || '.' || c.relname
+            FROM   pg_catalog.pg_class c
+                   LEFT JOIN pg_catalog.pg_user u ON u.usesysid = c.relowner
+                   LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE  c.relkind = '$type'
+                   AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+                   AND pg_catalog.pg_table_is_visible(c.oid)
+          }
+          : qq{
+            SELECT relname
+            FROM   pg_class
+            WHERE  relkind = '$type'
+                   AND relname NOT LIKE 'pg%';
+          };
 
-    my $objects = join (', ', map { chomp; $_ } @objects);
+        my @objects;
+        my $err = exec_sql($sql, 0, 0, \@objects);
+        hard_fail("Failed to get list of objects. The database error was\n\n",
+                  "$err\n") if $err;
 
-    $sql = qq{
-        GRANT SELECT, UPDATE, INSERT, DELETE
-        ON    $objects
-        TO    "$DB->{sys_user}";
-    };
-    $err = exec_sql($sql);
-    hard_fail("Failed to Grant privileges. The database error was\n\n$err")
-      if $err;
+        my $objects = join (', ', map { chomp; $_ } @objects);
+
+        $sql = qq{
+            GRANT $grant
+            ON    $objects
+            TO    "$DB->{sys_user}";
+        };
+        $err = exec_sql($sql);
+        hard_fail("Failed to Grant privileges. The database error was\n\n$err")
+            if $err;
+    }
 
     print "Done.\n";
 }

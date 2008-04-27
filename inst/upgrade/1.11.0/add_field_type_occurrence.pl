@@ -7,7 +7,7 @@ use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
 # Modify tables for field type occurrence
-exit if fetch_sql q{SELECT 1 FROM field_type WHERE key_name = 'max_occurrence'};
+exit if test_column 'field_type', 'max_occurrence';
 
 do_sql q{ALTER TABLE field_type ADD max_occurrence INTEGER},
        q{UPDATE field_type SET max_occurrence='0' WHERE quantifier='1'},

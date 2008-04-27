@@ -595,35 +595,11 @@ the Bricolage database user provided the proper permissions to access it.
 =cut
 
 sub do_sql {
-    my @objs;
     # Execute each SQL statement.
     foreach my $sql (@_) {
         local $SIG{__WARN__} = sub {};
         my $sth = prepare($sql);
         execute($sth);
-        if ($sql =~ /CREATE\s+TABLE\s+([^\s]*)/i
-            || $sql =~ /CREATE\s+SEQUENCE\s+([^\s]*)/i)
-          {
-              # Grab the name of the object to grant permissions on.
-              push @objs, $1;
-          }
-    }
-
-    # Now grant the necessary permissions.
-    if (@objs) {
-        my $objs = join(', ', @objs);
-        my $grant = prepare(qq{
-            GRANT  SELECT, UPDATE, INSERT, DELETE
-            ON     $objs
-            TO     "${ \DBI_USER() }"
-        });
-        execute($grant);
-        $grant = prepare(qq{
-            GRANT  ALL PRIVILEGES
-            ON     $objs
-            TO     "$opt_u"
-        });
-        execute($grant);
     }
 }
 
