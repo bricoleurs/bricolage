@@ -102,6 +102,11 @@ Made the Perl program and library installers (F<lib/Makefile.PL> and
 F<bin/Makefile.PL> more intelligent in their support of the C<$BRICOLAGE_ROOT>
 configuration variable. [Brian Smith]
 
+=item *
+
+Removed redudant permission granting code from the upgrade script library,
+since `make db_grant` is always run by `make db_upgrade`, anyway. [David]
+
 =back
 
 =head2 Bug Fixes
