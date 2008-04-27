@@ -1361,9 +1361,10 @@ you're upgrading an older installation of Bricolage that didn't have a build
 system, or it was simply used as-is from Subversion, you'll need to follow the
 directions below.
 
-To upgrade a manual installation of Bricolage, first set the BRICOLAGE_ROOT
-environment variable to the root of your Bricolage installation if it's
-something other than the default (F</usr/local/bricolage>), e.g.:
+To upgrade a manual installation of Bricolage, first set the
+C<$BRICOLAGE_ROOT> environment variable to the root of your Bricolage
+installation if it's something other than the default
+(F</usr/local/bricolage>), e.g.:
 
   export BRICOLAGE_ROOT=/opt/bricolage
 
@@ -1411,6 +1412,24 @@ version. See the L<"CONFIGURATION"> section below for details.
 Now, start up Bricolage and enjoy the new features!
 
   $BRICOLAGE_ROOT/bin/bric_apachectl start
+
+=head2 Switching to Apache 2
+
+As of version 2.0, Bricolage supports the Apache 2 Web server. If you'd like
+to upgrade your existing, Apache 1-powered Bricolage install to run on Apache
+2, first install Apache 2, mod_perl 2, and Apache2::Request (apreq 2). Then,
+just run C<make upgrade> as usual, but select "apache2" instead of "apache".
+Once the upgrade has finished, just execute these commands:
+
+  cd $BRICOLAGE_ROOT/conf
+  mv httpd.conf httpd.conf.orig
+  cp httpd.conf.def httpd.conf
+  mv bricolage.conf bricolage.conf.orig
+  cp bricolage.conf.def bricolage.conf
+
+If you've customized your F<httpd.conf> or F<bricolage.conf> settings, you
+will likely have to edit the new files to sync up with your original settings.
+Once that's done, just start Bricolage and you'll be good to go on Apache 2.
 
 =head1 CONFIGURATION
 
