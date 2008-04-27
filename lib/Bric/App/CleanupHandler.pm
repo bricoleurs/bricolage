@@ -120,6 +120,9 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
+
     eval {
         # Commit events (and send alerts).
         begin(1);

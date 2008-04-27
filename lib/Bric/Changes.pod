@@ -107,6 +107,11 @@ configuration variable. [Brian Smith]
 Removed redudant permission granting code from the upgrade script library,
 since `make db_grant` is always run by `make db_upgrade`, anyway. [David]
 
+=item *
+
+Eliminated extra processing and a potential error caused by mod_perl
+internally creating a sub-request. [David]
+
 =back
 
 =head2 Bug Fixes

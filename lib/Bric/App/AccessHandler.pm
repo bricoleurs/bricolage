@@ -126,6 +126,8 @@ B<Notes:> NONE.
 
 sub handler {
     my $r = shift;
+    # Do nothing to subrequests.
+    return OK if $r->main;
 
     my $ret = eval {
         # Silently zap foolish user access to http when SSL is always required
