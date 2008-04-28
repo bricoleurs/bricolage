@@ -128,9 +128,8 @@ sub get_users {
     );
     if ($DB{create_db}) {
         print "\n";
-        ask_confirm('Postgres Root Username', \$DB{root_user}, $QUIET);
-        ask_password('Postgres Root Password (leave empty for no password)',
-                     \$DB{root_pass}, $QUIET);
+        ask_confirm('Postgres Super Username', \$DB{root_user}, $QUIET);
+        ask_password(qq{Password for super user "$DB{root_user}"}, \$DB{root_pass}, $QUIET);
 
         unless ($DB{host_name}) {
             print "\n";
@@ -161,7 +160,7 @@ sub get_users {
         }
     }
 
-    ask_password("Bricolage Postgres Password", \$DB{sys_pass}, $QUIET);
+    ask_password(qq{Password for Postgres user "$DB{sys_user}"}, \$DB{sys_pass}, $QUIET);
     ask_confirm("Bricolage Database Name", \$DB{db_name}, $QUIET);
 }
 

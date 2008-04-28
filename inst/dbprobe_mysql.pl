@@ -108,9 +108,6 @@ sub get_users {
     );
 
     if ($DB{create_db}) {
-        ask_password("MySQL Root Password (leave empty for no password)",
-            \$DB{root_pass}, $QUIET);
-
         unless ($DB{host_name}) {
             $DB{system_user} = $DB{root_user};
             while(1) {
@@ -120,19 +117,22 @@ sub get_users {
                 print "User \"$DB{system_user}\" not found!  This user must exist ".
                     "on your system.\n";
             }
+            ask_password(qq{Password for MySQL root user "$DB{root_user}"},
+                         \$DB{root_pass}, $QUIET);
+
         }
     }
 
     while(1) {
-        ask_confirm("Bricolage Mysql Username", \$DB{sys_user}, $QUIET);
+        ask_confirm("Bricolage MySQL Username", \$DB{sys_user}, $QUIET);
         if ($DB{sys_user} eq $DB{root_user}) {
-            print "Bricolage Mysql User cannot be the same as the Postgres Root User.\n";
+            print "Bricolage MySQL User cannot be the same as the Postgres Root User.\n";
         } else {
             last;
         }
     }
 
-    ask_password("Bricolage Mysql Password", \$DB{sys_pass}, $QUIET);
+    ask_password(qq{Password for MySQL user "$DB{sys_user}"}, \$DB{sys_pass}, $QUIET);
     ask_confirm("Bricolage Database Name", \$DB{db_name}, $QUIET);
 }
 
@@ -140,12 +140,12 @@ sub get_users {
 sub get_host {
     print "\n";
     ask_confirm(
-        "Mysql Database Server Hostname (default is unset, i.e., localhost)",
+        "MySQL Database Server Hostname (default is unset, i.e., localhost)",
         \$DB{host_name},
         $QUIET,
     );
     ask_confirm(
-        "Mysql Database Server Port Number (default is unset, i.e., 3306)",
+        "MySQL Database Server Port Number (default is unset, i.e., 3306)",
         \$DB{host_port},
         $QUIET,
     );
@@ -170,13 +170,13 @@ sub get_server_version {
       unless $data;
     $data=~s/Server version:\s*//;
     my ($x, $y, $z) = $data=~ /(\d+)\.(\d+)(?:\.(\d+))?/;
-    return soft_fail("Failed to parse Mysql server version from string ",
+    return soft_fail("Failed to parse MySQL server version from string ",
                       "\"$data\".")
         unless defined $x and defined $y;
     $z ||= 0;
-    return soft_fail("Found old version of Mysql server: $x.$y.$z - ",
+    return soft_fail("Found old version of MySQL server: $x.$y.$z - ",
                      "5.0.3 or greater required.")
 	unless $x > 5 or ($x == 5 and ( $y >= 1 or $z >= 3));
-    print " Found acceptable version of Mysql server: $x.$y.$z.\n";
+    print " Found acceptable version of MySQL server: $x.$y.$z.\n";
     $DB{server_version}="$x.$y.$z";
 }
