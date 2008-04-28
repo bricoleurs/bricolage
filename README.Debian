@@ -28,7 +28,12 @@ Bricolage:
   expat
   unzip
 
-For other Perl module packages see below.
+For other Perl module packages see below. Once all dependencies have been
+satisfied, make sure that you enter "yes" when asked by the installer whether
+or not it should become the PostgreSQL system user, as the default Debian
+PostgreSQL configuration requires it. See
+http://www.depesz.com/index.php/2007/10/04/ident/ for a detailed explanation
+of the issue.
 
 
 SFTP Mover

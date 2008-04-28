@@ -178,6 +178,14 @@ The password for the PostgreSQL super user. Defaults to an empty string, which
 works for a locally-installed PostgreSQL using "trust" or "ident"
 authentication.
 
+=item * BRICOLAGE_PG_BECOME_USER
+
+A boolean indicating whether or not the installer should become the PostgreSQL
+system user (usually named "postgres") before connecting to the database and
+making changes to it. Such is required if your PostgreSQL server uses ident
+authentication, as is the default for Debian builds of PostgreSQL. Defaults to
+false.
+
 =item * BRICOLAGE_PG_BRICUSER
 
 The name of the PostgreSQL user for Bricolage itself to use. Defaults to

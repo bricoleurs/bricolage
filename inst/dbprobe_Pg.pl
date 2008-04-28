@@ -133,13 +133,21 @@ sub get_users {
                      \$DB{root_pass}, $QUIET);
 
         unless ($DB{host_name}) {
-            $DB{system_user} = $DB{root_user};
-            while(1) {
-                ask_confirm('Postgres System Username', \$DB{system_user}, $QUIET);
-                $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
-                last if defined $DB{system_user_uid};
-                print "User \"$DB{system_user}\" not found!  This user must exist ".
-                    "on your system.\n";
+            print "\n";
+            print "Should the installer become the Postgres system user?\n";
+            if ( ask_yesno(
+                'This requires that the installer be run as root.',
+                get_default('PG_BECOME_USER') || 0,
+                $QUIET,
+            )) {
+                $DB{system_user} = $DB{root_user};
+                while(1) {
+                    ask_confirm('Postgres System Username', \$DB{system_user}, $QUIET);
+                    $DB{system_user_uid} = (getpwnam($DB{system_user}))[2];
+                    last if defined $DB{system_user_uid};
+                    print "User \"$DB{system_user}\" not found!  This user must exist ".
+                        "on your system.\n";
+                }
             }
         }
     }

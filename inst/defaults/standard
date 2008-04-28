@@ -54,9 +54,10 @@ HTTPD_VERSION = apache
 # If it's running on a port other than the default port (5432), pass the 
 # appropriate port number with PG_HOSTPORT.
 
-PG_SUPERUSER  = postgres
-PG_BRICUSER   = bric
-PG_DB         = bric
+PG_SUPERUSER   = postgres
+PG_BRICUSER    = bric
+PG_DB          = bric
+PG_BECOME_USER = 0
 
 # MySQL settings.  MYSQL_SUPERUSER is the username of the MySQL
 # superuser (typically "root").  MYSQL_BRICUSER is the username that 
