@@ -21,10 +21,11 @@ if (my $sys_user = $DB->{system_user}) {
 }
 
 # Set environment variables for psql.
-$ENV{DBUSER} = $DB->{root_user};
-$ENV{DBPASSWORD} = $DB->{root_pass};
-$ENV{DBHOST} = $DB->{host_name} if $DB->{host_name};
-$ENV{DBPORT} = $DB->{host_port} if $DB->{host_port};
+use Data::Dumper;
+$ENV{PGUSER} = $DB->{root_user};
+$ENV{PGPASSWORD} = $DB->{root_pass};
+$ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
+$ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 BEGIN { $ERR_FILE = catfile tmpdir, '.db.stderr' }
 END { unlink $ERR_FILE if $ERR_FILE && -e $ERR_FILE }
 
