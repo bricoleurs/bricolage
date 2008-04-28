@@ -21,7 +21,6 @@ if (my $sys_user = $DB->{system_user}) {
 }
 
 # Set environment variables for psql.
-use Data::Dumper;
 $ENV{PGUSER} = $DB->{root_user};
 $ENV{PGPASSWORD} = $DB->{root_pass};
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
