@@ -434,8 +434,6 @@ START MODULE LIST
 
 =item Test::Pod 0.95 (optional)
 
-=item Apache2::SizeLimit (optional)
-
 =item Net::FTPServer (optional)
 
 =item Net::SFTP 0.08 (optional)
@@ -460,30 +458,54 @@ Note that you also have some required categories of modules, but you must pick
 from among them. Depending on your choice of database, you will need to install
 one of:
 
+=begin installation
+
+START DBD
+
+=end installation
+
 =over
 
-=item DBD::Pg 1.22 (optional)
+=item DBD::Pg 1.22
 
-=item DBD::mysql 3.0007 (optional)
+=item DBD::mysql 3.0007
 
 =back
 
 And depending on whether you're using Apache 1 or Apache 2, you'll need to
 install one of:
 
+=begin installation
+
+END DBD
+
+START Apache
+
+=end installation
+
 =over
 
-=item Apache::Request (optional)
+=item Apache::Request
 
-=item Apache2::Request (optional)
+=item Apache2::Request
 
 =back
 
 The fact that these are maked "(optional)" is just to help the installer
 determine CPAN dependencies. Trust us, one or the other of these B<is>
-required.
+required. Either one of these is optional, however:
+
+=over
+
+=item Apache::SizeLimit (optional)
+
+=item Apache2::SizeLimit (optional)
+
+=back
 
 =begin installation
+
+END Apache
 
 END MODULE LIST
 

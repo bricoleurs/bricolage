@@ -46,14 +46,19 @@ extract_module_list();
 foreach my $rec (@MOD) {
     $rec->{found} = check_module($rec);
     unless ($rec->{found}) {
-        # If the module is optional, ask if they want to install it;
-        # if not, but it's required for their type of installation
-        # (i.e. Pg or mysql), treat it as missing anyway.
-        if ($rec->{optional} and
-            (not ask_yesno("Do you want to install the optional module " .
-                           "$rec->{name}?", 0, $QUIET)
-               or $rec->{name} ne 'DBD::'.$REQ->{DB_TYPE})) {
-            $rec->{found} = 1;
+        # If the module is optional, check to see if it's required by the
+        # database or Apache choice, and act accordingly. If it really is an
+        # optional module, then ask if they want to install it.
+        if ( $rec->{optional} ) {
+            if ( ask_yesno(
+                "Do you want to install the optional module $rec->{name}?",
+                0,
+                $QUIET
+            )) {
+                $MISSING = 1;
+            } else {
+                $rec->{found} = 1;
+            }
         } else {
             $MISSING = 1;
         }
@@ -62,7 +67,7 @@ foreach my $rec (@MOD) {
 
 # if we have missing, tell all about it and make sure they want to proceed
 if ($MISSING) {
-    print "\nThe following required modules are either missing or out of ", 
+    print "\nThe following required modules are either missing or out of ",
       "date:\n\n";
     print map { "\t$_->{name}\n" } grep { not $_->{found} } @MOD;
     print <<END;
@@ -96,7 +101,7 @@ sub check_module {
     $|++;
     print "Looking for $name...";
 
-    { 
+    {
         local $^W = 0; # ignore warnings from modules
         my $result = eval "require $name;";
         return soft_fail("not found.") if $@;
@@ -114,26 +119,46 @@ sub check_module {
     return 1;
 }
 
-# extract the module list from Bric::Admin
+# Extract the module list from Bric::Admin
 sub extract_module_list {
-  my @mod;
-  open(ADM, "$FindBin::Bin/../lib/Bric/Admin.pod")
-    or die "Unable to open $FindBin::Bin/../lib/Bric/Admin.pod : $!";
-  # seek to start of modules
-  while (<ADM>) {
-    last if /START MODULE LIST/;
-  }
-  # read in modules
-  while (<ADM>) {
-    if (/^=item\s+(\S+)(?:\s+([\d\.]+))?(?:\s+(\(optional\)))?/) {
-      push @MOD, { name             => $1,
-		   req_version      => $2,
-                   optional         => defined $3 ? 1 : 0,
-                 };
-    } elsif (/END MODULE LIST/) {
-      last;
+    open(ADM, "$FindBin::Bin/../lib/Bric/Admin.pod")
+        or die "Unable to open $FindBin::Bin/../lib/Bric/Admin.pod : $!";
+    # seek to start of modules
+    while (<ADM>) {
+        last if /^START MODULE LIST/;
     }
-  }
-  close ADM;
-}
+    # read in modules
 
+    my $group = 'base';
+    my %mods_for = ( $group => [] );
+    while (<ADM>) {
+        last if /^END MODULE LIST/;
+        if (/^START\s+(\w+)/ ) {
+            $mods_for{$group = $1} = [];
+            next;
+        } elsif (/^=item\s+(\S+)(?:\s+([\d\.]+))?(?:\s+(\(optional\)))?/) {
+            push @{ $mods_for{$group} }, {
+                name             => $1,
+                req_version      => $2,
+                optional         => defined $3 ? 1 : 0,
+            };
+        }
+    }
+    close ADM;
+
+    while (my ($group, $mods) = each %mods_for ) {
+        # Handle the different groups of modules as appropriate.
+        if ($group eq 'DBD') {
+            # We just need the DBD for the selected database.
+            push @MOD, grep { $_->{name} eq "DBD::$REQ->{DB_TYPE}" } @$mods;
+        } elsif ($group eq 'Apache') {
+            # We only want the modules corresponding to the selected Apache.
+            my $ns = ucfirst $REQ->{HTTPD_VERSION};
+            push @MOD, grep { $_->{name}  =~ /^$ns\::/ } @$mods;
+        } else {
+            # Everything else goes in.
+            push @MOD, @$mods;
+        }
+    }
+
+}
