@@ -101,9 +101,8 @@ sub get_version {
 # ask the user for user settings
 sub get_users {
     print "\n";
-    print "Should the installer create the database user and database?\n";
     $DB{create_db} = ask_yesno(
-        'This requires `make install` to be run as root.',
+        'Should the installer connect to the database as a super user?',
         get_default('CREATE_DB') || 1,
         $QUIET
     );

@@ -30,7 +30,6 @@ use Bric::Inst qw(:all);
 use File::Spec::Functions;
 use Data::Dumper;
 
-
 our $REQ;
 do "./required.db" or die "Failed to read required.db : $!";
 
