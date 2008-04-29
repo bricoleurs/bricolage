@@ -625,9 +625,10 @@ sub _update_subelements {
             $self->_update_subelements($t, $param);
         }
 
-        if (!$is_cont &&
-             (!$t->is_autopopulated or exists
-              $param->{$widget . "|lock_val_$id"})) {
+        if (!$is_cont && (
+            !$t->is_autopopulated
+            or exists $param->{$widget . "|lock_val_$id"}
+        )) {
             my $val = $param->{$widget . "|$id"};
             $val = '' unless defined $val;
             if ( $param->{$widget . "|${id}-partial"} ) {

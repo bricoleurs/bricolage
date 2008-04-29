@@ -447,48 +447,53 @@ sub _deserialize_element {
     my $site_id   = $options{site_id};
     my @relations;
 
-    # make sure we have an empty element - Story->new() helpfully (?)
-    # creates empty data elements for required elements.
-    if (my @e = $element->get_elements) {
-        $element->delete_elements(\@e);
-        $element->save; # required for delete to "take"
+    # Map out the existing elements.
+    my (%containers, %fields);
+    for my $e ($element->get_containers) {
+        push @{ $containers{$e->get_element_type_id } ||= [] }, $e;
+    }
+    for my $e ($element->get_fields) {
+        push @{ $fields{$e->get_field_type_id } ||= [] }, $e;
     }
 
-    # get lists of possible data types and possible containers that
-    # can be added to this element.  Hash on names for quick lookups.
+    my @to_delete;
+
+    # get lists of possible field and container element types that can be
+    # added to this container element. Hash on names for quick lookups.
     my %valid_data      = map { $_->get_key_name => $_ }
-        $element->get_possible_field_types();
+        $element->get_element_type->get_field_types;
     my %valid_container = map { $_->get_key_name, $_  }
-        $element->get_possible_containers();
+        $element->get_element_type->get_containers;
 
     # load data elements
     $data->{field} ||= $data->{data};
     if ($data->{field}) {
         foreach my $d (@{$data->{field}}) {
             my $key_name = $d->{type} || $d->{element};
-            my $at = $valid_data{$key_name};
-            throw_ap(error => "Error loading data element '$key_name' for " .
-                       $element->get_key_name .
-                       ": cannot add field $key_name here.")
-              unless $at;
+            my $at = $valid_data{$key_name} or throw_ap(
+                error => "Error loading data element '$key_name' for " .
+                    $element->get_key_name .
+                        ": cannot add field $key_name here."
+            );
 
+            my $content = '';
             if ($at->get_sql_type eq 'date') {
-                # add date data to container
-                $element->add_field(
-                    $at,
-                    exists $d->{content} ?
-                        xs_date_to_db_date($d->{content}) : '',
-                    $d->{order}
-                );
+                $content = xs_date_to_db_date($d->{content})
+                    if exists $d->{content};
             } else {
-                my $content = exists $d->{content} ? $d->{content} : '';
+                $content = $d->{content} if exists $d->{content};
                 my $maxlen = $at->get_max_length;
                 if ($maxlen && length($content) > $maxlen) {
                     throw_ap(error => "Error loading data element '$key_name' for " .
                              $element->get_key_name .
                              ": content exceeds maximum length ($maxlen).");
                 }
+            }
 
+            if ( my $f = shift @{ $fields{ $at->get_id } || [] } ) {
+                $f->set_value( $content );
+                $f->set_place( $d->{order} );
+            } else {
                 # add data to container
                 $element->add_field(
                     $at,
@@ -496,9 +501,6 @@ sub _deserialize_element {
                     $d->{order}
                 );
             }
-
-            $element->save; # I'm not sure why this is necessary after
-                            # every add, but removing it causes errors
         }
     }
 
@@ -506,14 +508,15 @@ sub _deserialize_element {
     if ($data->{container}) {
         foreach my $c (@{$data->{container}}) {
             my $key_name = $c->{element_type} || $c->{element};
-            my $at = $valid_container{$key_name};
-            throw_ap(error => "Error loading container element for " .
-                       $element->get_key_name .
-                       " cannot add field $key_name here.")
-              unless $at;
+            my $at = $valid_container{$key_name} or throw_ap(
+                error => "Error loading container element for " .
+                    $element->get_key_name .
+                    " cannot add field $key_name here."
+            );
 
             # setup container object
-            my $container = $element->add_container($at);
+            my $container = shift @{ $containers{ $at->get_id } || [] }
+                || $element->add_container($at);
             $container->set_place($c->{order});
             $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
@@ -528,12 +531,18 @@ sub _deserialize_element {
                 data      => $c
             );
             # Log it.
-            log_event("${type}_add_element", $object,
-                      { Element => $container->get_key_name })
-              if $type && $object;
+            log_event("${type}_add_element", $object, {
+                Element => $container->get_key_name
+            }) if $type && $object;
 
         }
     }
+
+    # Delete any leftovers.
+    $element->delete_elements([
+        map { @$_ } values %containers, values %fields
+    ]);
+    $element->save;
     return @relations;
 }
 
