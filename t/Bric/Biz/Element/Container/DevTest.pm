@@ -194,7 +194,7 @@ sub test_field_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" cannot be added. There are already'
-      . ' [_2] [quant,_2,field] of this type, with a max of [_3].',
+      . ' [quant,_2,field,fields] of this type, with a max of [_3].',
         'para',
         4,
         4,
@@ -240,7 +240,7 @@ sub test_field_occurrence : Test(80) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Field "[_1]" cannot be deleted. There must be'
-      . ' at least [_2] [quant,_2,field] of this type.',
+      . ' at least [quant,_2,field,fields] of this type.',
         'para',
         5,
     ], 'Should get the correct maketext array';
@@ -372,8 +372,8 @@ sub test_zelem_occurrence : Test(93) {
       . ' There are already 2 elements of this type, with a max of 2.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Element "[_1]" cannot be added. There are already [_2]'
-      . ' [quant,_2,element] of this type, with a max of [_3].',
+        'Element "[_1]" cannot be added. There are already '
+      . '[quant,_2,element,elements] of this type, with a max of [_3].',
         $ets[0]->get_key_name,
         2,
         2,
@@ -392,7 +392,7 @@ sub test_zelem_occurrence : Test(93) {
         'Should get the correct exception message';
     is_deeply $err->maketext, [
         'Element "[_1]" cannot be deleted. There must be at least'
-      . ' [_2] [quant,_2,element] of this type.',
+      . ' [quant,_2,element,elements] of this type.',
         $ets[0]->get_key_name,
         2,
     ], 'Should get the correct maketext array';
@@ -913,7 +913,7 @@ sub test_pod : Test(227) {
       . 'Please remove all but 1.',
         'Should get the correct exception message';
     is_deeply $err->maketext, [
-        'Field "[_1]" appears [_2] times around line [_3].'
+        'Field "[_1]" appears [_2] times around line [_3]. '
       . 'Please remove all but [_4].',
         'para',
         6,
