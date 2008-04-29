@@ -42,8 +42,11 @@ eval { mkpath $tmpdir };
 if (my $err = $@) {
     die "Cannot create '$tmpdir': $err\n";
 }
-chown $DB->{system_user_uid}, -1, $tmpdir
-  or die "Cannot chown '$tmpdir' to $DB->{ROOT_USER}: $!\n";
+
+if ($DB->{system_user_uid}) {
+    chown $DB->{system_user_uid}, -1, $tmpdir
+        or die "Cannot chown '$tmpdir' to $DB->{ROOT_USER}: $!\n";
+}
 
 # Set environment variables for psql.
 $ENV{PGUSER} = $DB->{root_user};
@@ -89,8 +92,8 @@ foreach my $v (@{$UPGRADE->{TODO}}) {
             $perl, $script,
             '-u', $DB->{root_user},
             '-p', $DB->{root_pass},
-            '-i', $DB->{system_user_uid},
-            '-s', $DB->{system_user},
+            '-i', $DB->{system_user_uid} || '',
+            '-s', $DB->{system_user} || '',
         );
 
         # Pass through abnormal exits so that `make` will be halted.
