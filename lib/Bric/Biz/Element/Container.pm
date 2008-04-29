@@ -1026,7 +1026,7 @@ sub add_field {
                       . qq{$field_occurrence fields of this type, with a max of $field_max_occur.},
             maketext => [
                 'Field "[_1]" cannot be added. There are already '
-              . '[_2] [quant,_2,field] of this type, with a max of [_3].',
+              . '[quant,_2,field,fields] of this type, with a max of [_3].',
                 $field_name,
                 $field_occurrence,
                 $field_max_occur,
@@ -1097,7 +1097,7 @@ sub add_container {
                       . qq{$elem_occurrence elements of this type, with a max of $max_occur.},
             maketext => [
                 'Element "[_1]" cannot be added. There are already '
-              . '[_2] [quant,_2,element] of this type, with a max of [_3].',
+              . '[quant,_2,element,elements] of this type, with a max of [_3].',
                 $elem_name,
                 $elem_occurrence,
                 $max_occur,
@@ -1525,7 +1525,7 @@ sub delete_elements {
                                   . qq{There must be at least $min_occur elements of this type.},
                         maketext => [
                             'Element "[_1]" cannot be deleted. There must '
-                          . 'be at least [_2] [quant,_2,element] of this type.',
+                          . 'be at least [quant,_2,element,elements] of this type.',
                             $elem_name,
                             $min_occur,
                         ]
@@ -1556,7 +1556,7 @@ sub delete_elements {
                                   . qq{There must be at least $the_min_occur fields of this type.},
                         maketext => [
                             'Field "[_1]" cannot be deleted. There must '
-                          . 'be at least [_2] [quant,_2,field] of this type.',
+                          . 'be at least [quant,_2,field,fields] of this type.',
                             $field_name,
                             $the_min_occur,
                         ]
@@ -2387,7 +2387,7 @@ sub _deserialize_pod {
                                   . qq{$subelem_occur elements of this type, with a max of $subelem_max.},
                         maketext => [
                           'Element "[_1]" cannot be added. There are already '
-                        . '[_2] [quant,_2,element] of this type, with a max of [_3].',
+                        . '[quant,_2,element,elements] of this type, with a max of [_3].',
                             $elem_key_name,
                             $subelem_occur,
                             $subelem_max,
@@ -2516,7 +2516,7 @@ sub _deserialize_pod {
                                   . qq{times around line $line_num.}
                                   . qq{Please remove all but $max_occur.},
                         maketext => [
-                            'Field "[_1]" appears [_2] times around line [_3].'
+                            'Field "[_1]" appears [_2] times around line [_3]. '
                           . 'Please remove all but [_4].',
                             $kn,
                             $field_occurrence,

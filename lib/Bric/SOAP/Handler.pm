@@ -130,8 +130,7 @@ BEGIN {
 }
 
 if ( Bric::Config::ENCODE_OK && $SOAP::Lite::VERSION lt '0.71.03' ) {
-    # XXX Change the version number above as appropriate in response to the
-    # resolution of http://rt.cpan.org/Ticket/Display.html?id=35041.
+    # XXX http://rt.cpan.org/Ticket/Display.html?id=35041
     package SOAP::Serializer;
     no warnings 'redefine';
     eval q{
@@ -222,9 +221,10 @@ sub handle_err {
     $commit = 0;
 
     # Create an exception object unless we already have one.
-    $err = Bric::Util::Fault::Exception::AP->new
-        ( error => "Error executing SOAP command", payload => $err || $string )
-        unless isa_bric_exception($err);
+    $err = Bric::Util::Fault::Exception::AP->new(
+        error   => "Error executing SOAP command",
+        payload => $err || $string,
+    ) unless isa_bric_exception($err);
 
     # Rollback the database transactions.
     eval { rollback(1) };
