@@ -49,13 +49,13 @@ if (defined $id) {
     }
 }
 $m->out(qq{<div style="padding: 10px;">});
-$m->comp('/widgets/add_more/add_more.mc', 
+$m->comp('/widgets/add_more/add_more.mc',
     type => 'media_type_ext',
-	fields => [qw(extension)], 
-	name => 'media_type_ext', 
+	fields => [qw(extension)],
+	name => 'media_type_ext',
 	read_only => $no_edit,
-	use_vals => 1, 
-	objs => $objs, 
+	use_vals => 1,
+	objs => $objs,
 	meths => $meths,
     param => \%ARGS,
 );
