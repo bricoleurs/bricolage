@@ -31,8 +31,8 @@ $m->comp("/widgets/doubleListManager/doubleListManager.mc",
 This is a sub element that creates a double list manager. Can be supplied with
 an array of hashes for option values and descriptions for either left or right
 side options.  Values added to the readOnly arrays for either side will not be
-moved when the user hits the add or remove buttons.  Only values that are added 
-to the right side list by the user will be sent to the server when the form 
+moved when the user hits the add or remove buttons.  Only values that are added
+to the right side list by the user will be sent to the server when the form
 is submitted.
 
 </%doc>
@@ -41,13 +41,13 @@ my $widget = 'doubleListManager';
 </%once>
 <%args>
 @leftOpts	=> ()
-@rightOpts 	=> ()
+@rightOpts	=> ()
 $leftCaption    => ''
 $rightCaption   => ''
-$leftName 	=> "all_groups"
-$rightName 	=> "selected_groups"
-@readOnlyLeft 	=> ()
-@readOnlyRight 	=> ()
+$leftName	=> "all_groups"
+$rightName	=> "selected_groups"
+@readOnlyLeft	=> ()
+@readOnlyRight	=> ()
 $readOnly       => 0
 $useTable       => 1
 $showLeftList   => 1
@@ -101,32 +101,32 @@ $m->out(qq{<script type="text/javascript">\n},
         qq{</script>\n});
 </%init>
 % # begin html ---------------
-<table width=578 border=0 cellpadding=0 cellspacing=0>
+<table width="578" border="0" cellpadding="0" cellspacing="0" class="dlman">
   <tr>
 <%perl>;
 if ($showLeftList) {
-    $m->out(qq{  <td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>
-                 <td width=230 align=center><span class=label>$leftCaption</span></td>}  );
+    $m->out(qq{  <td width="50"><img src="/media/images/spacer.gif" width="50" height="1" /></td>
+                 <td width="230" align="center"><span class="label">$leftCaption</span></td>}  );
 } else {
-    $m->out(" <td width=50>&nbsp;</td><td>&nbsp;</td>");
+    $m->out(' <td width="50">&nbsp;</td><td>&nbsp;</td>');
 }
 </%perl>
-<td width=18 rowspan=3><img src="/media/images/spacer.gif" width=18 height=1 /></td>
+<td width="18" rowspan="3"><img src="/media/images/spacer.gif" width="18" height="1" /></td>
 <%perl>;
 if ($showRightList) {
-    $m->out(qq { <td align=center width=230><span class=label>$rightCaption</span></td>
-                 <td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>} );
+    $m->out(qq { <td align="center" width="230"><span class="label">$rightCaption</span></td>
+                 <td width="50"><img src="/media/images/spacer.gif" width="50" height="1" /></td>} );
 } else {
-    $m->out(qq{ <td>&nbsp;</td><td width=50><img src="/media/images/spacer.gif" width=50 height=1 /></td>});
+    $m->out(qq{ <td>&nbsp;</td><td width="50"><img src="/media/images/spacer.gif" width="50" height="1" /></td>});
 }
 </%perl>
 </tr>
 
 <tr>
-    <td>&nbsp;</td><td valign=top align=right>
+    <td>&nbsp;</td><td valign="top" align="right">
 % if ($showLeftList) {
 %   if (!$readOnly) {
-      <select name="<% $leftName %>" id="<% $leftName %>" size="<% $size %>" multiple >
+      <select name="<% $leftName %>" id="<% $leftName %>" size="<% $size %>" multiple="multiple" >
       <% $left %>
       </select>
 %   } else {
@@ -137,7 +137,7 @@ if ($showRightList) {
     <td valign=top>
 % if ($showRightList) {
 %   if (!$readOnly) {
-      <select name="<% $rightName %>" id="<% $rightName %>" size="<% $size %>" multiple >
+      <select name="<% $rightName %>" id="<% $rightName %>" size="<% $size %>" multiple="multiple" >
       <% $right %>
       </select>
 %   } else {
@@ -149,7 +149,7 @@ if ($showRightList) {
 </tr>
 <%perl>;
 if ($showLeftList && $showRightList && !$readOnly) {
-    $m->out(qq{ <tr><td>&nbsp;</td><td align="right"> });
+    $m->out(qq{ <tr class="dlbtns"><td>&nbsp;</td><td align="right"> });
     $m->out(qq{ <a href="#" onclick="move_item('} . $formName . qq{', '} . $leftName . qq{', '} . $rightName . qq{'); return false;">});
     $m->out(qq{<img src="/media/images/$lang_key/add_to_list_lgreen.gif" border=0 /></a>} );
     $m->out(qq{ </td><td align="left"> } );

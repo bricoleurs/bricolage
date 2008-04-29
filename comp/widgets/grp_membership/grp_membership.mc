@@ -6,10 +6,10 @@ grp_membership - Group membership widget
 
 =head1 SYNOPSIS
 
-<& '/widgets/grp_membership/grp_membership.mc', 
-   grp_class => 'Bric::Util::Grp', 
-   obj => $obj, 
-   formName => 'obj_profile', 
+<& '/widgets/grp_membership/grp_membership.mc',
+   grp_class => 'Bric::Util::Grp',
+   obj => $obj,
+   formName => 'obj_profile',
    all => 0
 &>
 
@@ -108,7 +108,7 @@ $m->comp( "/widgets/doubleListManager/doubleListManager.mc",
           readOnlyLeft  => \@logroups,
           leftCaption   => 'Available Groups',
           showLeftList  => !$no_edit,
-	  rightCaption  => $no_edit ? '' : 'Current Groups',
+          rightCaption  => $no_edit ? '' : 'Current Groups',
           readOnly      => $no_edit
         );
 

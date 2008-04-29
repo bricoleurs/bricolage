@@ -834,3 +834,9 @@ form .row,
 .paginate,
 .viewmeta {display: block;}
 /* End hide from IE-mac */
+
+/* double list manager. */
+table.dlman select { width: 40em; } /* IE-specific setting */
+table.dlman tr td > select { width:auto; min-width: 20em; } /* All other browsers */
+table.dlman { margin: 1em; }
+table.dlman tr.dlbtns { height: 30px; }
