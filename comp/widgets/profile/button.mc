@@ -53,7 +53,7 @@ my $vals = { disp      => '',
 
 $m->comp("/widgets/profile/displayFormElement.mc",
          id        => $id,
-         key       => $key, 
+         key       => $key,
          vals      => $vals,
          indent    => $indent,
          useTable  => $useTable,

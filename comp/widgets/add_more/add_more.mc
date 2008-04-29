@@ -34,44 +34,38 @@ for my $obj (@$objs) {
         my $id = $use_vals ? $obj->{id} : $obj->get_id;
         if (defined $id && !$read_only) {
             $m->out(qq{<td style="text-align: center;">});
-            
+
             # Output a hidden field with the ID.
             $m->comp('/widgets/profile/hidden.mc', name => "${type}_id", value => $id);
-            
-            # Output a delete button.
-            $m->comp('/widgets/profile/button.mc',
-                name => "del_$type\_button",
-                js   => qq{onclick="Element.remove(this.parentNode.parentNode); return false"},
-                button => 'delete_red',
-                useTable => 0
+
+            # Output a delete link.
+            $m->print(
+                '<a href="#" onclick="Element.remove(this.parentNode.parentNode); return false">',
+                '<img src="/media/images/delete.png" />',
+                '</a>'
             );
-            
             $m->out("</td>\n");
         }
         $m->out(qq{</tr>\n});
 }
 </%perl>
 
-% if (!$read_only) {
+% unless ($read_only) {
     <tr id="new_<% $type %>">
 %    foreach my $f (@$fields) {
         <td>
 %       delete $meths->{$f}{value};
-        <& '/widgets/profile/displayFormElement.mc', 
+        <& '/widgets/profile/displayFormElement.mc',
             key => $f,
-            vals => $meths->{$f}, 
-            name => '', 
+            vals => $meths->{$f},
+            name => '',
             useTable => 0
         &>
         </td>
 %   }
     <td>
-    <& '/widgets/profile/button.mc',
-        name => "del_$type\_button",
-        js   => qq{onclick="Element.remove(this.parentNode.parentNode); return false"},
-        button => 'delete_red',
-        useTable => 0
-    &>
+<button onclick="$('add-more-<% $type %>').appendChild(<% $type %>ElementCache.firstChild.cloneNode(true)); var f = document.getElementsByName('<% $fields->[0] %>'); if (f.length > 0) { f.item(f.length - 1).focus(); } this.hide(); return false">Add</button>
+<& '/widgets/profile/hidden.mc', name => 'addmore_type', value => $type &>
     </td>
     </tr>
 % }
@@ -80,22 +74,8 @@ for my $obj (@$objs) {
 <script type="text/javascript">
 var <% $type %>ElementCache = document.createElement("table");
 <% $type %>ElementCache.appendChild($('new_<% $type %>'));
-% unless (scalar @$objs) {
 $('add-more-<% $type %>').appendChild(<% $type %>ElementCache.firstChild.cloneNode(true));
-% }
 </script>
-
-% unless ($read_only) {
-<& '/widgets/profile/button.mc',
-    name   => "add_more_$type",
-    button => "add_more_lgreen",
-    disp   => 'Add More',
-    useTable => 0,
-    js     => qq{onclick="\$('add-more-$type').appendChild(} . $type . qq{ElementCache.firstChild.cloneNode(true)); return false"}
-&>
-<& '/widgets/profile/hidden.mc', 'name' => 'addmore_type', 'value' => $type &>
-% }
-
 <%args>
 $no_labels => undef
 $type
@@ -141,12 +121,12 @@ objects as she would like. This widget assists by displaying the existing
 associated objects, plus extra fields to add more objects.
 
 For example, let's say we have a user object with two contacts associated with
-it. The two rows will display the existing two contacts, plus delete buttons 
-next to them. Each time the "Add More" button is clicked, it will display 
+it. The two rows will display the existing two contacts, plus delete buttons
+next to them. Each time the "Add More" button is clicked, it will display
 another field so that the user can add another value.
 
-While the Add More widget handles the display of each row of input fields, 
-managing the changes of each row, as well as the addition of each row, must be 
+While the Add More widget handles the display of each row of input fields,
+managing the changes of each row, as well as the addition of each row, must be
 managed by you. It works by relying on arrays of the relevant fields. Each row
 has fields for each object that are named the same across rows.
 
@@ -156,19 +136,19 @@ passed to add_more.mc is "contact", each hidden field will be named
 "contact_id". Rows for which there is no object will not have this field.
 
 Following the ID hidden input, inputs will be output for each field defined by
-the C<fields> argument. For the contacts example cited in the Synopsis above, 
-there will be a "type" input and a "value" input in each row, regardless of 
+the C<fields> argument. For the contacts example cited in the Synopsis above,
+there will be a "type" input and a "value" input in each row, regardless of
 whether there's a pre-existing object for that row or not.
 
 When the delete button is clicked, the row is removed from the page via
 JavaScript, so that when Save is clicked, the values in that row will not be
 included.
 
-When processing the rows, go through the list of values (in our contact 
+When processing the rows, go through the list of values (in our contact
 example, we can use C<@{ $param->{value} }>), and update the object if there is
-a corresponding hidden ID field (e.g., C<$param->{contact_id}>). If there 
+a corresponding hidden ID field (e.g., C<$param->{contact_id}>). If there
 isn't, then delete it. Then loop through all of the existing objects and check
-to see if their IDs exist in C<$param->{contact_id}>.  If they don't, delete 
+to see if their IDs exist in C<$param->{contact_id}>.  If they don't, delete
 them.
 
 For an example of the Add More widget in practice, see the contacts in a user
@@ -219,8 +199,8 @@ according the the spec for the vals argument of displayFormElement.
 
 type - Required. A package key name that will be looked up in order to retrieve
 the contents of my_meths() unless use_vals is true. This type should describe
-the objects in $objs. The value of this key will also be used to name the 
-hidden field with the id of the object in that row. If the objects in the 
+the objects in $objs. The value of this key will also be used to name the
+hidden field with the id of the object in that row. If the objects in the
 C<$objs> anonymous array are contacts, for example, and type is "contact", then
 each row of existing contacts will have this field:
 
