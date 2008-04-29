@@ -212,17 +212,14 @@ bin 		:
 files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
-DBLOAD_FILES := $(shell find inst -name 'dbload_*.sql')
-
-db    		: inst/db.pl database.db $(DBLOAD_FILES)
-	$(PERL) inst/db.pl
+db    		: inst/db.pl database.db
+	$(PERL) inst/db.pl inst/dbload_*.sql
 
 files_with_hot_copy : config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl INSTALL HOT_COPY
 
-DBGRANT_FILES := $(shell find inst -name 'dbgrant_*.sql')
-db_grant	: inst/dbgrant.pl database.db $(DBGRANT_FILES)
-	$(PERL) inst/dbgrant.pl 
+db_grant	: inst/dbgrant.pl database.db
+	$(PERL) inst/dbgrant.pl
 
 done		: bconf/bricolage.conf db files bin lib cpan
 	$(PERL) inst/done.pl
@@ -299,7 +296,7 @@ dev_symlink :
 	$(PERL) inst/dev.pl
 
 dev 		: export DEVELOPER = 1
-dev			: inst/dist_sql install_dev_files install_db dev_symlink clean
+dev			: inst/dist_sql install_dev_files install_db dev_symlink clean distclean
 
 ##########################
 # test rules             #

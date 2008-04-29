@@ -50,11 +50,13 @@ if ($DB->{create_db}) {
 
     create_db();
     create_user();
+} else {
+    # Set variables for mysql user
+    $DB->{exec} .= " -u $DB->{sys_user} ";
+    $DB->{exec} .= "-p$DB->{sys_pass} " if $DB->{sys_pass};
 }
 
-# Set variables for mysql user
-$DB->{exec} .= " -u $DB->{sys_user} ";
-$DB->{exec} .= "-p$DB->{sys_pass} " if $DB->{sys_pass};
+# Set variables for host name and port.
 $DB->{exec} .= "-h $DB->{host_name} "
 if $DB->{host_name} && $DB->{host_name} ne 'localhost';
     $DB->{exec} .= "-P $DB->{host_port} " if $DB->{host_port} ne '';
