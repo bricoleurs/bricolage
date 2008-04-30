@@ -209,7 +209,6 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Bric::App::Session;
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
                          rethrow_exception);
 use Bric::Util::Trans::FS;
