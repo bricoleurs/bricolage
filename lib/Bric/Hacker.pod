@@ -642,24 +642,76 @@ Subversion branches.
 
 If you are a Bricolage release manager and you're getting ready to release a
 new version, here are the steps you'll need to take to create a distribution
-tarball_ First, proof-read the list of changes in L<Bric::Changes>. Be sure
-to add today's date to the header for the new release:
+tarball. First, proof-read the list of changes in L<Bric::Changes>. Be sure to
+add today's date to the header for the new release:
 
-  =34789>
-and L<http://www.bricolage.cc/downloads/>.
+  =head1 VERSION 2.x.x (2008-04-30)
+
+Make sure that the versions in F<inst/versions.txt> are correct.
+
+If this is a major release, you'll need to create a new branch, so that it can
+be maintained for bug fixes separately, and then tag the release in that
+branch. In Subversion, branches and tags are exactly the same; the difference
+is only in convention. So the convention for Bricolage is to store tags in the
+F<tags> subdirectory of the project directory, and branches in the F<branches>
+subdirectory. The other half of the convention is that no one should ever
+commit changes to a tag after it has been created. To create a branch, make
+the copy from the F<trunk>:
+
+  % svn cp https://svn.bricolage.cc/bricolage/trunk \
+    https://svn.bricolage.cc/bricolage/branches/rev_2_0 \
+    -m 'New branch for maintenance of Bricolage 2.0.x'
+
+Now export the branch and create the distribution tarball.
+
+  % svn export http://svn.bricolage.cc/bricolage/branches/rev_2_0
+  % cd rev_2_0
+  % make dist
+
+This will create a distribution tarball in the F<rev_2_0> directory. Copy this
+tarball somewhere, and do a full test with it, to make sure that Bricolage
+does indeed build and properly install itself.
+
+  % cp bricolage-2.x.x.tar.gz /tmp/src
+  % cd /tmp/src
+  % tar zxvf bricolage-2.x.x.tar.gz
+  % cd bricolage-1.x.x
+  % perl Makefile.PL
+  % make
+  # Shut down the database server.
+  % make test
+  # Start the database server.
+  % sudo make install
+  % make devtest
+  % sudo bric_apachectl start
+  # Log in to the UI and test it a bit.
+  % sudo make uninstall
+
+Be sure to run C<make devtest> after everything is installed to ensure that it
+is all functioning correctly. Users won't be running these tests, as they muck
+up the database. But that's okay for our validation of the release tarball.
+Use C<make uninstall> to clean up the mess. If you have to go back and make
+any changes, be sure to commit them to the Subversion repository and then do
+the whole thing over again. Once everything appears to be working properly,
+release!
+
+Releases consist minimally of uploading the dist tarball to
+L<http://sourceforge.net/project/showfiles.php?group_id=34789> and
+L<http://www.bricolage.cc/downloads/>, the latter via
+L<https://cm.bricolage.cc/>.
 
 Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:
 
-  % svn cp -m 'Tag for the 1.10.0 release of Bricolage.' \
-    http://svn.bricolage.cc/bricolage/branches/rev_1_10 \
-    http://svn.bricolage.cc/bricolage/tags/releases/1.10.0
+  % svn cp -m 'Tag for the 2.0.0 release of Bricolage.' \
+    http://svn.bricolage.cc/bricolage/branches/rev_2_0 \
+    http://svn.bricolage.cc/bricolage/tags/releases/2.0.0
 
 The tag is mainly kept for the purposes of record-keeping. And since copies
 are cheap in Subversion, it's worthwhile.
 
-At this point, you can add the next version to inst/versions.txt, change the
-version in F<lib/Bric.pm> and F<README>, add a new section to the top of
+At this point, you can add the next version to F<inst/versions.txt>, change
+the version in F<lib/Bric.pm> and F<README>, add a new section to the top of
 L<Bric::Changes>, and add a new directory to F<inst/upgrade/>.
 
 =head2 Documentation Generation
