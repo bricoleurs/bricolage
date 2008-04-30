@@ -6,7 +6,7 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.11.0 ()
+=head1 VERSION 1.11.0 (2008-04-30)
 
 =head2 New Features
 
@@ -194,7 +194,7 @@ Fixed a bug (svn 8039) in Container.pm that was preventing trunk from starting u
 
 =back
 
-=head1 VERSION 1.10.5 (2008-??-??)
+=head1 VERSION 1.10.5 (2008-04-29)
 
 =head2 Improvements
 
