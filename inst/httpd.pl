@@ -2,15 +2,23 @@
 
 =head1 NAME
 
-httpd.pl - Apache selection script to choose Apache version (apache, apache2)
-and start the appropriate probing script
+database.pl - Probes for the selected Apache server
 
 =head1 DESCRIPTION
 
-This script is called during "make" to ask the user to choose between
-different Apache versions then start the appropriate probing script.  It
-accomplishes this by asking the user .  Output collected in
-"httpd.db" by the actual probing scripts.
+This script is called during C<make> to probe for the selected databse server
+by executing the appropriate script, one of:
+
+=over
+
+=item * inst/htprobe_apache.pl
+
+=item * inst/htprobe_apache2.pl
+
+=back
+
+This script is dependent on the existence of F<required.db> to know which
+Apache has been selected.
 
 =head1 AUTHOR
 
@@ -33,35 +41,9 @@ use File::Spec::Functions;
 use Data::Dumper;
 
 our $REQ;
-do "./required.db" or die "Failed to read required.db : $!";
+do './required.db' or die "Failed to read required.db: $!\n";
 
-update_required_mods();
-run_probe();
-exit();
-
-sub update_required_mods {
-    our $MOD;
-    my $moddb = './modules.db';
-    do $moddb or die "Failed to read $moddb: $!";
-
-    my @MOD;
-    if ($REQ->{HTTPD_VERSION} eq 'apache') {
-        # remove modules not appropriate for apache 1.3
-        @MOD = grep { ! /^Apache2/ } @$MOD;
-    }
-    elsif ($REQ->{HTTPD_VERSION} eq 'apache2') {
-        # xxx: dunno...
-        # @MOD = grep {  } @$MOD;
-    }
-
-    open(my $fh, "> $moddb") or die "Unable to open $moddb: $!";
-    print $fh Data::Dumper->Dump([\@MOD], ['MOD']);
-    close($fh);
-}
-
-sub run_probe {
-    my $script = "./inst/htprobe_$REQ->{HTTPD_VERSION}.pl";
-    # @ARGV might contain "QUIET"
-    system($Config{perlpath}, $script, @ARGV) == 0
-      or die "Failed to launch $REQ->{HTTPD_VERSION} probing script $script: $?";
-}
+my $script = catfile 'inst', "htprobe_$REQ->{HTTPD_VERSION}.pl";
+# @ARGV might contain "QUIET"
+system($^X, $script, @ARGV)
+    and die "Failed to launch $REQ->{HTTPD_VERSION} probing script $script: $?\n";
