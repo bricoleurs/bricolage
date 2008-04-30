@@ -37,6 +37,19 @@ use File::Spec;
 use Bric::Test::Base;
 use Bric::Util::Grp; # Need to load now to prevent warnings later.
 
+BEGIN {
+    # XXX Delete Bric::Util::DBI::_disconnect() unless we're running dev
+    # tests or arbitrary tests (in which case it's likely that database-
+    # specific tests are being run). This is to prevent `make test` from
+    # throwing an exception when it can't connect to the database in
+    # _disconnect().
+    unless ($ENV{BRIC_DEV_TEST} or ($ENV{BRIC_TEST_CLASSES} &&$ENV{BRIC_TEST_CLASSES} =~ /DevTest\.pm\b/) ) {
+        require Bric::Util::DBI;
+        no warnings 'redefine';
+        *Bric::Util::DBI::_disconnect = sub {};
+    }
+}
+
 # Find the tests classes.
 my @classes;
 BEGIN {
@@ -82,16 +95,6 @@ BEGIN {
         die "Error loading $c: $@" if $@;
     }
 
-    # XXX Delete Bric::Util::DBI::_disconnect() unless we're running dev
-    # tests or arbitrary tests (in which case it's likely that database-
-    # specific tests are being run). This is to prevent `make test` from
-    # throwing an exception when it can't connect to the database in
-    # _disconnect().
-    unless ($ENV{BRIC_DEV_TEST} or $ENV{BRIC_TEST_CLASSES}) {
-        require Bric::Util::DBI;
-        no warnings 'redefine';
-        *Bric::Util::DBI::_disconnect = sub {};
-    }
 }
 
 # Run the tests.
