@@ -43,7 +43,7 @@ BEGIN {
     # specific tests are being run). This is to prevent `make test` from
     # throwing an exception when it can't connect to the database in
     # _disconnect().
-    unless ($ENV{BRIC_DEV_TEST} or ($ENV{BRIC_TEST_CLASSES} &&$ENV{BRIC_TEST_CLASSES} =~ /DevTest\.pm\b/) ) {
+    unless ($ENV{BRIC_DEV_TEST} or ($ENV{BRIC_TEST_CLASSES} && $ENV{BRIC_TEST_CLASSES} =~ /DevTest\.pm\b/) ) {
         require Bric::Util::DBI;
         no warnings 'redefine';
         *Bric::Util::DBI::_disconnect = sub {};
