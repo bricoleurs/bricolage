@@ -122,7 +122,7 @@ sub set_bric_conf_var {
     my ($conf, $var, $val) = @_;
     return unless defined $val and $val ne '';
     unless ($$conf =~ s/^(\s*)#?(\s*$var\s+=\s*).*$/$1$2$val/mi) {
-        hard_fail("Unable to set bricolage.conf variable $var to \"$val\".");
+        $$conf .= "$var     = $val\n";
     }
 }
 
