@@ -22,13 +22,14 @@ L<Bric::Admin>
 
 use strict;
 
-my @rdbmss = map { s/^sql//; $_ } grep { $_ !~ /[.]svn/ } @ARGV;
+my @rdbmss = map { s{^sql/}{}; $_ } grep { $_ !~ /[.]svn/ } @ARGV;
 
 for my $rdbms (@rdbmss) {
     for my $type qw(sql val con) {
+        my $dir = $type eq 'sql' ? '>' : '>>';
         system (
             "grep -vh '^--' `find sql/$rdbms -name '*.$type' | env "
-            . "LANG= LANGUAGE= LC_ALL=POSIX sort` > inst/$rdbms.sql"
+            . "LANG= LANGUAGE= LC_ALL=POSIX sort` $dir inst/$rdbms.sql"
         ) and die "Errror concatenating *.$type files in sql/$rdbms into inst/$rdbms.sql";
     }
 }
