@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use base qw(Bric::Test::Base);
 use Test::More;
-use Apache::FakeRequest;
 use Bric::App::Session;
 
 BEGIN {
@@ -11,6 +10,11 @@ BEGIN {
     # Keep CGI::Cookie from ouputting stuff.
     no warnings 'redefine';
     sub bake { 1 };
+}
+
+BEGIN {
+    package Apache::FakeRequest;
+    sub new { bless {} }
 }
 
 ##############################################################################

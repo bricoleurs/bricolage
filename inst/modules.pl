@@ -85,7 +85,7 @@ END
 
 
 # all done, dump out module database, announce success and exit
-open(OUT, ">modules.db") or die "Unable to open modules.db : $!";
+open OUT, '>modules.db' or die "Unable to open modules.db: $!\n";
 print OUT Data::Dumper->Dump([\@MOD],['MOD']);
 close OUT;
 
