@@ -296,7 +296,7 @@ dev_symlink :
 	$(PERL) inst/dev.pl
 
 dev 		: export DEVELOPER = 1
-dev			: inst/dist_sql install_dev_files install_db dev_symlink clean distclean
+dev			: inst/dist_sql install_dev_files install_db dev_symlink distclean
 
 ##########################
 # test rules             #
