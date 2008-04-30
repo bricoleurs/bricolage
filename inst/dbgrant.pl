@@ -37,8 +37,7 @@ print "\n\n==> Granting access rights to the Bricolage user <==\n\n";
 $DBCONF = './database.db';
 do $DBCONF or die "Failed to read $DBCONF : $!";
 
-my $instdb;
-$instdb = "./inst/dbgrant_$DB->{db_type}.pl";
-do $instdb or die "Failed to launch $DB->{db_type} access granting script ($instdb)$!";
+my $instdb = "./inst/dbgrant_$DB->{db_type}.pl";
+do $instdb or die "Failed to launch $DB->{db_type} access granting script ($instdb): $!\n";
 
 exit 0;

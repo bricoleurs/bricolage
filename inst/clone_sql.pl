@@ -2,8 +2,7 @@
 
 =head1 NAME
 
-clone_sql.pl - installation script to clone an existing database by launching apropriate
-database clone script
+clone_sql.pl - installation script to clone an existing database by launching apropriate database clone script
 
 =head1 DESCRIPTION
 
@@ -20,20 +19,9 @@ L<Bric::Admin>
 
 =cut
 
-
-use strict;
 use FindBin;
-use lib "$FindBin::Bin/lib";
-use Bric::Inst qw(:all);
-use File::Spec::Functions qw(:ALL);
-use File::Find qw(find);
-use DBI;
+use strict;
 
-print "\n\n==> Cloning Bricolage Database <==\n\n";
-
-our $DB;
-do "./database.db" or die "Failed to read database.db: $!";
-
-do "./clone_sql_$DB->{db}.pl" or die "Failed to launch $DB->{db} clone script (./clone_sql_$DB->{db}.pl): $!";
-
-exit 0;
+my $DB = do './database.db' or die "Failed to read database.db: $!";
+my $script = "$FindBin::Bin/clone_sql_$DB->{db_type}.pl";
+system ( $^X, $script ) and exit 1;

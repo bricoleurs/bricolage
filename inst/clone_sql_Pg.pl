@@ -20,44 +20,48 @@ L<Bric::Admin>
 =cut
 
 
-use strict;
 use FindBin;
-use lib "$FindBin::Bin/lib";
-use Bric::Inst qw(:all);
 use File::Spec::Functions qw(:ALL);
-use File::Find qw(find);
-use DBI;
+
+print "\n\n==> Cloning Bricolage Database <==\n\n";
 
 our $DB;
 do "./database.db" or die "Failed to read database.db: $!";
 
 # Make sure that we don't overwrite the existing Pg.sql.
 chdir 'dist';
+my $file = 'inst/Pg.sql';
 
 # Switch to postgres system user
-if (my $sys_user = $PG->{system_user}) {
+if (my $sys_user = $DB->{system_user}) {
     print "Becoming $sys_user...\n";
 
     # Make sure that the user can write out inst/Pg.sql.
-    my $file = -e 'inst/Pg.sql' ? 'inst/Pg.sql' : 'inst';
-    chown $PG->{system_user_uid}, -1, $file
-        or die "Cannot chown $file to $PG->{system_user_uid} ($sys_user).\n";
+    my $to_chown = -e 'inst/Pg.sql' ? 'inst/Pg.sql' : 'inst';
+    chown $DB->{system_user_uid}, -1, $to_chown
+        or die "Cannot chown $to_chown to $DB->{system_user_uid} ($sys_user).\n";
 
     # Become the user.
     require Config;
-    $> = $PG->{system_user_uid};
+    $> = $DB->{system_user_uid};
     $< = $DB->{system_user_uid} if $Config::Config{d_setruid};
-    die "Failed to switch EUID to $PG->{system_user_uid} ($sys_user).\n"
-        unless $> == $PG->{system_user_uid};
+    die "Failed to switch EUID to $DB->{system_user_uid} ($sys_user).\n"
+        unless $> == $DB->{system_user_uid};
 }
 
 $ENV{PGHOST} = $DB->{host_name} if $DB->{host_name};
 $ENV{PGPORT} = $DB->{host_port} if $DB->{host_port};
 
 # dump out postgres database
-system(catfile($DB->{bin_dir}, 'pg_dump') .
-       " -U$DB->{root_user} -O -x $DB->{db_name} > Pg.sql");
+my @pgdump = (
+    catfile($DB->{bin_dir}, 'pg_dump'),
+    '-U', $DB->{root_user},
+    '-f', $file,
+    '-O',
+    '-x',
+    $DB->{db_name},
+);
 
-printf "\n\n==> Finished cloning Bricolage Database <==\n\n";
-
-exit 0;
+# dump out postgres database
+system( @pgdump ) and die 'Error executing `' . join(' ', @pgdump), "`\n";
+print "\n\n==> Finished cloning Bricolage Database <==\n\n";

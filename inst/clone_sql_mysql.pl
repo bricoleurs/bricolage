@@ -19,29 +19,28 @@ L<Bric::Admin>
 
 =cut
 
-
 use strict;
-use FindBin;
-use lib "$FindBin::Bin/lib";
-use Bric::Inst qw(:all);
-use File::Spec::Functions qw(:ALL);
-use File::Find qw(find);
-use DBI;
+use File::Spec::Functions;
 
 print "\n\n==> Cloning Bricolage Database <==\n\n";
 
-our $DB;
-do "./database.db" or die "Failed to read database.db: $!";
+my $DB = do './database.db' or die "Failed to read database.db: $!\n";
 
 # Make sure that we don't overwrite the existing Pg.sql.
 chdir 'dist';
+my $file = catfile qw( inst mysql.sql);
 
-my $dbclone;
-$dbclone = catfile($DB->{bin_dir}, 'mysqldump');
-$dbclone = " -h $DB->{host_name} " if $DB->{host_name};
-$dbclone = " -P $DB->{host_port} " if $DB->{host_port};
+my @dbclone = (catfile($DB->{bin_dir}, 'mysqldump'));
+push @dbclone, '-h', $DB->{host_name} if $DB->{host_name};
+push @dbclone, '-P', $DB->{host_port} if $DB->{host_port};
+push @dbclone, (
+    '-u', $DB->{root_user},
+    ( $DB->{root_pass} ? "-p$DB->{root_pass}" : ()),
+    '-r', $file,
+    $DB->{db_name},
+);
 
 # dump out mysql database
-system($dbclone ." -u $DB->{root_user} -p$DB->{root_pass} -D $DB->{db_name} > mysql.sql");
-}
-exit 0;
+system( @dbclone ) and die 'Error executing `' . join(' ', @dbclone), "`\n";
+
+printf "\n\n==> Finished cloning Bricolage Database <==\n\n";
