@@ -115,14 +115,11 @@ dist_tar	:
 	tar cvf bricolage-$(BRIC_VERSION).tar bricolage-$(BRIC_VERSION)
 	gzip --best bricolage-$(BRIC_VERSION).tar
 
-SQL_FILES := $(shell find lib -name '*.sql' -o -name '*.val' -o -name '*.con')
-SQL_DIRS  := $(shell find sql -maxdepth 1 -regex 'sql/.*' -a \! -regex 'sql/\.svn')
-
 # This creates the apropriate sql initialization scripts for the databases with
 # directories in sql (directory names should conform to DBD:: package name, 
 # ex: Pg for PostgresSQL).
-inst/dist_sql : $(SQL_FILES) inst/dist_sql.pl
-	$(PERL) inst/dist_sql.pl $(SQL_DIRS)
+inst/dist_sql : inst/dist_sql.pl
+	$(PERL) inst/dist_sql.pl sql/*
 
 .PHONY 		: distclean inst/dist_sql dist_dir rm_svn dist_tar check_dist
 
@@ -169,9 +166,7 @@ clone_files_with_hot_copy :
 clone_lightweight     :
 	$(PERL) inst/clone_lightweight.pl
 
-CLONE_SQL_FILES := $(shell find inst -name 'clone_sql_*.pl')
-
-clone_sql       : $(CLONE_SQL_FILES)
+clone_sql       :
 	$(PERL) inst/clone_sql.pl
 
 clone_tar	:
@@ -213,7 +208,7 @@ files 		: config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl
 
 db    		: inst/db.pl database.db
-	$(PERL) inst/db.pl inst/dbload_*.sql
+	$(PERL) inst/db.pl
 
 files_with_hot_copy : config.db bconf/bricolage.conf
 	$(PERL) inst/files.pl INSTALL HOT_COPY
@@ -278,9 +273,8 @@ uninstall 	: is_root prep_uninstall stop db_uninstall rm_files clean
 prep_uninstall	:
 	$(PERL) inst/uninstall.pl
 
-DB_UNINST_FILES := $(shell find inst -name 'db_uninst_*.pl')
-db_uninstall	:$(DB_UNINST_FILES)
-	$(PERL) inst/db_uninstall.pl
+db_uninstall	:
+	$(PERL) inst/db_uninstall.pl inst/db_uninst_*.pl
 
 rm_files	:
 	$(PERL) inst/rm_files.pl

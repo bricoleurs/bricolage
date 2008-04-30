@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-dist_sql.pl - script to create init scripts for the database sql files found 
+dist_sql.pl - script to create init scripts for the database sql files found
 in sql directory depending in directory name
 
 =head1 DESCRIPTION
@@ -22,33 +22,13 @@ L<Bric::Admin>
 
 use strict;
 
-our @SQL;
+my @rdbmss = map { s/^sql//; $_ } grep { $_ !~ /[.]svn/ } @ARGV;
 
-get_db_sql();
-create_sqls();
-
-#all done
-exit 0;
-
-sub get_db_sql {
-    my $temp;
-    while (@ARGV) {
-        $temp=shift @ARGV;
-        $temp=~s/sql\///;
-        unshift @SQL, $temp;
-    }    
+for my $rdbms (@rdbmss) {
+    for my $type qw(sql val con) {
+        system (
+            "grep -vh '^--' `find sql/$rdbms -name '*.$type' | env "
+            . "LANG= LANGUAGE= LC_ALL=POSIX sort` > inst/$rdbms.sql"
+        ) and die "Errror concatenating *.$type files in sql/$rdbms into inst/$rdbms.sql";
+    }
 }
-
-sub create_sqls {
-    my ($temp,$temp1);
-    while (@SQL) {
-        $temp=shift @SQL;
-	system ("grep -vh '^--' `find sql/".$temp ." -name '*.sql' | env "
-	         . "LANG= LANGUAGE= LC_ALL=POSIX sort` > inst/".$temp.".sql");
-	system ("grep -vh '^--' `find sql/".$temp ." -name '*.val' | env "
-	         . "LANG= LANGUAGE= LC_ALL=POSIX sort` >> inst/".$temp.".sql");
-	system ("grep -vh '^--' `find sql/".$temp ." -name '*.con' | env "
-	         . "LANG= LANGUAGE= LC_ALL=POSIX sort` >> inst/".$temp.".sql");
-    }    
-}
-
