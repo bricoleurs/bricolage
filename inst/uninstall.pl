@@ -79,16 +79,18 @@ sub read_install_db {
 # (XXX: config.db and upgrade.db must be output for stop.pl to work as is)
 sub output_dbs {
     # fake up the .dbs from %INSTALL
-    my %dbs = ( PG     => "postgres.db",
-		CONFIG => "config.db"  );
+    my %dbs = (
+        DB     => 'database.db',
+		CONFIG => 'config.db',
+    );
     while ( my ($key, $file) = each %dbs) {
-	open(FILE, ">$file") or die "Unable to open $file : $!";
-	print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
-	close(FILE);
+        open(FILE, ">$file") or die "Unable to open $file : $!\n";
+        print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
+        close(FILE);
     }
 
     # output upgrade.db
-    open(FILE, ">upgrade.db") or die "Unable to open upgrade.db : $!";
-    print FILE Data::Dumper->Dump([\%UPGRADE], ["UPGRADE"]);
+    open(FILE, '>upgrade.db') or die "Unable to open upgrade.db : $!\n";
+    print FILE Data::Dumper->Dump([\%UPGRADE], ['UPGRADE']);
     close(FILE);
 }

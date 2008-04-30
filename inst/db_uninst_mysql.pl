@@ -6,7 +6,7 @@ db_uninst_mysql.pl - installation script to uninstall the MySQL database
 
 =head1 DESCRIPTION
 
-This script is called during C<make uninstall> to uninstall the 
+This script is called during C<make uninstall> to uninstall the
 MySQL Bricolage database.
 
 =head1 AUTHOR
@@ -22,10 +22,10 @@ L<Bric::Admin>
 =cut
 
 use strict;
+use File::Spec::Functions qw(:ALL);
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use File::Spec::Functions qw(:ALL);
-use File::Find qw(find);
+use Bric::Inst qw(:all);
 use DBI;
 
 print "\n\n==> Deleting Bricolage MySQL Database <==\n\n";
@@ -40,7 +40,6 @@ my $perl = $ENV{PERL} || $^X;
 open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
   or die "Cannot pipe STDERR: $!\n";
 
-
 # setup database and user while connected to dummy template1
 my $dbh = db_connect();
 drop_db($dbh);
@@ -53,7 +52,7 @@ print "\n\n==> Finished Deleting Bricolage PostgreSQL Database <==\n\n";
 sub db_connect {
     my $dsn = "dbi:mysql:database=$DB->{db_name}";
     $dsn .= ";host:$DB->{host_name}" if ( $DB->{host_name} ne "localhost" and $DB->{host_name} ne "");
-    $dsn .= ";port:$DB->{host_port}" if ( $DB->{host_port} ne "" );    
+    $dsn .= ";port:$DB->{host_port}" if ( $DB->{host_port} ne "" );
     my $dbh = DBI->connect($dsn,$DB->{root_user}, $DB->{root_pass});
     hard_fail("Unable to connect to MySQL using supplied root username ",
               "and password: ", DBI->errstr, "\n")
@@ -62,10 +61,9 @@ sub db_connect {
     return $dbh;
 }
 
-# create the database, optionally dropping an existing database
+# drop the database.
 sub drop_db {
     my $dbh = shift;
-
     if (ask_yesno("Drop database \"$DB->{db_name}\"?", 0)) {
         unless ($dbh->do("DROP DATABASE $DB->{db_name}")) {
             hard_fail("Failed to drop database.  The error from MySQL was:\n\n",
@@ -75,7 +73,7 @@ sub drop_db {
     }
 }
 
-# create SYS_USER, optionally dropping an existing syst
+# drop SYS_USER.
 sub drop_user {
     my $dbh = shift;
 
