@@ -22,6 +22,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
+=item *
+
+Really fix bug 1232 (saving categories with 3 keywords), that was falsely claimed
+to have been fixed in 1.10.3. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)
@@ -726,7 +731,7 @@ Element Types. [Marshall]
 
 =item *
 
-Fixed an apparently old bug with editing keywords in the Category Profile,
+Fixed an apparently old bug (1232) with editing keywords in the Category Profile,
 where you couldn't Save if there were exactly 3 keywords. [Scott]
 
 =item *
