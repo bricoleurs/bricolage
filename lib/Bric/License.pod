@@ -460,13 +460,13 @@ Bricolage's translation team:
 
 =over
 
-=item * ClE<aacute>udio Valente (Portuguese)
+=item * ClE<aacute>udio Valente and Pedro Custodio (Portuguese)
 
 =item * Marco Ghezzi (Italian)
 
 =item * Kang-min Liu (Traditional Chinese)
 
-=item * Gerfried Fuchs, Thorsten Biel, Florian Rossol (German)
+=item * Gerfried Fuchs, Thorsten Biel, Florian Rossol, and Steffen Schwigon (German)
 
 =item * Gang Luo (Simplified Chinese)
 

@@ -24,8 +24,9 @@ Install Perl 5.8.0 or greater.
 
 =item 2
 
-Install Apache 2.0.52 or greater with mod_perl, mod_log_config, mod_mime, and
-mod_alias. For SSL also install mod_ssl or apache-ssl.
+Install Apache 1.3.12 or greater -- or Apache 2.0.52 or greater -- with
+mod_perl, mod_log_config, mod_mime, mod_alias, and (on Apache 2) mod_apreq.
+For SSL also install mod_ssl or (on Apache 1 only apache-ssl).
 
 =item 3
 
@@ -60,9 +61,11 @@ appropriate defaults file for your system. See F<inst/defaults> for a list of
 supported systems. F<inst/defaults/standard> contains all of the default
 values, and other system-specific files can override those values.
 
-You can override many of those values during the install by setting the
-appropriate environment variables. The supported environment variables
-include:
+=head2 Installation Variables
+
+You can override many of those values during the install by passing the
+appropriate environment variables to C<make>. The supported environment
+variables include:
 
 =over
 
@@ -521,7 +524,7 @@ END MODULE LIST
 
 =item *
 
-Apache 2.0.52
+Apache 1.3.12 or Apache 2.0.52
 
 =item *
 

@@ -15,7 +15,7 @@ This document lists the Changes to Bricolage introduced with each release.
 =item *
 
 Added pick-a-type dropdown to Job Manager, so you can constrain the jobs
-listed to for example only today's job or only failed jobs. [Scott]
+listed to, for example, only today's job or only failed jobs. [Scott]
 
 =item *
 
@@ -30,13 +30,16 @@ of Code project. [Andrei Arsu]
 
 =item *
 
-Added a C<NONE> function to Bric::Util::DBI. For any C<list> parameter where
-you could've used C<ANY> before, you can now use C<NONE> to return only
-objects that don't match. [Scott]
+Added a C<NONE> function to L<Bric::Util::DBI|Bric::Util::DBI>. For any
+C<list> parameter where you could've used C<ANY> before, you can now also use
+C<NONE> to return only objects that I<don't> match. [Scott]
 
 =item *
 
-Added support for Apache 2. [Scott, Chris Heiland, David]
+Added support for Apache 2. See L<Switching to Apache 2 in
+Bric::Admin|Bric::Admin/"Switching to Apache 2"> or in F<README> for details
+on swtiching an existing Bricolage installation from Apache 1 to Apache 2.
+[Scott, Chris Heiland, David]
 
 =item *
 
@@ -52,7 +55,7 @@ set existing element types and field types to have min and max set to 0.
 
 =back
 
-=head2 Improvements
+=head2 UI Improvements
 
 =over
 
@@ -79,9 +82,13 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item * Organizations in the source profile
 
-=item * Add More sections in the user, contributor, media, and alert type profiles
-
 =item * Roles in the contributor profile
+
+=item * Contacts in the user and contributor profiles
+
+=item * Extensions in the media type profile
+
+=item * Rules in the alert type profile
 
 =back
 
@@ -94,17 +101,17 @@ opposed to one screen per subelement as it was previously.
 =item *
 
 The right side of desk items has been redesigned. Icons are used because they
-save space, which finally allows assets to be moved between desks from the
+save space. and they finally allow assets to be moved between desks from the
 Workspace, and assets to be checked in to any desk from the Desk view. The
 "and Publish" and "and Shelve" options have also been added. Additionally, you
-have the option to publish assets on PUBLISH desks immediately, or schedule
+have the option to immediately publish assets on publish desks, or schedule
 them for later.
 
 =item *
 
 Desks now use JavaScript to execute actions immediately. Where you previously
 had to choose an action from a select list and scroll all the way to the
-bottom to execute it, you can now check in, move, check out or delete an asset
+bottom to execute it, you can now check in, move, check out, or delete an asset
 in one click, without a full page refresh.
 
 =item *
@@ -137,6 +144,28 @@ are used instead, making the left nav faster. [Scott, Marshall, David]
 
 =item *
 
+Added the new C<BLOB_SEARCH> F<bricolage.conf> directive, which enables data
+text searches in the UI to search paragraph-type fields as well as shorter
+header-type fields. [David]
+
+=item *
+
+When editing a field type, if a numeric value is set to an empty value, it
+will be set to 0 rather than retaining its previous value. [David]
+
+=item *
+
+The expire information for sources is now localized in the list view (the
+Sources Manager). [David]
+
+=back
+
+=head2 Improvements
+
+=over
+
+=item *
+
 Moved the Mason UI components in F<comp/widgets/wrappers/sharky/> to
 F<comp/widgets/wrappers/> since "sharky" makes no sense. [Marshall]
 
@@ -151,46 +180,26 @@ C<< Bric::Biz::Element::Container->list() >>. [David]
 
 =item *
 
-Added the new C<BLOB_SEARCH> F<bricolage.conf> directive, which enables data
-text searches to search paragraph-type fields as well as shorter header-type
-fields. [David]
-
-=item *
-
-Added C<--fatal-no-cat> option to F<contrib/bric_media_upload>. [Scott]
-
-=item *
-
-When editing a field type, if a numeric value is set to an empty value, it
-will be set to 0 rather than remaining unchanged. [David]
-
-=item *
-
-The Expire information for sources is now localized in the list view (the
-Sources Manger). [David]
+Added the C<--fatal-no-cat> option to F<contrib/bric_media_upload>. [Scott]
 
 =item *
 
 Added support for a bunch of environment variables during installation.
-They're documented in L<Bric::Admin|Bric::Admin>/F<INSTALL>, and are most
+They're documented in
+L<Bric::Admin|Bric::Admin/"Installation Variables">/F<INSTALL>, and are most
 useful when used in combination with either C<INSTALL_VERBOSITY=QUIET> or
 C<make dev>. [David]
 
 =item *
 
-The installer's C<make install> target no longer necessarily has to be run by
-the super user, as long as the user does not have to create the database.
-[Brian Smith]
-
-=back
-
-=head2 Bug Fixes
-
-=over
-
-=item *
-
-Fixed a bug (svn 8039) in Container.pm that was preventing trunk from starting up [Beaudet]
+The installer is no longer required to become the system super user (root)
+during C<make install>, although it is still recommended. During the database
+configuration, the installer asks whether it should create the database and if
+it should become the database system user during installation, which is the
+bit that required the user to be root, and is required for compatibility with
+"ident" authentication. The default is to not become the database system user,
+although C<make install> may still need to be run as the super user in order
+to install files in their proper locations. [Brian Smith and David]
 
 =back
 
