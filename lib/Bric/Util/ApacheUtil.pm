@@ -33,12 +33,14 @@ our @EXPORT_OK = qw(unescape_url escape_uri);
 
 use Bric::Config qw(:mod_perl);
 BEGIN {
-    if (MOD_PERL_VERSION < 2) {
-        require Apache;          Apache->import();
-        require Apache::Util;    Apache::Util->import();
-    } else {
-        require Apache2::Util;   Apache2::Util->import();
-        require Apache2::URI;    Apache2::URI->import();
+    if (MOD_PERL) {
+        if (MOD_PERL_VERSION < 2) {
+            require Apache;          Apache->import();
+            require Apache::Util;    Apache::Util->import();
+        } else {
+            require Apache2::Util;   Apache2::Util->import();
+            require Apache2::URI;    Apache2::URI->import();
+        }
     }
 }
 
