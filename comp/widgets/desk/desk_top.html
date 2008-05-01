@@ -46,6 +46,11 @@ if ($class eq 'story') {
 } else {
     ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
     ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
+    $sort_by_val = $sort_by_val eq 'cover_date' ? 'deploy_date'
+                 : $sort_by_val eq 'cover_date__desc' ? 'deploy_date__desc'
+                 : $sort_by_val eq 'element_type' ? 'output_channel'
+                 : $sort_by_val;
+
 }
 
 my $sites = $c->get('__SITES__');
@@ -66,20 +71,23 @@ my $sort_by = {
     story => [
         [ name       => 'Title' ],
         [ uri        => 'Primary URI' ],
-        [ cover_date => 'Cover Date' ],
+        [ cover_date => 'Cover Date (oldest first)' ],
+        [ cover_date__desc => 'Cover Date (newest first)' ],
         [ element_type  => 'Story Type' ],
         [ priority   => 'Priority' ],
     ],
     media => [
         [ name       => 'Title' ],
         [ uri        => 'Primary URI' ],
-        [ cover_date => 'Cover Date' ],
+        [ cover_date => 'Cover Date (oldest first)' ],
+        [ cover_date__desc => 'Cover Date (newest first)' ],
         [ element_type  => 'Media Type' ],
         [ priority   => 'Priority' ],
     ],
     template => [
         [ name           => 'File Name' ],
-        [ deploy_date    => 'Deployed Date' ],
+        [ deploy_date    => 'Deployed Date (oldest first)' ],
+        [ deploy_date__desc    => 'Deployed Date (newest first)' ],
         [ output_channel => 'Output Channel' ],
         [ priority       => 'Priority' ],
     ]

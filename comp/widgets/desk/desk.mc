@@ -57,6 +57,8 @@ my $cached_assets = sub {
 
     if (my $curr_objs = $objs->{$ckey}) {
         if ($sort_by) {
+            # check for sort order
+            my $sort_descending = $sort_by =~ s/__desc$//gi;
             # Check for READ permission and sort them.
             my ($sort_get, $sort_arg) =
               @{$meths->{$sort_by}}{'get_meth', 'get_args'};
@@ -79,6 +81,7 @@ my $cached_assets = sub {
                     lc $sort_get->($b, @$sort_arg)
                 } grep { chk_authz($_, READ, 1) } @$curr_objs;
             }
+            @$curr_objs = reverse @$curr_objs if $sort_descending;
 
         } else {
             # Just check for READ permission.
