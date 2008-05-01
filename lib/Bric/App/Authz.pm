@@ -176,7 +176,7 @@ sub clear_authz_cache {
     my $id = $obj->get_id;
     $id = '' unless defined $id;
     my $key = "_AUTHZ_:$ref:$id";
-    my $r = Apache::Request->instance(Apache->request);
+    my $r = Bric::Util::ApacheReq->instance;
     $r->pnotes( $key, undef );
     return $obj;
 }
