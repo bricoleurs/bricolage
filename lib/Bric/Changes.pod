@@ -6,6 +6,14 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.11.1 (2008-??-??)
+
+=head2 Improvements
+
+=over
+
+=back
+
 =head1 VERSION 1.11.0 (2008-04-30)
 
 =head2 New Features
