@@ -12,6 +12,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
+=item *
+
+Added reverse date sorting option on desks (newest items first). Suggested
+by Bret Dawson. [Greg Heo]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)
