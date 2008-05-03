@@ -1,6 +1,6 @@
 package Bric::App::Authz;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

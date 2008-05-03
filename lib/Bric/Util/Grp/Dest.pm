@@ -1,6 +1,6 @@
 package Bric::Util::Grp::Dest;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

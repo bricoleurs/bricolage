@@ -1,6 +1,6 @@
 package Bric::Util::ApacheConst;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

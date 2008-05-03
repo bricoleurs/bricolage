@@ -1,6 +1,6 @@
 package Bric::Util::DBD::Oracle;
 
-# $Id $
+# $Id$
 
 =pod
 

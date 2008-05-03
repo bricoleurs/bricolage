@@ -1,6 +1,6 @@
 package Bric::Util::Language::ru_ru;
 
-# $Id $
+# $Id$
 
 =encoding utf8
 

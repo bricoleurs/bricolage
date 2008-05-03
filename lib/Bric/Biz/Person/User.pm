@@ -1,6 +1,6 @@
 package Bric::Biz::Person::User;
 
-# $Id $
+# $Id$
 
 =pod
 

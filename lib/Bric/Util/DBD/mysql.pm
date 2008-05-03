@@ -1,6 +1,6 @@
 package Bric::Util::DBD::mysql;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

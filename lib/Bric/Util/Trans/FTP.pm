@@ -1,6 +1,6 @@
 package Bric::Util::Trans::FTP;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Util::AuthLDAP;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

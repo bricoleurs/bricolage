@@ -1,6 +1,6 @@
 package Bric::App::Callback::Event;
 
-# $Id $
+# $Id$
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;

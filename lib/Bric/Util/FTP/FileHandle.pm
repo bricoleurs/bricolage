@@ -1,6 +1,6 @@
 package Bric::Util::FTP::FileHandle;
 
-# $Id $
+# $Id$
 
 =pod
 

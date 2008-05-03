@@ -1,6 +1,6 @@
 package Bric::Util::Time;
 
-# $Id $
+# $Id$
 
 =pod
 

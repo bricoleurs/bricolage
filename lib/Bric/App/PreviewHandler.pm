@@ -1,6 +1,6 @@
 package Bric::App::PreviewHandler;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Util::Grp::Workflow;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

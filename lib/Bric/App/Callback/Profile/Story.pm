@@ -1,6 +1,6 @@
 package Bric::App::Callback::Profile::Story;
 
-# $Id $
+# $Id$
 
 use base qw(Bric::App::Callback);   # not subclassing Profile
 __PACKAGE__->register_subclass;

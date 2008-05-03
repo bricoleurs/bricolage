@@ -1,6 +1,6 @@
 package Bric::App::Cache;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

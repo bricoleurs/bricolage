@@ -1,6 +1,6 @@
 package Bric::Util::AlertType::Parts::Rule;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

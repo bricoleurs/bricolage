@@ -1,6 +1,6 @@
 package Bric::Util::Language::zh_cn;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

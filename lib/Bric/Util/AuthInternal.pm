@@ -1,6 +1,6 @@
 package Bric::Util::AuthInternal;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::App::Handler;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

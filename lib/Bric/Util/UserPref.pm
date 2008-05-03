@@ -1,6 +1,6 @@
 package Bric::Util::UserPref;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

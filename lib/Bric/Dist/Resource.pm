@@ -1,6 +1,6 @@
 package Bric::Dist::Resource;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

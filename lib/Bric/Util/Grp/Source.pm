@@ -1,6 +1,6 @@
 package Bric::Util::Grp::Source;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

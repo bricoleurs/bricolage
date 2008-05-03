@@ -1,6 +1,6 @@
 package Bric::App::Callback::CharTrans;
 
-# $Id $
+# $Id$
 
 use strict;
 use base qw(Bric::App::Callback);

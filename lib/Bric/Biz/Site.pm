@@ -1,6 +1,6 @@
 package Bric::Biz::Site;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

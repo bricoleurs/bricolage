@@ -1,6 +1,6 @@
 package Bric::Util::DBD::Pg;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

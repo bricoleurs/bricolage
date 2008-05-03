@@ -1,6 +1,6 @@
 package Bric::SOAP;
 
-# $Id $
+# $Id$
 
 require Bric; our $VERSION = Bric->VERSION;
 

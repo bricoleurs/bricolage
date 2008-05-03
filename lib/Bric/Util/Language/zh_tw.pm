@@ -1,6 +1,6 @@
 package Bric::Util::Language::zh_tw;
 
-# $Id $
+# $Id$
 
 =encoding utf8
 

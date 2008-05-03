@@ -1,6 +1,6 @@
 package Bric::Biz::Keyword;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

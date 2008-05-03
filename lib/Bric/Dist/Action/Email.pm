@@ -1,6 +1,6 @@
 package Bric::Dist::Action::Email;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

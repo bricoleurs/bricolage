@@ -1,6 +1,6 @@
 package Bric::App::ApacheConfig;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

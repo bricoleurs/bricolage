@@ -1,6 +1,6 @@
 package Bric::App::Callback::Profile;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

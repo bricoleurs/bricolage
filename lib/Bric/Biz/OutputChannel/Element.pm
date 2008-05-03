@@ -1,6 +1,6 @@
 package Bric::Biz::OutputChannel::Element;
 
-# $Id $
+# $Id$
 #############################################################################
 
 =head1 NAME

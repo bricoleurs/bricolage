@@ -1,6 +1,6 @@
 package Bric::Util::Trans::SFTP;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Util::Language::de_de;
 
-# $Id $
+# $Id$
 
 =encoding utf8
 

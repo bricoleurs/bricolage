@@ -1,6 +1,6 @@
 package Bric::Util::Coll;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

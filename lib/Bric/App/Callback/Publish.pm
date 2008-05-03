@@ -1,6 +1,6 @@
 package Bric::App::Callback::Publish;
 
-# $Id $
+# $Id$
 
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;

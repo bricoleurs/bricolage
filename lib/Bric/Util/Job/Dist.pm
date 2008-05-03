@@ -1,6 +1,6 @@
 package Bric::Util::Job::Dist;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

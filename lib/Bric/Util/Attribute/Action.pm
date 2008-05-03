@@ -1,6 +1,6 @@
 package Bric::Util::Attribute::Action;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Dist::Action::DTDValidate;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

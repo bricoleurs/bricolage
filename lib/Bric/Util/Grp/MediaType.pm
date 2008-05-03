@@ -1,6 +1,6 @@
 package Bric::Util::Grp::MediaType;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

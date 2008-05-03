@@ -1,6 +1,6 @@
 package Bric::Dist::Action::HTMLClean;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

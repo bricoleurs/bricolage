@@ -1,6 +1,6 @@
 package Bric::Dist::Server;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

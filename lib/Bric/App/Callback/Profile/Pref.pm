@@ -1,6 +1,6 @@
 package Bric::App::Callback::Profile::Pref;
 
-# $Id $
+# $Id$
 
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;

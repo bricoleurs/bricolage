@@ -1,6 +1,6 @@
 package Bric::Util::DBI;
 
-# $Id $
+# $Id$
 
 =pod
 

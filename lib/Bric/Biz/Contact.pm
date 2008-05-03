@@ -1,6 +1,6 @@
 package Bric::Biz::Contact;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Util::Trans::WebDAV;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

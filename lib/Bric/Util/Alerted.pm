@@ -1,6 +1,6 @@
 package Bric::Util::Alerted;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

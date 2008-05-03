@@ -1,6 +1,6 @@
 package Bric::Dist::Handler;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

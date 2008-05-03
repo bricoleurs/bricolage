@@ -1,6 +1,6 @@
 package Bric::Util::Grp::Event;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

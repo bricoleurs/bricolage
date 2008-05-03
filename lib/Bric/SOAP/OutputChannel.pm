@@ -1,6 +1,6 @@
 package Bric::SOAP::OutputChannel;
 
-# $Id $
+# $Id$
 
 use strict;
 use warnings;

@@ -1,6 +1,6 @@
 package Bric::Dist::Action::Mover;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

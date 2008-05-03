@@ -1,6 +1,6 @@
 package Bric::Biz::Asset::Business::Media::Video;
 
-# $Id $
+# $Id$
 ################################################################################
 
 =head1 NAME

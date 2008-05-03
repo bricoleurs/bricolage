@@ -1,6 +1,6 @@
 package Bric::Util::EventType;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

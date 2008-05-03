@@ -1,6 +1,6 @@
 package Bric::Util::Language::vi_vn;
 
-# $Id $
+# $Id$
 
 =encoding utf8
 

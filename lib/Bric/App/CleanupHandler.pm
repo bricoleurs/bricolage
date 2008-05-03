@@ -1,6 +1,6 @@
 package Bric::App::CleanupHandler;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

@@ -1,6 +1,6 @@
 package Bric::Util::Priv::Parts::Const;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 

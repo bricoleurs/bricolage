@@ -1,6 +1,6 @@
 package Bric::Dist::Client;
 
-# $Id $
+# $Id$
 
 =head1 NAME
 
