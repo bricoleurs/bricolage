@@ -56,20 +56,20 @@ create_paths();
 rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
-find({ wanted   => sub { copy_files($CONFIG->{MASON_COMP_ROOT}, $HOT_COPY) },
+find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}), $HOT_COPY) },
        no_chdir => 1 }, './comp') unless $ENV{DEVELOPER};
 
 # Copy the contents of the bconf directory.
-find({ wanted   => sub { copy_files(catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
+find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
        no_chdir => 1 }, './bconf');
 
 unless ($UPGRADE) {
     # Copy the contents of the data directory.
-    find({ wanted   => sub { copy_files($CONFIG->{MASON_DATA_ROOT}, $HOT_COPY) },
+    find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}), $HOT_COPY) },
            no_chdir => 1 }, './data');
 }
 
-assign_permissions();
+assign_permissions() unless ($ENV{PERL_INSTALL_ROOT});
 
 
 print "\n\n==> Finished Copying Bricolage Files <==\n\n";
@@ -78,11 +78,11 @@ exit 0;
 
 # create paths configured by the user
 sub create_paths {
-    mkpath([catdir($CONFIG->{MASON_COMP_ROOT}, "data"),
-	    $CONFIG->{MASON_DATA_ROOT},
-	    catdir($CONFIG->{BRICOLAGE_ROOT}, "conf"),
-	    catdir($CONFIG->{TEMP_DIR}, "bricolage"),
-	    $CONFIG->{LOG_DIR}],
+    mkpath([catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}, "data"),
+	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}),
+	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"),
+	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{TEMP_DIR}, "bricolage"),
+	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{LOG_DIR})],
 	   1,
 	   0755);
 }
