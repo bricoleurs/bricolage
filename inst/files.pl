@@ -29,6 +29,9 @@ use File::Path qw(mkpath rmtree);
 use File::Find qw(find);
 use File::Copy qw(copy);
 
+# avoid uninitialized value warnings
+$ENV{PERL_INSTALL_ROOT}='' unless exists $ENV{PERL_INSTALL_ROOT};
+
 # make sure we're root, otherwise uninformative errors result
 unless ($> == 0) {
     print "This process must (usually) be run as root.\n";
