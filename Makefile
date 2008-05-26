@@ -180,6 +180,8 @@ clone_tar	:
 
 install 	: install_files install_db done
 
+install_package	: install_files
+
 install_files	: all is_root cpan lib bin files
 
 install_dev_files	: all is_root cpan files
