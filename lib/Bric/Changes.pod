@@ -19,6 +19,19 @@ by Bret Dawson. [Greg Heo]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed non-standard installation path being ignored if changed during multi 
+installation mode. This was done by changing the defaults files to include
+the C<BRICOLAGE_ROOT> variable. So when C<BRICOLAGE_ROOT> is changed and the
+others are then evaled they get changed too. [Paul Orrock]
+
+=back
+
 =head1 VERSION 1.11.0 (2008-04-30)
 
 =head2 New Features

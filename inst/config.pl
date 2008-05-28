@@ -113,24 +113,15 @@ END
     } else {
         # multi system defaults
         # These values will be eval'd after the user has made her choice.
-        $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT')
-            || '/usr/local/bricolage';
-        $CONFIG{TEMP_DIR}         = get_default('BRICOLAGE_TMP_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/tmp';
-        $CONFIG{MODULE_DIR}       = get_default('BRICOLAGE_PERL_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/lib';
-        $CONFIG{BIN_DIR}          = get_default('BRICOLAGE_BIN_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/bin';
-        $CONFIG{MAN_DIR}          = get_default('BRICOLAGE_MAN_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/man';
-        $CONFIG{LOG_DIR}          = get_default('BRICOLAGE_LOG_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/log';
-        $CONFIG{PID_FILE}         = get_default('BRICOLAGE_PID')
-            || '$CONFIG{BRICOLAGE_ROOT}/log/httpd.pid';
-        $CONFIG{MASON_COMP_ROOT}  = get_default('BRICOLAGE_COMP_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/comp';
-        $CONFIG{MASON_DATA_ROOT}  = get_default('BRICOLAGE_DATA_DIR')
-            || '$CONFIG{BRICOLAGE_ROOT}/data';
+        $CONFIG{BRICOLAGE_ROOT}   = get_default('BRICOLAGE_ROOT');
+        $CONFIG{TEMP_DIR}         = get_default('BRICOLAGE_TMP_DIR');
+        $CONFIG{MODULE_DIR}       = get_default('BRICOLAGE_PERL_DIR');
+        $CONFIG{BIN_DIR}          = get_default('BRICOLAGE_BIN_DIR');
+        $CONFIG{MAN_DIR}          = get_default('BRICOLAGE_MAN_DIR');
+        $CONFIG{LOG_DIR}          = get_default('BRICOLAGE_LOG_DIR');
+        $CONFIG{PID_FILE}         = get_default('BRICOLAGE_PID');
+        $CONFIG{MASON_COMP_ROOT}  = get_default('BRICOLAGE_COMP_DIR');
+        $CONFIG{MASON_DATA_ROOT}  = get_default('BRICOLAGE_DATA_DIR');
     }
 }
 

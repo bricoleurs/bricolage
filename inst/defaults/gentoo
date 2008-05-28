@@ -91,12 +91,12 @@ DB_TYPE          = Pg
 
 INSTALL_STYLE      = m                          # How Files are to be installed
 BRICOLAGE_ROOT     = /usr/local/bricolage       # Bricolage Root Directory
-BRICOLAGE_TMP_DIR  = /usr/local/bricolage/tmp   # Temporary Directory
-BRICOLAGE_PERL_DIR = /usr/local/bricolage/lib   # Perl Module Directory
-BRICOLAGE_BIN_DIR  = /usr/local/bricolage/bin   # Executable Directory
-BRICOLAGE_MAN_DIR  = /usr/local/bricolage/man   # Man-Page Directory (! to skip)
-BRICOLAGE_LOG_DIR  = /usr/local/bricolage/log   # Log Directory
-BRICOLAGE_PID      = /usr/local/bricolage/log/httpd.pid  # PID File Location
-BRICOLAGE_COMP_DIR = /usr/local/bricolage/comp  # Mason Component Directory
-BRICOLAGE_DATA_DIR = /usr/local/bricolage/data  # Mason Data Directory
+BRICOLAGE_TMP_DIR  = $CONFIG{BRICOLAGE_ROOT}/tmp   # Temporary Directory
+BRICOLAGE_PERL_DIR = $CONFIG{BRICOLAGE_ROOT}/lib   # Perl Module Directory
+BRICOLAGE_BIN_DIR  = $CONFIG{BRICOLAGE_ROOT}/bin   # Executable Directory
+BRICOLAGE_MAN_DIR  = $CONFIG{BRICOLAGE_ROOT}/man   # Man-Page Directory (! to skip)
+BRICOLAGE_LOG_DIR  = $CONFIG{BRICOLAGE_ROOT}/log   # Log Directory
+BRICOLAGE_PID      = $CONFIG{BRICOLAGE_ROOT}/log/httpd.pid  # PID File Location
+BRICOLAGE_COMP_DIR = $CONFIG{BRICOLAGE_ROOT}/comp  # Mason Component Directory
+BRICOLAGE_DATA_DIR = $CONFIG{BRICOLAGE_ROOT}/data  # Mason Data Directory
 
