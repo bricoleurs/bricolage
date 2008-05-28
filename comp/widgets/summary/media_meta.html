@@ -26,7 +26,7 @@
 %     } else {
 <dd><% $prim_uri %></dd>
 <dt><% $lang->maketext('Preview in') %>:</dt>
-<dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.ocSelect.options[window.document.theForm.ocSelect.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
+<dd><% $oc_select %>&nbsp;<a href="#" onClick="window.open('/workflow/profile/preview/media/<% $id %>/' + window.document.theForm.<% $oc_select_name %>.options[window.document.theForm.<% $oc_select_name %>.selectedIndex].value, 'preview_<% SERVER_WINDOW_NAME %>');return false;"><img src="/media/images/<% $lang_key %>/preview_lgreen.gif" alt="Preview" border="0" width="74" height="20"></a></dd>
 % }
 </dl>
 
@@ -61,7 +61,8 @@ my $asset_type = Bric::Biz::ElementType->lookup({id => $at});
 my @ocs = $media->get_output_channels();
 my $primocid = $media->get_primary_oc_id;
 
-my $oc_select = '<select name="ocSelect">';
+my $oc_select_name = "ocSelect_media_$id";
+my $oc_select = qq{<select name="$oc_select_name">};
 foreach my $oc (@ocs) {
     my $ocid = $oc->get_id;
     my $selected = $ocid == $primocid ? ' selected' : '';

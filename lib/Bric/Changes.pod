@@ -27,6 +27,11 @@ This document lists the Changes to Bricolage introduced with each release.
 Really fix bug 1232 (saving categories with 3 keywords), that was falsely claimed
 to have been fixed in 1.10.3. [Scott]
 
+=item *
+
+Fixed bug 1340, where Preview buttons weren't working within Related assets.
+[Scott & David]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)
