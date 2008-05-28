@@ -403,7 +403,7 @@ START MODULE LIST
 
 =item Test::Class 0.04
 
-=item Params::CallbackRequest 1.10
+=item Params::CallbackRequest 1.16
 
 =item MasonX::Interp::WithCallbacks 1.10
 
@@ -502,7 +502,7 @@ START Apache
 
 =back
 
-The fact that these are maked "(optional)" is just to help the installer
+The fact that these are marked "(optional)" is just to help the installer
 determine CPAN dependencies. Trust us, one or the other of these B<is>
 required. Either one of these is optional, however:
 

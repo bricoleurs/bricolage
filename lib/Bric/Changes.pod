@@ -30,6 +30,12 @@ installation mode. This was done by changing the defaults files to include
 the C<BRICOLAGE_ROOT> variable. So when C<BRICOLAGE_ROOT> is changed and the
 others are then evaled they get changed too. [Paul Orrock]
 
+=item * 
+
+Updated Admin.pod to ensure that we have at least version 1.16 of
+Params::CallbackRequest so that we detect mod_perl2 correctly when running
+Apache2. [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)
@@ -64,7 +70,7 @@ C<NONE> to return only objects that I<don't> match. [Scott]
 
 Added support for Apache 2. See L<Switching to Apache 2 in
 Bric::Admin|Bric::Admin/"Switching to Apache 2"> or in F<README> for details
-on swtiching an existing Bricolage installation from Apache 1 to Apache 2.
+on switching an existing Bricolage installation from Apache 1 to Apache 2.
 [Scott, Chris Heiland, David]
 
 =item *
