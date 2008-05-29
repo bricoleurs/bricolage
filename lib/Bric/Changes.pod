@@ -32,6 +32,10 @@ to have been fixed in 1.10.3. [Scott]
 Fixed bug 1340, where Preview buttons weren't working within Related assets.
 [Scott & David]
 
+=item *
+
+Fixed bug 1339, editing User Prefs wasn't working. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

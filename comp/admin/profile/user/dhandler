@@ -170,8 +170,7 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 }
 
 # Establish the return URI.
-my $return = get_state_name('login') eq 'ssl' ? last_page
-      : last_page;
+my $return = last_page =~ m{/user_pref} ? last_page(3) : last_page;
 </%init>
 
 

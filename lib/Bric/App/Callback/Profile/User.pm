@@ -27,6 +27,8 @@ sub save : Callback {
     my $user = $self->obj;
     my $r = $self->apache_req;
 
+    my $return = last_page =~ m{/user_pref} ? last_page(3) : last_page;
+
     if ($param->{delete}) {
         # Deactivate it.
         $user->deactivate;
@@ -37,9 +39,8 @@ sub save : Callback {
         log_event('user_deact', $user);
         add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
         # redirect_onload() prevents any other callbacks from executing.
-        get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
-          : redirect_onload(last_page,
-                            $self);
+        get_state_name('login') eq 'ssl' ? $self->set_redirect($return)
+          : redirect_onload($return, $self);
         return;
     }
 
@@ -148,9 +149,8 @@ sub save : Callback {
 
     # Redirect. Use redirect_onload because the User profile has been using SSL.
     # But note that because it executes right away, no more callbacks will execute!
-    get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
-      : redirect_onload(last_page,
-                        $self);
+    get_state_name('login') eq 'ssl' ? $self->set_redirect($return)
+      : redirect_onload($return, $self);
 }
 
 
