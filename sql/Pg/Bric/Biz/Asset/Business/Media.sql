@@ -185,7 +185,7 @@ CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));
 CREATE INDEX idx_media_instance__description ON media_instance(LOWER(description));
 CREATE INDEX idx_media_instance__file_name ON media_instance(LOWER(file_name));
 CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
-CREATE INDEX fkx_media__media_instance ON media_instance(media__id);
+CREATE UNIQUE INDEX udx_media__media_instance ON media_instance(media__id, version, checked_out);
 CREATE INDEX fkx_usr__media_instance ON media_instance(usr__id);
 CREATE INDEX fkx_media_type__media_instance ON media_instance(media_type__id);
 CREATE INDEX fkx_category__media_instance ON media_instance(category__id);

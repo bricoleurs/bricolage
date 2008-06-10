@@ -16,6 +16,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
+=item *
+
+Changed an index in the story and media instance tables to improve query
+speed. Thanks to Alex Krohn for reporting the performance issue. [David and
+Josh Berkus]
+
 =back
 
 =head2 Bug Fixes
