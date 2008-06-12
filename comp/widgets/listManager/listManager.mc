@@ -568,6 +568,7 @@ my $output_profile_controls = sub {
             $value = "?$value" unless substr($value, 0, 1) eq '?';
         }
 
+        $label = '' unless defined $label;
         push @cntl, qq{<a href="$url$value" class="redLink">}
             . $lang->maketext($label) . '</a>';
     }

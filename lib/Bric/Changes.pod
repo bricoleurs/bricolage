@@ -47,6 +47,11 @@ Fixed bug 1339, editing User Prefs wasn't working. [Scott]
 The download link in Media Profile wasn't popping up into a new window on some
 browsers due to a typo. Spotted by Tatiana Titova. [Scott]
 
+=item *
+
+In the Contributors Manager, sometimes there aren't "New" links, and this was
+causing the latest Locale::Maketext indigestion. Spotted by John Watson. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

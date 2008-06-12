@@ -446,6 +446,8 @@ Friends who have spotted bugs include:
 
 =item * Tatiana Titova
 
+=item * John Watson
+
 =back
 
 Bricolage's translation team:
