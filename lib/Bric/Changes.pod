@@ -42,6 +42,11 @@ Fixed bug 1340, where Preview buttons weren't working within Related assets.
 
 Fixed bug 1339, editing User Prefs wasn't working. [Scott]
 
+=item *
+
+The download link in Media Profile wasn't popping up into a new window on some
+browsers due to a typo. Spotted by Tatiana Titova. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

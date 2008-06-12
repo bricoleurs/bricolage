@@ -7,7 +7,7 @@
   <tr>
     <th style="text-align: right;<% $indent %>"><% $lang->maketext('Download') %>:&nbsp;</th>
 %     if (my $uri = $media->get_local_uri) {
-    <td><a href="<% $uri %>" onclick="window.open(this.href, 'download_} . SERVER_WINDOW_NAME . qq{'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a></td>
+    <td><a href="<% $uri %>" onclick="window.open(this.href, 'download_<% SERVER_WINDOW_NAME %>'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a></td>
 %     } else {
     <td><% $lang->maketext('No file has been uploaded') %></td>
 %     }
@@ -34,7 +34,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 %   if (my $uri = $media->get_local_uri) {
   <tr>
     <th style="text-align: right;"><% $lang->maketext('Download') %>:</th>
-    <td><a href="<% $uri %>" onclick="window.open(this.href, 'download_} . SERVER_WINDOW_NAME . qq{'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a></td>
+    <td><a href="<% $uri %>" onclick="window.open(this.href, 'download_<% SERVER_WINDOW_NAME %>'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a></td>
     <td><& '/widgets/profile/imageSubmit.mc',
          formName => "theForm",
          callback => $widget ."|delete_media_cb",
