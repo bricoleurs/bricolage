@@ -22,6 +22,13 @@ Changed an index in the story and media instance tables to improve query
 speed. Thanks to Alex Krohn for reporting the performance issue. [David and
 Josh Berkus]
 
+=item *
+
+Tweaked F<contrib/bric_media_upload/bric_media_upload> so that it uses
+C<bric_soap site list_ids> instead of C<bric_soap category list_ids> for setting
+the login cookie. That should be more efficient for installations that have many
+more categories than they have sites. [Scott]
+
 =back
 
 =head2 Bug Fixes

@@ -454,12 +454,12 @@ sub check_connect_soap {
     our ($target_username, $target_password, $timeout, $temp_dir);
 
     # check to see if root category exists
-    my $command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password '$target_password' category list_ids --search path=/";
+    my $command = "$BRIC_SOAP --save-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url --username $target_username --password '$target_password' site list_ids";
     print "Caching cookie in $temp_dir/logincookie\n" if $VERBOSE;
 
     print "Executing $command\n" if $VERBOSE;
     my $exec_result = `$command 2>&1`;
-    if ( ($exec_result =~ /category_\d*/) ) {
+    if ( ($exec_result =~ /^site_\d*/) ) {
         print "\nConnected to $targ_url\n" if $VERBOSE;
         return 1;
     }
