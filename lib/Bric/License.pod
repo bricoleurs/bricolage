@@ -448,6 +448,8 @@ Friends who have spotted bugs include:
 
 =item * John Watson
 
+=item * Ed Guzman
+
 =back
 
 Bricolage's translation team:

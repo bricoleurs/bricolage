@@ -137,9 +137,9 @@ a single OR search that hits element and filename.
 
 The priority of the template.
 
-=item publish_status
+=item deploy_status
 
-Stories that have been published have a publish_status of "1",
+Templates that have been deployed have a deploy_status of "1",
 otherwise "0".
 
 =item deploy_date_start
@@ -509,7 +509,7 @@ Returns true if $param is an allowed parameter to the $method method.
 
 my $allowed = {
     list_ids => { map { $_ => 1 } qw(element file_name output_channel category
-                                     workflow simple priority publish_status
+                                     workflow simple priority deploy_status
                                      element deploy_date_start deploy_date_end
                                      expire_date_start expire_date_end site
                                      Order OrderDirection Offset Limit),
@@ -647,7 +647,7 @@ sub load_asset {
         for my $name qw(expire_date deploy_date) {
             my $date = $tdata->{$name};
             if ($date) {
-                throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
+                throw_ap error => __PACKAGE__ . "::create : $name must be undefined if deploy_status is false"
                     unless $tdata->{deploy_status} or $name ne 'deploy_date';
                 my $db_date = xs_date_to_db_date($date);
                 throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")

@@ -52,6 +52,13 @@ browsers due to a typo. Spotted by Tatiana Titova. [Scott]
 In the Contributors Manager, sometimes there aren't "New" links, and this was
 causing the latest Locale::Maketext indigestion. Spotted by John Watson. [Scott]
 
+=item *
+
+Fix for bug 1344 (spotted by Ed Guzman) and hopefully better fix for bug 1326
+(my suggestion wasn't quite right). The handling of E<lt>publish_statusE<gt>
+in bric_soap has been a bit dodgy. Also changed publish_status to deploy_status
+in C<Bric::SOAP::Template>. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

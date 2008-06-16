@@ -706,7 +706,8 @@ sub load_asset {
             my $date = $mdata->{$name};
             if ($date) {
                 throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
-                    unless $mdata->{publish_status} or $name !~ /publish/;
+                    if not $mdata->{publish_status} and $name =~ /publish/;
+
                 my $db_date = xs_date_to_db_date($date);
                 throw_ap(error => __PACKAGE__ . "::export : bad date format for $name : $date")
                     unless defined $db_date;
@@ -805,8 +806,21 @@ sub load_asset {
         }
 
         # set simple fields
-        my @simple_fields = qw(description uri publish_status);
+        my @simple_fields = qw(description uri);
         $media->_set(\@simple_fields, [ @{$mdata}{@simple_fields} ]);
+
+        # almost totally ignoring whatever publish_status is set to
+        if ($update) {
+            if ($media->get_publish_date or $media->get_first_publish_date) {
+                # some publish date is set, so it must've been published
+                $media->set_publish_status(1);
+            } else {
+                $media->set_publish_status($mdata->{publish_status});
+            }
+        } else {
+            # creating, so can't have published it yet
+            $media->set_publish_status(0);
+        }
 
         # remove all contributors if updating
         unless ($aliased) {
