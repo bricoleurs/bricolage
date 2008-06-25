@@ -72,6 +72,10 @@ The state for Log lists was getting stuck, so if you go to the 2nd page of the
 log for a media, say, every log thereafter was the same. Reported by John
 Kirkwood. [Scott]
 
+=item *
+
+Fix both parts of bug 1345, Bulk Edit had problems with blank lines. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

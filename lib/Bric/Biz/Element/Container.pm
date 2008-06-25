@@ -2038,7 +2038,13 @@ sub _podify {
                  .  "$indent=end $kn\n\n";
         } else {
             my $kn = $sub->get_key_name;
+            my $wt = $sub->get_widget_type;
+
             (my $data = $sub->get_value) =~ s/((?:^|\r?\n|\r)+\s*)=/$1\\=/g;
+            if ($wt eq 'checkbox') {
+                $data = $data ? '1' : '0';
+            }
+
             $pod .= "$indent=$kn\n\n" unless $kn eq $default_field;
             $data =~ s/(\r?\n|\r)(?!$)/$1$indent/mg if $indent;
             $pod .= "$indent$data\n\n";
@@ -2338,9 +2344,9 @@ sub _deserialize_pod {
 
             else {
                 $kn = $def_field;
-                $field_type = $field_types{$kn}
-                    || _bad_field(\%field_types, $kn, $line_num);
-                if ($field_ord{$kn} && !$field_type->get_quantifier) {
+                $field_type = $field_types{$kn};
+
+                if (defined $field_type && $field_ord{$kn} && !$field_type->get_quantifier) {
                     throw_invalid
                         error    => qq{Non-repeatable field "$kn" appears more }
                                   . qq{than once beginning at line $line_num. }
@@ -2361,6 +2367,12 @@ sub _deserialize_pod {
                     $line_num++;
                     last DEF_FIELD if $line =~ /^\s*$/;
                     ($content .= "$line\n") =~ s/^$indent//mg;
+                }
+
+                # we weren't expecting this default field *here*,
+                # so just ignore it
+                if (not defined $field_type) {
+                    next POD;
                 }
             }
 
