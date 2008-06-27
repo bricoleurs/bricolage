@@ -21,6 +21,10 @@ by Bret Dawson. [Greg Heo]
 
 Updated Xinha include script to reflect latest Xinha updates. [Matt Rolf]
 
+=item *
+
+Updated SFTP.pm to use the faster Net::SSH2. [Sarah Mercier, Matt Rolf, Charlie Reitsma, Michael Herring]
+
 =back
 
 =head2 Bug Fixes
