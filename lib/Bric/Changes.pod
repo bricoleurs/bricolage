@@ -17,6 +17,10 @@ This document lists the Changes to Bricolage introduced with each release.
 Added reverse date sorting option on desks (newest items first). Suggested
 by Bret Dawson. [Greg Heo]
 
+=item *
+
+Updated Xinha include script to reflect latest Xinha updates. [Matt Rolf]
+
 =back
 
 =head2 Bug Fixes
