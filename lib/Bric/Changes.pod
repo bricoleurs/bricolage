@@ -44,6 +44,11 @@ Updated Admin.pod to ensure that we have at least version 1.16 of
 Params::CallbackRequest so that we detect mod_perl2 correctly when running
 Apache2. [Paul Orrock]
 
+=item *
+
+Fixed CCS bug which was preventing the jump buttons from displaying in Firefox
+and Safari. [Matt Rolf]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)
