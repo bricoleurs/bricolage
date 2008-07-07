@@ -23,7 +23,7 @@ HTML wrapper for top and side navigation.
 
 </%doc>
 <%args>
-$title   => 'Bricolage'
+$title   => get_pref('Bricolage Instance Name') 
 $jsInit  => ""
 $context
 $useSideNav => 1

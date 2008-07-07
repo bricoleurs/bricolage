@@ -76,6 +76,15 @@ Kirkwood. [Scott]
 
 Fix both parts of bug 1345, Bulk Edit had problems with blank lines. [Scott]
 
+=item *
+
+Fixed CCS bug which was preventing the jump buttons from displaying in Firefox
+and Safari. [Matt Rolf]
+
+=item *
+
+Tweaked Bricolage Instance Name display. [Matt Rolf]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

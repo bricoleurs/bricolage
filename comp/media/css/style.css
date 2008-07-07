@@ -179,7 +179,7 @@ div.debug dt:after {
 }
 
 .jump { float: right; padding-top: 3px; }
-.desk-top { position: relative; background-color: #666633; color: white; padding: 3px 5px; margin: 0px 0px 10px 0px; }
+.desk-top { background-color: #666633; color: white; padding: 3px 5px; margin: 0px 0px 10px 0px; }
 .desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; line-height: 1.4em; margin: 0; }
 .desk-top .sort { float: right; text-align: right; font-size: 1em;  padding: 2px 20px 0px 0px; }
 .desk-top .sort select { font-size: 1em; }
