@@ -447,9 +447,7 @@ START MODULE LIST
 
 =item Net::FTPServer (optional)
 
-=item Net::SFTP 0.08 (optional)
-
-=item Math::BigInt::GMP (optional)
+=item Net::SSH2 0.18 (optional)
 
 =item HTTP::DAV (optional)
 
@@ -2019,22 +2017,18 @@ the database -- see Bric::Util::MediaType for more information. Defaults to
 B<ENABLE_SFTP_MOVER:> This directive indicates whether the Bricolage server
 may distribute resources using the SFTP mover. Setting this to "On" or "Yes"
 or "1" will enable the SFTP mover. In order to use the SFTP mover, you must
-manually install the Net::SFTP module from the CPAN. Furthermore, you should
-login to the remote server in order to initialize F<~/.ssh/known_hosts> before
+manually install libssh2, which can be found at L<http://www.libssh2.org/>.
+You will also need to install the Net::SSH2 module from the CPAN. If you've
+installed your own SSL toolkit such as OpenSSL, make sure that libssh2 is using 
+the same version as your Bricolage instance.  
+
+Login to the remote server in order to initialize F<~/.ssh/known_hosts> before
 using the SFTP mover. You might also need to create the directory F</.ssh> on
 the Bricolage server (and possibly on the destination server, too) with write
 permission for "nobody", in case nobody's home directory is something like
 F</bin/false> and ssh falls back to F</> as the home directory). To use a
 private key, it must be named F<~/.ssh/identity> for F<~/.ssh/id_rsa>, as
 those are the files that Net::SSH::Perl looks for. Defaults to "Off" if not
-specified.
-
-=item *
-
-B<ENABLE_SFTP_V2:> Set this directive to "On" or "Yes" or "1" to enable the
-SFTP mover to try to use the SSH protocol 2 before protocol 1; otherwise, it
-first tries protocol 1. Enable this directive if you've installed the
-necessary CPAN modules for SSH-2 support in Net::SFTP. Disabled if not
 specified.
 
 =item *
@@ -2049,11 +2043,11 @@ but is generally F</> (and therefore probably I<not> what you want).
 B<SFTP_MOVER_CIPHER:> This directive forces the SFTP mover (if enabled by the
 C<ENABLE_SFTP_MOVER> directive) to use a particular encryption cipher. This
 can be useful for tuning SFTP distribution for speed. The default is 0, which
-allows the default cipher to be used. Consult the Net::SSH::Perl documentation
-for a complete list of supported ciphers for SSH-1 and SSH-2. As of this
-writing, the suppported ciphers are "IDEA", "DES", "DES3", and "Blowfish" for
-SSH-1; and "arcfour", "blowfish-cbc", and "3des-cbc" for SSH-2. The default
-SSH-1 cipher is "IDEA"; the default SSH-2 cipher is "3des-cbc".
+allows the default cipher to be used. Consult the Net::SSH2 documentation
+for a complete list of supported ciphers for SSH-2. As of this writing, the
+suppported ciphers are "aes256-cbc", "aes192-cbc", "aes128-cbc", "blowfish-cbc"
+"arcfour", "cast128-cbc", "3des-cbc" and "none". The default SSH-2 cipher is
+"aes256-cbc".
 
 =item *
 

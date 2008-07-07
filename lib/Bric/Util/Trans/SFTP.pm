@@ -141,10 +141,7 @@ sub put_res {
         my $ssh2 = Net::SSH2->new();
         my $connect = eval {
             $ssh2->connect($hn);
-            my $cipher_value = SFTP_MOVER_CIPHER;
-            if(defined $cipher_value){
-                $ssh2->method("CRYPT_CS", $cipher_value);
-            }
+            $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
             $ssh2->auth_password($user,$password);
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
@@ -295,8 +292,16 @@ sub del_res {
         foreach my $res (@$resources) {
             # Get the name of the file to be deleted.
             my $file = $fs->cat_dir($doc_root, $res->get_uri);
+            # Strip the filename off end of uri and escape it
+            my $orig_base = $fs->base_name($file);
+            my $escaped_base;
+            ($escaped_base = $orig_base) =~ s/(.)/\\$1/g;
+            # Strip off directory destination and
+              # re-name file with escapes included
+            my $base_dir = $fs->dir_name($file);
+            my $file_esc = $fs->cat_dir($base_dir, $escaped_base);
             # Delete the file
-            $sftp->unlink($file);
+            $sftp->unlink($file_esc);
         }
 
         # Disconnect and free memory
