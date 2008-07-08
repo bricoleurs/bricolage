@@ -607,19 +607,28 @@ sub _serialize_element {
 
         # look for related stuff and tag relative if we'll include in
         # the assets dump.
-        my ($related_story, $related_media);
-        if ($related_story = $element->get_related_story) {
-            $attr{related_story_id} = $related_story->get_id;
+        if (my $related_asset = $element->get_related_story) {
+            my $id = $related_asset->get_id;
+            if ($options{args}{use_related_uri}) {
+                $attr{related_story_uri} = $related_asset->get_uri;
+            } else {
+                $attr{related_story_id} = $id
+            }
             if ($options{args}{export_related_stories}) {
                 $attr{relative} = 1;
-                push(@related, [ story => $attr{related_story_id} ]);
+                push(@related, [ story => $id ]);
             }
         }
-        if ($related_media = $element->get_related_media) {
-            $attr{related_media_id} = $related_media->get_id;
+        if (my $related_asset = $element->get_related_media) {
+            my $id = $related_asset->get_id;
+            if ($options{args}{use_related_uri}) {
+                $attr{related_media_uri} = $related_asset->get_uri;
+            } else {
+                $attr{related_media_id} = $id
+            }
             if ($options{args}{export_related_media}) {
                 $attr{relative} = 1;
-                push(@related, [ media => $attr{related_media_id} ]);
+                push(@related, [ media => $id ]);
             }
         }
 

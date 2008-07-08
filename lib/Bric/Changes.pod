@@ -29,6 +29,10 @@ C<bric_soap site list_ids> instead of C<bric_soap category list_ids> for setting
 the login cookie. That should be more efficient for installations that have many
 more categories than they have sites. [Scott]
 
+=item *
+
+Added C<--use-related-uri> option to C<bric_soap>. [Scott]
+
 =back
 
 =head2 Bug Fixes

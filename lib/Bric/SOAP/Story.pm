@@ -708,6 +708,7 @@ my $allowed = {
                     keys %{ Bric::Biz::Asset::Business::Story->PARAM_WHERE_MAP }
                 },
     export   => { map { $_ => 1 } qw(story_id story_ids
+                                     use_related_uri
                                      export_related_media
                                      export_related_stories) },
     create   => { map { $_ => 1 } qw(document workflow desk) },
