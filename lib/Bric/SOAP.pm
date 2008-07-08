@@ -522,7 +522,6 @@ The XSD source:
              <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
              <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
              <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
-             <xs:attribute name="use_related_uri" type="xs:boolean" use="optional"/>
              <xs:attribute name="relative" type="xs:boolean" use="optional"/>
            </xs:complexType>
          </xs:element>
@@ -1532,7 +1531,6 @@ The XSD source:
      <xs:attribute name="related_media_id" type="xs:int" use="optional"/>
      <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
      <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
-     <xs:attribute name="use_related_uri" type="xs:boolean" use="optional"/>
      <xs:attribute name="relative" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>
