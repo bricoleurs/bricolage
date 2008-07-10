@@ -8,6 +8,7 @@ use strict;
 use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::Util::DBI qw(:trans);
+use Bric::Util::Time qw(strfdate);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:msg :aref :history :wf);
 use Bric::App::Event qw(log_event);
@@ -236,7 +237,7 @@ sub create_related_media : Callback {
         : $param->{"$widget|file"};
     my $m_param = {
         'title'                   => $filename,
-        'cover_date'              => $asset->get_cover_date(ISO_8601_FORMAT),
+        'cover_date'              => strfdate(),
         'priority'                => $asset->get_priority,
         'media_prof|category__id' => $asset->get_primary_category->get_id,
         'media_prof|source__id'   => $asset->get_source__id,

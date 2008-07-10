@@ -33,6 +33,11 @@ more categories than they have sites. [Scott]
 
 Added C<--use-related-uri> option to C<bric_soap>. [Scott]
 
+=item *
+
+For media uploaded through the Story Profile, the cover date now defaults to
+the current date/time instead of the cover date of the story. [Scott]
+
 =back
 
 =head2 Bug Fixes
