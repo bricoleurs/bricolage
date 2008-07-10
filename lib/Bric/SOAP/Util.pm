@@ -611,6 +611,7 @@ sub _serialize_element {
             my $id = $related_asset->get_id;
             if ($options{args}{use_related_uri}) {
                 $attr{related_story_uri} = $related_asset->get_uri;
+                $attr{related_site_id} = $related_asset->get_site_id;
             } else {
                 $attr{related_story_id} = $id
             }
@@ -623,6 +624,7 @@ sub _serialize_element {
             my $id = $related_asset->get_id;
             if ($options{args}{use_related_uri}) {
                 $attr{related_media_uri} = $related_asset->get_uri;
+                $attr{related_site_id} = $related_asset->get_site_id;
             } else {
                 $attr{related_media_id} = $id
             }

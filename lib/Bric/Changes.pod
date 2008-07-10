@@ -31,7 +31,7 @@ more categories than they have sites. [Scott]
 
 =item *
 
-Added C<--use-related-uri> option to C<bric_soap>. [Scott]
+Added C<--use-related-uri> option to C<bric_soap>. [Scott, David]
 
 =item *
 
