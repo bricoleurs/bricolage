@@ -94,6 +94,10 @@ and Safari. [Matt Rolf]
 
 Tweaked Bricolage Instance Name display. [Matt Rolf]
 
+=item *
+
+Fixed bug 1343, View Diff wasn't working in IE. Reported by Ed Guzman. [Scott]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)
