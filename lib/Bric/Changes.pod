@@ -678,8 +678,8 @@ Updated the Portuguese localizations. [Pedro Custodio]
 =item *
 
 A story being published for the first time now has its C<publish_status> set
-to true I<before> it is published, instead of aftewards. This both prevents an
-exception when a template tries to save a story that has not been published
+to true I<before> it is published, instead of afterwards. This both prevents
+an exception when a template tries to save a story that has not been published
 before, and eliminates the need for templates to set the C<publish_status> on
 a story before calling C<publish_another()> for a another story that will
 search for the current story in the database. Reported by Rod Taylor (Ticket #
