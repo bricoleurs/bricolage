@@ -1,7 +1,11 @@
 <div id="element_<% $id %>_content" class="content">
 % unless ($top_level) {
 <fieldset>
-<legend class="name"><% $element->get_name %>:</legend>
+<legend class="name"><% $element->get_name %>: 
+% if (!$type->is_related_story && !$type->is_related_media) {
+<a href="#" id="element_<% $id %>_showhide" onclick="Effect.toggle('element_<% $id %>', 'blind', {duration: 0.5}); $('element_<% $id %>_showhide').innerHTML = ($('element_<% $id %>_showhide').innerHTML == '[+]' ? '[-]' : '[+]'); return false;">[-]</a>
+% }
+</legend>
 % }
 % if ($type->is_related_story) {
 <div id="element_<% $id %>_rel_story">
