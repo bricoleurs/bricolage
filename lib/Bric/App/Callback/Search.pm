@@ -92,7 +92,7 @@ sub media : Callback {
 
     my (@field, @crit);
 
-    _build_fields($self, \@field, \@crit, [qw(simple name uri data_text)]);
+    _build_fields($self, \@field, \@crit, [qw(simple name uri keyword data_text)]);
     _build_id_fields($self, \@field, \@crit, [qw(element_type_id site_id)]);
     _build_bool_fields($self, \@field, \@crit, [qw(active)]);
     _build_date_fields($self->class_key, $self->params, \@field, \@crit,
