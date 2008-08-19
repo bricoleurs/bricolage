@@ -122,9 +122,9 @@ default.
 
 =item to_preview
 
-Set this to true to publish to the preview destination instead of the
-publish destination.  This will fail if PREVIEW_LOCAL is On in
-bricolage.conf.
+Set this to true to publish to all preview destinations instead of the publish
+destinations. This will fail if C<PREVIEW_LOCAL> is enabled in
+F<bricolage.conf>.
 
 =item publish_date
 
@@ -280,8 +280,9 @@ sub publish {
 
         if ($preview) {
             # Just preview it.
-            push @published, name( "$type\_id" => $id )
-                if $burner->preview($obj, $type, get_user_id);
+            push @published, name( "$type\_id" => $id ) if grep {
+                $burner->preview($obj, $type, get_user_id, $_->get_id)
+            } $obj->get_output_channels;
         } else {
             # Schedule the publish.
             my $name = 'Publish "' . $obj->get_name . '"';

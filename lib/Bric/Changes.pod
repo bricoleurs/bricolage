@@ -14,8 +14,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added reverse date sorting option on desks (newest items first). Suggested
-by Bret Dawson. [Greg Heo]
+Added reverse date sorting option on desks (newest items first). Suggested by
+Bret Dawson. [Greg Heo]
 
 =item *
 
@@ -23,7 +23,15 @@ Updated Xinha include script to reflect latest Xinha updates. [Matt Rolf]
 
 =item *
 
-Updated SFTP.pm to use the faster Net::SSH2. [Sarah Mercier, Matt Rolf, Charlie Reitsma, Michael Herring]
+Updated SFTP.pm to use the faster Net::SSH2. [Sarah Mercier, Matt Rolf,
+Charlie Reitsma, Michael Herring]
+
+=item *
+
+The C<to_preview> option to C<Bric::SOAP::Workflow->publish >> now previews a
+document for all output channels, not just the primary output channel. The
+same of course applies to the C<--to-preview> option to F<bric_soap>.
+Suggested by Terence Bodola. [David]
 
 =back
 
