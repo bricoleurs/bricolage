@@ -18,6 +18,13 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Added entries to the config settings in ApacheConfig.pm for Apache 1.3 
+to neutralize the potentially malicious use of HTTP TRACE requests by returning 
+a forbidden operation response when such requests are received. 
+L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet]
+
+=item *
+
 Changed an index in the story and media instance tables to improve query
 speed. Thanks to Alex Krohn for reporting the performance issue. [David and
 Josh Berkus]
