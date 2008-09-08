@@ -32,7 +32,7 @@ Install Perl 5.8.0 or greater.
 
 =item 2
 
-Install Apache 1.3.12 or greater with mod_perl, mod_log_config, mod_mime, and
+Install Apache 1.3.34 or greater with mod_perl, mod_log_config, mod_mime, and
 mod_alias. For SSL also install mod_ssl or apache-ssl.
 
 =item 3
@@ -249,11 +249,11 @@ END MODULE LIST
 
 =item *
 
-Apache 1.3.12
+Apache 1.3.34 or later
 
 =item *
 
-mod_perl 1.25 - Apache/Perl Integration
+mod_perl 1.xx or later - Apache/Perl Integration
 
 =item *
 
@@ -269,11 +269,11 @@ OpenSSL 0.9.6b (optional)
 
 =item *
 
-mod_ssl 2.8.4-1.3.20 - Apache Interface to OpenSSL (optional)
+mod_ssl 2.8.4-1.3.xx - Apache Interface to OpenSSL (optional)
 
 =item *
 
-apache_ssl 1.3.22+ssl_1.47 Apache SSL (optional)
+apache_ssl 1.3.xx+ssl_1.xx Apache SSL (optional)
 
 =item *
 

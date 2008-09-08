@@ -72,9 +72,7 @@ do {
         '  PerlCleanupHandler     Bric::App::CleanupHandler',
         '  RedirectMatch          '.
                 'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
-        '  RewriteEngine on',
-        '  RewriteCond %{REQUEST_METHOD} ^TRACE',
-        '  RewriteRule .* - [F]',
+        '  TraceEnable            off',
     );
 
     # Setup Apache::DB handler if debugging

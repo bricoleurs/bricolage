@@ -76,7 +76,7 @@ unless ($RESULTS{PG} and $RESULTS{APACHE} and
             $RESULTS{PG}     ? "" :
             "\tPostgreSQL >= 7.3.0 (http://postgresql.org)\n",
             $RESULTS{APACHE} ? "" :
-            "\tApache >= 1.3.12    (http://apache.org)\n",
+            "\tApache >= 1.3.34    (http://apache.org)\n",
             $RESULTS{EXPAT}  ? "" :
             "\texpat >= 1.95.0     (http://expat.sourceforge.net)\n",
             "\nSee INSTALL for details.\n"
@@ -144,7 +144,7 @@ sub find_pg {
 
 # look for apache
 sub find_apache {
-    print "Looking for Apache with version >= 1.3.12...\n";
+    print "Looking for Apache with version >= 1.3.34...\n";
 
     # find Apache by looking for executables called httpd, httpsd,
     # apache-perl or apache, in that order.  First search user's
@@ -198,7 +198,7 @@ sub find_apache {
     return soft_fail("Found Apache 2. Bricolage only supports Apache 1.3.\n")
       if $x > 1;
     return soft_fail("Found old version of Apache: $x.$y.$z - ",
-                     "1.3.12 or greater required.")
+                     "1.3.34 or greater required.")
         unless (($x == 1 and $y > 3) or ($x == 1 and $y == 3 and $z >= 12));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];

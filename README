@@ -57,9 +57,7 @@ If you'd like to contribute to Bricolage, see:
 KNOWN ISSUES
 ============
 
-* Apache 1.3.28 does not work properly with Bricolage. It causes the
-  connections to the PostgreSQL server to be unexpectedly dropped in such a
-  way that Bricolage cannot reconnect. Please use Apache 1.3.29, instead.
+* None at this time
 
 Enjoy!
 
