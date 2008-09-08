@@ -72,9 +72,9 @@ sources.
 
 From http://www.modssl.org/source/ download the mod_ssl sources. Make sure
 that the second half of the version number is the same as the version of
-Apache you downloaded. For example, if you downloaded apache_1.3.27.tar.gz,
+Apache you downloaded. For example, if you downloaded apache_1.3.41.tar.gz,
 then the mod_ssl sources you want will be something like
-mod_ssl-2.x.x-1.3.27.tar.gz.
+mod_ssl-2.x.x-1.3.41.tar.gz.
 
 From ftp://ftp.cpan.org/pub/CPAN/src/, download perl-5.8.x.tar.gz.
 
@@ -165,7 +165,7 @@ You should be fine if you follow the steps outlined here.
 
 7. Install Apache:
 
-  % cd apache_1.3.26/
+  % cd apache_1.3.xx/
   % SSL_BASE=/usr/local/src/openssl-VERSION/ \
     ./configure \
     --with-layout=Apache \

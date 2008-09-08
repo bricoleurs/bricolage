@@ -85,9 +85,9 @@ unless (($RESULTS{PG} or $RESULTS{MYSQL}) and ($RESULTS{APACHE} or $RESULTS{APAC
             $RESULTS{MYSQL}   ? "" :
             "\tMySQL client >= 4.1.0     (http://mysql.com)\n",
             $RESULTS{APACHE}  ? "" :
-            "\tApache >= 1.3.12 && < 2.0 (http://httpd.apache.org)\n",
+            "\tApache >= 1.3.34 && < 2.0 (http://httpd.apache.org)\n",
             $RESULTS{APACHE2} ? "" :
-            "\tApache >= 2.0.51          (http://httpd.apache.org)\n",
+            "\tApache >= 2.0.55          (http://httpd.apache.org)\n",
             $RESULTS{EXPAT}   ? "" :
             "\texpat >= 1.95.0           (http://expat.sourceforge.net)\n",
             "\nSee INSTALL for details.\n"
@@ -204,7 +204,7 @@ sub find_mysql {
 
 
 sub find_apache {
-    print "Looking for Apache with version >= 1.3.12 && < 2.0...\n";
+    print "Looking for Apache with version >= 1.3.34 && < 2.0...\n";
 
     # find Apache by looking for executables called httpd, httpsd,
     # apache-perl or apache, in that order.  First search user's
@@ -257,7 +257,7 @@ sub find_apache {
         unless defined $x and defined $y and defined $z;
 
     return soft_fail("Found unacceptable version of Apache: $x.$y.$z - ",
-                     "version >= 1.3.12 and < 2.0 required.")
+                     "version >= 1.3.34 and < 2.0 required.")
         unless (($x == 1 and $y == 3 and $z >= 12) or ($x == 1 and $y > 3));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
@@ -266,7 +266,7 @@ sub find_apache {
 }
 
 sub find_apache2 {
-    print "Looking for Apache with version >= 2.0.51...\n";
+    print "Looking for Apache with version >= 2.0.55...\n";
 
     # Note: be careful with the names here. The defaults have 2s in them,
     # like APACHE2_EXE, but what's put in %REQ doesn't have a 2, so APACHE_EXE.
@@ -321,7 +321,7 @@ sub find_apache2 {
         unless defined $x and defined $y and defined $z;
 
     return soft_fail("Found unacceptable version of Apache: $x.$y.$z - ",
-                     "2.0.51 or greater required\n")
+                     "2.0.55 or greater required\n")
         unless ($x == 2 and ($y > 0 or ($y == 0 and $z >= 51)));
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
@@ -380,3 +380,4 @@ sub get_httpd {
     ask_confirm("httpd version ($htstring): ", \$REQ{HTTPD_VERSION}, $QUIET);
     print "\n\n==> Finished Selecting Apache version <==\n\n";
 }
+
