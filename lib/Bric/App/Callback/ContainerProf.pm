@@ -174,6 +174,11 @@ sub create_related_media : Callback {
     $self->_drift_correction;
     my $widget = $self->class_key;
 
+    # Bail on error or when there is no file.
+    my $param = $self->params;
+    return if $param->{_inconsistent_state_};
+    return unless $param->{"$widget|file"};
+
     # Get a handle on things to restore later.
     my $element =  get_state_data($widget, 'element');
     my $type    = $element->get_object_type;
@@ -181,10 +186,6 @@ sub create_related_media : Callback {
     my $state   = get_state($widget);
     my $type_state = get_state_name($type.'_prof');
     clear_state($widget);
-
-    my $param = $self->params;
-    return if $param->{_inconsistent_state_};
-    return unless $param->{"$widget|file"};
 
     # Get the workflow for media files.
     my $media_wf = find_workflow($asset->get_site_id, MEDIA_WORKFLOW, READ);
