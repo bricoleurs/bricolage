@@ -63,6 +63,11 @@ Apache2. [Paul Orrock]
 Fixed CCS bug which was preventing the jump buttons from displaying in Firefox
 and Safari. [Matt Rolf]
 
+=item *
+
+Trying to add an element to a document that has related media fields no longer
+causes an error [David]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)
