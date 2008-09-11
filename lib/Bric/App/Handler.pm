@@ -202,9 +202,10 @@ our %EXPORT_TAGS = (err => [qw(handle_err)]);
 ################################################################################
 # Constants
 ################################################################################
-use constant ERROR_FILE =>
-  Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
-			       Bric::Util::Trans::FS->split_uri(ERROR_URI));
+use constant ERROR_FILE => Bric::Util::Trans::FS->cat_dir(
+    MASON_COMP_ROOT->[0][1],
+    Bric::Util::Trans::FS->split_uri(ERROR_URI),
+);
 
 ################################################################################
 # Fields
@@ -359,10 +360,10 @@ sub handle_err {
     # not guaranteed. Use print STDERR to avoid escaping newlines.
     print STDERR $err->can('trace_as_text')
       ? $err->trace_as_text
-      : join ("\n",
-              map {sprintf "  [%s:%d]", $_->filename, $_->line }
-                $err->trace->frames),
-        "\n";
+      : join (
+          "\n",
+          map { sprintf '  [%s:%d]', $_->filename, $_->line } $err->trace->frames
+      ), "\n";
 
     # Process the exception for the user.
     # Instead of using $interp->exec we start over a la PreviewHandler.

@@ -1,5 +1,6 @@
 % # Check to see if this is a preview screen.
 % my $prev = $r->pnotes('burner.preview');
+% unless ($is_partial) {
 <& /widgets/wrappers/header.mc,
         title      => 'Error',
         useSideNav => !$prev,
@@ -10,6 +11,8 @@
 
 <p><% $lang->maketext('An error occurred while processing your request:')%></p>
 
+% }
+<div id="servererror">
 % if (isa_exception($fault)) {
 <p class="errorMsg"><% escape_html($fault->error) %></p>
 % }
@@ -68,7 +71,8 @@
 <p>Please report this error to your administrator.  It may be helpful to include the error details in your report.</p>
 % }
 
-<& '/widgets/wrappers/footer.mc' &>
+</div>
+% $m->comp('/widgets/wrappers/footer.mc') unless $is_partial;
 % $r->status(HTTP_INTERNAL_SERVER_ERROR);
 % $m->abort;
 <%init>;
@@ -86,4 +90,5 @@ my $pay = isa_bric_exception($fault) ? ($fault->payload || '') : '';
 
 my $is_burner_error = isa_bric_exception($fault, 'Exception::Burner');
 my %req_args = HTML::Mason::Request->instance->request_args;
+my $is_partial = $r->headers_in->{'X-Requested-With'} eq 'XMLHttpRequest';
 </%init>
