@@ -150,7 +150,7 @@ a.small         { font-size: .9em; }
 .blackMedUnderlinedLink { font-size:11px; color:#006666;}
 
 .label          { font-weight: bold }
-.label.required { font-weight: bold; color: #8b0000}
+.label.required { font-weight: bold; color: #cc0000}
 .burgandyLabel { font-size:10px; font-weight:bold; color:#993300}
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
@@ -161,7 +161,7 @@ a.small         { font-size: .9em; }
 .alias          { font-style:italic; }
 
 #errors      { margin: 10px 0; }
-.errorMsg    { padding: 3px 0; color: #8b0000; font-weight: bold}
+.errorMsg    { padding: 3px 0; color: #cc0000; font-weight: bold}
 .statusMsg   { display: none; } /* Status messages are sent to the browser before the */
                                 /* stylesheet.  If this style ever gets applied, that */
                                 /* means there was an error and these messages should */
@@ -872,7 +872,7 @@ table.dlman tr.dlbtns { height: 30px; }
 }
 
 .lightboxerror {
-	border: 1em solid #8b0000;
+	border: 1em solid #cc0000;
 }
 
 .lightbox .errorMsg { padding-top: 0; margin-top: 0; }
