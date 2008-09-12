@@ -40,7 +40,7 @@ $show_all         => undef
 </%args>
 
 <%init>;
-my ($w_id, $d_id) = $r->uri =~ m!/(\d+)/(\d+)/?$!;
+my ($w_id, $d_id) = $r->uri =~ m{/(\d+)/(\d+)/?$};
 my $d = Bric::Biz::Workflow::Parts::Desk->lookup({'id' => $d_id});
 my $d_name = $d ? $d->get_name : 'Unknown';
 my $wf = Bric::Biz::Workflow->lookup({ id => $w_id });

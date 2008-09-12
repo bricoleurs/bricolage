@@ -39,6 +39,13 @@ document for all output channels, not just the primary output channel. The
 same of course applies to the C<--to-preview> option to F<bric_soap>.
 Suggested by Terence Bodola. [David]
 
+=item *
+
+Server errors sent in responxe to Ajax requests are now displayed in a modal
+lightbox widget, rather than just geting shoved into the DOM. Also, effects
+that should only occur on success (such as removing a story from a desk when
+you move it) now only happen on success.
+
 =back
 
 =head2 Bug Fixes
@@ -67,6 +74,11 @@ and Safari. [Matt Rolf]
 
 Trying to add an element to a document that has related media fields no longer
 causes an error [David]
+
+=item *
+
+Server errors sent in response to AJAX requests no longer send a full HTML
+file in reply, just the error stuff. [David]
 
 =back
 

@@ -29,7 +29,7 @@
         <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
         <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
-    
+
     <div class="actions">
         <ul class="action">
             <li><a href="<% $link %>" title="<% $vlabel %>">
@@ -58,7 +58,7 @@
             </li>
 % }
         </ul>
-        
+
         <ul class="movers" style="float: right; width: 100px">
 % if (!$user && $action eq 'checkin_cb') {
             <li>
@@ -90,7 +90,7 @@
                   globalImage => 1,
                   useTable => 0
               &>
-             </li> 
+             </li>
 % }
 
 % if (!$user && $can_edit && $move_opts) {
@@ -126,7 +126,7 @@
                     js     => 'onclick="' . &$publish_js . '"',
                     globalImage => 1,
                     useTable => 0
-                &>    
+                &>
 %           } else {
                 <& /widgets/profile/button.mc,
                     disp => "Publish (double click to publish now)",
@@ -147,7 +147,7 @@
             </li>
 % }
         </ul>
-        
+
 %       if ($user) {
         <p><% $user %></p>
 %       } else {
@@ -203,7 +203,7 @@ if ($checked_out_by_current_user) {
     $action = 'checkin_cb';
 } elsif (defined $user_id) {
     $checkin_opts = undef;
-    $user = $obj->get_user->format_name;    
+    $user = $obj->get_user->format_name;
 }
 
 # Assemble the list of desks we can move this to.
@@ -217,7 +217,7 @@ if ($checkin_opts || $move_opts) {
         my $key = join('-', $did, $workflow_id);
         my $value = $to . $d->get_name;
         push @$checkin_opts, [$key, $value];
-        push @$move_opts, [$key, $value] unless $did == $desk_id;        
+        push @$move_opts, [$key, $value] unless $did == $desk_id;
         $seen{$did} = 1;
     }
 
@@ -233,7 +233,7 @@ if ($checkin_opts || $move_opts) {
                 my $key = join('-', $did, $wid);
                 my $value = $to . $_->get_name;
                 push @$checkin_opts, [$key, $value];
-                push @$move_opts, [$key, $value] unless $did == $desk_id; 
+                push @$move_opts, [$key, $value] unless $did == $desk_id;
                 $seen{$did} = 1;
             }
         }
@@ -307,12 +307,12 @@ my $checkin_js = sub {
         # to disappear.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", ($next_desk ? ("desk_asset|next_desk=$next_desk") : ()));
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') } ); return false";
     } else {
-        my $parameters = join('&amp;', "desk_type=workflow", 
-                                       "obj=${class}_${id}", 
-                                       "highlight=$highlight", 
-                                       "desk_asset|checkin_cb=${class}_${id}", 
+        my $parameters = join('&amp;', "desk_type=workflow",
+                                       "obj=${class}_${id}",
+                                       "highlight=$highlight",
+                                       "desk_asset|checkin_cb=${class}_${id}",
                                        "desk_asset|next_desk=$next_desk");
         return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
     }
@@ -321,18 +321,18 @@ my $checkin_js = sub {
 my $move_js = sub {
     my $next_desk = shift;
     if ($desk_type eq 'workflow') {
-        # Workflows only show assets from one desk, so the asset needs to 
+        # Workflows only show assets from one desk, so the asset needs to
         # disappear when it's moved to a different desk.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|move_cb=$class\_$id", "desk_asset|next_desk=$next_desk");
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') }); return false";
     } else {
         # The workspace shows assets from many desks, so the asset needs
         # to be updated.
-        my $parameters = join('&amp;', "desk_type=$desk_type", 
-                                       "obj=${class}_${id}", 
-                                       "highlight=$highlight", 
-                                       "desk_asset|move_cb=${class}_${id}", 
+        my $parameters = join('&amp;', "desk_type=$desk_type",
+                                       "obj=${class}_${id}",
+                                       "highlight=$highlight",
+                                       "desk_asset|move_cb=${class}_${id}",
                                        "desk_asset|next_desk=$next_desk");
         if ($next_desk eq 'shelve') {
             return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
@@ -347,10 +347,10 @@ my $publish_js = sub {
     my $uri = $r->uri;
     if ($class eq 'template') {
         my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";        
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";
     } else {
         my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";                
+        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
     }
 };
 

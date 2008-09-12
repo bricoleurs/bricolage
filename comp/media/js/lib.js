@@ -1045,6 +1045,25 @@ document.getParentByTagName = function(element, tagName) {
     return element;
 }
 
+/*
+ * Application-wide stuff.
+ */
+var Bricolage = {
+    handleError: function(req) {
+        div = document.createElement('div');
+        div.className = 'lightboxerror';
+        Element.update(
+            div,
+            '<h1 class="errorMsg">Error</h1>' +
+            '<p><a href="#" class="lbAction" rel="deactivate">Close</a></p>' +
+            req.responseText +
+            '<p><a href="#" class="lbAction" rel="deactivate">Close</a></p>'
+        );
+        document.body.appendChild(div);
+        new Lightbox(div).activate();
+    }
+};
+
 var Desk = {
     visibleMenu: '',
 
@@ -1055,16 +1074,26 @@ var Desk = {
             parameters: ''
         }, opts || {});
         Desk.hideMenu();
-        new Ajax.Updater(element, options.uri, { insertion: Element.replace, asynchronous: true, parameters: options.parameters });
+        new Ajax.Updater( { success: element }, options.uri, {
+            insertion: Element.replace,
+            asynchronous: true,
+            parameters: options.parameters,
+            onFailure: Bricolage.handleError
+        } );
     },
 
-    request: function(opts) {
+    request: function(opts, onSuccess) {
         var options = Object.extend({
             uri: document.location,
             parameters: ''
         }, opts || {});
         Desk.hideMenu();
-        new Ajax.Request(options.uri, { asynchronous: true, parameters: options.parameters });
+        new Ajax.Request( options.uri, {
+            asynchronous: true,
+            parameters: options.parameters,
+            onSuccess: onSuccess,
+            onFailure: Bricolage.handleError
+        } );
     },
 
     showMenu: function(button, event) {
@@ -1192,11 +1221,12 @@ Abstract.ListManager.prototype = {
         var extraParams = this.options.extraParameters.join("&");
         extraParams = extraParams ? "&" + extraParams : '';
 
-        new Ajax.Updater(this.element, uri, {
-          parameters: Form.serialize(this.element) + extraParams,
-          asynchronous: true,
-          evalScripts: true,
-          onComplete: callback
+        new Ajax.Updater( { success: this.element }, uri, {
+            parameters: Form.serialize(this.element) + extraParams,
+            asynchronous: true,
+            evalScripts: true,
+            onSuccess: callback,
+            onFailure: Bricolage.handleError,
         });
     }
 };
@@ -1242,7 +1272,126 @@ AssociationListManager.prototype = Object.extend(new Abstract.ListManager(), {
             }
         });
     }
-})
+});
+
+/*
+Created By: Chris Campbell
+Website: http://particletree.com
+Date: 2/1/2006
+
+Adapted By: Simon de Haan
+Website: http://blog.eight.nl
+Date: 21/2/2006
+
+Adapted By: David Wheeler
+Website: http://blog.eight.nl
+Date: 11/9/2008
+
+Inspired by the lightbox implementation found at
+http://www.huddletogether.com/projects/lightbox/
+And the lightbox gone wild by ParticleTree at
+http://particletree.com/features/lightbox-gone-wild/
+
+*/
+var Lightbox = Class.create();
+Lightbox.prototype = {
+	yPos : 0,
+	xPos : 0,
+    browser : new Browser(),
+
+	initialize: function(elem) {
+        this.content = elem;
+	},
+
+	// Turn everything on - mainly the IE fixes
+	activate: function(){
+        if (this.browser.is_ie) {
+			this.getScroll();
+			this.prepareIE('100%', 'hidden');
+			this.setScroll(0,0);
+			this.hideSelects('hidden');
+		}
+		this.display('block');
+	},
+
+	// Ie requires height to 100% and overflow hidden or else you can scroll
+	// down past the lightbox
+	prepareIE: function(height, overflow){
+		bod = document.getElementsByTagName('body')[0];
+		bod.style.height = height;
+		bod.style.overflow = overflow;
+
+		htm = document.getElementsByTagName('html')[0];
+		htm.style.height = height;
+		htm.style.overflow = overflow;
+	},
+
+	// In IE, select elements hover on top of the lightbox
+	hideSelects: function(visibility){
+		selects = document.getElementsByTagName('select');
+		for(i = 0; i < selects.length; i++) {
+			selects[i].style.visibility = visibility;
+		}
+	},
+
+	// Taken from lightbox implementation found at
+	// http://www.huddletogether.com/projects/lightbox/
+	getScroll: function(){
+		if (self.pageYOffset) {
+			this.yPos = self.pageYOffset;
+		} else if (document.documentElement && document.documentElement.scrollTop){
+			this.yPos = document.documentElement.scrollTop;
+		} else if (document.body) {
+			this.yPos = document.body.scrollTop;
+		}
+	},
+
+	setScroll: function(x, y){
+		window.scrollTo(x, y);
+	},
+
+	display: function(display){
+        this.overlay().style.display = display;
+		this.content.style.display = display;
+        this.content.style.top = window.scrollY + 100 + 'px';
+		if (display != 'none') this.actions();
+	},
+
+	// Search through new links within the lightbox, and attach click event
+	actions: function(){
+		lbActions = document.getElementsByClassName('lbAction');
+
+		for(i = 0; i < lbActions.length; i++) {
+			Event.observe(
+                lbActions[i],
+                'click',
+                this[lbActions[i].rel].bindAsEventListener(this),
+                false
+            );
+			lbActions[i].onclick = function() { return false };
+		}
+        return this;
+	},
+
+	// Example of creating your own functionality once lightbox is initiated
+	deactivate: function() {
+		if (this.browser.is_ie){
+			this.setScroll(0,this.yPos);
+			this.prepareIE('auto', 'auto');
+			this.hideSelects('visible');
+		}
+		this.display('none');
+    },
+
+    overlay: function () {
+        var overlay = $('overlay');
+        if (overlay) return overlay;
+        overlay = document.createElement('div');
+        overlay.id = 'overlay';
+        document.body.appendChild(overlay);
+        return overlay;
+    }
+};
 
 /*
  * Container profile
@@ -1259,12 +1408,16 @@ var Container = {
         if (options.extraParameters != '') {
             params = params + '&' + options.extraParameters;
         }
-
-        new Ajax.Updater('element_' + container_id + '_content', '/widgets/container_prof/container.html', {
+        // Only update the element content with the requst results if the request is
+        // successful.
+        new Ajax.Updater(
+            { success: 'element_' + container_id + '_content' },
+            '/widgets/container_prof/container.html', {
             parameters: params,
             asynchronous: true,
             evalScripts: true,
-            onComplete: function(request) {
+            onFailure: Bricolage.handleError,
+            onSuccess: function(request) {
                 Container.updateOrder('element_' + container_id)
             }
         });
@@ -1288,18 +1441,22 @@ var Container = {
         return confirm(warn_delete_msg);
     },
 
-    // Used to associate a story or media with an element, from a popup.  It returns the updated
-    // partial, which is then inserted into the parent window.
-    // Takes the container ID to which to add the asset and the ID of the asset to relate
+    // Used to associate a story or media with an element, from a popup. It
+    // returns the updated partial, which is then inserted into the parent
+    // window. Takes the container ID to which to add the asset and the ID of
+    // the asset to relate
     update_related: function(action, type, widget, container_id, asset_id) {
         new Ajax.Updater(
-          window.opener.document.getElementById('element_' + container_id + '_rel_' + type),
-          '/widgets/container_prof/_related.html', {
-              parameters: 'type=' + type + '&widget=' + widget + '&container_id=' + container_id + '&container_prof|' + action + '_' + type + '_cb=' + asset_id,
-              asynchronous: true,
-              onComplete: function(request) {
-                  window.close();
-              }
+           { success: window.opener.document.getElementById(
+                'element_' + container_id + '_rel_' + type
+            ) },
+            '/widgets/container_prof/_related.html', {
+                parameters: 'type=' + type + '&widget=' + widget +
+                    '&container_id=' + container_id + '&container_prof|' +
+                     action + '_' + type + '_cb=' + asset_id,
+                asynchronous: true,
+                onSuccess: function(r) { window.close(); },
+                onFailure: Bricolage.handleError
           }
         )
     },

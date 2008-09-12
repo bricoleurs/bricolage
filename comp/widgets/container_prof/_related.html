@@ -40,7 +40,7 @@ if ($rel) {
     add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
           $type, $rel->get_title)
       unless $rel->is_active;
-    
+
     my $thumb = '';
     if (USE_THUMBNAILS && $type ne 'story') {
         if ($thumb =  $rel->thumbnail_uri) {
@@ -58,7 +58,7 @@ if ($rel) {
               type   => $type,
               header => 'Currently Related '.ucfirst($type),
               frame  => 0,
-              button => $thumb . $button 
+              button => $thumb . $button
     );
 } else {
     $m->out('<div class="noneFound">',
@@ -66,7 +66,7 @@ if ($rel) {
         qq{<div class="button">$button</div>},
         '</div>'
     );
-    
+
     if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
         # Give 'em an upload form.
         if (my $uploader = $m->scomp('/widgets/profile/media_upload.mc',
