@@ -154,6 +154,7 @@ sub handler {
             executing   => 0,
         })) {
             $job->execute_me;
+            Bric::Util::Burner->flush_another_queue;
             log_event("job_exec", $job);
         }
     };

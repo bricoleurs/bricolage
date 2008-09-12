@@ -194,7 +194,7 @@ sub publish : Callback {
                     ? $job->get_comp_time ? 'expired from '   : 'scheduled for expiration from'
                     : $job->get_comp_time ? 'published to' : 'scheduled for publication to';
                 add_msg(
-                    qq{ "[_1]" ${saved} [_2].},
+                    qq{"[_1]" ${saved} [_2].},
                     $doc->get_title,
                     $doc->get_site->get_name,
                 );
@@ -225,6 +225,9 @@ sub publish : Callback {
             if $count > 3;
         add_msg("[quant,_1,$key,$plural] expired.",   $exp_count)
             if $exp_count;
+
+        # Publish stuff passed to publish_another().
+        Bric::Util::Burner->flush_another_queue if $key eq 'story';
     }
 
     unless (exists($param->{instant}) && $param->{instant}) {

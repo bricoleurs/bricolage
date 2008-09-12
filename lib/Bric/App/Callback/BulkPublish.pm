@@ -59,6 +59,9 @@ sub publish_categories : Callback {
             log_event('job_new', $job);
             $counts{$key}++;
         }
+
+        # Publish stuff passed to publish_another().
+        Bric::Util::Burner->flush_another_queue if $key eq 'story';
     }
     if (%counts) {
         if (my $c = $counts{story}) {

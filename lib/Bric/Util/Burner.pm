@@ -466,6 +466,50 @@ sub list_file_types  {
     return [ map { @$_ } grep { defined } @$file_types ];
 }
 
+##############################################################################
+
+=item Bric::Util::Burner->flush_another_queue
+
+Goes through the list of documents queued for publish by C<publish_another()>
+and schedules them to be published. This method is called by the cleanup
+handler and/or by C<bric_queued>, and therefore not generally of interest to
+template developers (unless you want to flush the queue to force a publish
+after every call to C<publish_another()>, but be careful! You might force the
+publication of documents passed to C<publish_another()> by other templates in
+the same request!).
+
+=cut
+
+# XXX We're passing notes here, and Job::Pub will add them to the burner it
+# creates, but it does not store them. So if the publish job is in the future
+# or if QUEUE_PUBLISH_JOBS is enabled, the notes will not be available to the
+# other burner. We might want to add note serialization and deserialization to
+# the job class if this becomes a serious problem for anyone.
+
+my @another_queue_uuids;
+my %another_queue;
+
+sub flush_another_queue {
+    my $class = shift;
+    return $class unless @another_queue_uuids;
+    while (my $uuid = shift @another_queue_uuids) {
+        my ($doc, $pub_time, $notes) = @{ $another_queue{$uuid} };
+        my $key = $doc->key_name;
+        Bric::Util::Job::Pub->new({
+            sched_time          => $pub_time,
+            user_id             => get_user_id(),
+            name                => 'Publish "' . $doc->get_name . '"',
+            "$key\_instance_id" => $doc->get_version_id,
+            priority            => $doc->get_priority,
+            notes               => $notes,
+        })->save;
+    }
+
+    # Once we get here all recursive adds to the queue have been cleaned out.
+    %another_queue = ();
+    return $class;
+}
+
 =back
 
 =cut
@@ -1366,29 +1410,48 @@ sub publish {
   $burner->publish_another($ba, $publish_time);
   $burner->publish_another($ba, $publish_time, $anytime);
 
-Designed to be called from within a template, this method publishes a document
-other than the one currently being published. This is useful when a template
-for one document type needs to trigger the publish of another document. Look
-up that document via the Bricolage API and then pass it to this method to have
-it published at the same time as the story currently being published.
+Designed to be called from within a template, this method schedules the
+publication of a document other than the one currently being published. This
+is useful when a template for one document type needs to trigger the
+publication of another document. Look up that document via the Bricolage API
+and then pass it to this method to have it scheduled for publication at the
+same time as the story currently being published.
 
 If the mode isn't C<PUBLISH_MODE> or if the document passed in is the same
 story as the currently burning story, the publish will not actually be
-executed. Pass in a DateTime string to specify a different date and time to
-publish the document. If that date is in the future, a publish job will be
-schedule at that time. Pass in a true value as the third argument to trigger
-the publish in any mode, including C<PREVIEW_MODE> (not recommended).
+executed. Pass in an ISO-8601 datetime string to specify a date and time
+different than the current story to publish the document at a different time.
+Pass in a true value as the third argument to trigger the publish in any mode,
+including C<PREVIEW_MODE> (not recommended).
+
+If the document to be published has been published before, then the
+previously-published version will be published instead of the current version.
+This will help prevent removing stories from workflow while users are working
+on them.
 
 Note that any values stored in the C<notes> attribute of the current burner
-will be copied to the new burner that burns the new document, unless the
-C<$publish_time> agrument schedules the document to be published at a future
-time.
+will be copied to the publish job, and will therefore be available in
+templates when the other document is published, but B<only> if the publish
+date and time is before I<now> and if the C<QUEUE_PUBLISH_JOBS>
+F<bricolage.conf> directive is not enabled.
 
 B<Throws:> NONE.
 
 B<Side Effects:> NONE.
 
-B<Notes:> NONE.
+B<Notes:>
+
+All documents passed to C<publish_another()> are stored in a publish queue
+internal to Bric::Util::Burner; they will B<not> be published immediately. The
+queue may be cleared and all documents in it published by calling the
+C<flush_another_queue()> class method.
+
+You do not need to flush the publish queue from your templates, however,
+unless you want to always force an immediate republish. The reason for this is
+so that, if the bulk publication of a lot of stories at once causes the same
+document to be repeatedly passed to C<publish_another>, it will only be
+published once per Apache request or per poll time by C<bric_queued>. So in
+principal, you don't need to worry about this at all.
 
 =cut
 
@@ -1396,7 +1459,7 @@ sub publish_another {
     my ($self, $ba, $pub_time, $anytime) = @_;
     # Just return if we're in publish mode or the user wants to trigger
     # the publish in preview mode, too (totally whacked).
-    return unless $anytime || $self->_get('mode') == PUBLISH_MODE;
+    return $self unless $anytime || $self->_get('mode') == PUBLISH_MODE;
 
     # Figure out what we're publishing. (Why can't it figure that out for
     # itself??
@@ -1406,7 +1469,7 @@ sub publish_another {
 
     # Don't bother if it's the same as the current story.
     if ($key eq 'story' and my $story = $self->get_story) {
-        return if $ba->get_id == $story->get_id;
+        return $self if $ba->get_id == $story->get_id;
     }
 
     # Figure out the publish time. Default to the same time as the story
@@ -1414,22 +1477,24 @@ sub publish_another {
     $pub_time ||= $self->get_story->get_publish_date(ISO_8601_FORMAT)
         || strfdate;
 
-    if ($pub_time gt strfdate) {
-        # Schedule it to be published later.
-        Bric::Util::Job::Pub->new({
-            sched_time          => $pub_time,
-            user_id             => Bric::App::Session::get_user_id(),
-            name                => 'Publish "' . $ba->get_name . '"',
-            "$key\_instance_id" => $ba->get_version_id,
-            priority            => $ba->get_priority,
-        })->save;
-        return $self;
-    }
+    # Make sure that, if it has been published before, that we republish
+    # the published version, not the current version.
+    $ba = ref($ba)->lookup({ version_id => $ba->get_version_id })
+        if $ba->get_publish_status
+        && $ba->get_version > $ba->get_published_version;
 
-    # Construct a new burner object and publish the document.
-    my $b2 = __PACKAGE__->new;
-    $b2->_set(['_notes'] => [$self->_get('_notes')]);
-    $b2->publish($ba, $key, get_user_id, $pub_time);
+    my $uuid = $ba->get_uuid;
+    if (my $queue = $another_queue{$uuid}) {
+        # Set up the earliest publish time.
+        if ($pub_time lt $queue->[1]) {
+            @{ $queue }[1,2] = ($pub_time, [ $self->_get('_notes') ] );
+        }
+    } else {
+        # Add it to the publish_another queue.
+        push @another_queue_uuids, $uuid;
+        $another_queue{$uuid} = [ $ba, $pub_time, [ $self->_get('_notes') ] ];
+    }
+    return $self;
 }
 
 #------------------------------------------------------------------------------#

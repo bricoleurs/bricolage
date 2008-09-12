@@ -50,6 +50,9 @@ for my $s (Bric::Biz::Asset::Business::Story->list({
     $job->save;
 }
 
+# Publish stuff passed to publish_another().
+Bric::Util::Burner->flush_another_queue;
+
 1;
 __END__
 

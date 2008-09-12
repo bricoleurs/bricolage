@@ -34,8 +34,8 @@ Charlie Reitsma, Michael Herring]
 
 =item *
 
-The C<to_preview> option to C<Bric::SOAP::Workflow->publish >> now previews a
-document for all output channels, not just the primary output channel. The
+The C<to_preview> option to C<< Bric::SOAP::Workflow->publish >> now previews
+a document for all output channels, not just the primary output channel. The
 same of course applies to the C<--to-preview> option to F<bric_soap>.
 Suggested by Terence Bodola. [David]
 
@@ -45,6 +45,17 @@ Server errors sent in responxe to Ajax requests are now displayed in a modal
 lightbox widget, rather than just geting shoved into the DOM. Also, effects
 that should only occur on success (such as removing a story from a desk when
 you move it) now only happen on success.
+
+=item *
+
+Changed the behavior of C<< Bric::Util::Burner->publish_another >> so that,
+rather than immediately publishing a document, it instead adds it to a list of
+documents to be published and then returns. Documents added to the list are
+then published when all other publish jobs in a given request have finished
+publishing. The upshot is that if you bulk publish 50 stories that all trigger
+the republication of a home page story, that home page story will be
+republished only once, rather than 50 times. Sponsored by NetStumbler and
+Kineticode, with production testing by the National Gallery of Art. [David]
 
 =back
 

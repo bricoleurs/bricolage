@@ -232,6 +232,8 @@ sub run_as_daemon {
     my $pkg = fork_to_dist();
     login();
     while (1) {
+        # XXX Add a Limit parameter here? Seems like we should be able to
+        # force it to do no more than a few at a time.
         for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
@@ -246,6 +248,17 @@ sub run_as_daemon {
             print $@ if $@;
             terminate() if $CaughtSignal;
         }
+
+        # Flush out the publish_another queue.
+        if ($pkg eq PUB_PKG) {
+            eval {
+                Bric::Util::Burner->flush_another_queue;
+                commit_events();
+            };
+            print $@ if $@;
+            terminate() if $CaughtSignal;
+        }
+
         # no need to store the TERM signal during sleep
         $SIG{TERM} = \&terminate;
         sleep $Delay;
@@ -306,6 +319,7 @@ sub run_single_job {
     print 'Executing ' . $job->get_name . "\n" if $Verbose;
     eval {
         $job->execute_me;
+        Bric::Util::Burner->flush_another_queue if $pkg eq PUB_PKG;
         commit_events();
     };
     print $@ if $@;

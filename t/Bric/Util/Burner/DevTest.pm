@@ -8,6 +8,7 @@ use Test::More;
 use Bric::Util::Burner;
 use Bric::Biz::Asset::Template;
 use Bric::Util::Trans::FS;
+use Bric::Util::Time qw(strfdate);
 use Bric::Biz::Category;
 use Bric::Biz::Asset::Template::DevTest;
 use Bric::Config qw(:temp :prev);
@@ -15,8 +16,7 @@ use Bric::Biz::OutputChannel;
 use File::Basename;
 use Test::MockModule;
 use Test::File::Contents;
-
-sub table { 'alert_type' }
+use Data::UUID;
 
 my $fs = Bric::Util::Trans::FS->new;
 
@@ -198,6 +198,78 @@ sub test_notes : Test(7) {
     is $burner->notes('foo'), 'bar', "'foo' should return 'bar'";
     ok $burner->clear_notes, "Clear the notes";
     is_deeply $burner->notes, {}, "Notes should be empty again";
+
+}
+
+##############################################################################
+sub test_publish_another : Test(12) {
+    my $self = shift;
+    ok my $burner = Bric::Util::Burner->new, "Create a new burner";
+    $burner->{mode} = Bric::Util::Burner::PUBLISH_MODE;
+
+    # Mock stuff in burner class.
+    my $oc = Bric::Biz::OutputChannel->new({
+        site_id  => 100,
+        protocol => 'http://',
+    });
+    my $bc = Test::MockModule->new('Bric::Util::Burner');
+    $bc->mock(get_oc => $oc);
+
+    # Mock stuff in Story class.
+    my $sc = Test::MockModule->new('Bric::Biz::Asset::Business::Story');
+    $sc->mock(new => sub { my $pkg = shift; bless {@_}, $pkg; });
+    $sc->mock(get_site_id => 100);
+    $sc->mock(get_output_channels => [$oc]);
+    $sc->mock(get_primary_oc => $oc);
+    $sc->mock(get_uri => sub { shift->{uri} });
+
+    my $ug = Data::UUID->new;
+    my $story = Bric::Biz::Asset::Business::Story->new(
+        uuid => $ug->create_str,
+        id   => 12,
+        uri  => '/foo/bar',
+        name => 'FooBar',
+    );
+
+    # Add it to the burner mock.
+    $bc->mock( get_story => $story );
+
+    # Create another mock story to call for publish_another.
+    my $story2 = Bric::Biz::Asset::Business::Story->new(
+        uuid => $ug->create_str,
+        id   => 13,
+        uri  => '/reviews/books',
+        name => 'Book Reviews',
+    );
+
+    # Mock the publish job module.
+    my $jm = Test::MockModule->new('Bric::Util::Job::Pub');
+    my @jobs;
+    $jm->mock( save => sub { push @jobs, shift; $jobs[-1] });
+
+    my $early_time = '2006-09-07 13:47:23';
+    ok $burner->publish_another($story2, strfdate),
+        'Pass a story to publish_another';
+    ok $burner->publish_another($story2, $early_time),
+        'Pass a story to publish_another again with an earlier time';
+    ok $burner->publish_another($story2, strfdate),
+        'And again';
+    ok $burner->publish_another($story, strfdate),
+        'Pass the current story to publish_another()';
+
+    is scalar @jobs, 0, 'There should be no jobs scheduled';
+    ok +Bric::Util::Burner->flush_another_queue,
+        'Flush the publish_another queue';
+    is scalar @jobs, 1, 'There should be only one job scheduled';
+    is $jobs[0]->get_name, 'Publish "Book Reviews"',
+        'It should have the proper name';
+    is $jobs[0]->get_sched_time, $early_time,
+        'The earliest time should be the scheduled time';
+
+    @jobs = ();
+    ok +Bric::Util::Burner->flush_another_queue,
+        'Flush the publish_another queue again';
+    is scalar @jobs, 0, 'There should be no new jobs';
 
 }
 

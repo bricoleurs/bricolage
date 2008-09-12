@@ -298,6 +298,9 @@ sub publish {
         }
     }
 
+    # Publish stuff passed to publish_another().
+    Bric::Util::Burner->flush_another_queue;
+
     print STDERR __PACKAGE__ . "->publish() finished : ",
         join(', ', map { $_->name . " => " . $_->value } @published), "\n"
             if DEBUG;
