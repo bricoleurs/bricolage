@@ -31,25 +31,6 @@ if ($element->get_elements ||
 
 % }
 
-<%perl>
-if ($is_related_story) {
-    $m->comp( '/widgets/wrappers/table_top.mc',
-        caption => 'Related Story',
-        number => $num++
-    );
-    $related_summary->($element, 'story', $widget, $asset);
-    $m->comp('/widgets/wrappers/table_bottom.mc');
-}
-if ($is_related_media) {
-    $m->comp( '/widgets/wrappers/table_top.mc',
-        caption => 'Related Media',
-        number => $num++
-    );
-    $related_summary->($element, 'media', $widget, $asset);
-    $m->comp('/widgets/wrappers/table_bottom.mc');
-}
-</%perl>
-
 % if ($show_summary) {
 <div class="buttonBar">
     <div class="delete">
@@ -111,68 +92,7 @@ my $start = get_state_data($widget, 'start');
 my $at_id = $element->get_element_type_id;
 my $at = Bric::Biz::ElementType->lookup({'id' => $at_id});
 
-# Uncomment this when the related_element flag is in at_type.
-my $is_related_story = $at->is_related_story ? 1 : 0;
-my $is_related_media = $at->is_related_media ? 1 : 0;
-
 # Nab the story from the story_prof widget.
 my $type  = $element->get_object_type;
 my $asset = get_state_data($type.'_prof', $type);
 </%init>
-<%once>;
-my $related_summary = sub {
-  my ($element, $type, $widget, $asset) = @_;
-  my $rel = $type eq 'story' ? $element->get_related_story
-                             : $element->get_related_media;
-
-  my $button = $m->scomp(
-      '/widgets/profile/button.mc',
-      widget   => $widget,
-      cb       => "pick_related_".$type."_cb",
-      button   => "edit_lgreen",
-      useTable => 0
-  );
-
-  if ($rel) {
-      add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
-              $type, $rel->get_title)
-        unless $rel->is_active;
-
-      my $thumb = '';
-      if (USE_THUMBNAILS && $type ne 'story') {
-          if ($thumb =  $rel->thumbnail_uri) {
-              $thumb = $m->comp(
-                  '/widgets/profile/preview_link.mc',
-                  doc   => $rel,
-                  value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
-                  type  => $type,
-              );
-          }
-      }
-      # The summary info
-      $m->comp('/widgets/summary/summary.mc',
-                asset  => $rel,
-                type   => $type,
-                header => 'Currently Related '.ucfirst($type),
-                frame  => 0,
-                button => $thumb . $button );
-  } else {
-      $m->out('<div class="noneFound">',
-              $lang->maketext('No related [_1]'. ucfirst($type)),
-              qq{<div class="button">$button</div>},
-              '</div>');
-      if (RELATED_MEDIA_UPLOAD && $type eq 'media') {
-          # Give 'em an upload form.
-          if (my $uploader = $m->scomp(
-                  '/widgets/profile/media_upload.mc',
-                  widget      => $widget,
-                  file_widget => 'container_prof',
-                  formName    => "theForm",
-                  site_id     => $asset->get_site_id,
-          )) {
-              $m->out(qq{<div class="uploader">$uploader</div>\n});
-          }
-      }
-  }
-};
-</%once>

@@ -2,37 +2,36 @@
     name => 'id',
     value => $id
 &>
-
-<& "/widgets/container_prof/edit_related_$type.html", 
+<& "/widgets/container_prof/edit_related_$type.html",
     widget  => 'container_prof',
     element => $element,
     args    => \%ARGS
 &>
-
-<%once>
+<%once>;
 my $locate_subelement;
 $locate_subelement = sub {
     my ($element, $id) = @_;
-    
+
     {
         no warnings 'uninitialized';
         return $element if $element->get_id == $id;
     }
-    
+
     foreach my $t ($element->get_elements) {
         next unless $t->is_container;
-            
+
         my $locate_element = $locate_subelement->($t, $id);
         return $locate_element if $locate_element;
     }
 };
 </%once>
-
 <%args>
 $type => 'story'
 $id
 </%args>
-
-<%init>
-my $element = $locate_subelement->(get_state_data('container_prof', 'element'), $id);
+<%init>;
+my $element = $locate_subelement->(
+    get_state_data('container_prof', 'element'),
+    $id
+);
 </%init>

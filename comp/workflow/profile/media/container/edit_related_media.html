@@ -28,7 +28,7 @@ $id
                    " | Related $mdisp",
     popup => 1
 &>
-<form action="<% $r->uri %>" method="post">
+<form action="<% $r->uri %>" method="post" name="theForm" enctype="multipart/form-data">
     <& '/widgets/profile/related/edit.html',
         type => 'media',
         id   => $id,

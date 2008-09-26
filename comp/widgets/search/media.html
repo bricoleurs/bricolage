@@ -5,6 +5,7 @@ $disp_field
 $use_form_tag
 $wf
 $state
+$insert
 </%args>
 <%init>
 my $advanced_search = $state->{advanced_search};
@@ -207,7 +208,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
         </div>
     </div>
 </div>
-
+<% $insert %>
 <& '/widgets/wrappers/table_bottom.mc' &>
 
 % if ($use_form_tag) {

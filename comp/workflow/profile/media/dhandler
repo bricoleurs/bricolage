@@ -42,7 +42,8 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
 </%init>
 <& "/widgets/wrappers/header.mc",
     title => "$disp Profile",
-    context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title')
+    context => "Workflow | Profile | $disp | " . $r->pnotes('media_prof|title'),
+    popup    => !!get_state_data('_profile_return'), # Should be a popup when creating related media.
 &>
 <form method="post" action="<% $r->uri %>" enctype="multipart/form-data" id="theForm" name="theForm" onsubmit="return confirmChanges('theForm')">
 <% $content %>

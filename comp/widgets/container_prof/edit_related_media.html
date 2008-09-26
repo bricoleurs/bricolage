@@ -3,8 +3,8 @@
   state_key    => 'rel_media',
   type         => 'media',
   field        => 'title',
+  insert       => $insert,
   use_form_tag => 0 &>
-
 <a name="results"></a>
 <& '/widgets/wrappers/table_top.mc', caption => 'Choose Related Media' &>
 <& /widgets/listManager/listManager.mc,
@@ -12,7 +12,7 @@
    state_key => 'rel_media',
    sortBy   => 'name',
    select   => undef,
-   profile  => $related_profile,
+   profile  => undef,
    constrain => { location => '/%' }, # Must have a file associated.
    featured => $relate_id ? [$relate_id] : undef,
    exclude  => $excl_sub,
@@ -37,14 +37,16 @@
 $widget
 $element => undef
 $args
+$formName => 'theForm'
 </%args>
 <%init>;
 # The element object.
 $element ||= get_state_data($widget, 'element');
 my $relate_id = $element->get_related_media_id;
+my $obj_type = $element->get_object_type;
 
 my $excl_sub;
-if ($element->get_object_type eq 'media') {
+if ($obj_type eq 'media') {
     my $asset_id = get_state_data('media_prof', 'media')->get_id;
     $excl_sub = sub {
         return 1 if $_[0]->get_id == $asset_id;
@@ -75,14 +77,17 @@ my $field_values = sub {
 
     }
 };
-</%init>
-<%once>;
-my $related_profile = sub {
-    my ($o,$flags) = @_;
-    unless ($flags->{featured}) {
-        return ['Relate', $r->uri, "container_prof|relate_media_cb=".$o->get_id];
-    } else {
-        return ['Un-relate', $r->uri, "container_prof|unrelate_media_cb=".$o->get_id];
+
+my $insert = '';
+if (RELATED_MEDIA_UPLOAD) {
+    # Give 'em an upload form.
+    if (my $uploader = $m->scomp('/widgets/profile/media_upload.mc',
+        widget      => $widget,
+        file_widget => 'container_prof',
+        formName    => $formName,
+        site_id     => get_state_data("$obj_type\_prof", $obj_type)->get_site_id,
+    )) {
+        $insert =  qq{<div class="uploader">$uploader</div>\n};
     }
-};
-</%once>
+}
+</%init>

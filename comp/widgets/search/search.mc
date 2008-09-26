@@ -26,6 +26,7 @@ $field        => '_default'
 $groupList    => undef
 $use_form_tag => 1
 $wf           => undef
+$insert       => ''
 </%args>
 <%once>
 my $widget = 'search';
@@ -61,5 +62,6 @@ $m->comp("$type.html", widget       => $widget,
                        use_form_tag => $use_form_tag,
                        wf           => $wf,
                        state        => $state,
+                       insert       => $insert,
         );
 </%init>

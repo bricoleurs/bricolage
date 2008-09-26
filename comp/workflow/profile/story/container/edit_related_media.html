@@ -1,13 +1,12 @@
-<& /widgets/wrappers/header.mc, 
+<& /widgets/wrappers/header.mc,
     title => "Select Related $mdisp",
     context => "$context $crumb Related $mdisp",
     popup => 1
 &>
-
-<form action="<% $r->uri %>" method="post">
+<form action="<% $r->uri %>" method="post" name="theForm" enctype="multipart/form-data">
     <& '/widgets/profile/related/edit.html',
         type => 'media',
-        id   => $id,
+        id      => $id,
         args    => \%ARGS
     &>
 </form>

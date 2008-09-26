@@ -20,6 +20,7 @@ use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:media);
+use Bric::Util::ApacheConst qw(HTTP_OK);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Parts::Member::Contrib;
@@ -747,12 +748,22 @@ sub return_to_other {
     # $prev has state information for a story or media profile that created
     # the media profile we've just finished with. So restore that state.
     clear_state('_profile_return');
+    clear_msg();
     set_state(container_prof => @{$prev->{state}});
     set_state(
         "$prev->{type}\_prof", $prev->{type_state},
         { $prev->{type} => $prev->{prof} }
     );
-    $self->set_redirect($prev->{uri});
+
+    my $r = $self->apache_req;
+    my $widget = $self->class_key;
+    $r->print(
+        qq{<script type="text/javascript" src="/media/js/prototype.js"></script>\n},
+        qq{<script type="text/javascript" src="/media/js/scriptaculous.js"></script>\n},
+        qq{<script type="text/javascript" src="/media/js/lib.js"></script>},
+        qq{<script type="text/javascript">Container.update('$prev->{type}', '$widget', '$prev->{elem_id}');</script>},
+    );
+    $self->abort(HTTP_OK);
 }
 
 sub handle_upload {

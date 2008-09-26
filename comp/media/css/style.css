@@ -137,6 +137,8 @@ body.popup #headerContainer    { padding-top: 8px; }
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
+.uploader { border-top: 1px solid #666633; margin-top: 10px; padding: 5px; }
+
 a.small         { font-size: .9em; }
 .orangeLink     { font-size:10px; color:#CC6633;}
 .orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}

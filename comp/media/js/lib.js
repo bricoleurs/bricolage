@@ -1469,6 +1469,22 @@ var Container = {
         return Container.update_related('unrelate', type, widget, container_id, asset_id);
     },
 
+    // Update the display of an element, but do nothing else.
+    update: function( type, widget, container_id ) {
+        new Ajax.Updater(
+           { success: window.opener.document.getElementById(
+                'element_' + container_id + '_rel_' + type
+            ) },
+            '/widgets/container_prof/_related.html', {
+                parameters: 'type=' + type + '&widget=' + widget +
+                    '&container_id=' + container_id,
+                asynchronous: true,
+                onSuccess: function(r) { window.close(); },
+                onFailure: Bricolage.handleError
+          }
+        )
+    },
+
     addElement: function(container_id, element_id) {
         Container.refresh(container_id, {
             extraParameters: 'container_prof|add_element_cb=' + container_id + '&container_prof|add_element_to_' + container_id + '=' + element_id

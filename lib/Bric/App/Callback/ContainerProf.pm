@@ -45,7 +45,7 @@ sub bulk_edit : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $r = $self->apache_req;
 
@@ -64,7 +64,7 @@ sub view : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $r = $self->apache_req;
     my $field = $self->trigger_key;
@@ -95,7 +95,7 @@ sub clear : Callback(priority => 1) {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     clear_state($self->class_key);
 }
@@ -104,7 +104,7 @@ sub add_element : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $widget = $self->class_key;
 
@@ -147,7 +147,7 @@ sub update : Callback(priority => 1) {
     $self->_drift_correction;
     my $param = $self->params;
     my $widget = $self->class_key;
-    return if $param->{'_inconsistent_state_'} || $param->{"$widget|up_cb"};
+    return if $param->{_inconsistent_state_} || $param->{"$widget|up_cb"};
 
     $self->_update_parts($self->params);
 
@@ -162,7 +162,7 @@ sub pick_related_media : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $element = get_state_data($self->class_key, 'element');
     my $uri = $self->_get_container_url($element);
@@ -233,6 +233,7 @@ sub create_related_media : Callback {
         type_state => $type_state,
         prof       => $asset,
         type       => $type,
+        elem_id    => $element->get_id,
         uri        => $self->apache_req->uri,
     });
 
@@ -250,9 +251,12 @@ sub relate_media : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
-    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    my $element = $self->_locate_subelement(
+        get_state_data($self->class_key, 'element'),
+        $param->{container_id}
+    );
     $element->set_related_media_id($self->value);
 }
 
@@ -260,17 +264,21 @@ sub unrelate_media : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
-    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
-    $element->set_related_media_id(undef);
+    my $element = $self->_locate_subelement(
+        get_state_data($self->class_key, 'element'),
+        $param->{container_id}
+    );
+
+    $element->set_related_media(undef);
 }
 
 sub pick_related_story : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $element = get_state_data($self->class_key, 'element');
     my $uri = $self->_get_container_url($element);
@@ -281,9 +289,12 @@ sub relate_story : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
-    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    my $element = $self->_locate_subelement(
+        get_state_data($self->class_key, 'element'),
+        $param->{container_id}
+    );
     $element->set_related_story($self->value);
 }
 
@@ -291,9 +302,12 @@ sub unrelate_story : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
-    my $element = $self->_locate_subelement(get_state_data($self->class_key, 'element'), $param->{'container_id'});
+    my $element = $self->_locate_subelement(
+        get_state_data($self->class_key, 'element'),
+        $param->{container_id}
+    );
     $element->set_related_story(undef);
 }
 
@@ -301,7 +315,7 @@ sub related_up : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     $self->_handle_related_up;
 }
@@ -310,7 +324,7 @@ sub lock_val : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $key     = $self->class_key;
     my $value   = $self->value;
@@ -334,7 +348,7 @@ sub save_and_up : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     if ($self->params->{$self->class_key . '|delete'}) {
         $self->_delete_element;
@@ -362,7 +376,7 @@ sub save_and_stay : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     if ($self->params->{$self->class_key . '|delete'}) {
         $self->_delete_element;
@@ -389,7 +403,7 @@ sub up : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     $self->_pop_and_redirect;
 }
@@ -400,7 +414,7 @@ sub change_default_field : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     my $def     = $self->params->{$self->class_key.'|default_field'};
     my $element = get_state_data($self->class_key, 'element');
@@ -417,7 +431,7 @@ sub bulk_edit_this : Callback {
     my $self = shift;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
 
     # Note that we are just 'flipping' the current view of this element.  That is,
     # it's the same element, same data, but different view of it.
@@ -434,7 +448,7 @@ sub bulk_save : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
     $self->_handle_bulk_save;
 }
 
@@ -442,7 +456,7 @@ sub bulk_up : Callback {
     my ($self) = @_;
     $self->_drift_correction;
     my $param = $self->params;
-    return if $param->{'_inconsistent_state_'};
+    return if $param->{_inconsistent_state_};
     $self->_handle_bulk_up;
 }
 
@@ -793,7 +807,7 @@ sub _drift_correction {
                 . "'Forward' buttons");
 
         # Set this flag so that nothing gets changed on this request.
-        $param->{'_inconsistent_state_'} = 1;
+        $param->{_inconsistent_state_} = 1;
 
         set_state_data($self->class_key, 'elements', \@tmp_stack);
     }

@@ -57,6 +57,23 @@ the republication of a home page story, that home page story will be
 republished only once, rather than 50 times. Sponsored by NetStumbler and
 Kineticode, with production testing by the National Gallery of Art. [David]
 
+=item *
+
+Removed the "Related Story" and "Related Media" sections of the element
+profile, as they are now included in the "Content" sections of the element
+profile, and therefore redundant. [David]
+
+=item *
+
+The upload field for relatd media (available when the C<RELATED_MEDIA_UPLOAD>
+F<bricolage.conf> directive is enabled) is no longer displayed in the element
+profile. Instead, it is displayed in the "Edit" popup window, where you can
+now search for an existing media document I<or> upload a new file. This
+eliminates a bug when more than one upload fied was displayed in the "Content"
+section of a document profile. It also makes it clearer that you're editing a
+new, related media document, is the popup looks different than the main
+display window (in that it has no nav). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -90,6 +107,15 @@ causes an error [David]
 
 Server errors sent in response to AJAX requests no longer send a full HTML
 file in reply, just the error stuff. [David]
+
+=item *
+
+Eliminated redundant "Relate" column from the search results when searching
+for a media document to relate. [David]
+
+=item *
+
+The "Un-relate" link now properly unrelates media documents. [David]
 
 =back
 
