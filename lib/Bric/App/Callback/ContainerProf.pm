@@ -763,7 +763,22 @@ sub _drift_correction {
     my $param = $self->params;
 
     # Don't do anything if we've already corrected ourselves.
-    return if $param->{'_drift_corrected_'};
+    return if $param->{_drift_corrected_};
+
+    # Restore a preious section if a user did not properly exit a related
+    # media popup.
+    if (my $prev = get_state_data('_profile_return')) {
+        if ( $param->{doc_uuid} && $param->{doc_uuid} eq $prev->{prof}->get_uuid ) {
+            # Someone forgot to close a popup. Restore the state.
+            clear_state('_profile_return');
+            clear_msg();
+            set_state(container_prof => @{$prev->{state}});
+            set_state(
+                "$prev->{type}\_prof" => $prev->{type_state},
+                { $prev->{type} => $prev->{prof} }
+            );
+        }
+    }
 
     # Update the state name
     set_state_name($self->class_key, $param->{$self->class_key.'|state_name'});
@@ -777,7 +792,7 @@ sub _drift_correction {
     my $element  = get_state_data($self->class_key, 'element');
     # Return immediately if everything is already in sync.
     if ($element->get_id == $element_id) {
-        $param->{'_drift_corrected_'} = 1;
+        $param->{_drift_corrected_} = 1;
         return;
     }
 

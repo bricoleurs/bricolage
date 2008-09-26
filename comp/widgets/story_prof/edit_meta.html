@@ -28,6 +28,12 @@ $m->comp("/widgets/wrappers/table_top.mc",
 
 );
 
+# Used by Bric::App::Callback::ContainerProf->_drift_correction.
+$m->comp(
+    '/widgets/profile/hidden.mc',
+    name    => 'doc_uuid',
+    value   => $story->get_uuid
+);
 </%perl>
 <dl class="viewmeta">
   <dt><% $lang->maketext('UUID') %>:</dt>

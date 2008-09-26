@@ -751,7 +751,7 @@ sub return_to_other {
     clear_msg();
     set_state(container_prof => @{$prev->{state}});
     set_state(
-        "$prev->{type}\_prof", $prev->{type_state},
+        "$prev->{type}\_prof" => $prev->{type_state},
         { $prev->{type} => $prev->{prof} }
     );
 
