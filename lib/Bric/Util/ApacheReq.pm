@@ -143,7 +143,7 @@ sub parse_args {
     return () unless defined $string and $string;
     return map {
         tr/+/ /;
-        s/%([0-9a-fA-F]{2})/pack("C",hex($1))/ge;
+        s/%([0-9a-fA-F]{2})/pack 'C', hex($1)/ge;
         $_;
     } split /[=&;]/, $string, -1;
 }

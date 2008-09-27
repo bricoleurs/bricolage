@@ -858,7 +858,7 @@ table.dlman tr.dlbtns { height: 30px; }
 	filter: alpha(opacity=80);
 }
 
-.lightbox, .lightboxerror {
+.lightbox, .lightboxerror, .lightboxconflict {
 	color: #333;
 	display: none;
 	position: absolute;
@@ -876,6 +876,15 @@ table.dlman tr.dlbtns { height: 30px; }
 .lightboxerror {
 	border: 1em solid #cc0000;
 }
+
+.lightboxconflict {
+	border: 1em solid #ff5500;
+	width: 40%;
+    left: 30%;
+	height: 25%;
+}
+
+.lightboxconflict .errorMsg { color: #ff5500; }
 
 .lightbox .errorMsg { padding-top: 0; margin-top: 0; }
 

@@ -1049,18 +1049,23 @@ document.getParentByTagName = function(element, tagName) {
  * Application-wide stuff.
  */
 var Bricolage = {
-    handleError: function(req) {
+    _handle: function( req, klass, title ) {
         div = document.createElement('div');
-        div.className = 'lightboxerror';
+        div.className = klass;
         Element.update(
             div,
-            '<h1 class="errorMsg">Error</h1>' +
-            '<p><a href="#" class="lbAction" rel="deactivate">Close</a></p>' +
+            '<h1 class="errorMsg">' + title + '</h1>' +
             req.responseText +
             '<p><a href="#" class="lbAction" rel="deactivate">Close</a></p>'
         );
         document.body.appendChild(div);
         new Lightbox(div).activate();
+    },
+    handleError: function(req) {
+        Bricolage._handle(req, 'lightboxerror', error_msg);
+    },
+    handleConflict: function(req) {
+        Bricolage._handle(req, 'lightboxconflict', conflict_msg);
     }
 };
 
@@ -1078,7 +1083,8 @@ var Desk = {
             insertion: Element.replace,
             asynchronous: true,
             parameters: options.parameters,
-            onFailure: Bricolage.handleError
+            onFailure: Bricolage.handleError,
+            on409: Bricolage.handleConflict
         } );
     },
 
@@ -1092,7 +1098,8 @@ var Desk = {
             asynchronous: true,
             parameters: options.parameters,
             onSuccess: onSuccess,
-            onFailure: Bricolage.handleError
+            onFailure: Bricolage.handleError,
+            on409: Bricolage.handleConflict
         } );
     },
 
@@ -1227,6 +1234,7 @@ Abstract.ListManager.prototype = {
             evalScripts: true,
             onSuccess: callback,
             onFailure: Bricolage.handleError,
+            on409: Bricolage.handleConflict
         });
     }
 };
@@ -1417,6 +1425,7 @@ var Container = {
             asynchronous: true,
             evalScripts: true,
             onFailure: Bricolage.handleError,
+            on409: Bricolage.handleConflict,
             onSuccess: function(request) {
                 Container.updateOrder('element_' + container_id)
             }
@@ -1456,7 +1465,8 @@ var Container = {
                      action + '_' + type + '_cb=' + asset_id,
                 asynchronous: true,
                 onSuccess: function(r) { window.close(); },
-                onFailure: Bricolage.handleError
+                onFailure: Bricolage.handleError,
+                on409: Bricolage.handleConflict
           }
         )
     },
@@ -1480,7 +1490,8 @@ var Container = {
                     '&container_id=' + container_id,
                 asynchronous: true,
                 onSuccess: function(r) { window.close(); },
-                onFailure: Bricolage.handleError
+                onFailure: Bricolage.handleError,
+                on409: Bricolage.handleConflict
           }
         )
     },

@@ -122,9 +122,12 @@ sub move : Callback {
     # or the desk ID is the same.
     return unless $next_desk_id and $next_desk_id != $curr_desk_id;
 
-    unless ($obj->is_current) {
-        add_msg('Cannot move [_1] asset "[_2]" while it is checked out.',
-            $class, $obj->get_name);
+    unless ($obj->get_version > 0 && $obj->is_current) {
+        $self->raise_conflict(
+            'Cannot move [_1] asset "[_2]" while it is checked out.',
+            $class,
+            $obj->get_name
+        );
         return;
     }
 

@@ -774,9 +774,9 @@ sub _save_data {
     $self->_handle_categories($story, $param, $widget);
 
     $self->_handle_keywords($story, $param);
-    
+
     $self->_handle_contributors($story, $param, $widget);
-    
+
     # avoid repeated messages from repeated calls to _save_data
     &$unique_msgs if $data_errors;
 
@@ -791,15 +791,15 @@ sub _handle_categories {
 
     my ($cat_ids, @to_add, @to_delete, %checked_cats);
     my %existing_cats = map { $_->get_id => $_ } $story->get_categories;
-    
+
     $cat_ids = mk_aref($param->{"category_id"});
-    
+
     # Bail unless there are categories submitted via the UI. Otherwise we end
     # up deleting categories added during create().  This should also prevent
     # us from ever somehow deleting all categories on a story, which really
     # screws things up (the error is not (currently) fixable through the UI!)
     return unless @$cat_ids;
-    
+
     foreach my $cat_id (@$cat_ids) {
         # Mark this category as seen so we don't delete it later
         $checked_cats{$cat_id} = 1;
@@ -808,17 +808,15 @@ sub _handle_categories {
         if (defined $existing_cats{$cat_id}) {
             next;
         }
-    
+
         # Since the category doesn't exist, we need to add it
         my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
         push @to_add, $cat;
         log_event('story_add_category', $story, { Category => $cat->get_name });
-        add_msg('Category "[_1]" added.',
-                '<span class="l10n">' . $cat->get_name . '</span>');
     }
-    
+
     $story->add_categories(\@to_add);
-    
+
     $story->set_primary_category($param->{"primary_category_id"})
         if defined $param->{"primary_category_id"};
 
@@ -835,19 +833,17 @@ sub _handle_categories {
 
             push @to_delete, $cat;
             log_event('story_del_category', $story, { Category => $cat->get_name });
-            add_msg('Category "[_1]" disassociated.',
-                    '<span class="l10n">' . $cat->get_name . '</span>');
         }
     }
 
     $story->delete_categories(\@to_delete);
-        
-    set_state_data($widget, 'story', $story);  
+
+    set_state_data($widget, 'story', $story);
 };
 
 sub _handle_keywords {
     my ($self, $story, $param) = @_;
-    
+
     # Delete old keywords.
     my $old;
     my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
@@ -872,9 +868,9 @@ sub _handle_keywords {
 
 sub _handle_contributors {
     my ($self, $story, $param, $widget) = @_;
-    
+
     my $existing = { map { $_->get_id => $_ } $story->get_contributors };
-    
+
     my $order = {};
     foreach my $contrib_id (@{ mk_aref($param->{'contrib_id'}) }) {
         if (defined $existing->{$contrib_id}) {
@@ -889,10 +885,10 @@ sub _handle_contributors {
         }
         $order->{$contrib_id} = $param->{$widget . '|contrib_order_' . $contrib_id};
     }
-    
+
     if (my @to_delete = keys %$existing) {
         $story->delete_contributors(\@to_delete);
-        
+
         my $contrib;
         foreach my $id (@to_delete) {
             $contrib = $existing->{$id}->{obj};
@@ -903,9 +899,9 @@ sub _handle_contributors {
         if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
         else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
     }
-    
+
     $story->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
-    
+
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;
 }

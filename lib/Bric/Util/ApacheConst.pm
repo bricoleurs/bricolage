@@ -46,6 +46,7 @@ use constant HTTP_BAD_REQUEST           => 400;
 use constant HTTP_UNAUTHORIZED          => 401;
 use constant HTTP_FORBIDDEN             => 403;
 use constant HTTP_NOT_FOUND             => 404;
+use constant HTTP_CONFLICT              => 409;
 
 use constant HTTP_INTERNAL_SERVER_ERROR => 500;
 use constant HTTP_NOT_IMPLEMENTED       => 501;
@@ -72,6 +73,7 @@ our @EXPORT = qw(
     HTTP_UNAUTHORIZED
     HTTP_FORBIDDEN
     HTTP_NOT_FOUND
+    HTTP_CONFLICT
 
     HTTP_INTERNAL_SERVER_ERROR
     HTTP_NOT_IMPLEMENTED

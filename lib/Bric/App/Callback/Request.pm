@@ -9,6 +9,9 @@ package Bric::App::Callback::Request;
 use strict;
 use base qw(Bric::App::Callback);
 use Bric::App::Util qw(:history);
+use Bric::Util::ApacheConst qw(HTTP_OK OK);
+use HTML::Entities;
+
 use constant CLASS_KEY => 'request';
 __PACKAGE__->register_subclass;
 
