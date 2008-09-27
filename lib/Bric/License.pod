@@ -454,6 +454,8 @@ Friends who have spotted bugs include:
 
 =item * Jean-Michel Caricand
 
+=item * Roland van Ipenburg
+
 =back
 
 Bricolage's translation team:

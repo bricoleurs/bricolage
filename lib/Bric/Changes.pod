@@ -117,6 +117,11 @@ for a media document to relate. [David]
 
 The "Un-relate" link now properly unrelates media documents. [David]
 
+=item *
+
+Fixed F<bric_dist_mon> so that it works when Bricolage is running on mod_perl
+2. Reported by Roland van Ipenburg. [David]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)

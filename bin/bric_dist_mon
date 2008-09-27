@@ -149,7 +149,6 @@ use Bric::App::Auth;
 use Getopt::Std;
 use Unix::Syslog qw(:subs :macros);
 use POSIX qw(:sys_wait_h);
-use Apache::FakeRequest;
 use Term::ReadPassword;
 
 use constant INTERVAL => 30;
@@ -172,10 +171,9 @@ my $prog = Bric::Util::Trans::FS->base_name($0);
 usage() if $opt_h;
 version() if $opt_v;
 
-if ($opt_p eq '') {
-    {
+if ($opt_u && !$opt_p) {
+    until ($opt_p) {
         $opt_p = read_password('Password: ');
-        redo unless $opt_p;
     }
 }
 
@@ -196,6 +194,11 @@ if ($opt_U) {
 {
     # This Section is for the creation of a fake Apache object that can be
     # used by Bric::App::Auth.
+    package FakeReq;
+    sub new { my $c = shift; bless {@_} => $c }
+    sub connection { shift->{connection} }
+    sub args { undef }
+
     package FakeConn;
     unless ($opt_a) {
     require Sys::Hostname;
@@ -204,6 +207,7 @@ if ($opt_U) {
     }
     sub new { bless {} }
     sub remote_ip { $opt_a }
+
 }
 
 
@@ -255,7 +259,7 @@ sub send_jobs {
     log_msg("Checking for new jobs.") if $opt_d;
     eval {
         # Create the authentication cookie.
-        my $r = Apache::FakeRequest->new(connection => FakeConn->new);
+        my $r = FakeReq->new(connection => FakeConn->new);
         my ($cookie, $msg) = Bric::App::Auth::login($r, $opt_u, $opt_p);
         log_err($msg) if $msg;
 
