@@ -418,8 +418,8 @@ sub create : Callback {
     }
 
     # Check the category ID.
-    my $cid = $param->{"$widget|new_category_id"};
-    unless (defined $cid && $cid ne '') {
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
         $self->raise_conflict("Please select a primary category.");
         $ret = 1;
     }
@@ -438,7 +438,10 @@ sub create : Callback {
     my $story = Bric::Biz::Asset::Business::Story->new($init);
 
     # Set the primary category
-    my $cat = Bric::Biz::Category->lookup({ id => $cid });
+    my $cat = Bric::Biz::Category->lookup({
+        uri     => $curi,
+        site_id => $wf->get_site_id,
+    });
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
 
