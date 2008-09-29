@@ -364,6 +364,7 @@ my $show_all   = 0;
 
 if ($search_stale) {
     delete $state->{site_id};
+} else {
     $pagination = $state->{pagination} if defined $state->{pagination};
     $offset     = $state->{offset} if $limit;
     $show_all   = $state->{show_all};
