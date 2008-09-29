@@ -82,6 +82,11 @@ This means that if a user tries to move a story they don't have permission to
 move, the story will not appear to be moved in the UI and the user will be
 told that she lacks the permission. [David]
 
+=item *
+
+The "New Story" page now uses an autocomplete field to select a primary
+category. [David]
+
 =back
 
 =head2 Bug Fixes

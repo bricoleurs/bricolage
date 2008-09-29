@@ -1,8 +1,4 @@
 <%perl>
-my $wf = Bric::Biz::Workflow->lookup
-  ({ id => get_state_data($widget, 'work_id')});
-my $site_id = $wf->get_site_id;
-
 $m->comp("/widgets/wrappers/table_top.mc",
          caption => "Properties",
          id      => 'storyinfo',
@@ -51,20 +47,19 @@ $m->comp( '/widgets/select_object/select_object.mc',
           exclude  => $excl_sub,
         );
 
-$m->comp( '/widgets/select_object/select_object.mc',
-          object     => 'category',
-          disp       => 'Primary Category',
-          name       => "$widget|new_category_id",
-          constrain  => { site_id => $site_id },
-          exclude    => $excl_sub,
-          size       => 25,
-          req        => 1,
-          field      => 'uri',
-          sort_field => 'uri',
-          localize   => 0,
-          useTable   => 1
-        );
+$m->comp(
+    '/widgets/profile/text.mc',
+    disp => 'Primary Category',
+    name => 'new_category_autocomplete',
+    id   => 'new_category_uri',
+);
+</%perl>
+<div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
+<script type="text/javascript">
+new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { onEmpty: function() { Element.show('new_cat_warning'); }, onNotEmpty: function() { Element.hide('new_cat_warning') }, onEnter: function() { catListMan.add('new_category_uri') }, parameters: 'site_id=<% $site_id %>' });
+</script>
 
+<%perl>;
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "priority",
          vals => $pmeth,
@@ -99,4 +94,8 @@ my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
 </%once>
 <%init>;
 $cdate->{value} = strfdate();
+my $wf = Bric::Biz::Workflow->lookup({
+    id => get_state_data($widget, 'work_id')
+});
+my $site_id = $wf->get_site_id;
 </%init>

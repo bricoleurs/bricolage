@@ -5,6 +5,7 @@
 </ul>
 <%args>
 $new_category_autocomplete => "/"
+$site_id => undef
 </%args>
 <%init>
 my $story = get_state_data('story_prof', 'story');
@@ -14,7 +15,7 @@ my $parent_cat = Bric::Biz::Category->lookup({ uri => $parent_cat_uri });
 
 my @categories = Bric::Biz::Category->list({ 
     uri => $new_category_autocomplete . "%",
-    site_id => $story->get_site_id,
+    site_id => $site_id || $story->get_site_id,
     parent_id => (defined $parent_cat ? $parent_cat->get_id : 0)
 });
 
