@@ -123,7 +123,7 @@ my $category_select = sub {
     my $story = get_state_data($widget, 'story');
     my $primary_cat = $story->get_primary_category;
 
-    if ($cat->get_name eq $primary_cat->get_name) {
+    if ($cat->get_uri eq $primary_cat->get_uri) {
         return;
     } else {
         return ['Delete', "$widget|delete_id"];

@@ -115,6 +115,12 @@ Tweaked Bricolage Instance Name display. [Matt Rolf]
 
 Fixed bug 1343, View Diff wasn't working in IE. Reported by Ed Guzman. [Scott]
 
+=item *
+
+A category with associated with a story different URIs but the same name as
+the primary category can now properly be deleted. Reported by Matt Rolf (Bug
+#1341). [David]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)
