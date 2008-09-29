@@ -352,12 +352,7 @@ $fields ||= [sort keys %$meth];
 my %featured_lookup = map { ($_,1) } @$featured;
 
 # limit the number of results to display per page
-my $limit = Bric::Util::Pref->lookup_val( "Search Results / Page" ) || 0;
-my $site_cx;
-$site_cx = $c->get_user_cx(get_user_id)
-  if $cx_filter
-  && Bric::Util::Pref->lookup_val( "Filter by Site Context" )
-  && $pkg->HAS_MULTISITE;
+my $limit = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
 
 #--------------------------------------#
 # Set up pagination data.
@@ -367,11 +362,18 @@ my $pagination = $limit ? 1 : 0;
 my $offset     = undef;
 my $show_all   = 0;
 
-unless ($search_stale) {
+if ($search_stale) {
+    delete $state->{site_id};
     $pagination = $state->{pagination} if defined $state->{pagination};
     $offset     = $state->{offset} if $limit;
     $show_all   = $state->{show_all};
 }
+
+my $site_cx;
+$site_cx = $state->{site_id} ||= $c->get_user_cx(get_user_id)
+  if $cx_filter
+  && Bric::Util::Pref->lookup_val( 'Filter by Site Context' )
+  && $pkg->HAS_MULTISITE;
 
 #--------------------------------------#
 # Find constraint and list objects.

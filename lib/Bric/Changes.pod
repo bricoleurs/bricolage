@@ -48,6 +48,13 @@ the current date/time instead of the cover date of the story. [Scott]
 
 Added search by Keyword to "Find Media". [Scott]
 
+=item *
+
+When the "Filter by Site Context" preference is turned on, if a user does a
+search and then changes the site context, the search results will not change
+to the new site until the user submits a new search. Reported by Matt Rolf
+(Bug #1337). [David]
+
 =back
 
 =head2 Bug Fixes
