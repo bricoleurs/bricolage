@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'user_pref';
 use strict;
 use Bric::App::Authz qw(chk_authz EDIT);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::App::Session qw(:user);
 
 my $disp_name = 'User Preference';
@@ -22,7 +22,7 @@ sub save : Callback {
 
     my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
     unless (chk_authz($user, EDIT, 1) || $param->{user_id} == get_user_id) {
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         return;
     }
 
@@ -38,7 +38,7 @@ sub save : Callback {
     my $name = $user_pref->get_name;
 
     log_event('user_pref_save', $user_pref);
-    add_msg("$disp_name \"[_1]\" updated.", $name);
+    $self->add_message(qq{$disp_name "[_1]" updated.}, $name);
 
     $self->cache->set_lmu_time;
 
@@ -52,7 +52,7 @@ sub delete : Callback {
 
     my $user = Bric::Biz::Person::User->lookup({ id => $param->{user_id} });
     unless (chk_authz($user, EDIT, 1) || $param->{user_id} == get_user_id) {
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         return;
     }
 
@@ -67,7 +67,7 @@ sub delete : Callback {
 
         $user_pref->delete;
 
-        add_msg("$disp_name \"[_1]\" reset.", $name);
+        $self->add_message(qq{$disp_name "[_1]" reset.}, $name);
     }
 
     $self->cache->set_lmu_time;

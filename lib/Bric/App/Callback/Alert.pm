@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'alert';
 
 use strict;
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:aref :msg :history);
+use Bric::App::Util qw(:aref :history);
 use Bric::Util::Alerted;
 
 my $class = 'Bric::Util::Alerted';
@@ -35,7 +35,7 @@ $msg_redirect = sub {
     my ($self, $ids) = @_;
     $class->ack_by_id(@$ids);
     my $c = @$ids;
-    add_msg("[quant,_1,$disp_name] acknowledged.", $c) if $c;
+    $self->add_message('[quant,_1,$disp_name] acknowledged.', $c) if $c;
     $self->set_redirect(last_page());
 };
 

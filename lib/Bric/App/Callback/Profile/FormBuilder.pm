@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:aref :msg :history :pkg :browser :elem);
+use Bric::App::Util qw(:aref :history :pkg :browser :elem);
 use Bric::Biz::ElementType::Parts::FieldType;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::OutputChannel::Element;
@@ -99,7 +99,7 @@ $base_handler = sub {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         $self->set_redirect(last_page());
     } else {
         # Process its data
@@ -109,7 +109,7 @@ $base_handler = sub {
         if ($param->{'delete'}) {
             $obj->deactivate();
             $obj->save();
-            add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
             log_event("${key}_deact", $obj);
             $self->set_redirect("/admin/manager/$key/");
         } else {
@@ -160,7 +160,10 @@ $do_contrib_type = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
             # There's already an attribute by that name.
-            add_msg('The "[_1]" field type already exists. Please try another key name.', $param->{fb_name});
+            $self->raise_conflict(
+                'The "[_1]" field type already exists. Please try another key name.',
+                $param->{fb_name},
+            );
             $no_save = 1;
         } else {
             my $sqltype = $param->{fb_type} eq 'date' ? 'date'
@@ -207,7 +210,7 @@ $do_contrib_type = sub {
 
         if ($self->cb_key eq 'save') {
             # Record a message and redirect if we're saving.
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
             # Log it.
             my $msg = defined $param->{"$key\_id"} ? "$key\_save" : "$key\_new";
             log_event($msg, $obj);
@@ -243,9 +246,10 @@ $do_element_type = sub {
     # Check if we need to inhibit a save based on some special conditions
     $no_save = $check_save_element_type->(\@cs, $param, $key);
 
-    add_msg(qq{The key name "[_1]" is already used by another $disp_name.},
-            $key_name)
-      if $no_save;
+    $self->raise_conflict(
+        qq{The key name "[_1]" is already used by another $disp_name.},
+        $key_name,
+    ) if $no_save;
 
     # Roll in the changes.
     $obj = $get_obj->($class, $param, $key, $obj);
@@ -333,9 +337,10 @@ $do_element_type = sub {
             $obj->set_primary_oc_id($oc_id, $site_id);
             $obj->add_output_channels($oc_id);
         } else {
-            add_msg 'Site "[_1]" cannot be associated because it has no ' .
-              'output channels',
-              Bric::Biz::Site->lookup({ id => $site_id })->get_name;
+            $self->raise_conflict(
+                'Site "[_1]" cannot be associated because it has no output channels',
+                Bric::Biz::Site->lookup({ id => $site_id })->get_name
+            );
         }
     }
 
@@ -369,8 +374,9 @@ $do_element_type = sub {
                 $val =~ s/\s+$//;
                 $val ||= 0;
                 if ( $val !~ /^\d+$/ ) {
-                    add_msg( 'Min and max occurrence must be a positive numbers.' )
-                        unless $erred;
+                    $self->raise_conflict(
+                        'Min and max occurrence must be a positive numbers.'
+                    ) unless $erred;
                     $erred   = 1;
                     $no_save = 1;
                     next;
@@ -432,7 +438,7 @@ $delete_sites = sub {
     if ($param->{'rem_site'}) {
         my $del_site_ids = mk_aref($param->{'rem_site'});
         if(@$del_site_ids >= @{$obj->get_sites}) {
-            add_msg("You cannot remove all Sites.");
+            $self->raise_conflict('You cannot remove all Sites.');
         } else {
             $obj->remove_sites($del_site_ids);
         }
@@ -520,8 +526,10 @@ $set_primary_ocs = sub {
             unless ($oc_ids{$siteid}) {
                 $$no_save = 1;
                 my $site = Bric::Biz::Site->lookup({id => $siteid});
-                add_msg('Site "[_1]" requires a primary output channel.',
-                        $site->get_name);
+                $self->raise_conflict(
+                    'Site "[_1]" requires a primary output channel.',
+                    $site->get_name,
+                );
             }
         }
     } elsif ($cb_key eq 'add_oc_id') {
@@ -550,8 +558,10 @@ $add_new_attrs = sub {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{$key_name}) {
             # There's already an attribute by that name.
-            add_msg('The "[_1]" field type already exists. Please try '
-                    . 'another key name.', $key_name);
+            $self->raise_conflict(
+                'The "[_1]" field type already exists. Please try another key name.',
+                $key_name,
+            );
             $$no_save = 1;
         } else {
             if ($param->{fb_type} eq 'codeselect') {
@@ -622,8 +632,9 @@ $save_element_type_etc = sub {
                 if ($obj->is_top_level) {
                     my $site_id = $obj->get_sites->[0];
                     unless ($site_id and $obj->get_primary_oc_id($site_id) ) {
-                        add_msg("Element type must be associated with at least " .
-                                "one site and one output channel.");
+                        $self->raise_conflict(
+                            'Element type must be associated with at least one site and one output channel.'
+                        );
                         return;
                     }
                 }
@@ -632,7 +643,7 @@ $save_element_type_etc = sub {
                 my $msg = $key . (defined $param->{"$key\_id"} ? '_save' : '_new');
                 log_event($msg, $obj);
                 # Record a message and redirect if we're saving.
-                add_msg("$disp_name profile \"[_1]\" saved.", $name);
+                $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
                 # return to profile if creating new object
                 $self->set_redirect("/admin/manager/$key/") unless $cb_key eq 'save_n_stay';
             }

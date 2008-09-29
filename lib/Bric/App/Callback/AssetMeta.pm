@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'asset_meta';
 
 use strict;
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:msg :history);
+use Bric::App::Util qw(:history);
 use Bric::Biz::Asset::Template;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
@@ -30,7 +30,7 @@ sub add_note : Callback {
 
     unless ($obj->get_checked_out && $obj->get_user__id == get_user_id) {
         # Protect the user from herself.
-        add_msg(
+        $self->raise_forbidden(
             'You cannot add a note to "[_1]" because it is not checked out to you',
             $obj->get_title
         );
@@ -51,12 +51,12 @@ sub add_note : Callback {
         } else {
             # It's not the same as the cached object. So just save it.
             $obj->save;
-            add_msg('Note saved.');
+            $self->add_message('Note saved.');
         }
     } else {
         # Just save the asset with the note.
         $obj->save;
-        add_msg('Note saved.');
+        $self->add_message('Note saved.');
     }
     # Use the page history to go back to the page that called us.
     $self->set_redirect(last_page());

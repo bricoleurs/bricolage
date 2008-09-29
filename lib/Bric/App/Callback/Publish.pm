@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'publish';
 
 use strict;
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:aref :msg :history :browser redirect_onload);
+use Bric::App::Util qw(:aref :history :browser redirect_onload);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::OutputChannel;
@@ -193,7 +193,7 @@ sub publish : Callback {
                 my $saved = $expired
                     ? $job->get_comp_time ? 'expired from '   : 'scheduled for expiration from'
                     : $job->get_comp_time ? 'published to' : 'scheduled for publication to';
-                add_msg(
+                $self->add_message(
                     qq{"[_1]" ${saved} [_2].},
                     $doc->get_title,
                     $doc->get_site->get_name,
@@ -221,10 +221,14 @@ sub publish : Callback {
             }
             $doc->save;
         }
-        add_msg("[quant,_1,$key,$plural] published.", $count - $exp_count)
-            if $count > 3;
-        add_msg("[quant,_1,$key,$plural] expired.",   $exp_count)
-            if $exp_count;
+        $self->add_message(
+            "[quant,_1,$key,$plural] published.",
+            $count - $exp_count,
+        ) if $count > 3;
+        $self->add_message(
+            "[quant,_1,$key,$plural] expired.",
+            $exp_count,
+        ) if $exp_count;
 
         # Publish stuff passed to publish_another().
         Bric::Util::Burner->flush_another_queue if $key eq 'story';

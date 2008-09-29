@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:aref :msg :history redirect_onload);
+use Bric::App::Util qw(:aref :history redirect_onload);
 use Bric::Biz::Person::User;
 use Bric::Config qw(:auth_len LISTEN_PORT);
 use Bric::Util::Grp;
@@ -37,7 +37,7 @@ sub save : Callback {
         # the system to reload their user objects from the database.
         $self->cache->set_lmu_time;
         log_event('user_deact', $user);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $user->get_name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $user->get_name);
         # redirect_onload() prevents any other callbacks from executing.
         get_state_name('login') eq 'ssl' ? $self->set_redirect(last_page)
           : redirect_onload(last_page,
@@ -61,23 +61,32 @@ sub save : Callback {
     my $cur_login = $user->get_login || '';
     if (!$login) {
         # There is no login!
-        add_msg('Login cannot be blank. Please enter a login.');
+        $self->raise_conflict('Login cannot be blank. Please enter a login.');
         $no_save = 1;
     } elsif ($login ne $cur_login) {
         if (length $login < LOGIN_LENGTH ) {
             # The login isn't long enough.
-            add_msg('Login must be at least [_1] characters.', LOGIN_LENGTH);
+            $self->raise_conflict(
+                'Login must be at least [_1] characters.',
+                LOGIN_LENGTH,
+            );
             $no_save = 1;
         }
         if ($login !~ /^[-\.\@\w]+$/) {
             # The login contains invalid characters
-            add_msg('Login "[_1]" contains invalid characters.', $login);
+            $self->raise_conflict(
+                'Login "[_1]" contains invalid characters.',
+                $login,
+            );
             $no_save = 1;
         }
 
         unless ($class->login_avail($login)) {
             # The new login is already used by someone.
-            add_msg('Login "[_1]" is already in use. Please try again.', $login);
+            $self->raise_conflict(
+                'Login "[_1]" is already in use. Please try again.',
+                $login,
+            );
             $no_save = 1;
         }
         # Okay, go ahead and set it, even though the user might have to change it.
@@ -97,17 +106,24 @@ sub save : Callback {
             # The old password checks out. Check the new passwords.
             if ($pass ne $param->{pass_2}) {
                 # The new passwords don't match.
-                add_msg('New passwords do not match. Please try again.');
+                $self->raise_conflict(
+                    'New passwords do not match. Please try again.'
+                );
                 $no_save = 1;
             }
             if ($pass =~ /^\s+/ || $pass =~ /\s+$/) {
                 # Password contains illegal preceding or trailing spaces.
-                add_msg('Password contains illegal preceding or trailing spaces. Please try again.');
+                $self->raise_conflict(
+                    'Password contains illegal preceding or trailing spaces. Please try again.'
+                );
                 $no_save = 1;
             }
             if (length $pass < PASSWD_LENGTH) {
                 # The password isn't long enough.
-                add_msg('Passwords must be at least [_1] characters!', PASSWD_LENGTH);
+                $self->raise_conflict(
+                    'Passwords must be at least [_1] characters!',
+                    PASSWD_LENGTH,
+                );
                 $no_save = 1;
             }
             # Change the password if we're saving.
@@ -118,7 +134,7 @@ sub save : Callback {
 
         } else {
             # The old password was wrong.
-            add_msg('Invalid password. Please try again.');
+            $self->raise_conflict('Invalid password. Please try again.');
             $no_save = 1;
         }
     }
@@ -131,7 +147,7 @@ sub save : Callback {
     }
     $user->save;
     log_event(defined $param->{user_id} ? 'user_save' : 'user_new', $user);
-    add_msg("$disp_name profile \"[_1]\" saved.", $user->get_name);
+    $self->add_message(qq{$disp_name profile "[_1]" saved.}, $user->get_name);
 
     # Take care of group management, since the use of the redirect_onload()
     # function below will prevent it from executing as a callback.

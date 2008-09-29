@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'dest';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Biz::OutputChannel;
 use Bric::Dist::ServerType;
 
@@ -35,7 +35,7 @@ sub save : Callback {
         $dest->deactivate;
         $dest->save;
         log_event('dest_deact', $dest);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
         $self->set_redirect("/admin/manager/dest");
         return;
@@ -54,8 +54,10 @@ sub save : Callback {
        && $dests[0] != $dest_id) {
         $used = 1;
     }
-    add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
-      if $used;
+    $self->raise_conflict(
+        qq{The name "[_1]" is already used by another $disp_name.},
+        $name,
+    ) if $used;
 
     # If they're editing it, assume it's active.
     $param->{active} = 1;
@@ -99,7 +101,7 @@ sub save : Callback {
         if (defined $dest_id) {
             log_event('dest_' . (defined $param->{dest_id} ? 'save' : 'new'), $dest);
             # Send a message to the browser.
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
             # Set the redirection.
             $self->set_redirect("/admin/manager/dest");
         } else {
@@ -124,7 +126,10 @@ sub delete : Callback {
             $dest->save;
             log_event("${type}_deact", $dest);
         } else {
-            add_msg('Permission to delete "[_1]" denied.', $dest->get_name);
+            $self->raise_forbidden(
+                'Permission to delete "[_1]" denied.',
+                $dest->get_name,
+            );
         }
     }
 }

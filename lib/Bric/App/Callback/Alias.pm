@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg :aref);
+use Bric::App::Util qw(:aref);
 use Bric::Biz::Asset;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Business::Media;
@@ -129,7 +129,7 @@ $work_it = sub {
     log_event("$class_key\_aliased", $aliased, { 'To Site' => $site->get_name() });
 
     # Let 'em know what we've done.
-    add_msg('Alias to "[_1]" created and saved.', $ba->get_title());
+    $self->add_message('Alias to "[_1]" created and saved.', $ba->get_title);
 };
 
 $handle_asset = sub {

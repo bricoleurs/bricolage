@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'category';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
 use Bric::Util::Grp;
@@ -37,7 +37,7 @@ sub save : Callback {
     if ($param->{delete} || $param->{delete_cascade}) {
         if ($id == $root_id) {
             # You can't deactivate the root category!
-            add_msg("$disp_name \"[_1]\" cannot be deleted.", $name);
+            $self->raise_conflict("$disp_name \"[_1]\" cannot be deleted.", $name);
             $param->{'obj'} = $cat;
             return;
         }
@@ -56,7 +56,7 @@ sub save : Callback {
         $cat->deactivate($arg);
         $cat->save;
         log_event($type . $key, $cat);
-        add_msg($msg, $name);
+        $self->add_message($msg, $name);
     } else {
         # Roll in the changes.
         $cat->set_name($param->{name});
@@ -81,7 +81,9 @@ sub save : Callback {
 
                 if (defined($id) and $id == $p_id
                     or grep $_->get_id == $p_id, $cat->children) {
-                    add_msg("Parent cannot choose itself or its child as its parent. Try a different parent.");
+                    $self->raise_conflict(
+                        'Parent cannot choose itself or its child as its parent. Try a different parent.'
+                    );
                     $param->{'obj'} = $cat;
                     return;
                 }
@@ -94,12 +96,18 @@ sub save : Callback {
                         $par->get_uri,
                         $param->{directory}
                     ) . '/';
-                    add_msg('URI "[_1]" is already in use. Please try a different directory name or parent category.', $uri);
+                    $self->raise_conflict(
+                        'URI "[_1]" is already in use. Please try a different directory name or parent category.',
+                        $uri,
+                    );
                     $param->{'obj'} = $cat;
                     return;
                 }
                 if ($param->{directory} =~ /[^\w.-]+/) {
-                    add_msg('Directory name "[_1]" contains invalid characters. Please try a different directory name.', $param->{directory});
+                    $self->raise_conflict(
+                        'Directory name "[_1]" contains invalid characters. Please try a different directory name.',
+                        $param->{directory},
+                    );
                     $param->{'obj'} = $cat;
                     return;
                 } else {
@@ -147,7 +155,7 @@ sub save : Callback {
             $self->obj($cat) if $param->{grp_cascade};
         }
 
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        $self->add_message("$disp_name profile \"[_1]\" saved.", $name);
     }
     # Redirect back to the manager.
 

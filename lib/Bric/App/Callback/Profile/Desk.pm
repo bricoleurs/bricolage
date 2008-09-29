@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'desk';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg :history);
+use Bric::App::Util qw(:history);
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 
@@ -34,7 +34,10 @@ sub save : Callback {
         $desk->save;
         $self->$expire_wf_cache($param->{"${type}_id"});
         log_event("${type}_deact", $desk);
-        add_msg("$disp_name profile \"[_1]\" deleted from all workflows.", $name);
+        $self->add_message(
+            "$disp_name profile \"[_1]\" deleted from all workflows.",
+            $name,
+        );
         $self->set_redirect(defined $param->{workflow_id} ?
                        "/admin/profile/workflow/$param->{workflow_id}"
                          : last_page());
@@ -55,9 +58,10 @@ sub save : Callback {
 	       && $desks[0] != $desk_id) {
                 $used = 1;
             }
-            add_msg("The name \"[_1]\" is already used by another $disp_name.",
-                    $name)
-              if $used;
+            $self->raise_conflict(
+                "The name \"[_1]\" is already used by another $disp_name.",
+                $name,
+            ) if $used;
         }
 
         # Roll in the changes.

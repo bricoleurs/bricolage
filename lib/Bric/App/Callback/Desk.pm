@@ -12,7 +12,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg :pkg :aref);
+use Bric::App::Util qw(:pkg :aref);
 use Bric::App::Callback::Publish;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
@@ -340,18 +340,18 @@ sub publish : Callback {
     # if we set the fail behaviour to fail rather than warn
     if (PUBLISH_RELATED_ASSETS && @messages) {
         if (PUBLISH_RELATED_FAIL_BEHAVIOR eq 'fail') {
-            add_msg(@$_) for @messages;
+            $self->add_message(@$_) for @messages;
             my $msg = 'Publish aborted due to errors above. Please fix the '
                 . ' above problems and try again.';
             throw_error error    => $msg,
                         maketext => $msg;
         } else {
             # we are set to warn, should we add a further warning to the msg ?
-            add_msg(@$_) for @messages;
-            add_msg('Some of the related assets were not published.');
+            $self->raise_conflict(@$_) for @messages,
+                'Some of the related assets were not published.';
         }
     } else {
-        add_msg(@$_) for @messages;
+        $self->raise_conflict(@$_) for @messages;
     }
 
     # For publishing from a desk, I added two new 'publish'
@@ -414,12 +414,12 @@ sub deploy : Callback {
                 $template->set_workflow_id(undef);
                 $template->save;
                 log_event("template_rem_workflow", $template);
-                add_msg('Template "[_1]" deployed.', $template->get_uri)
+                $self->add_message('Template "[_1]" deployed.', $template->get_uri)
                     if $count == 1;
             }
             # Sum it up for them
             if ($count > 1) {
-                add_msg("[quant,_1,template] deployed.", $count);
+                $self->add_message('[quant,_1,template] deployed.', $count);
             }
         }
     }
@@ -492,7 +492,10 @@ sub delete : Callback {
         }
         log_event("${class}_deact", $obj);
     } else {
-        add_msg('Permission to delete "[_1]" denied.', $obj->get_name);
+        $self->raise_forbidden(
+            'Permission to delete "[_1]" denied.',
+            $obj->get_name
+        );
     }
 }
 
@@ -514,14 +517,14 @@ sub _merge_properties {
     if (ALLOW_SLUGLESS_NONFIXED || $story->is_fixed || $param->{slug} =~ /\S/) {
         $story->set_slug($param->{slug});
     } else {
-        add_msg('Slug required for non-fixed (non-cover) story type.');
+        $self->raise_conflict('Slug required for non-fixed (non-cover) story type.');
         $err++;
     }
 
     # Category
     my $cid = $param->{"$widget|new_category_id"};
     unless (defined $cid && $cid ne '') {
-        add_msg('Please select a primary category.');
+        $self->raise_conflict('Please select a primary category.');
         $err++;
     } else {
         # Delete all the current categories first,
@@ -548,7 +551,7 @@ sub _merge_properties {
 
     # Cover date
     if ($param->{'cover_date-partial'}) {
-        add_msg('Cover Date incomplete.');
+        $self->raise_conflict('Cover Date incomplete.');
         $err++;
     } else {
         $story->set_cover_date($param->{cover_date});
@@ -557,7 +560,7 @@ sub _merge_properties {
     # Output Channel
     my $ocid = $param->{"$widget|new_oc_id"};
     unless (defined $ocid && $ocid ne '') {
-        add_msg('Please select a primary output channel.');
+        $self->raise_conflict('Please select a primary output channel.');
         $err++;
     } else {
         # Delete all the current output channels first,

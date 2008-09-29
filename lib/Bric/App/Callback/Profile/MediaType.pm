@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'media_type';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Util::MediaType;
 
 my $type = 'media_type';
@@ -33,7 +33,7 @@ sub save : Callback {
         $mt->deactivate;
         $mt->save;
         log_event("${type}_deact", $mt);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
         $self->set_redirect("/admin/manager/$type");
         return;
     } else {
@@ -42,11 +42,13 @@ sub save : Callback {
         # Make sure the name isn't already taken.
         my $used = 0;
         if (!defined $name || $name !~ /\S/) {
-            add_msg('Name is required.');
+            $self->raise_conflict('Name is required.');
             $used = 1;
         } elsif ($name !~ m|^\S+/\S+$|) {
-            add_msg(qq{Name "[_1]" is not a valid media name. The name must }
-                      . 'be of the form "type/subtype".', $name);
+            $self->raise_conflict(
+                qq{Name "[_1]" is not a valid media name. The name must be of the form "type/subtype".},
+                $name,
+            );
             $used = 1;
         } else {
             my @mts = ($class->list_ids({ name => $name }),
@@ -54,8 +56,10 @@ sub save : Callback {
             $used = 1 if @mts > 1
               || (@mts == 1 && !defined $mt_id)
               || (@mts == 1 && defined $mt_id && $mts[0] != $mt_id);
-            add_msg("The name \"[_1]\" is already used by another $disp_name.", $name)
-              if $used;
+            $self->raise_conflict(
+                qq{The name "[_1]" is already used by another $disp_name.},
+                $name,
+            ) if $used;
         }
 
         # Process add_more widget.
@@ -65,20 +69,22 @@ sub save : Callback {
             next unless $extension && $extension !~ /^\s+$/;
             next if delete $old_exts{ lc $extension };
             if ($extension !~ /^\w{1,10}$/) {
-                add_msg('Extension "[_1]" ignored.', $extension);
+                $self->raise_conflict('Extension "[_1]" ignored.', $extension);
                 next;
             }
             my $mt_id = Bric::Util::MediaType->get_id_by_ext($extension);
             if ( $mt_id && $mt_id != $mt->get_id ) {
-                add_msg(
+                $self->raise_conflict(
                     'Extension "[_1]" is already used by media type "[_2]".',
                     $extension,
                     Bric::Util::MediaType->get_name_by_ext($extension)
                 );
                 $used_ext += 1;
             } else {
-                add_msg('Problem adding "[_1]"', $extension)
-                    unless $mt->add_exts($extension);
+                $self->raise_conflict(
+                    'Problem adding "[_1]"',
+                    $extension,
+                ) unless $mt->add_exts($extension);
             }
         }
 
@@ -86,7 +92,7 @@ sub save : Callback {
         unless (($mt->get_exts)[0]) {
             # Revert the extensions
             $mt->add_exts(@orig_exts);
-            add_msg('At least one extension is required.');
+            $self->raise_conflict('At least one extension is required.');
             $used_ext = 1;
         }
 
@@ -101,7 +107,7 @@ sub save : Callback {
         } else {
             $mt->activate();
             $mt->save();
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
             unless (defined $mt_id) {
                 log_event($type . '_new', $mt);
             } else {

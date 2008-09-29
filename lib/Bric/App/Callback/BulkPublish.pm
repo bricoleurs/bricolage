@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(:all);
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(mk_aref add_msg);
+use Bric::App::Util qw(mk_aref);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Util::DBI qw(ANY);
@@ -65,13 +65,13 @@ sub publish_categories : Callback {
     }
     if (%counts) {
         if (my $c = $counts{story}) {
-            add_msg('[quant,_1,story,stories] published.', $c);
+            $self->add_message('[quant,_1,story,stories] published.', $c);
         }
         if (my $c = $counts{media}) {
-            add_msg('[quant,_1,media,media] published.', $c);
+            $self->add_message('[quant,_1,media,media] published.', $c);
         }
     } else {
-        add_msg('Nothing republished') unless %counts;
+        $self->add_message('Nothing republished') unless %counts;
     }
 }
 

@@ -11,7 +11,7 @@ use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:msg :aref :history :wf);
+use Bric::App::Util qw(:aref :history :wf);
 use Bric::App::Event qw(log_event);
 use Bric::App::Callback::Desk;
 use Bric::App::Callback::Profile::Media;
@@ -190,8 +190,10 @@ sub create_related_media : Callback {
     # Get the workflow for media files.
     my $media_wf = find_workflow($asset->get_site_id, MEDIA_WORKFLOW, READ);
     unless (find_desk($media_wf, CREATE)) {
-        add_msg("You do not have sufficient permission to create a media "
-                . "document for this site");
+        $self->raise_forbidden(
+            'You do not have sufficient permission to create a media '
+            . 'document for this site'
+        );
         return;
     }
 
@@ -366,7 +368,7 @@ sub save_and_up : Callback {
         } else {
             # Save the element we are working on.
             $element->save();
-            add_msg('Element "[_1]" saved.', $element->get_name);
+            $self->add_message('Element "[_1]" saved.', $element->get_name);
             $self->_pop_and_redirect;
         }
     }
@@ -394,7 +396,7 @@ sub save_and_stay : Callback {
         } else {
             # Save the element we are working on
             $element->save();
-            add_msg('Element "[_1]" saved.', $element->get_name);
+            $self->add_message('Element "[_1]" saved.', $element->get_name);
         }
     }
 }
@@ -559,7 +561,7 @@ sub _delete_element {
         $self->set_redirect($uri);
     }
 
-    add_msg('Element "[_1]" deleted.', $element->get_name);
+    $self->add_message('Element "[_1]" deleted.', $element->get_name);
     return;
 }
 
@@ -648,7 +650,10 @@ sub _update_subelements {
             $val = '' unless defined $val;
             if ( $param->{$widget . "|${id}-partial"} ) {
                 # The date is only partial. Send them back to to it again.
-                add_msg('Invalid date value for "[_1]" field.', $t->get_name);
+                $self->raise_conflict(
+                    'Invalid date value for "[_1]" field.',
+                    $t->get_name
+                );
                 set_state_data($widget, '__NO_SAVE__', 1);
             } else {
                 # Truncate the value, if necessary, then set it.
@@ -687,9 +692,11 @@ sub _update_subelements {
     if (@curr_elements) {
         eval { $element->reorder_elements([ grep { defined } @curr_elements ]) };
         if ($@) {
-            add_msg("Warning! State inconsistent: Please use the buttons "
-                    . "provided by the application rather than the 'Back'/"
-                    . "'Forward' buttons.");
+            $self->add_message(
+                'Warning! State inconsistent: Please use the buttons '
+                . q{provided by the application rather than the 'Back'/}
+                . q{'Forward' buttons.}
+            );
         }
     }
 }
@@ -817,9 +824,11 @@ sub _drift_correction {
     }
     # If we didn't find the element, abort, and restore the element stack
     else {
-        add_msg("Warning! State inconsistent: Please use the buttons "
-                . "provided by the application rather than the 'Back'/"
-                . "'Forward' buttons");
+        $self->add_message(
+            'Warning! State inconsistent: Please use the buttons '
+            . q{provided by the application rather than the 'Back'/}
+            . q{'Forward' buttons.}
+        );
 
         # Set this flag so that nothing gets changed on this request.
         $param->{_inconsistent_state_} = 1;

@@ -8,7 +8,6 @@ use constant CLASS_KEY => 'source';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg);
 use Bric::Biz::Org;
 use Bric::Biz::Org::Source;
 
@@ -31,7 +30,7 @@ sub save : Callback {
         # Deactivate it.
         $source->deactivate;
         log_event("${type}_deact", $source);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
         $source->save;
     } else {
         my $source_id = $param->{"${type}_id"};
@@ -46,7 +45,10 @@ sub save : Callback {
 	   && $sources[0] != $source_id) {
             $used = 1;
         }
-        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
+        $self->raise_conflict(
+            qq{The name "[_1]" is already used by another $disp_name.},
+            $name,
+        ) if $used;
 
         # Roll in the changes.
         if ($param->{org}) {
@@ -67,7 +69,7 @@ sub save : Callback {
             $source->set_source_name($param->{source_name});
             $source->save;
             log_event($type . (defined $param->{source_id} ? '_save' : '_new'), $source);
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
         }
     }
     # Save changes and redirect back to the manager.

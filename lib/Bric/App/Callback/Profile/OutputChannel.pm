@@ -8,7 +8,7 @@ use constant CLASS_KEY => 'output_channel';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Biz::OutputChannel;
 
 my $type = CLASS_KEY;
@@ -43,7 +43,7 @@ $do_callback = sub {
         # Deactivate it.
         $oc->deactivate;
         log_event('output_channel_deact', $oc);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
         $oc->save;
         $self->set_redirect('/admin/manager/output_channel');
     } else {
@@ -62,7 +62,10 @@ $do_callback = sub {
             $used = 1;
         }
 
-        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
+        $self->add_message(
+            qq{"The name "[_1]" is already used by another $disp_name.},
+            $name,
+        ) if $used;
 
         # Set the basic properties.
         $oc->set_description( $param->{description} );
@@ -77,9 +80,9 @@ $do_callback = sub {
         # Set the URI Template properties, catching all exceptions.
         my $bad_uri;
         eval { $oc->set_uri_format($param->{uri_format}) };
-        $bad_uri = 1 && add_msg($@->get_msg) if $@;
+        $bad_uri = 1 && $self->raise_conflict($@->get_msg) if $@;
         eval { $oc->set_fixed_uri_format($param->{fixed_uri_format}) };
-        $bad_uri = 1 && add_msg($@->get_msg) if $@;
+        $bad_uri = 1 && $self->raise_conflict($@->get_msg) if $@;
 
         if ($used) {
             $param->{'obj'} = $oc;
@@ -134,7 +137,7 @@ $do_callback = sub {
 
             $oc->save;
             log_event('output_channel_save', $oc);
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
             $self->set_redirect('/admin/manager/output_channel');
         } else {
             $oc->save;

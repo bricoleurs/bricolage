@@ -19,12 +19,17 @@ sub lang { Bric::Util::Language->get_handle(get_pref('Language')) }
 sub cache { $cache }
 sub set_redirect { shift->redirect(shift, 1) }
 
+sub add_message {
+    shift;
+    add_msg(@_);
+}
+
 sub raise_status {
     my ($self, $status) = (shift, shift);
-    my $r = $self->apache_req or return add_msg(@_);
+    my $r = $self->apache_req or return $self->add_message(@_);
 
     # If it's not an Ajax request, it's just a message.
-    return add_msg(@_)
+    return $self->add_message(@_)
         if ($r->headers_in->{'X-Requested-With'} || '') ne 'XMLHttpRequest';
 
     # Abort the database transaction.
@@ -102,6 +107,13 @@ also be used as an instance method.
 
 Sets the URL to redirect to after all callbacks have finished executing, but
 before the request is turned over to Mason for processing.
+
+=head3 add_message
+
+  $cb->add_message( 'Template "[_1]" deployed.', $template->get_uri );
+
+Add a status message to be displayed to the user. Pass in a list of values
+suitable for passing through C<< $lang->maketext >>.
 
 =head3 raise_status
 

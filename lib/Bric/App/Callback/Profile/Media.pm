@@ -12,7 +12,7 @@ use Bric::App::Callback::Desk;
 use Bric::App::Callback::Util::OutputChannel qw(update_output_channels);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:msg :history :aref);
+use Bric::App::Util qw(:history :aref);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::ElementType;
 use Bric::Biz::Keyword;
@@ -64,7 +64,7 @@ sub update : Callback(priority => 1) {
     $media->set_priority($param->{priority})
       if exists $param->{priority};
 
-    update_output_channels($media, $param);
+    update_output_channels($self, $media, $param);
 
     # Delete old keywords.
     my $old;
@@ -157,7 +157,7 @@ sub revert : Callback(priority => 6) {
     my $version = $self->params->{"$widget|version"};
     $media->revert($version);
     $media->save;
-    add_msg('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
+    $self->add_message('Media "[_1]" reverted to V.[_2]', $media->get_title, $version);
     $self->params->{checkout} = 1; # Reload checked-out media.
     $self->clear_my_state;
 }
@@ -182,7 +182,7 @@ sub save : Callback(priority => 6) {
         $media->activate();
         $media->save;
         log_event('media_save', $media);
-        add_msg('Media "[_1]" saved.', $media->get_title);
+        $self->add_message('Media "[_1]" saved.', $media->get_title);
     }
 
     my $return = get_state_data($widget, 'return') || '';
@@ -245,7 +245,7 @@ sub checkin : Callback(priority => 6) {
         log_event('media_checkout', $media) if $work_id;
         log_event('media_checkin', $media, { Version => $media->get_version });
         log_event("media_rem_workflow", $media);
-        add_msg('Media "[_1]" saved and shelved.', $media->get_title);
+        $self->add_message('Media "[_1]" saved and shelved.', $media->get_title);
     } elsif ($desk_id eq 'publish') {
         # Publish the media asset and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -280,8 +280,11 @@ sub checkin : Callback(priority => 6) {
         my $dname = $pub_desk->get_name;
         log_event('media_moved', $media, { Desk => $dname })
           unless $no_log;
-        add_msg('Media "[_1]" saved and checked in to "[_2]".',
-                $media->get_title, $dname);
+        $self->add_message(
+            'Media "[_1]" saved and checked in to "[_2]".',
+            $media->get_title,
+            $dname
+        );
 
         # Prevent loss of data due to publish failure.
         commit(1);
@@ -330,8 +333,11 @@ sub checkin : Callback(priority => 6) {
         log_event('media_checkin', $media, { Version => $media->get_version });
         my $dname = $desk->get_name;
         log_event('media_moved', $media, { Desk => $dname }) unless $no_log;
-        add_msg('Media "[_1]" saved and moved to "[_2]".',
-                $media->get_title, $dname);
+        $self->add_message(
+            'Media "[_1]" saved and moved to "[_2]".',
+            $media->get_title,
+            $dname,
+        );
 
         # Clear the state out and set redirect.
         $self->clear_my_state;
@@ -368,7 +374,7 @@ sub save_and_stay : Callback(priority => 6) {
         $media->activate;
         $media->save;
         log_event('media_save', $media);
-        add_msg('Media "[_1]" saved.', $media->get_title) unless $no_log;
+        $self->add_message('Media "[_1]" saved.', $media->get_title) unless $no_log;
     }
 
     # Set the state.
@@ -425,7 +431,7 @@ sub cancel : Callback(priority => 6) {
             # others to find.
             $media->save;
         }
-        add_msg('Media "[_1]" check out canceled.', $media->get_title);
+        $self->add_message('Media "[_1]" check out canceled.', $media->get_title);
     }
     $self->clear_my_state;
     if (my $prev = get_state_data('_profile_return')) {
@@ -529,7 +535,7 @@ sub create : Callback {
     log_event('media_add_workflow', $media, { Workflow => $wf->get_name });
     log_event('media_moved', $media, { Desk => $start_desk->get_name });
     log_event('media_save', $media);
-    add_msg('Media "[_1]" created and saved.', $media->get_title);
+    $self->add_message('Media "[_1]" created and saved.', $media->get_title);
 
     # Put the media asset into the session and clear the workflow ID.
     set_state_data($widget, 'media', $media);
@@ -599,7 +605,10 @@ sub recall : Callback {
             log_event('media_checkout', $ba);
             $co++;
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                $ba->get_name,
+            );
         }
     }
 
@@ -634,7 +643,10 @@ sub checkout : Callback {
             # Log Event.
             log_event('media_checkout', $ba);
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $ba->get_name);
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                $ba->get_name,
+            );
         }
     }
 
@@ -727,8 +739,11 @@ sub save_related : Callback {
     );
 
     $desk_cb->checkin;
-    add_msg('Media "[_1]" saved and checked in to "[_2]".',
-            $media->get_title, $desk->get_name);
+    $self->add_message(
+        'Media "[_1]" saved and checked in to "[_2]".',
+        $media->get_title,
+        $desk->get_name,
+    );
 
     if (my $prev = get_state_data('_profile_return')) {
         $self->return_to_other($prev);
@@ -777,7 +792,7 @@ sub handle_upload {
     # Prevent big media uploads
     if (MEDIA_UPLOAD_LIMIT && $upload->size > MEDIA_UPLOAD_LIMIT * 1024) {
         my $msg = 'File "[_1]" too large to upload (more than [_2] KB)';
-        add_msg($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
+        $self->raise_conflict($msg, $upload->filename, MEDIA_UPLOAD_LIMIT);
         return;
     }
 
@@ -818,11 +833,16 @@ sub _handle_contributors {
         foreach my $id (@to_delete) {
             $contrib = $existing->{$id}->{obj};
             delete $existing->{$id};
-            log_event('media_del_contrib', $media,
-                      { Name => $contrib->get_name });
+            log_event('media_del_contrib', $media, { Name => $contrib->get_name });
         }
-        if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
-        else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
+        if (@to_delete > 1) {
+            $self->add_message('Contributors disassociated.'); }
+        else {
+            $self->add_message(
+                'Contributor "[_1]" disassociated.',
+                $contrib->get_name,
+            );
+        }
     }
 
     $media->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
@@ -844,7 +864,7 @@ $handle_delete = sub {
     $media->save;
     log_event("media_rem_workflow", $media);
     log_event("media_deact", $media);
-    add_msg('Media "[_1]" deleted.', $media->get_title);
+    $self->add_message('Media "[_1]" deleted.', $media->get_title);
 };
 
 $save_category = sub {
@@ -857,7 +877,7 @@ $save_category = sub {
     $media->set_category__id($cat_id);
 
     my $cat = Bric::Biz::Category->lookup({id => $cat_id});
-    add_msg("Category \"[_1]\" associated.", $cat->get_name);
+    $self->add_message("Category \"[_1]\" associated.", $cat->get_name);
 
     # Avoid unnecessary empty searches.
     Bric::App::Callback::Search->no_new_search;

@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'field_type';
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
-use Bric::App::Util qw(:msg :history);
+use Bric::App::Util qw(:history);
 
 my $type = CLASS_KEY;
 my $disp_name = 'Field';
@@ -25,7 +25,7 @@ sub save : Callback {
     unless (chk_authz($elem, EDIT, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         $self->set_redirect(last_page());
         $self->has_perms(0);
         return;
@@ -38,7 +38,7 @@ sub save : Callback {
         $ed->set_min_occurrence(0);
         log_event("$type\_rem", $elem, { Name => $name });
         log_event("$type\_deact", $ed);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
     } else {
         my $numregex = qr{^\s*\d+\s*$};
         my $meths = $ed->my_meths;
@@ -91,7 +91,7 @@ sub save : Callback {
         #    $set_meta_string->($ed, $f, $param);
         #}
 
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
         log_event("$type\_save", $ed);
     }
 

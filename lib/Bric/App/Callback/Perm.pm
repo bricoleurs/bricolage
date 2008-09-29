@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'perm';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
 my $type = 'perm';
@@ -82,10 +82,11 @@ $do_save = sub {
                         my $tgid = $type eq 'obj' ? $ugid : $gid;
                         unless (chk_authz(0, $perm_val, 1, $tgid)
                                 || ($perm_val == DENY && chk_authz(0, READ, 1, $tgid))) {
-                            add_msg('Permission to grant permission "[_1]" to group'
-                                    . ' "[_2]" denied',
-                                    Bric::Util::Priv->vals_href->{$perm_val},
-                                    $perm->get_obj_grp->get_name);
+                            $self->raise_forbidden(
+                                'Permission to grant permission "[_1]" to group "[_2]" denied',
+                                Bric::Util::Priv->vals_href->{$perm_val},
+                                $perm->get_obj_grp->get_name,
+                            );
                             return;
                         }
 
@@ -102,10 +103,11 @@ $do_save = sub {
                     unless (chk_authz(0, $perm_val, 1, $tgid)
                             || ($perm_val == DENY && chk_authz(0, READ, 1, $tgid))) {
                         my $bad_grp = Bric::Util::Grp->lookup({ id => $tgid });
-                        add_msg('Permission to grant permission "[_1]" to group'
-                                . ' "[_2]" denied',
-                                Bric::Util::Priv->vals_href->{$perm_val},
-                                $bad_grp->get_name);
+                        $self->raise_forbidden(
+                            'Permission to grant permission "[_1]" to group "[_2]" denied',
+                            Bric::Util::Priv->vals_href->{$perm_val},
+                            $bad_grp->get_name,
+                        );
                         return;
                     }
 
@@ -135,7 +137,7 @@ $do_save = sub {
     }
 
     # Set a message and redirect!
-    add_msg("$disp_name saved.");
+    $self->add_message("$disp_name saved.");
 
     return $gid;
 };

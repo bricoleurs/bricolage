@@ -1064,6 +1064,9 @@ var Bricolage = {
     handleError: function(req) {
         Bricolage._handle(req, 'lightboxerror', error_msg);
     },
+    handleForbidden: function(req) {
+        Bricolage._handle(req, 'lightboxforbidden', forbidden_msg);
+    },
     handleConflict: function(req) {
         Bricolage._handle(req, 'lightboxconflict', conflict_msg);
     }
@@ -1084,6 +1087,7 @@ var Desk = {
             asynchronous: true,
             parameters: options.parameters,
             onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
             on409: Bricolage.handleConflict
         } );
     },
@@ -1099,6 +1103,7 @@ var Desk = {
             parameters: options.parameters,
             onSuccess: onSuccess,
             onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
             on409: Bricolage.handleConflict
         } );
     },
@@ -1234,6 +1239,7 @@ Abstract.ListManager.prototype = {
             evalScripts: true,
             onSuccess: callback,
             onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
             on409: Bricolage.handleConflict
         });
     }
@@ -1425,6 +1431,7 @@ var Container = {
             asynchronous: true,
             evalScripts: true,
             onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
             on409: Bricolage.handleConflict,
             onSuccess: function(request) {
                 Container.updateOrder('element_' + container_id)
@@ -1466,6 +1473,7 @@ var Container = {
                 asynchronous: true,
                 onSuccess: function(r) { window.close(); },
                 onFailure: Bricolage.handleError,
+                on403: Bricolage.handleForbidden,
                 on409: Bricolage.handleConflict
           }
         )
@@ -1491,6 +1499,7 @@ var Container = {
                 asynchronous: true,
                 onSuccess: function(r) { window.close(); },
                 onFailure: Bricolage.handleError,
+                on403: Bricolage.handleForbidden,
                 on409: Bricolage.handleConflict
           }
         )

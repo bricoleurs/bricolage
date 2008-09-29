@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Callback::Util::Contact qw(update_contacts);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Util::Attribute::Grp;
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Grp::Person;
@@ -31,7 +31,7 @@ sub save : Callback {
         $contrib->deactivate;
         $contrib->save;
         log_event("${type}_deact", $contrib);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $contrib->get_name);
+        $self->add_message("$disp_name profile \"[_1]\" deleted.", $contrib->get_name);
         $self->set_redirect('/admin/manager/contrib');
         return;
     } else {                    # Roll in the changes.
@@ -81,7 +81,7 @@ sub save : Callback {
 
             foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
                 my ($subsys, $name) = split /\|/, $aname;
-                
+
                 # Grab the SQL type.
                 my $sqltype = $mem_attr->get_sqltype({ name => $name,
                                                        subsys => '_MEMBER_SUBSYS' });
@@ -106,7 +106,7 @@ sub save : Callback {
 
             if ($self->cb_key eq 'save') {
                 # Record a message and redirect if we're saving
-                add_msg("$disp_name profile \"[_1]\" saved.", $name);
+                $self->add_message("$disp_name profile \"[_1]\" saved.", $name);
                 log_event("${type}_save", $contrib);
                 clear_state("contrib_profile");
                 $self->set_redirect('/admin/manager/contrib');

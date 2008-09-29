@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:msg :aref :pkg);
+use Bric::App::Util qw(:aref :pkg);
 
 sub delete : Callback {
     my $self = shift;
@@ -28,7 +28,7 @@ sub delete : Callback {
         } else {
             my $name = $obj->get_name;
             $name = 'Object' unless defined $name;
-            add_msg('Permission to delete "[_1]" denied.', $name);
+            $self->raise_forbidden('Permission to delete "[_1]" denied.', $name);
         }
     }
 }
@@ -49,7 +49,7 @@ sub deactivate : Callback {
         } else {
             my $name = $obj->get_name;
             $name = 'Object' unless defined $name;
-            add_msg('Permission to delete "[_1]" denied.', $name);
+            $self->raise_forbidden('Permission to delete "[_1]" denied.', $name);
         }
     }
 }

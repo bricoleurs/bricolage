@@ -26,7 +26,7 @@ use HTML::Mason::MethodMaker('read_write' => [qw(obj type class has_perms)]);
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
-use Bric::App::Util qw(:aref :msg :history :pkg :browser);
+use Bric::App::Util qw(:aref :history :pkg :browser);
 use Bric::App::Session qw(:user);
 
 my $excl = {
@@ -94,7 +94,7 @@ sub new {
     {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         $self->set_redirect(last_page());
         $self->has_perms(0);
     } else {
@@ -179,7 +179,7 @@ sub manage_grps : Callback( priority => 7 ) {
         # Assemble the new member information.
         foreach my $grp (@add_grps) {
             # Check permissions.
-            next unless $chk_grp_perms->($grp, $all_grp_id, $is_user);
+            next unless $chk_grp_perms->($self, $grp, $all_grp_id, $is_user);
 
             # Add the object to the group.
             $grp->add_members([{ obj => $o }]);
@@ -189,7 +189,7 @@ sub manage_grps : Callback( priority => 7 ) {
 
         foreach my $grp (@del_grps) {
             # Check permissions.
-            next unless $chk_grp_perms->($grp, $all_grp_id, $is_user);
+            next unless $chk_grp_perms->($self, $grp, $all_grp_id, $is_user);
 
             # Deactivate the object's group membership.
             foreach my $mem ($grp->has_member({ obj => $o })) {
@@ -204,18 +204,24 @@ sub manage_grps : Callback( priority => 7 ) {
 }
 
 $chk_grp_perms = sub {
-    my ($grp, $all_grp_id, $is_user) = @_;
+    my ($cb, $grp, $all_grp_id, $is_user) = @_;
     # If it's a user group, disallow access unless the current user is the
     # global admin or a member of the group. If it's not a user group,
     # disallow access unless the current user has EDIT access to the members
     # of the group.
-    unless ($grp->get_id != $all_grp_id
-            && chk_authz($grp, EDIT, 1)
-            && (($is_user
-                 && (user_is_admin || $grp->has_member({ obj => get_user_object }))
-                || chk_authz(0, EDIT, 1, $grp->get_id)))) {
-        add_msg('Permission to manage "[_1]" group membership denied',
-                $grp->get_name);
+    unless (
+        $grp->get_id != $all_grp_id
+        && chk_authz($grp, EDIT, 1)
+        && ((
+                $is_user
+                && (user_is_admin || $grp->has_member({ obj => get_user_object }))
+                || chk_authz(0, EDIT, 1, $grp->get_id)
+            ))
+    ) {
+        cb->raise_forbidden(
+            'Permission to manage "[_1]" group membership denied',
+            $grp->get_name,
+        );
         return;
     }
     return 1;

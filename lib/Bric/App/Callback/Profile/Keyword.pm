@@ -8,7 +8,6 @@ use constant CLASS_KEY => 'keyword';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg);
 
 my $disp_name = 'Keyword';
 my $class = 'Bric::Biz::Keyword';
@@ -29,7 +28,10 @@ sub save : Callback {
         $keyword->save;
 
         log_event("$widget\_deact", $keyword);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $keyword->get_name);
+        $self->add_message(
+            qq{$disp_name profile "[_1]" deleted.},
+            $keyword->get_name,
+        );
     } else {
         # Roll in the changes. Assume it's active.
         foreach my $meth ($keyword->my_meths(1)) {
@@ -40,7 +42,10 @@ sub save : Callback {
         $keyword->save;
 
         log_event($widget . ($is_saving ? '_save' : '_new'), $keyword);
-        add_msg("$disp_name profile \"[_1]\" saved.", $keyword->get_name);
+        $self->add_message(
+            qq{$disp_name profile "[_1]" saved.},
+            $keyword->get_name,
+        );
     }
     $self->set_redirect("/admin/manager/$widget");
     $param->{'obj'} = $keyword;

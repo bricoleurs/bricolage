@@ -858,7 +858,7 @@ table.dlman tr.dlbtns { height: 30px; }
 	filter: alpha(opacity=80);
 }
 
-.lightbox, .lightboxerror, .lightboxconflict {
+.lightbox, .lightboxerror, .lightboxconflict, .lightboxforbidden {
 	color: #333;
 	display: none;
 	position: absolute;
@@ -873,19 +873,21 @@ table.dlman tr.dlbtns { height: 30px; }
 	overflow: auto;	
 }
 
-.lightboxerror {
-	border: 1em solid #cc0000;
-}
+.lightbox .errorMsg { padding-top: 0; margin-top: 0; }
 
-.lightboxconflict {
-	border: 1em solid #ff5500;
+.lightboxconflict, .lightboxforbidden {
 	width: 40%;
     left: 30%;
 	height: 25%;
 }
 
-.lightboxconflict .errorMsg { color: #ff5500; }
+.lightboxerror     { border: 1em solid #cc0000; }
+.lightboxconflict  { border: 1em solid #ff5500; }
+.lightboxforbidden { border: 1em solid #800000; }
 
-.lightbox .errorMsg { padding-top: 0; margin-top: 0; }
+.lightboxerror .errorMsg     { color: #cc0000; }
+.lightboxconflict .errorMsg  { color: #ff5500; }
+.lightboxforbidden .errorMsg { color: #800000; }
+
 
 .lightbox[id]{ /* IE6 and below Can't See This */    position:fixed;    }#overlay[id]{ /* IE6 and below Can't See This */    position:fixed;    }

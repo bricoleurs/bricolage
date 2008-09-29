@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'element_type';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg :history);
+use Bric::App::Util qw(:history);
 use Bric::Biz::ElementType;
 use Bric::Util::DBI qw(:junction);
 
@@ -28,7 +28,7 @@ sub addElementType : Callback {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         $self->set_redirect(last_page());
     } else {
         $param->{obj} = $obj;
@@ -62,7 +62,7 @@ sub doRedirect : Callback {
     unless (chk_authz($obj, $id ? EDIT : CREATE, 1)) {
         # If we're in here, the user doesn't have permission to do what
         # s/he's trying to do.
-        add_msg("Changes not saved: permission denied.");
+        $self->raise_forbidden('Changes not saved: permission denied.');
         $self->set_redirect(last_page());
     } else {
         $self->set_redirect('/admin/profile/element_type/' . $param->{element_type_id});

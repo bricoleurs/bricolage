@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 
 my $type = CLASS_KEY;
 my $disp_name = 'Alert Type';
@@ -33,7 +33,7 @@ sub save : Callback {
         $at->remove;
         $at->save;
         log_event("${type}_del", $at);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message("$disp_name profile \"[_1]\" deleted.", $name);
         $self->set_redirect('/admin/manager/alert_type');
     } else {
         # Just save it.
@@ -42,7 +42,7 @@ sub save : Callback {
             $param->{'obj'} = $ret;
             return;
         }
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        $self->add_message("$disp_name profile \"[_1]\" saved.", $name);
         $self->set_redirect('/admin/manager/alert_type');
     }
 }
@@ -79,7 +79,7 @@ sub edit_recip : Callback {
     $at->add_groups( $param->{ctype}, @{ mk_aref($param->{add_groups}) } );
     $at->del_groups( $param->{ctype}, @{ mk_aref($param->{del_groups}) } );
     $at->save;
-    add_msg("[_1] recipients changed.", $param->{ctype});
+    $self->add_message("[_1] recipients changed.", $param->{ctype});
     $self->set_redirect("/admin/profile/alert_type/$param->{alert_type_id}");
 }
 
@@ -97,7 +97,10 @@ sub delete : Callback {
             $at->save();
             log_event($self->class_key . '_del', $at);
         } else {
-            add_msg('Permission to delete "[_1]" denied.', $at->get_name);
+            $self->raise_forbidden(
+                'Permission to delete "[_1]" denied.',
+                $at->get_name,
+            );
         }
     }
 }
@@ -149,7 +152,10 @@ $save = sub {
         if (defined $param->{event_type_id}) {
             $at->set_event_type_id($param->{event_type_id});
             if ($at->name_used) {
-                add_msg("The name \"[_1]\" is already used by another $disp_name.", $name);
+                $self->raise_conflict(
+                    'The name "[_1]" is already used by another $disp_name.',
+                    $name,
+                );
             } else {
                 $at->save;
                 log_event($type . '_new', $at);
@@ -160,7 +166,10 @@ $save = sub {
 
     # Make sure the name isn't already in use.
     if ($at->name_used) {
-        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name);
+        $self->raise_conflict(
+            'The name "[_1]" is already used by another $disp_name.',
+            $name,
+        );
         return $at;
     }
 

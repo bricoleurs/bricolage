@@ -77,7 +77,7 @@ sub story : Callback {
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
         _build_date_fields(
-            $self->class_key, $self->params, \@field, \@crit,
+            $self, \@field, \@crit,
             [qw(cover_date publish_date expire_date)],
         );
     }
@@ -113,7 +113,7 @@ sub media : Callback {
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
         _build_date_fields(
-            $self->class_key, $self->params, \@field, \@crit,
+            $self, \@field, \@crit,
             [qw(cover_date publish_date expire_date)]
         );
     }
@@ -149,7 +149,7 @@ sub template : Callback {
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
         _build_date_fields(
-            $self->class_key, $self->params, \@field, \@crit,
+            $self, \@field, \@crit,
             [qw(cover_date publish_date expire_date)]
         );
     }
@@ -293,7 +293,9 @@ sub _build_bool_fields {
 };
 
 sub _build_date_fields {
-    my ($widget, $param, $field, $crit, $add) = @_;
+    my ($cb, $field, $crit, $add) = @_;
+    my $widget = $cb->class_key;
+    my $param  = $cb->params;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
 
@@ -311,7 +313,9 @@ sub _build_date_fields {
                 ', month=>'.CORE::substr($v_start,5,2).
                 ', day=>'.CORE::substr($v_start,8,2).')');
             if ($@) {
-                add_msg("Invalid start date ".CORE::substr($v_start,0,10)." ($f)");
+                $cb->raise_conflict(
+                    'Invalid start date ' . CORE::substr($v_start, 0, 10) . " ($f)"
+                );
                 $v_start = '';
             }
         }
@@ -320,7 +324,9 @@ sub _build_date_fields {
                 ', month=>'.CORE::substr($v_end,5,2).
                 ', day=>'.CORE::substr($v_end,8,2).')');
             if ($@) {
-                add_msg("Invalid end date ".CORE::substr($v_end,0,10)." ($f)");
+                $cb->raise_conflict(
+                    'Invalid end date ' . CORE::substr($v_end, 0, 10) . " ($f)"
+                );
                 $v_end = '';
             }
         }

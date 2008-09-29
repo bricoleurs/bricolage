@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'workflow';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
 
@@ -34,7 +34,7 @@ sub save : Callback {
         $self->cache->set('__WORKFLOWS__' . $wf->get_site_id, 0);
         log_event("${type}_deact", $wf);
         $self->set_redirect('/admin/manager/workflow');
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
     } else {
         my $wf_id = $param->{"${type}_id"};
         my $site_id = $param->{site_id} || $wf->get_site_id;
@@ -54,7 +54,10 @@ sub save : Callback {
 	   && $wfs[0] != $wf_id) {
             $used = 1;
         }
-        add_msg("The name \"[_1]\" is already used by another $disp_name.", $name) if $used;
+        $self->add_message(
+            qq{The name "[_1]" is already used by another $disp_name.},
+            $name,
+        ) if $used;
 
         # Roll in the changes.
         $wf->set_name($param->{name}) unless $used;
@@ -118,7 +121,7 @@ sub save : Callback {
                 $wf->activate;
                 $wf->save;
                 $self->cache->set("__WORKFLOWS__$site_id", 0);
-                add_msg("$disp_name profile \"[_1]\" saved.", $name);
+                $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
                 log_event($type . '_save', $wf);
                 $self->set_redirect('/admin/manager/workflow');
             }
@@ -142,7 +145,10 @@ sub delete : Callback {
             log_event("${type}_deact", $wf);
             $flag = 1;
         } else {
-            add_msg('Permission to delete "[_1]" denied.', $wf->get_name);
+            $self->raise_forbidden(
+                'Permission to delete "[_1]" denied.',
+                $wf->get_name,
+            );
         }
     }
     if ($flag) {

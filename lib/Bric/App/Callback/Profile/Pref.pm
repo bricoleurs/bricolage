@@ -8,7 +8,6 @@ use constant CLASS_KEY => 'pref';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg);
 
 my $disp_name = 'Preference';
 
@@ -27,7 +26,7 @@ sub save : Callback {
     $pref->set_can_be_overridden($param->{can_be_overridden} ? 1 : 0);
     $pref->save;
     log_event('pref_save', $pref);
-    add_msg("$disp_name \"[_1]\" updated.", $name);
+    $self->add_message(qq{$disp_name "[_1]" updated.}, $name);
 
     $self->cache->set_lmu_time;
 

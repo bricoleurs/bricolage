@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:user);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Config qw(ADMIN_GRP_ID);
 
 my $type = CLASS_KEY;
@@ -64,7 +64,7 @@ sub deactivate : Callback {
         if (chk_authz($grp, EDIT, 1)) {
             if ($grp->get_permanent) {
                 # Disallow deletion of permanent groups.
-                add_msg("$disp_name cannot be deleted.");
+                $self->raise_conflict("$disp_name cannot be deleted.");
             } else {
                 # Deactivate it.
                 $grp->deactivate;
@@ -78,7 +78,10 @@ sub deactivate : Callback {
             $grp->save;
             log_event('grp_deact', $grp);
         } else {
-            add_msg('Permission to delete "[_1]" denied.', $grp->get_name);
+            $self->raise_forbidden(
+                'Permission to delete "[_1]" denied.',
+                $grp->get_name,
+            );
         }
     }
 }
@@ -125,7 +128,7 @@ $save_sub = sub {
     if ($param->{delete} && !$no_log) {
         if ($grp->get_permanent) {
             # Dissallow deletion of permanent groups.
-            add_msg("$disp_name cannot be deleted.");
+            $self->raise_conflict("$disp_name cannot be deleted.");
         } else {
             # Deactivate it.
             $grp->deactivate;
@@ -133,7 +136,7 @@ $save_sub = sub {
             log_event('grp_deact', $grp);
             # Reset the cache.
             $reset_cache->($grp, $class, $self);
-            add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
         }
         # Set redirection back to the manager.
         $self->set_redirect($redir);
@@ -160,8 +163,10 @@ $save_sub = sub {
 
             # Make sure it isn't an All group.
             if ($param->{grp_id} == $pkg->INSTANCE_GROUP_ID) {
-                add_msg('Permission to manage "[_1]" group membership denied',
-                        $grp->get_name);
+                $self->raise_forbidden(
+                    'Permission to manage "[_1]" group membership denied',
+                    $grp->get_name,
+                );
                 return;
             }
 
@@ -170,16 +175,20 @@ $save_sub = sub {
                 unless (user_is_admin || $grp->has_member(get_user_object)) {
                     # No member management only if the current user is a global
                     # admin or a member of the group.
-                    add_msg('Permission to manage "[_1]" group membership denied',
-                            $grp->get_name);
+                    $self->raise_forbidden(
+                        'Permission to manage "[_1]" group membership denied',
+                        $grp->get_name,
+                    );
                     return;
                 }
             } else {
                 unless (chk_authz(0, EDIT, 1, $param->{grp_id})) {
                     # No member management if the current user does not already
                     # have permisssion to edit the members of the group.
-                    add_msg('Permission to manage "[_1]" group membership denied',
-                            $grp->get_name);
+                    $self->raise_forbidden(
+                        'Permission to manage "[_1]" group membership denied',
+                        $grp->get_name,
+                    );
                     return;
                 }
             }
@@ -213,7 +222,7 @@ $save_sub = sub {
         $grp->save;
         unless ($no_log) {
             log_event('grp_save', $grp);
-            add_msg("$disp_name profile \"[_1]\" saved.", $name);
+            $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
         }
 
         # Redirect back to the manager.

@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Auth ();
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:msg del_redirect redirect_onload);
+use Bric::App::Util qw(del_redirect redirect_onload);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
 use Bric::Config qw(LISTEN_PORT);
@@ -39,7 +39,7 @@ sub login : Callback {
             redirect_onload('http://' . $r->hostname . $port . $redir, $self);
         }
     } else {
-        add_msg($msg);
+        $self->raise_forbidden($msg);
         $r->log_reason($msg);
     }
 }
@@ -55,8 +55,10 @@ sub masquerade : Callback {
         my ($res, $msg) = Bric::App::Auth::masquerade($r, $u);
         $self->set_redirect('/');
     } else {
-        add_msg('You do not have permission to override user "[_1]"',
-                $u->get_name);
+        $self->raise_forbidden(
+            'You do not have permission to override user "[_1]"',
+            $u->get_name,
+        );
     }
 }
 

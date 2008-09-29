@@ -8,7 +8,6 @@ use constant CLASS_KEY => 'org';
 
 use strict;
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:msg);
 
 my $disp_name = 'Org';
 my $class = 'Bric::Biz::Org';
@@ -31,7 +30,7 @@ sub save : Callback {
         $org->save;
 
         log_event("$widget\_deact", $org);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
     } else {
         # Roll in the changes. Assume it's active.
         foreach my $meth ($org->my_meths(1)) {
@@ -42,7 +41,7 @@ sub save : Callback {
         $org->save;
 
         log_event($widget . ($is_saving ? 'save' : 'new'), $org);
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
     }
     $self->set_redirect("/admin/manager/$widget");
     $param->{'obj'} = $org;

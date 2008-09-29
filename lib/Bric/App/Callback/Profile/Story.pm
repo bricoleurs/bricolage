@@ -12,7 +12,7 @@ use Bric::App::Callback::Desk;
 use Bric::App::Callback::Util::OutputChannel qw(update_output_channels);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:msg :history :aref);
+use Bric::App::Util qw(:history :aref next_msg);
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
@@ -71,9 +71,11 @@ sub revert : Callback {
     my $version = $self->params->{"$widget|version"};
     $story->revert($version);
     $story->save;
-    add_msg('Story "[_1]" reverted to V.[_2].',
-            '<span class="l10n">' . $story->get_title . '</span>',
-            $version);
+    $self->add_message(
+        'Story "[_1]" reverted to V.[_2].',
+        '<span class="l10n">' . $story->get_title . '</span>',
+        $version,
+    );
     $self->params->{checkout} = 1; # Reload checked-out story.
     set_state_data($widget, 'story');
 }
@@ -95,8 +97,10 @@ sub save : Callback(priority => 6) {
         # Save the story.
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.',
-                '<span class="l10n">' . $story->get_title . '</span>');
+        $self->add_message(
+            'Story "[_1]" saved.',
+            '<span class="l10n">' . $story->get_title . '</span>'
+        );
 
     }
 
@@ -155,8 +159,10 @@ sub checkin : Callback(priority => 6) {
         log_event('story_checkout', $story) if $work_id;
         log_event('story_checkin', $story, { Version => $story->get_version });
         log_event("story_rem_workflow", $story);
-        add_msg('Story "[_1]" saved and shelved.',
-                '<span class="l10n">' . $story->get_title . '</span>');
+        $self->add_message(
+            'Story "[_1]" saved and shelved.',
+            '<span class="l10n">' . $story->get_title . '</span>',
+        );
         # Clear the state out and set redirect.
         $self->clear_my_state;
         $self->set_redirect('/');
@@ -193,8 +199,11 @@ sub checkin : Callback(priority => 6) {
         my $dname = $pub_desk->get_name;
         log_event('story_moved', $story, { Desk => $dname })
           unless $no_log;
-        add_msg('Story "[_1]" saved and checked in to "[_2]".',
-                '<span class="l10n">' . $story->get_title . '</span>', $dname);
+        $self->add_message(
+            'Story "[_1]" saved and checked in to "[_2]".',
+            '<span class="l10n">' . $story->get_title . '</span>',
+            $dname,
+        );
 
         # Prevent loss of data due to publish failure.
         commit(1);
@@ -237,8 +246,11 @@ sub checkin : Callback(priority => 6) {
         log_event('story_checkin', $story, { Version => $story->get_version });
         my $dname = $desk->get_name;
         log_event('story_moved', $story, { Desk => $dname }) unless $no_log;
-        add_msg('Story "[_1]" saved and moved to "[_2]".',
-                '<span class="l10n">' . $story->get_title . '</span>', $dname);
+        $self->add_message(
+            'Story "[_1]" saved and moved to "[_2]".',
+            '<span class="l10n">' . $story->get_title . '</span>',
+            $dname,
+        );
 
         # Clear the state out and set redirect.
         $self->clear_my_state;
@@ -266,8 +278,10 @@ sub save_and_stay : Callback(priority => 6) {
         $story->activate;
         $story->save;
         log_event('story_save', $story);
-        add_msg('Story "[_1]" saved.',
-                '<span class="l10n">' . $story->get_title . '</span>');
+        $self->add_message(
+            'Story "[_1]" saved.',
+            '<span class="l10n">' . $story->get_title . '</span>',
+        );
     }
 }
 
@@ -320,8 +334,10 @@ sub cancel : Callback(priority => 6) {
             # others to find.
             $story->save;
         }
-        add_msg('Story "[_1]" check out canceled.',
-                '<span class="l10n">' . $story->get_title . '</span>');
+        $self->add_message(
+            'Story "[_1]" check out canceled.',
+            '<span class="l10n">' . $story->get_title . '</span>',
+        );
     }
     $self->clear_my_state;
     $self->set_redirect("/");
@@ -389,20 +405,22 @@ sub create : Callback {
             my $element = Bric::Biz::ElementType->lookup({id => $at_id});
             unless ($element->is_fixed_uri) {
                 unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
-                    add_msg('Slug required for non-fixed (non-cover) story type.');
+                    $self->add_message(
+                        'Slug required for non-fixed (non-cover) story type.'
+                    );
                     $ret = 1;
                 }
             }
         }
     } else {
-        add_msg("Please select a story type.");
+        $self->raise_conflict("Please select a story type.");
         $ret = 1;
     }
 
     # Check the category ID.
     my $cid = $param->{"$widget|new_category_id"};
     unless (defined $cid && $cid ne '') {
-        add_msg("Please select a primary category.");
+        $self->raise_conflict("Please select a primary category.");
         $ret = 1;
     }
 
@@ -429,7 +447,7 @@ sub create : Callback {
 
     # Set the slug and cover date and save the story.
     if ($param->{'cover_date-partial'}) {
-        add_msg('Cover Date incomplete.');
+        $self->rais_conflict('Cover Date incomplete.');
         return;
     }
 
@@ -460,8 +478,10 @@ sub create : Callback {
     log_event('story_add_workflow', $story, { Workflow => $wf->get_name });
     log_event('story_moved', $story, { Desk => $start_desk->get_name });
     log_event('story_save', $story);
-    add_msg('Story "[_1]" created and saved.',
-            '<span class="l10n">' . $story->get_title . '</span>');
+    $self->add_message(
+        'Story "[_1]" created and saved.',
+        '<span class="l10n">' . $story->get_title . '</span>',
+    );
 
     # Put the story into the session and clear the workflow ID.
     set_state_data($widget, 'story', $story);
@@ -530,8 +550,10 @@ sub checkout : Callback {
             # Log Event.
             log_event('story_checkout', $ba);
         } else {
-            add_msg('Permission to checkout "[_1]" denied.',
-                    '<span class="l10n">' . $ba->get_title . '</span>');
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                '<span class="l10n">' . $ba->get_title . '</span>',
+            );
         }
     }
 
@@ -586,8 +608,10 @@ sub recall : Callback {
             log_event('story_checkout', $ba);
             $co++;
         } else {
-            add_msg('Permission to checkout "[_1]" denied.',
-                    '<span class="l10n">' . $ba->get_title . '</span>');
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                '<span class="l10n">' . $ba->get_title . '</span>',
+            );
         }
     }
 
@@ -679,7 +703,7 @@ $save_category = sub {
 
     foreach my $id (@$cat_id) {
         if ($id == $primary_cid) {
-            add_msg('The primary category cannot be deleted.');
+            $self->raise_conflict('The primary category cannot be deleted.');
             next;
         }
         delete $existing->{$id};
@@ -689,7 +713,7 @@ $save_category = sub {
     }
 
     if (@to_delete) {
-        add_msg('Categories disassociated.');
+        $self->add_message('Categories disassociated.');
         $story->delete_categories(\@to_delete);
     }
 
@@ -706,11 +730,12 @@ $save_category = sub {
 
 # removes repeated error messages
 $unique_msgs = sub {
+    my $self = shift;
     my (%seen, @msgs);
-    while (my $msg = next_msg()) {
+    while (my $msg = next_msg) {
         push @msgs, $msg unless $seen{$msg}++;
     }
-    add_msg($_) for @msgs;
+    $self->add_message($_) for @msgs;
 };
 
 sub _save_data {
@@ -732,7 +757,9 @@ sub _save_data {
         my $element = Bric::Biz::ElementType->lookup({id => $at_id});
         unless ($element->is_fixed_uri) {
             unless (defined $param->{slug} && $param->{slug} =~ /\S/) {
-                add_msg('Slug required for non-fixed (non-cover) story type.');
+                $self->raise_conflict(
+                    'Slug required for non-fixed (non-cover) story type.'
+                );
                 $data_errors = 1;
             }
         }
@@ -741,7 +768,7 @@ sub _save_data {
         eval { $story->set_slug($param->{slug}) };
         if (my $err = $@) {
             rethrow_exception($err) unless isa_bric_exception($err, 'Error');
-            add_msg($err->maketext);
+            $self->raise_conflict($err->maketext);
             $data_errors = 1;
         }
     }
@@ -756,20 +783,20 @@ sub _save_data {
       if exists $param->{priority};
 
     if ($param->{'cover_date-partial'}) {
-        add_msg('Cover Date incomplete.');
+        $self->raise_conflict('Cover Date incomplete.');
         $data_errors = 1;
     } elsif (exists $param->{cover_date}) {
         $story->set_cover_date($param->{cover_date});
     }
 
     if ($param->{'expire_date-partial'}) {
-        add_msg('Expire Date incomplete.');
+        $self->raise_conflict('Expire Date incomplete.');
         $data_errors = 1;
     } elsif (exists $param->{expire_date}) {
         $story->set_expire_date($param->{expire_date});
     }
 
-    update_output_channels($story, $param);
+    update_output_channels($self, $story, $param);
 
     $self->_handle_categories($story, $param, $widget);
 
@@ -778,7 +805,7 @@ sub _save_data {
     $self->_handle_contributors($story, $param, $widget);
 
     # avoid repeated messages from repeated calls to _save_data
-    &$unique_msgs if $data_errors;
+    $unique_msgs->($self) if $data_errors;
 
     set_state_data($widget, 'story', $story);
 
@@ -826,8 +853,10 @@ sub _handle_categories {
         # If the category isn't still in the list of categories, delete it
         if (!(defined $checked_cats{$cat_id})) {
             if ($cat_id == $primary) {
-                add_msg('Category "[_1]" cannot be dissociated because it is the '
-                        . 'primary category', $cat->get_name);
+                $self->add_message(
+                    'Category "[_1]" cannot be dissociated because it is the primary category',
+                    $cat->get_name,
+                );
                 next;
             }
 
@@ -896,8 +925,14 @@ sub _handle_contributors {
             log_event('story_del_contrib', $story,
                       { Name => $contrib->get_name });
         }
-        if (scalar @to_delete > 1) { add_msg('Contributors disassociated.'); }
-        else { add_msg('Contributor "[_1]" disassociated.', $contrib->get_name); }
+        if (scalar @to_delete > 1) {
+            $self->add_message('Contributors disassociated.');
+        } else {
+            $self->add_message(
+                'Contributor "[_1]" disassociated.',
+                $contrib->get_name,
+            );
+        }
     }
 
     $story->reorder_contributors(sort { $order->{$a} <=> $order->{$b} } keys %$order);
@@ -917,8 +952,10 @@ sub _handle_delete {
     $story->save;
     log_event("story_rem_workflow", $story);
     log_event("story_deact", $story);
-    add_msg('Story "[_1]" deleted.',
-            '<span class="l10n">' . $story->get_title . '</span>');
+    $self->add_message(
+        'Story "[_1]" deleted.',
+        '<span class="l10n">' . $story->get_title . '</span>',
+    );
     return 1;
 };
 

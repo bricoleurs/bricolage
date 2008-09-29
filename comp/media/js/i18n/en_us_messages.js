@@ -27,3 +27,4 @@ var occurrences = ' occurrences';
 var digits_only_msg = ' must be a positive number';
 var error_msg = 'Error!';
 var conflict_msg = 'Whoops!';
+var forbidden_msg = 'Permission Denied';

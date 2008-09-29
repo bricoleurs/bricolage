@@ -65,7 +65,7 @@ profile, and therefore redundant. [David]
 
 =item *
 
-The upload field for relatd media (available when the C<RELATED_MEDIA_UPLOAD>
+The upload field for related media (available when the C<RELATED_MEDIA_UPLOAD>
 F<bricolage.conf> directive is enabled) is no longer displayed in the element
 profile. Instead, it is displayed in the "Edit" popup window, where you can
 now search for an existing media document I<or> upload a new file. This
@@ -73,6 +73,14 @@ eliminates a bug when more than one upload fied was displayed in the "Content"
 section of a document profile. It also makes it clearer that you're editing a
 new, related media document, is the popup looks different than the main
 display window (in that it has no nav). [David]
+
+=item *
+
+Permission and conflict messages thrown by callbacks in response to Ajax
+requests now cause a lightbox to be thrown up with the message highlighted.
+This means that if a user tries to move a story they don't have permission to
+move, the story will not appear to be moved in the UI and the user will be
+told that she lacks the permission. [David]
 
 =back
 

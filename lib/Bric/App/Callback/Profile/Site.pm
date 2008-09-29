@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'site';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Util::Fault qw(rethrow_exception isa_bric_exception);
 use Bric::Util::Grp;
 
@@ -36,7 +36,10 @@ sub save : Callback {
         $self->cache->set($wf_cache_key . $site->get_id, 0);
         log_event("${type}_deact", $site);
         $self->set_redirect('/admin/manager/site');
-        add_msg("$disp_name profile \"[_1]\" deleted.", $param->{name});
+        $self->add_message(
+            qq{$disp_name profile "[_1]" deleted.},
+            $param->{name},
+        );
         return;
     }
 
@@ -48,7 +51,7 @@ sub save : Callback {
     $self->cache->set_lmu_time;
     $self->cache->set($site_cache_key, 0);
     $self->cache->set($wf_cache_key . $site->get_id, 0);
-    add_msg("$disp_name profile \"[_1]\" saved.", $param->{name});
+    $self->add_message(qq{$disp_name profile "[_1]" saved.}, $param->{name});
     log_event($type . '_save', $site);
 
     $param->{obj} = $site;
@@ -73,7 +76,10 @@ sub delete : Callback {
             log_event("${type}_deact", $site);
             $flag = 1;
         } else {
-            add_msg('Permission to delete "[_1]" denied.', $site->get_name);
+            $self->raise_forbidden(
+                'Permission to delete "[_1]" denied.',
+                $site->get_name,
+            );
         }
     }
     if ($flag) {

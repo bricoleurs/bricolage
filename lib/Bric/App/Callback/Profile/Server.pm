@@ -9,7 +9,7 @@ use constant CLASS_KEY => 'server';
 use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref);
 use Bric::Dist::Server;
 use Bric::Dist::ServerType;
 
@@ -36,7 +36,7 @@ sub save : Callback {
         $s->del;
         $s->save;
         log_event('server_del', $s);
-        add_msg("$disp_name profile \"[_1]\" deleted.", $name);
+        $self->add_message("$disp_name profile \"[_1]\" deleted.", $name);
         # Set the redirection.
         $self->set_redirect("/admin/profile/dest/$param->{dest_id}");
         return;
@@ -57,7 +57,7 @@ sub save : Callback {
        && $dests[0] != $dest_id) {
         $used = 1;
     }
-    add_msg("The name \"[_1]\" is already used by another $disp_name in this $dest_name.", $name) if $used;
+    $self->add_message("The name \"[_1]\" is already used by another $disp_name in this $dest_name.", $name) if $used;
 
     # Roll in the changes.
     if (exists $param->{active}) {
@@ -83,7 +83,7 @@ sub save : Callback {
         $s->set_host_name($param->{host_name});
         $s->save;
         log_event($type . (defined $param->{server_id} ? '_save' : '_new'), $s);
-        add_msg("$disp_name profile \"[_1]\" saved.", $name);
+        $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
         # Set the redirection.
         $self->set_redirect("/admin/profile/dest/$param->{dest_id}");
     }

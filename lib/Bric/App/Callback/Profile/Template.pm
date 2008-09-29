@@ -10,7 +10,7 @@ use strict;
 use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:msg :history);
+use Bric::App::Util qw(:history);
 use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
@@ -25,49 +25,55 @@ my $DESK_URL   = '/workflow/profile/desk/';
 my $SEARCH_URL = '/workflow/manager/template/';
 my $ACTIVE_URL = '/workflow/active/template/';
 
-my ($save_meta, $save_code, $save_object, $checkin, $check_syntax,
-    $delete_fa, $create_fa, $handle_upload);
-
+my ( $save_meta, $save_code, $save_object, $checkin, $check_syntax, $delete_fa,
+    $create_fa, $handle_upload );
 
 sub save : Callback(priority => 6) {
-    my $self = shift;
+    my $self   = shift;
     my $widget = $self->class_key;
 
-    $save_object->($self, $self->params);
-    my $fa = get_state_data($widget, 'template');
+    $save_object->( $self, $self->params );
+    my $fa = get_state_data( $widget, 'template' );
 
     my $workflow_id = $fa->get_workflow_id;
-    if ($self->params->{"$widget|delete"}) {
+    if ( $self->params->{"$widget|delete"} ) {
+
         # Delete the fa.
-        $delete_fa->($self, $fa);
-    } else {
+        $delete_fa->( $self, $fa );
+    }
+    else {
+
         # Check syntax.
-        return unless $check_syntax->($self, $widget, $fa);
+        return unless $check_syntax->( $self, $widget, $fa );
+
         # Save it.
         $fa->save;
 
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
+        my $sb = Bric::Util::Burner->new( { user_id => get_user_id() } );
         $sb->deploy($fa);
 
-        log_event('template_save', $fa);
-        add_msg('Template "[_1]" saved.', $fa->get_file_name);
+        log_event( 'template_save', $fa );
+        $self->add_message( 'Template "[_1]" saved.', $fa->get_file_name );
     }
 
-    my $return = get_state_data($widget, 'return') || '';
+    my $return = get_state_data( $widget, 'return' ) || '';
 
     # Clear out our application state and send 'em home.
     clear_state($widget);
 
-    if ($return eq 'search') {
+    if ( $return eq 'search' ) {
         my $url = $SEARCH_URL . $workflow_id . '/';
         $self->set_redirect($url);
-    } elsif ($return eq 'active') {
+    }
+    elsif ( $return eq 'active' ) {
         my $url = $ACTIVE_URL . $workflow_id;
         $self->set_redirect($url);
-    } elsif ($return =~ /\d+/) {
+    }
+    elsif ( $return =~ /\d+/ ) {
         my $url = $DESK_URL . $workflow_id . '/' . $return . '/';
         $self->set_redirect($url);
-    } else {
+    }
+    else {
         $self->set_redirect("/");
     }
 }
@@ -107,7 +113,7 @@ sub save_and_stay : Callback(priority => 6) {
         # Save the template.
         $fa->save;
         log_event('template_save', $fa);
-        add_msg('Template "[_1]" saved.', $fa->get_file_name);
+        $self->add_message('Template "[_1]" saved.', $fa->get_file_name);
     }
 }
 
@@ -213,7 +219,7 @@ sub cancel : Callback(priority => 6) {
             # others to find.
             $fa->save;
         }
-        add_msg('Template "[_1]" check out canceled.', $fa->get_file_name);
+        $self->add_message('Template "[_1]" check out canceled.', $fa->get_file_name);
     }
     clear_state($self->class_key);
 
@@ -348,7 +354,10 @@ sub recall : Callback {
             $sb->deploy($fa);
 
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $fa->get_file_name);
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                $fa->get_file_name,
+            );
         }
     }
 
@@ -384,7 +393,10 @@ sub checkout : Callback {
             my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
             $sb->deploy($t_obj);
         } else {
-            add_msg('Permission to checkout "[_1]" denied.', $t_obj->get_file_name);
+            $self->raise_forbidden(
+                'Permission to checkout "[_1]" denied.',
+                $t_obj->get_file_name,
+            );
         }
     }
 
@@ -478,7 +490,7 @@ $checkin = sub {
         log_event(($new ? 'template_create' : 'template_save'), $fa);
         log_event('template_checkin', $fa, { Version => $fa->get_version });
         log_event("template_rem_workflow", $fa);
-        add_msg('Template "[_1]" saved and shelved.', $fa->get_file_name);
+        $self->add_message('Template "[_1]" saved and shelved.', $fa->get_file_name);
     } elsif ($desk_id eq 'deploy') {
         # Publish the template and remove it from workflow.
         my ($pub_desk, $no_log);
@@ -512,8 +524,11 @@ $checkin = sub {
         my $dname = $pub_desk->get_name;
         log_event('template_moved', $fa, { Desk => $dname })
           unless $no_log;
-        add_msg('Template "[_1]" saved and checked in to "[_2]".',
-                $fa->get_file_name, $dname);
+        $self->add_message(
+            'Template "[_1]" saved and checked in to "[_2]".',
+            $fa->get_file_name,
+            $dname,
+        );
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
@@ -539,8 +554,11 @@ $checkin = sub {
         log_event('template_checkin', $fa, { Version => $fa->get_version });
         my $dname = $desk->get_name;
         log_event('template_moved', $fa, { Desk => $dname }) unless $no_log;
-        add_msg('Template "[_1]" saved and moved to "[_2]".',
-                $fa->get_file_name, $dname);
+        $self->add_message(
+            'Template "[_1]" saved and moved to "[_2]".',
+            $fa->get_file_name,
+            $dname,
+        );
     }
 
     # Deploy the template, if necessary.
@@ -576,7 +594,7 @@ $check_syntax = sub {
     # Return success if the syntax checks out.
     return 1 if $burner->chk_syntax($fa, \$err);
     # Otherwise, add a message and return false.
-    add_msg("Template compile failed: [_1]", $err);
+    $self->add_message('Template compile failed: [_1]', $err);
     return 0
 };
 
@@ -595,7 +613,7 @@ $delete_fa = sub {
     $fa->deactivate;
     $fa->save;
     log_event("template_deact", $fa);
-    add_msg('Template "[_1]" deleted.', $fa->get_file_name);
+    $self->add_message('Template "[_1]" deleted.', $fa->get_file_name);
 };
 
 $create_fa = sub {
@@ -614,7 +632,7 @@ $create_fa = sub {
         unless ($param->{$widget.'|no_at'}) {
             unless (defined $at_id && $at_id ne '') {
                 # It's no good.
-                add_msg("You must select an Element.");
+                $self->raise_conflict('You must select an Element.');
                 return;
             }
             # Associate it with an Element.
@@ -660,14 +678,16 @@ $create_fa = sub {
                 site_id => $site_id,
             });
             if (defined $fa) {
-                add_msg("Deactivated template was reactivated.");
+                $self->add_message('Deactivated template was reactivated.');
                 $fa->activate;
                 $was_reactivated = 1;
             } else {
                 # XXX: it's redundant to say "element and burner"
                 # because a burner is associated uniquely with the element
                 # (don't forget to update Locale if this changes)
-                add_msg("A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.");
+                $self->raise_conflict(
+                    'A template already exists for the selected output channel, category, element and burner you selected.  You must delete the existing template before you can add a new one.'
+                );
                 return;
             }
         }
@@ -696,7 +716,7 @@ $create_fa = sub {
     log_event('template_add_workflow', $fa, { Workflow => $wf->get_name });
     log_event('template_moved', $fa, { Desk => $start_desk->get_name });
     log_event('template_save', $fa);
-    add_msg('Template "[_1]" saved.', $fa->get_file_name);
+    $self->add_message('Template "[_1]" saved.', $fa->get_file_name);
 
     # Put the template into the session and clear the workflow ID.
     set_state_data($widget, 'template', $fa);
