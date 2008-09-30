@@ -135,6 +135,12 @@ The "Un-relate" link now properly unrelates media documents. [David]
 Fixed F<bric_dist_mon> so that it works when Bricolage is running on mod_perl
 2. Reported by Roland van Ipenburg. [David]
 
+=item *
+
+Improved compatibility of the installer with certain Apache configurations
+where the apreq2 module might be named differently. Reported by Roland van
+Ipenburg (Bug #1359). [David]
+
 =back
 
 =head1 VERSION 1.11.0 (2008-04-30)
