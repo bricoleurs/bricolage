@@ -59,17 +59,38 @@ create_paths();
 rmtree catdir($CONFIG->{MASON_DATA_ROOT}, 'obj') if $UPGRADE;
 
 # Copy the Mason UI components.
-find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}), $HOT_COPY) },
-       no_chdir => 1 }, './comp') unless $ENV{DEVELOPER};
+find({
+    no_chdir => 1,
+    wanted   => sub {
+        copy_files(
+            catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}),
+            $HOT_COPY
+        )
+    },
+}, './comp') unless $ENV{DEVELOPER};
 
 # Copy the contents of the bconf directory.
-find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"), 0) },
-       no_chdir => 1 }, './bconf');
+find({
+    no_chdir => 1,
+    wanted   => sub {
+        copy_files(
+            catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"),
+            0
+        )
+    },
+}, './bconf');
 
 unless ($UPGRADE) {
     # Copy the contents of the data directory.
-    find({ wanted   => sub { copy_files(catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}), $HOT_COPY) },
-           no_chdir => 1 }, './data');
+    find({
+        no_chdir => 1,
+        wanted   => sub {
+            copy_files(
+                catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}),
+                $HOT_COPY
+            )
+        },
+    }, './data');
 }
 
 assign_permissions() unless ($ENV{PERL_INSTALL_ROOT});
