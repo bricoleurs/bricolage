@@ -354,12 +354,17 @@ sub expire_session {
     throw_gen(error => 'Unable to expire user session.', payload => $@)
       if $@;
 
+    # Also gotta delete the session to keep it from being written to disk.
+    %HTML::Mason::Commands::session = ();
+
     # Expire the session cookie.
-    my $cookie = Apache::Cookie->new($r,
-                     -name    => COOKIE,
-                     -expires => "-1d",
-                     -value   => 'Expired',
-                     -path    => '/');
+    my $cookie = Apache::Cookie->new(
+        $r,
+        -name    => COOKIE,
+        -expires => '-1d',
+        -value   => 'Expired',
+        -path    => '/'
+    );
 
     # Send this cookie out with the headers.
     $cookie->bake;
@@ -686,11 +691,11 @@ sub set_user {
     my $curr_id =  get_user_id();
     # Create a new session if the user has changed.
     setup_user_session($r, 1) if defined $curr_id && $uid != $curr_id;
-    my $bric_user = { login  => $user->get_login,
-                    id     => $uid,
-                    object => $user
-                  };
-    $HTML::Mason::Commands::session{_bric_user} = $bric_user;
+    $HTML::Mason::Commands::session{_bric_user} = {
+        login  => $user->get_login,
+        id     => $uid,
+        object => $user
+    };
     return 1;
 }
 
