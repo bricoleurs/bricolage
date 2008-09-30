@@ -103,8 +103,7 @@ my $cached_assets = sub {
     # Figure out what all we've got. We'll use this for displaying
     # relative links.
     $others = {
-        map  { $_ => 1 }
-        grep { $objs->{$_} && @{ $objs->{$_} } }
+        map  { $_ => $objs->{$_}  ? scalar @{ $objs->{$_} } : 0 }
         keys %$pkgs
     };
 
@@ -253,10 +252,14 @@ if ($class eq 'template') {
 }
 
 if (defined $objs && @$objs > $obj_offset) {
-    $m->comp("/widgets/desk/desk_top.html",
-             class => $class,
-             others => $others,
-             sort_by_val => $sort_by);
+    $m->comp(
+        '/widgets/desk/desk_top.html',
+        class       => $class,
+        others      => $others,
+        sort_by_val => $sort_by,
+        offset      => $offset,
+        show_all    => $show_all,
+    );
 
     my $disp = get_disp_name($class);
     my (%types, %users, %wfs);

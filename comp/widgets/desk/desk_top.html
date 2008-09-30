@@ -1,18 +1,16 @@
 <a name="<% $class %>"></a>
 
-% if (($link1) || ($link2)) {
+% if ( my @links = $jump_to->($class, $offset, $show_all, $others) ) {
 <div class="jump">
-% if ($link1) {
-  <a href="#<% $link1 %>"><img src="/media/images/<% "$lang_key/$img1" %>_dgreen.gif"></a>
-% } if ($link2) {
-  <a href="#<% $link2 %>"><img src="/media/images/<% "$lang_key/$img2" %>_dgreen.gif"></a>
-% }
+%     for my $link (@links) {
+  <a href="<% $link->{link} %>"><% $link->{label} %> &raquo;</a>
+%     }
 </div>
 % }
 <div class="desk-top">
   <h1><% $caption %></h1>
   <div class="sort">
-    <label for="<% $class %>_sort_by"><% $lang->maketext('Sort By') %>:</label> 
+    <label for="<% $class %>_sort_by"><% $lang->maketext('Sort By') %>:</label>
     <& '/widgets/profile/select.mc',
         value => $sort_by_val,
         useTable => 0,
@@ -30,24 +28,12 @@ $class => 'story'
 $caption => ''
 $sort_by_val => undef
 $others => {}
+$show_all => undef
+$offset   => undef
 </%args>
 <%init>;
 $caption ||= $pl_names->{$class};
 $sort_by_val = get_pref('Default Asset Sort') unless defined $sort_by_val;
-my ($link1, $link2, $lab1, $lab2, $img1, $img2);
-if ($class eq 'story') {
-    ($link1, $lab1, $img1) = ('media', $pl_names->{media}, 'media') if $others->{media};
-    ($link2, $lab2, $img2) = ('template', $pl_names->{template}, 'templates')
-      if $others->{template};
-} elsif ($class eq 'media') {
-    ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
-    ($link2, $lab2, $img2) = ('template', $pl_names->{template}, 'templates')
-      if $others->{template};
-} else {
-    ($link1, $lab1, $img1) = ('story', $pl_names->{story}, 'stories') if $others->{story};
-    ($link2, $lab2, $img2) = ('media', $pl_names->{media}, 'media') if $others->{media};
-}
-
 my $sites = $c->get('__SITES__');
 
 unless ($sites) {
@@ -90,4 +76,48 @@ my $pl_names = {
    media    => get_class_info('media')->get_plural_name,
    template => get_class_info('template')->get_plural_name
 };
+my $offset_by = sub {
+    my ($type, $offset, $others) = @_;
+    my $per_page = get_pref('Search Results / Page') or return;
+    return 0 if $type eq 'story';
+    my $prev = $others->{story};
+    $prev += $others->{media} if $type eq 'template';
+    return int $prev / $per_page;
+};
+
+my $jump_to = sub {
+    my ($type, $offset, $show_all, $others) = @_;
+    my $per_page = get_pref('Search Results / Page');
+    my @links;
+
+    if ($show_all || !$per_page) {
+        for my $what qw(story media template) {
+            push @links, {
+                link => "#$what",
+                label => $pl_names->{$what},
+            } unless $type eq $what or !$others->{$what};
+        }
+        return @links;
+    }
+
+    for my $what qw(story media template) {
+        next if $type eq $what or !$others->{$what};
+        my $starts_on = $offset_by->($type, $offset, $others);
+        if (defined $starts_on) {
+            if ($starts_on == $offset) {
+                push @links, {
+                    link  => "#$what",
+                    label => $pl_names->{$what},
+                };
+            } else {
+                push @links, {
+                    link => $r->uri . "?offset=$starts_on#$what",
+                    label => $pl_names->{$what},
+                };
+            }
+        }
+    }
+    return @links;
+};
+
 </%once>

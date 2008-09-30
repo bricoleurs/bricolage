@@ -67,6 +67,13 @@ publish, and then expires them all, regardless of URI, output channel, or file
 system path. This should fix the expiration of stale files once and for all
 (Bug #1351). [David]
 
+=item *
+
+The links to jump to different kinds of assets on My Workspace (or a desk if
+it happens to have different kinds of assets) are now generated in a more
+sensible manner, and display as text links rather than the ugly images we had
+previously. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -153,6 +160,12 @@ Reported by Scott (Bug#1339). [David]
 
 Reverting an image media document works again. Reported by Scott Lanning (Bug
 #1352). [David]
+
+=item *
+
+The links to jump to different kinds of assets on My Workspace (or a desk if
+it happens to have different kinds of assets) will now jump to the proper page
+when pagination is turned on. Reported by Matt Rolf (Bug #150). [David]
 
 =back
 
