@@ -131,6 +131,11 @@ Media documents are now properly expired. Reported by Matt Rolf (Bug #1347).
 The login window no longer shows the username in the top right corner right
 after logging out. Reported by Matt Rolf (Bug #1149). [David]
 
+=item *
+
+Fixed a bug uploading a file to a related media element when that related
+media element has lockable fields. Reported by Scott (Bug #1353). [David]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

@@ -202,7 +202,7 @@ sub pick_related_media : Callback {
     $self->set_redirect("$uri/edit_related_media.html");
 }
 
-sub create_related_media : Callback {
+sub create_related_media : Callback( priority => 5) {
     my $self = shift;
     $self->_drift_correction;
     my $widget = $self->class_key;
