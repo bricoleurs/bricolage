@@ -62,9 +62,15 @@ $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 
 # Output the form buttons.
 $m->out("<br />\n");
-$m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-   no_del => 1, no_save => $no_edit, widget => $type );
-
+$m->comp(
+    '/widgets/profile/formButtons.mc',
+    type    => $type,
+    section => $widget,
+    no_del  => 1,
+    no_save => $no_edit,
+    widget  => $type,
+    return  => last_page . '?user_pref|return_cb=1',
+);
 </%perl>
 </form>
 

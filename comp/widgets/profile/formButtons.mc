@@ -51,7 +51,7 @@ unless ($no_save) {
    </td>
    <td align="right">
 <%perl>;
-$m->out(qq{<a href="#" onclick="window.location.href='$return'; return false;"><img src="/media/images/$lang_key/$ret_val.gif" border=0 name="return" value="Return" vspace=2 /></a>}) unless $no_ret;
+$m->out(qq{<a href="#" onclick="window.location.href='$return'; return false;"><img src="/media/images/$lang_key/$ret_val.gif" border="0" name="return" value="Return" vspace="2" /></a>}) unless $no_ret;
 </%perl>
 
   </td>

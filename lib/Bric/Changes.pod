@@ -73,10 +73,6 @@ Fixed bug 1340, where Preview buttons weren't working within Related assets.
 
 =item *
 
-Fixed bug 1339, editing User Prefs wasn't working. [Scott]
-
-=item *
-
 The download link in Media Profile wasn't popping up into a new window on some
 browsers due to a typo. Spotted by Tatiana Titova. [Scott]
 
@@ -135,6 +131,11 @@ after logging out. Reported by Matt Rolf (Bug #1149). [David]
 
 Fixed a bug uploading a file to a related media element when that related
 media element has lockable fields. Reported by Scott (Bug #1353). [David]
+
+=item *
+
+Editing user prefs when SSL is enabled no longer breaks the User profile.
+Reported by Scott (Bug#1339). [David]
 
 =back
 

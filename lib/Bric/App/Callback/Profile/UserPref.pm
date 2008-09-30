@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'user_pref';
 use strict;
 use Bric::App::Authz qw(chk_authz EDIT);
 use Bric::App::Event qw(log_event);
-use Bric::App::Util qw(:aref :msg);
+use Bric::App::Util qw(:aref :msg :history);
 use Bric::App::Session qw(:user);
 
 my $disp_name = 'User Preference';
@@ -40,6 +40,7 @@ sub save : Callback {
 
     $self->cache->set_lmu_time;
 
+    pop_page();
     $self->set_redirect("/admin/profile/user/$param->{user_id}");
 }
 
@@ -70,8 +71,14 @@ sub delete : Callback {
 
     $self->cache->set_lmu_time;
 
+    pop_page();
     $self->set_redirect("/admin/profile/user/$param->{user_id}");
 }
 
+
+sub return : Callback {
+    # Go back in time.
+    pop_page, pop_page;
+}
 
 1;
