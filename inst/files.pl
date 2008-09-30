@@ -95,20 +95,23 @@ unless ($UPGRADE) {
 
 assign_permissions() unless ($ENV{PERL_INSTALL_ROOT});
 
-
 print "\n\n==> Finished Copying Bricolage Files <==\n\n";
 exit 0;
 
-
 # create paths configured by the user
 sub create_paths {
-    mkpath([catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}, "data"),
-	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}),
-	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"),
-	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{TEMP_DIR}, "bricolage"),
-	    catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{LOG_DIR})],
-	   1,
-	   0755);
+    my $inst_root = $ENV{PERL_INSTALL_ROOT};
+    mkpath(
+        [
+            catdir($inst_root, $CONFIG->{MASON_COMP_ROOT}, 'data'),
+            catdir($inst_root, $CONFIG->{MASON_DATA_ROOT}),
+            catdir($inst_root, $CONFIG->{BRICOLAGE_ROOT}, 'conf'),
+            catdir($inst_root, $CONFIG->{TEMP_DIR}, 'bricolage'),
+            catdir($inst_root, $CONFIG->{LOG_DIR})
+        ],
+        1,
+        0755
+    );
 }
 
 # copy files - should be called by a find() with no_chdir set
@@ -130,13 +133,13 @@ sub copy_files {
     if (-d) {
         mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
-      if ($link) {
-        link($_, $targ) or die "Unable to link $_ to $targ : $!";
-      } else {
-        copy($_, $targ) or die "Unable to copy $_ to $targ : $!";
-        chmod((stat($_))[2], $targ)
-          or die "Unable to copy mode from $_ to $targ : $!";
-      }
+        if ($link) {
+            link($_, $targ) or die "Unable to link $_ to $targ : $!";
+        } else {
+            copy($_, $targ) or die "Unable to copy $_ to $targ : $!";
+            chmod((stat($_))[2], $targ)
+                or die "Unable to copy mode from $_ to $targ : $!";
+        }
     }
 }
 
