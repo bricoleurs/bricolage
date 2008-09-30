@@ -55,6 +55,18 @@ search and then changes the site context, the search results will not change
 to the new site until the user submits a new search. Reported by Matt Rolf
 (Bug #1337). [David]
 
+=item *
+
+Rewrote (again) the way in which stale files are identified for expiration. It
+used to be that Bricolage would look for all resources associated with a given
+document and output channel but none of the current jobs. But if a story had
+previously been in two output channels and one was removed, Bricolage didn't
+look for stale files in that output channel. So now Bricolage asks for a list
+of resources associated with a document but none of the jobs created in a
+publish, and then expires them all, regardless of URI, output channel, or file
+system path. This should fix the expiration of stale files once and for all
+(Bug #1351). [David]
+
 =back
 
 =head2 Bug Fixes

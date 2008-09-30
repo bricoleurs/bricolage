@@ -227,6 +227,7 @@ use Bric::App::Session qw(:user);
 use Bric::Biz::Site;
 require Bric::Util::Job::Pub;
 require Bric::Util::Job::Dist;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Pref;
 use Bric::Util::Time qw(:all);
 use File::Basename qw(fileparse);
@@ -1218,6 +1219,7 @@ sub publish {
     my $at = $ats->{$ba->get_element_type_id} ||= $ba->get_element_type;
     my $ocs = $ba->get_output_channels;
 
+    my @job_ids;
     foreach my $oc (@$ocs) {
         my $ocid = $oc->get_id;
         my $base_path = $fs->cat_dir($self->get_out_dir, 'oc_'. $ocid);
@@ -1301,6 +1303,7 @@ sub publish {
             # Save the job.
             $job->save;
             log_event('job_new', $job);
+            push @job_ids, $job->get_id;
 
             # Set up an expire job, if necessary.
             if ($exp_date and my @res = $job->get_resources) {
@@ -1308,32 +1311,43 @@ sub publish {
                   '" from "' . $oc->get_name . '"';
                 $self->_expire($exp_date, $ba, $bat, $expname, $user_id, \@res);
             }
+        }
+    }
 
-            # Expire stale resources, if necessary.
-            if (my @stale = Bric::Dist::Resource->list({
-                "$key\_id" => $baid,
-                not_job_id => $job->get_id,
-                $key eq 'story'
-                    ? (path  => "$base_path/%")
-                    : (oc_id => $oc->get_id, not_uri => $ba->get_uri($oc) ),
+    # Expire stale resources, if necessary.
+    if (my @stale = Bric::Dist::Resource->list({
+        "$key\_id" => $baid,
+        not_job_id => ANY(@job_ids),
+    })) {
+        # Yep, there are old resources to expire. Map them to destinations.
+        my %resources_for;
+        my %dest_for;
+        for my $res (@stale) {
+            for my $dest (Bric::Dist::ServerType->list({
+                resource_id => $res->get_id
             })) {
-                # Yep, there are old resources to expire.
-                my $expname = 'Expire stale "' . $ba->get_name .
-                  '" from "' . $oc->get_name . '"';
-                $self->_expire($publish_date, $ba, $bat, $expname, $user_id, \@stale);
-
-                # Dissociate the stale resources from this asset.
-                if ($key eq 'story') {
-                    foreach my $sr (@stale) {
-                        $sr->del_story_ids($baid)->save;
-                    }
-                } else {
-                    foreach my $sr (@stale) {
-                        $sr->del_media_ids($baid)->save;
-                    }
-                }
+                $dest_for{$dest->get_id} ||= $dest;
+                push @{ $resources_for{$dest->get_id} ||= [] }, $res;
             }
         }
+
+        # Expire all resources from each destination.
+        while (my ($did, $res) = each %resources_for) {
+            my $dest = $dest_for{$did};
+            $self->_expire(
+                $publish_date,
+                $ba,
+                [$dest],
+                'Expire stale "' . $ba->get_name . '" from "'
+                    . $dest->get_name . '"',
+                $user_id,
+                $res,
+            );
+        }
+
+        # Dissociate the stale resources from this asset.
+        my $meth = $key eq 'story' ? 'del_story_ids' : 'del_media_ids';
+        $_->$meth($baid)->save for @stale;
     }
 
     if ($published) {
