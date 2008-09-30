@@ -1455,6 +1455,7 @@ sub prepare_clone {
         $e->prepare_clone;
     }
 
+    $self->uncache_me;
     return $self->_set(['id'] => [undef]);
 }
 

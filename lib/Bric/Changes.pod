@@ -149,6 +149,11 @@ media element has lockable fields. Reported by Scott (Bug #1353). [David]
 Editing user prefs when SSL is enabled no longer breaks the User profile.
 Reported by Scott (Bug#1339). [David]
 
+=item *
+
+Reverting an image media document works again. Reported by Scott Lanning (Bug
+#1352). [David]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)

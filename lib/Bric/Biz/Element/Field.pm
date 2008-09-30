@@ -791,7 +791,9 @@ B<Notes:> NONE.
 =cut
 
 sub prepare_clone {
-    shift->_set(['id'], [undef]);
+    my $self = shift;
+    $self->uncache_me;
+    $self->_set(['id'], [undef]);
 }
 
 ################################################################################
