@@ -147,11 +147,11 @@ sub copy_files {
 # and the files beneath them.
 sub assign_permissions {
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-	   catdir($CONFIG->{MASON_COMP_ROOT}, "data"));
+       catdir($CONFIG->{MASON_COMP_ROOT}, "data"));
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-	   $CONFIG->{MASON_DATA_ROOT});
+       $CONFIG->{MASON_DATA_ROOT});
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-	   catdir($CONFIG->{TEMP_DIR}, "bricolage"));
+       catdir($CONFIG->{TEMP_DIR}, "bricolage"));
     system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-	   catdir($CONFIG->{LOG_DIR}));
+       catdir($CONFIG->{LOG_DIR}));
 }
