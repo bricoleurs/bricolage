@@ -42,9 +42,9 @@ print "\n\n==> Copying Bricolage Files <==\n\n";
 
 # read in user config settings
 our $CONFIG;
-do "./config.db" or die "Failed to read config.db : $!";
+do "./config.db" or die "Failed to read config.db: $!";
 our $AP;
-do "./apache.db" or die "Failed to read apache.db : $!";
+do "./apache.db" or die "Failed to read apache.db: $!";
 
 # check if we're upgrading
 our $UPGRADE;
@@ -134,11 +134,11 @@ sub copy_files {
         mkpath([$targ], 1, 0755) unless -e $targ;
     } else {
         if ($link) {
-            link($_, $targ) or die "Unable to link $_ to $targ : $!";
+            link($_, $targ) or die "Unable to link $_ to $targ: $!";
         } else {
-            copy($_, $targ) or die "Unable to copy $_ to $targ : $!";
+            copy($_, $targ) or die "Unable to copy $_ to $targ: $!";
             chmod((stat($_))[2], $targ)
-                or die "Unable to copy mode from $_ to $targ : $!";
+                or die "Unable to copy mode from $_ to $targ: $!";
         }
     }
 }
@@ -146,12 +146,12 @@ sub copy_files {
 # assigns the proper permissions to the various directories created
 # and the files beneath them.
 sub assign_permissions {
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-       catdir($CONFIG->{MASON_COMP_ROOT}, "data"));
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
+    system('chown', '-R', $AP->{user} . ':' . $AP->{group},
+       catdir($CONFIG->{MASON_COMP_ROOT}, 'data'));
+    system('chown', '-R', $AP->{user} . ':' . $AP->{group},
        $CONFIG->{MASON_DATA_ROOT});
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
-       catdir($CONFIG->{TEMP_DIR}, "bricolage"));
-    system("chown", "-R", $AP->{user} . ':' . $AP->{group},
+    system('chown', '-R', $AP->{user} . ':' . $AP->{group},
+       catdir($CONFIG->{TEMP_DIR}, 'bricolage'));
+    system('chown', '-R', $AP->{user} . ':' . $AP->{group},
        catdir($CONFIG->{LOG_DIR}));
 }
