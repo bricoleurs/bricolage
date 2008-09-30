@@ -126,6 +126,11 @@ the primary category can now properly be deleted. Reported by Matt Rolf (Bug
 Media documents are now properly expired. Reported by Matt Rolf (Bug #1347).
 [David]
 
+=item *
+
+The login window no longer shows the username in the top right corner right
+after logging out. Reported by Matt Rolf (Bug #1149). [David]
+
 =back
 
 =head1 VERSION 1.10.5 (2008-04-29)
