@@ -753,6 +753,7 @@ our %Lexicon = (
   'No media document found for URI "[_1]" at line [_2].' => 'No media document found for URI "[_1]" at line [_2].',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
+  'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
   );
 
 =end comment

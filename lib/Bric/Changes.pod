@@ -235,6 +235,14 @@ since `make db_grant` is always run by `make db_upgrade`, anyway. [David]
 Eliminated extra processing and a potential error caused by mod_perl
 internally creating a sub-request. [David]
 
+=item *
+
+Bricolage no longer throws an exception when Imager fails to open an image
+file, which is what happens when Bricolage tries to create a thumbnail. Since
+most often the error will be due to a bad media file, it now just sends a
+warning to the error log and continues on its merry way. Suggested by Scott
+(Bug #1358). [David]
+
 =back
 
 =head2 Bug Fixes

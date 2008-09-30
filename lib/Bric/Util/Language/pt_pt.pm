@@ -755,6 +755,7 @@ To translate:
 	'Clone' => 'Clonar',
 	'Last Published' => 'Última Publicação',
     'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
+    'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
 
 =end comment
 

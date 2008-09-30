@@ -123,6 +123,7 @@ To translate:
       'Code' => 'Code',
       'Code Select' => 'Code Select',
       'Invalid codeselect code (didn't return an array ref of even size)' => 'Invalid codeselect code (didn't return an array ref of even size)',
+      'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
   );
 
 =end comment

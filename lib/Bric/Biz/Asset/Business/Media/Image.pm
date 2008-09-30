@@ -55,6 +55,7 @@ use strict;
 
 use base qw( Bric::Biz::Asset::Business::Media );
 use Bric::Config qw(:media :thumb);
+use Bric::App::Util ();
 use Bric::Util::Fault qw(throw_error throw_gen);
 require Imager if USE_THUMBNAILS;
 
@@ -412,9 +413,14 @@ sub create_thumbnail {
     }
 
     my $img = Imager->new;
-    $img->open(file => $path, type => $format)
-      or throw_gen error   => "Imager cannot open '$path'",
-                   payload => $img->errstr;
+    unless ( $img->open(file => $path, type => $format) ) {
+        Bric::App::Util::add_msg(
+            'Could not create a thumbnail for [_1]: [_2]',
+            $self->get_uri,
+            $img->errstr,
+        );
+        return;
+    }
 
     # If either dimension is greather than the thumbnail size, create a
     # smaller version by scaling largest side to THUMBNAIL_SIZE
