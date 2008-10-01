@@ -4,7 +4,7 @@ package bric_upgrade;
 
 =head1 NAME
 
-bric_upgrade_mysql - Library with functions to assist upgrading a Bricolage PostgreSQL database.
+bric_upgrade_Pg - Library with functions to assist upgrading a Bricolage PostgreSQL database.
 
 =head1 DESCRIPTION
 
