@@ -218,6 +218,7 @@ my $sort_by = $type eq 'template' ? 'uri'
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
+<div style="float: right">
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',
@@ -233,6 +234,7 @@ my $sort_by = $type eq 'template' ? 'uri'
    button    => 'publish_checked_red',
    useTable  => 0 &>
 % }
+</div>
 </form>
 <& /widgets/wrappers/sharky/footer.mc &>
 <%cleanup>;

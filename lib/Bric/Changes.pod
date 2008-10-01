@@ -74,6 +74,13 @@ it happens to have different kinds of assets) are now generated in a more
 sensible manner, and display as text links rather than the ugly images we had
 previously. [David]
 
+=item *
+
+The "Checkout" and "Publish Checked" buttons in the "Find" interface for
+stories, media, and templates are now displayed on the right-hand side of the
+screen, better aligning them with the checkboxes that they're associated with.
+Suggested by Matt Rolf. [David]
+
 =back
 
 =head2 Bug Fixes
