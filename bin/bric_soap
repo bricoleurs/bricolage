@@ -104,13 +104,13 @@ Options:
   --timeout              - specify the HTTP timeout for SOAP requests in
                            seconds.  Defaults to 30.
 
-  --save-cookie-file	 - specify a file to save cookies to for later use-
-			   useful if you do not wish to relogin each time.
+  --save-cookie-file     - specify a file to save cookies to for later use-
+               useful if you do not wish to relogin each time.
 
   --use-cookie-file      - specify a file in which cookies have been saved
-			   during a previous session.  If you use this
-			   option no username or password are
-			   required.
+               during a previous session.  If you use this
+               option no username or password are
+               required.
 
   --chunks               - perform actions in chunks of this many ids.
                            Currently implemented only for the workflow
@@ -257,28 +257,27 @@ BEGIN {
     our $workflow;
     our ($help, $man);
     GetOptions("help"                   => \$help,
-	       "man"                    => \$man,
-	       "verbose+"               => \$verbose,
-	       "username=s"             => \$username,
-	       "password:s"             => \$password,
-	       "server=s"               => \$server,
-	       "search=s"               => \%search,
-	       "with-related-stories"   => \$with_related_stories,
-	       "with-related-media"     => \$with_related_media,
-               "use-related-uri"        => \$use_related_uri,
-	       "all"                    => sub { $with_related_stories = 1;
-						 $with_related_media   = 1; },
-	       "to-preview"             => \$to_preview,
-	       "publish-date=s"         => \$publish_date,
-               "published-only"         => \$published_only,
-	       "desk=s"                 => \$desk,
-	       "workflow=s"             => \$workflow,
-               "timeout=s"              => \$timeout,
-	       "save-cookie-file=s"     => \$save_cookie,
-	       "use-cookie-file=s"      => \$use_cookie,
-               "chunks=s",              => \$chunks,
-               "continue-on-errors"     => \$continue,
-	      ) or  pod2usage(2);
+           "man"                    => \$man,
+           "verbose+"               => \$verbose,
+           "username=s"             => \$username,
+           "password:s"             => \$password,
+           "server=s"               => \$server,
+           "search=s"               => \%search,
+           "with-related-stories"   => \$with_related_stories,
+           "with-related-media"     => \$with_related_media,
+           "use-related-uri"        => \$use_related_uri,
+           "all"                    => sub { $with_related_stories = 1 = $with_related_media   = 1; },
+           "to-preview"             => \$to_preview,
+           "publish-date=s"         => \$publish_date,
+           "published-only"         => \$published_only,
+           "desk=s"                 => \$desk,
+           "workflow=s"             => \$workflow,
+           "timeout=s"              => \$timeout,
+           "save-cookie-file=s"     => \$save_cookie,
+           "use-cookie-file=s"      => \$use_cookie,
+           "chunks=s",              => \$chunks,
+           "continue-on-errors"     => \$continue,
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
@@ -390,7 +389,7 @@ my @options = $use_cookie ? ("server") : ("username","password","server");
 foreach my $opt (@options) {
     no strict 'refs';
     pod2usage("Missing required $opt option.")
-	unless $$opt;
+    unless $$opt;
 }
 
 # make sure chunking isn't requested for a non-chunk-supporting command
@@ -415,7 +414,7 @@ if  ($save_cookie) {
 }
 
 $soap->proxy($server . '/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1,
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1,
                                               file => $cookie_string,
                                               autosave=>1),
              timeout    => $timeout,
@@ -487,18 +486,18 @@ sub create {
 
     # work through documents
     foreach (@ARGV) {
-	my $document;
-	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading document from STDIN...\n"
-		if $verbose;
-	    $document = join('', <STDIN>);
-	} else {
-	    print STDERR "$module $command: Reading document \"$_\"...\n"
-		if $verbose;
-	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
-	    $document = join('', <DOC>);
-	    close(DOC);
-	}
+    my $document;
+    if ($_ eq '-') {
+        print STDERR "$module $command: Reading document from STDIN...\n"
+        if $verbose;
+        $document = join('', <STDIN>);
+    } else {
+        print STDERR "$module $command: Reading document \"$_\"...\n"
+        if $verbose;
+        open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
+        $document = join('', <DOC>);
+        close(DOC);
+    }
 
         if ($verbose) {
             my $class = $jump{$module}->{class};
@@ -506,8 +505,8 @@ sub create {
               "with document:  ", length($document), " bytes\n";
         }
 
-	# print out response ids
-	_print_ids($soap->create(name(document => $document)->type('base64'), @opts));
+    # print out response ids
+    _print_ids($soap->create(name(document => $document)->type('base64'), @opts));
     }
 }
 
@@ -520,20 +519,20 @@ sub update {
 
     # work through documents
     foreach (@ARGV) {
-	my $document;
-	if ($_ eq '-') {
-	    print STDERR "$module $command: Reading document from STDIN...\n"
-		if $verbose;
-	    $document = join('', <STDIN>);
-	} else {
-	    print STDERR "$module $command: Reading document \"$_\"...\n"
-		if $verbose;
-	    open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
-	    $document = join('', <DOC>);
-	    close(DOC);
-	}
+    my $document;
+    if ($_ eq '-') {
+        print STDERR "$module $command: Reading document from STDIN...\n"
+        if $verbose;
+        $document = join('', <STDIN>);
+    } else {
+        print STDERR "$module $command: Reading document \"$_\"...\n"
+        if $verbose;
+        open(DOC, $_) or die "Unable to open document \"$_\" : $!\n";
+        $document = join('', <DOC>);
+        close(DOC);
+    }
 
-	my @update_ids = grep { /\d/ } $document =~ /<$module.*?id=(["'])(\d+)\1/g
+    my @update_ids = grep { /\d/ } $document =~ /<$module.*?id=(["'])(\d+)\1/g
         or die "No $module ids found in update document.\n";
         if ($verbose) {
             print STDERR "$module $command: Found ids for update: ",
@@ -544,15 +543,15 @@ sub update {
               " with document:  ", length($document), " bytes\n";
         }
 
-	my $response = $soap->update(name(document =>
+    my $response = $soap->update(name(document =>
                                           $document)->type('base64'),
                                      name(update_ids =>
                                           [ map
                                             { name("$module\_id" => $_) }
                                             @update_ids ]),
                                      @opts);
-	# print out ids
-	_print_ids($response);
+    # print out ids
+    _print_ids($response);
     }
 }
 
@@ -593,7 +592,7 @@ sub checkout {
 
 sub move {
     die "$module $command requires a desk option.\n"
-	unless defined $desk;
+    unless defined $desk;
     my @opts = (name(desk => $desk));
     push @opts, name(workflow => $workflow) if defined $workflow;
 
@@ -615,23 +614,23 @@ sub _read_ids {
   my @ids;
   while (defined($_ = shift @ARGV)) {
       if ($_ eq '-') {
-	  print STDERR "$module $command: Reading ids from STDIN...\n"
-	      if $verbose;
-	  push @ARGV, map { chomp; $_ } <STDIN>;
-	  next;
+      print STDERR "$module $command: Reading ids from STDIN...\n"
+          if $verbose;
+      push @ARGV, map { chomp; $_ } <STDIN>;
+      next;
       }
 
       # plain integers use default if available
       if (/^\d+$/) {
-	  die "$module $command requires named ids ".
-	      "(story_1024, for example).\n"
-		  unless $default_type;
-	  push @ids, name($default_type, $_);
+      die "$module $command requires named ids ".
+          "(story_1024, for example).\n"
+          unless $default_type;
+      push @ids, name($default_type, $_);
       } elsif (/^([a-zA-Z_]+)_(\d+)$/) {
-	  my ($name, $id) = ($1, $2);
-	  push @ids, name(lc $name . "_id", $id);
+      my ($name, $id) = ($1, $2);
+      push @ids, name(lc $name . "_id", $id);
       } else {
-	  die "$module $command : found malformed id : \"$_\".\n";
+      die "$module $command : found malformed id : \"$_\".\n";
       }
   }
 
@@ -662,7 +661,7 @@ sub _foreach_chunks (&@) {
             $end = $start + $chunks - 1;
             $end = $#_ if $end > $#_;
             $code->(@_[$start .. $end]);
-	}
+    }
     }
 }
 
@@ -672,11 +671,11 @@ sub _print_ids {
     # print out ids with types
     my ($count, $data);
     for($count = 1; 
-	$data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
-	$count++) {
-	my $name = $data->name;
-	$name =~ s/_id$//;
-	print $name, "_", $data->value, "\n";
+    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+    $count++) {
+    my $name = $data->name;
+    $name =~ s/_id$//;
+    print $name, "_", $data->value, "\n";
     }
 }
 
