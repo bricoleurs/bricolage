@@ -30,7 +30,7 @@ sub table { 'element_type' };
 # Test constructors.
 ##############################################################################
 # Test new().
-sub test_new : Test(24) {
+sub test_new : Test(27) {
     my $self = shift;
 
     my %et = (
@@ -48,6 +48,7 @@ sub test_new : Test(24) {
     is( $et->get_name, $et{name},               'Check name' );
     is( $et->get_key_name, $et{key_name},       'Check key_name' );
     is( $et->get_description, $et{description}, 'Check description' );
+    is( $et->get_displayed, undef,              'Check displayed' );
 
     # Test backwards compatibility with an ATType object.
     ok my $att = Bric::Biz::ATType->new({
@@ -62,10 +63,12 @@ sub test_new : Test(24) {
         %et,
         key_name => $et{key_name} . '+',
         type_id => $att->get_id,
+        displayed => 1,
     }), 'Create an element type with an ATType object';
     isa_ok($et, 'Bric::Biz::ElementType');
     isa_ok($et, 'Bric');
     is $et->get_type_id, $att->get_id, 'Should have the type ID';
+    is $et->get_displayed, $et, 'Displayed should be true';
 
     ok $et->save, 'Save the new element type';
     ok $et = Bric::Biz::ElementType->lookup({ id => $et->get_id }),
@@ -74,6 +77,7 @@ sub test_new : Test(24) {
     isa_ok($et, 'Bric::Biz::ElementType');
     isa_ok($et, 'Bric');
     is $et->get_type_id, $att->get_id, 'Should have the type ID';
+    is $et->get_displayed, $et, 'Displayed should still be true';
 
     ok $et->is_fixed_uri,      'Should be fixed_uri';
     ok $et->is_top_level,      'Should be top level';
@@ -95,15 +99,13 @@ sub test_lookup : Test(2) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(69) {
+sub test_list : Test(71) {
     my $self = shift;
 
     # Create a new element group.
     ok( my $grp = Bric::Util::Grp::ElementType->new({
         name => 'Test ElementGrp'
     }), "Create group" );
-
-
 
     # Create some test records.
     for my $n (1..5) {
@@ -114,6 +116,7 @@ sub test_list : Test(69) {
         if ($n % 2) {
             # There'll be three of these.
             $args{description} .= $n;
+            $args{displayed} = 1;
             @args{qw(fixed_uri related_media related_story)} = (1,1,1);
         } else {
             # There'll be two of these.
@@ -240,6 +243,11 @@ sub test_list : Test(69) {
     ok( @ets = Bric::Biz::ElementType->list({ top_level => 1 }),
         "Look up top_level => 1" );
     is( scalar @ets, 11, "Check for 11 element types" );
+
+    # Try displayed
+    ok( @ets = Bric::Biz::ElementType->list({ displayed => 1 }),
+        "Look up displayed => 1" );
+    is( scalar @ets, 3, "Check for 3 element types" );
 
     # Try media
     ok( @ets = Bric::Biz::ElementType->list({ media => 1 }),

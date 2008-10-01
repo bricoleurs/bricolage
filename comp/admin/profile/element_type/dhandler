@@ -437,13 +437,14 @@ my $type = 'Subelement';
 if (defined $id) {
     if ($comp->is_top_level) {
         $exclude->{paginated} = 1;
+        $exclude->{displayed} = 1;
         $type = get_disp_name($comp->get_biz_class_id);
         $type = 'Other Media' if $type eq 'Media';
     } else {
         $exclude->{fixed_uri} = 1;
     }
 } else {
-    @{$exclude}{qw(paginated fixed_uri related_story related_media)}
+    @{$exclude}{qw(paginated fixed_uri related_story related_media displayed)}
         = (1, 1, 1, 1);
 }
 

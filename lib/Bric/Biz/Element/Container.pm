@@ -85,6 +85,7 @@ my @COLS = qw(
     parent_id
     place
     object_order
+    displayed
     related_story__id
     related_media__id
     active
@@ -96,6 +97,7 @@ my @FIELDS = qw(
     parent_id
     place
     object_order
+    displayed
     related_story_id
     related_media_id
     _active
@@ -113,6 +115,7 @@ my @SEL_COLS = qw(
     e.parent_id
     e.place
     e.object_order
+    e.displayed
     e.related_story__id
     e.related_media__id
     e.active
@@ -130,6 +133,7 @@ my @SEL_FIELDS = qw(
     parent_id
     place
     object_order
+    displayed
     related_story_id
     related_media_id
     _active
@@ -157,6 +161,7 @@ BEGIN {
         element_type_id    => Bric::FIELD_RDWR,
         related_story_id   => Bric::FIELD_RDWR,
         related_media_id   => Bric::FIELD_RDWR,
+        displayed          => Bric::FIELD_RDWR,
 
         # Private Fields
         _del_subelems      => Bric::FIELD_NONE,
@@ -208,6 +213,11 @@ element.
 The order of this element relative to the other container elements based on
 the same Bric::Biz::AssetType object that are subelements of the parent
 element.
+
+=item displayed
+
+Boolean indicating whether or not the container element's display is toggled
+open in the document profile. Ignored for top-level container elements.
 
 =item parent_id
 
@@ -278,10 +288,10 @@ sub new {
         });
     }
 
-    # Alias element type attributes and make it so..
-    @{$init}{qw(name key_name description relate_story relate_media)}
+    # Alias element type attributes and make it so...
+    @{$init}{qw(name key_name description relate_story relate_media displayed)}
         = $init->{_element_type_obj}->_get(
-            qw(name key_name description related_story related_media)
+            qw(name key_name description related_story related_media displayed)
         );
 
     my $self = $class->SUPER::new($init);
@@ -428,6 +438,11 @@ C<parent_id> must be C<NULL>. May use C<ANY> for a list of possible values.
 The ID of a Bric::Biz::Asset::Business::Media object that may be related to
 container elements. Pass C<undef> to this parameter to specify that the
 C<parent_id> must be C<NULL>. May use C<ANY> for a list of possible values.
+
+=item displayed
+
+A boolean value indicating whether the returned data elements should have
+their display toggled open in the document profile.
 
 =item active
 
@@ -587,6 +602,28 @@ B<Notes:> NONE.
 
 Sets the order number for this object relative to other container elements
 based on the same Bric::Biz::ElementType object.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $displayed = $container->get_displayed
+
+Returns boolean value indicating whether or not the container element's display
+should be toggled open in the document profile.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $container->set_displayed($displayed)
+
+Sets the boolean value indicating whether or not the container element's
+display should be toggled open in the document profile.
 
 B<Throws:> NONE.
 
@@ -1979,8 +2016,8 @@ sub _do_list {
             push @wheres, any_where $v, 'e.id = ?', \@params;
         }
 
-        elsif ($k eq 'active') {
-            push @wheres, 'e.active = ?';
+        elsif ($k eq 'active' || $k eq 'displayed') {
+            push @wheres, "e.$k = ?";
             push @params, $v ? 1 : 0;
         }
 

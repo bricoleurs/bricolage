@@ -140,6 +140,7 @@ use constant ORD => qw(
     related_story
     related_media
     media
+    displayed
     biz_class_id
     active
 );
@@ -170,6 +171,7 @@ my @cols = qw(
     related_story
     related_media
     media
+    displayed
     biz_class__id
     type__id
     active
@@ -185,6 +187,7 @@ my @props = qw(
     related_story
     related_media
     media
+    displayed
     biz_class_id
     type_id
     _active
@@ -199,6 +202,7 @@ my %bool_attrs = map { $_ => undef } qw(
     fixed_uri
     related_story
     related_media
+    displayed
     media
     active
 );
@@ -239,6 +243,7 @@ BEGIN {
         related_story       => Bric::FIELD_NONE,
         related_media       => Bric::FIELD_NONE,
         media               => Bric::FIELD_NONE,
+        displayed           => Bric::FIELD_RDWR,
         biz_class_id        => Bric::FIELD_RDWR,
         type_id             => Bric::FIELD_READ,
         grp_ids             => Bric::FIELD_READ,
@@ -306,6 +311,10 @@ Defaults to false.
 
 Defaults to false.
 
+=item displayed
+
+Defaults to false.
+
 =item biz_class_id
 
 Defaults to the ID for Bric::Biz::Asset::Business::Story.
@@ -323,22 +332,22 @@ B<Notes:> NONE.
 sub new {
     my ($class, $init) = @_;
     $init->{_active} = 1;
-
     # Backwards compatibility for Bric::Biz::ATType.
     if (my $type_id = $init->{type_id} ||= delete $init->{type__id}) {
-        my @bool_attrs = keys %bool_attrs;
+        my @bool_attrs = grep { $_ ne 'displayed' } keys %bool_attrs;
         if (my $type = Bric::Biz::ATType->lookup({ id => $type_id })) {
             @{$init}{@bool_attrs, 'biz_class_id', 'fixed_uri'}
                 = $type->_get(@bool_attrs, 'biz_class_id', 'fixed_url');
         } else {
             delete $init->{type_id};
         }
+        # Displayed not suported by ATType.
+        $init->{displayed} ||= 0;
     } else {
         # Set up boolean defaults.
         for my $attr (keys %bool_attrs) {
             $init->{$attr} = $init->{$attr} ? 1 : 0;
         }
-
         # Set up default business class ID.
         $init->{biz_class_id} ||= STORY_CLASS_ID;
     }
@@ -484,6 +493,10 @@ Boolean value for paginated element types.
 =item fixed_uri
 
 Boolean value for fixed URI element types.
+
+=item displayed
+
+Boolean value for displayed element types.
 
 =item related_story
 
@@ -865,6 +878,19 @@ sub my_meths {
 
         },
 
+        displayed    => {
+            name     => 'displayed',
+            get_meth => sub {shift->is_displayed(@_)},
+            get_args => [],
+            set_meth => sub {shift->set_displayed(@_)},
+            set_args => [],
+            disp     => 'Displayed',
+            len      => 1,
+            req      => 0,
+            type     => 'short',
+            props    => { type => 'checkbox'}
+        },
+
         biz_class_id => {
             name     => 'biz_class_id',
             get_meth => sub {shift->get_biz_class_id(@_)},
@@ -1016,6 +1042,15 @@ The C<media> attribute is a boolean that indicates whether elements based on
 the element type are media documents. This attribute is a redundant
 combination fo the C<biz_type_id> and C<top_level> attributes.
 
+=head3 displayed
+
+  my $is_displayed = $element_type->is_displayed;
+  $element_type = $element_type->set_displayed($is_displayed);
+
+The C<displayed> attribute is a boolean that indicates whether elements based
+on the element type are displayed in the document profile when they are first
+created. Note that it's ignored for top-level elements.
+
 =cut
 
 # Reference is just for backwards compatibility.
@@ -1026,6 +1061,7 @@ for my $attr (qw(
     related_story
     related_media
     media
+    displayed
 )) {
     no strict 'refs';
     my $iser = sub { $_[0]->_get($attr) ? shift : undef };

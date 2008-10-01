@@ -103,6 +103,12 @@ subelements in them. [David]
 Related media and/or story subelements may now be toggled to show/hide them
 like any other subelements in a document. [David]
 
+=item *
+
+Added the "displayed" attribute to element type and container objects. Setting
+it on a subelement type causes the value to be set on the containers created
+based on that type. [David]
+
 =back
 
 =head2 Bug Fixes

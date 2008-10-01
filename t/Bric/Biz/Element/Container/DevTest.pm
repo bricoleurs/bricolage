@@ -44,10 +44,12 @@ sub construct {
 ################################################################################
 # Test the constructors
 
-sub test_new : Test(15) {
+sub test_new : Test(16) {
     my $self = shift;
 
     ok (my $cont = $self->construct,          'Construct Container');
+    is $cont->get_displayed, 0,               'Displayed should be false';
+
     ok (my $at  = $cont->get_element_type,    'Get Element Type Object');
     ok (my $atd = ($at->get_field_types)[0],  'Get Field Type Object');
 
@@ -74,6 +76,36 @@ sub test_new : Test(15) {
 
     ok $atd->set_max_occurrence(1), 'Resetting the max back to 1';
     ok $atd->save, 'Save the field';
+}
+
+sub test_inherit_display : Test(15) {
+    my $self = shift;
+    ok (my $at = $self->get_elem,    'Get Element Type Object');
+    ok $at->set_displayed(1),        'Set the element type displayed on';
+    ok (my $cont = $self->construct, 'Construct a new container');
+    ok $at->set_displayed(0),        'Disable element type display';
+    is $cont->get_displayed, 1,      'Displayed should be true';
+
+    ok $cont->save,                  'Save the container';
+    ok (my $c_id = $cont->get_id,    'Get Container ID');
+    $self->add_del_ids([$c_id], $cont->S_TABLE);
+
+    ok ($cont = $self->class->lookup({
+        object_type => 'story',
+        id          => $c_id
+    }), 'Lookup the container');
+    isa_ok $cont, $self->class;
+    is $cont->get_displayed, 1, 'Its displayed attribute should still be true';
+
+    ok $cont->set_displayed(0), 'Disable display';
+    ok $cont->save,             'Save it again';
+    ok ($cont = $self->class->lookup({
+        object_type => 'story',
+        id          => $c_id
+    }), 'Lookup the container again');
+    isa_ok $cont, $self->class;
+    is $cont->get_displayed, 0, 'Its displayed attribute should now be false';
+
 }
 
 ##############################################################################
@@ -413,7 +445,7 @@ sub test_zelem_occurrence : Test(93) {
 
 ##############################################################################
 # Test list.
-sub test_list : Test(158) {
+sub test_list : Test(160) {
     my $self       = shift->create_element_types;
     my $class      = $self->class;
     my $story_type = $self->{story_type};
@@ -550,6 +582,15 @@ sub test_list : Test(158) {
         active      => 0,
     }), 'List inactive elements';
     is scalar @elems, 2, 'There should be two inactive elements';
+
+    # Try by displayed.
+    $elems[0]->set_displayed(1)->save;
+    $elems[1]->set_displayed(1)->save;
+    ok @elems = $class->list({
+        object_type => 'story',
+        displayed   => 1,
+    }), 'List displayed elements';
+    is scalar @elems, 2, 'There should be two active elements';
 }
 
 

@@ -515,6 +515,7 @@ sub load_asset {
         $element->set_fixed_uri($edata->{fixed_uri} ? 1 : 0);
         $element->set_related_story($edata->{related_story} ? 1 : 0);
         $element->set_related_media($edata->{related_media} ? 1 : 0);
+        $element->set_displayed($edata->{displayed} ? 1 : 0);
         $element->set_media($edata->{is_media} ? 1 : 0);
 
         # change business class to ID
@@ -813,6 +814,7 @@ sub serialize_asset {
     $writer->dataElement(fixed_uri     => ($element->get_fixed_uri ? 1 : 0));
     $writer->dataElement(related_story => ($element->get_related_story ? 1 : 0));
     $writer->dataElement(related_media => ($element->get_related_media ? 1 : 0));
+    $writer->dataElement(displayed     => ($element->get_displayed ? 1 : 0));
     $writer->dataElement(is_media      => ($element->get_media ? 1 : 0));
 
     # change business class to ID

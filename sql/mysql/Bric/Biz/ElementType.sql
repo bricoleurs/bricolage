@@ -26,6 +26,7 @@ CREATE TABLE element_type  (
     fixed_uri       BOOLEAN        NOT NULL DEFAULT FALSE,
     related_story   BOOLEAN        NOT NULL DEFAULT FALSE,
     related_media   BOOLEAN        NOT NULL DEFAULT FALSE,
+    displayed       BOOLEAN        NOT NULL DEFAULT FALSE,
     media           BOOLEAN        NOT NULL DEFAULT FALSE,
     biz_class__id   INTEGER        NOT NULL,
     type__id        INTEGER,

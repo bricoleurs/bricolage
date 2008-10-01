@@ -265,6 +265,7 @@ $do_element_type = sub {
         # It's an existing type.
         $obj->set_paginated(     defined $param->{paginated}     ? 1 : 0 );
         $obj->set_fixed_uri(     defined $param->{fixed_uri}     ? 1 : 0 );
+        $obj->set_displayed(     defined $param->{displayed}     ? 1 : 0 );
         $obj->set_related_story( defined $param->{related_story} ? 1 : 0 );
         $obj->set_related_media( defined $param->{related_media} ? 1 : 0 );
     }

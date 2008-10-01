@@ -517,6 +517,7 @@ The XSD source:
              <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
              <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
              <xs:attribute name="relative" type="xs:boolean" use="optional"/>
+             <xs:attribute name="displayed" type="xs:boolean" use="optional"/>
            </xs:complexType>
          </xs:element>
        </xs:sequence>
@@ -765,6 +766,7 @@ The XSD source:
          <xs:element name="fixed_uri" type="xs:boolean"/>
          <xs:element name="related_story" type="xs:boolean"/>
          <xs:element name="related_media" type="xs:boolean"/>
+         <xs:element name="displayed" type="xs:boolean"/>
          <xs:element name="is_media" type="xs:boolean"/>
          <xs:element name="biz_class">
            <xs:simpleType>
@@ -1531,6 +1533,7 @@ The XSD source:
      <xs:attribute name="related_media_uri" type="xs:int" use="optional"/>
      <xs:attribute name="related_site_id" type="xs:int" use="optional"/>
      <xs:attribute name="relative" type="xs:boolean" use="optional"/>
+     <xs:attribute name="displayed" type="xs:boolean" use="optional"/>
    </xs:complexType>
  </xs:schema>
 

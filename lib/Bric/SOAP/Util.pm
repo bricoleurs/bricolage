@@ -518,6 +518,7 @@ sub _deserialize_element {
             my $container = shift @{ $containers{ $at->get_id } || [] }
                 || $element->add_container($at);
             $container->set_place($c->{order});
+            $container->set_displayed($c->{displayed} ? 1 : 0);
             $element->save; # I'm not sure why this is necessary after
                             # every add, but removing it causes errors
 
@@ -603,7 +604,8 @@ sub _serialize_element {
     if ($element->is_container) {
         my %attr = (
             element_type => $element->get_key_name,
-            order   => $element->get_place - $diff
+            order   => $element->get_place - $diff,
+            displayed => $element->displayed,
         );
 
         my @e = $element->get_elements();
