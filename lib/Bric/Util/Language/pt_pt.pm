@@ -759,6 +759,7 @@ To translate:
   'place must be a positive number.' => 'place must be a positive number.',
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
     'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
+  'Toggle "[_1]"' => 'Toggle “[_1]”',
 
 =end comment
 

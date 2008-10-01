@@ -1,10 +1,9 @@
 <div id="element_<% $id %>_content" class="content">
 % unless ($top_level) {
 <fieldset>
-<legend class="name"><% $element->get_name %>: 
-% if (!$type->is_related_story && !$type->is_related_media) {
-<a href="#" id="element_<% $id %>_showhide" onclick="Effect.toggle('element_<% $id %>', 'blind', {duration: 0.5}); $('element_<% $id %>_showhide').innerHTML = ($('element_<% $id %>_showhide').innerHTML == '[+]' ? '[-]' : '[+]'); return false;">[-]</a>
-% }
+<legend class="name">
+<a href="#" style="" id="element_<% $id %>_showhide" onclick="Effect.toggle('element_<% $id %>', 'blind', {duration: 0.3}); this.innerHTML = this.innerHTML == '&#x25ba;' ? '&#x25bc;' : '&#x25ba;'; return false;" title="<% $lang->maketext('Toggle "[_1]"', escape_html($element->get_name) ) %>">&#x25ba;</a>
+<span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
 % if ($type->is_related_story) {
@@ -27,7 +26,7 @@
     &>
 </div>
 % }
-<ul id="element_<% $id %>" class="elements">
+<ul id="element_<% $id %>" class="elements"<% $top_level ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {
     <li id="subelement_con<% $dt->get_id %>" class="container clearboth">

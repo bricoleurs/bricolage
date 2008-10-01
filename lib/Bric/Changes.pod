@@ -87,6 +87,22 @@ told that she lacks the permission. [David]
 The "New Story" page now uses an autocomplete field to select a primary
 category. [David]
 
+=item *
+
+Minor improvements to the dynamic display and handling of container elements
+in document profiles. [David]
+
+=item *
+
+Container elements in document profiles are now toggled close by default when
+you load a document. This keeps the display short for documents with lots of
+subelements in them. [David]
+
+=item *
+
+Related media and/or story subelements may now be toggled to show/hide them
+like any other subelements in a document. [David]
+
 =back
 
 =head2 Bug Fixes

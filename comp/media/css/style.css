@@ -479,6 +479,8 @@ dl.viewmeta dd a { font-size: inherit; }
 div.actions { background: #999966; padding: 2px 4px; }
 div.addelement { text-align: right;}
 
+.content legend a { font-size: 160%; text-decoration:none; }
+.content legend:hover, .content h3:hover { cursor: move; }
 .buttonBar .delete {
     font-weight: bold;
     text-align: center;
