@@ -165,7 +165,7 @@ CREATE INDEX idx_story_instance__cover_date ON story_instance(cover_date);
 CREATE INDEX idx_story_instance__name ON story_instance(LOWER(name));
 CREATE INDEX idx_story_instance__description ON story_instance(LOWER(description));
 CREATE INDEX idx_story_instance__slug ON story_instance(LOWER(slug));
-CREATE INDEX fkx_story__story_instance ON story_instance(story__id);
+CREATE UNIQUE INDEX udx_story__story_instance ON story_instance(story__id, version, checked_out);
 CREATE INDEX fkx_usr__story_instance ON story_instance(usr__id);
 CREATE INDEX fkx_primary_oc__story_instance ON story_instance(primary_oc__id);
 CREATE INDEX idx_story_instance__note ON story_instance(note) WHERE note IS NOT NULL;

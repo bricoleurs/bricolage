@@ -123,7 +123,7 @@ if (@prefs) {
 </%perl>
 
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
-   no_del => $no_del, no_save => $no_edit, return => $return, widget => $type &>
+   no_del => $no_del, no_save => $no_edit, return => last_page, widget => $type &>
 
 </form>
 
@@ -174,10 +174,6 @@ if (exists($ARGS{'addmore_type'}) && $ARGS{'addmore_type'} eq 'contact') {
 	  if defined $meth->{set_meth};
     }
 }
-
-# Establish the return URI.
-my $return = get_state_name('login') eq 'ssl' ? last_page
-      : last_page;
 </%init>
 
 

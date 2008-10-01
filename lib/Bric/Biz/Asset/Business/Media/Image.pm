@@ -53,6 +53,7 @@ use strict;
 
 use base qw( Bric::Biz::Asset::Business::Media );
 use Bric::Config qw(:media :thumb);
+use Bric::App::Util ();
 use Bric::Util::Fault qw(throw_error throw_gen);
 require Imager if USE_THUMBNAILS;
 
@@ -382,6 +383,7 @@ B<Notes:> NONE.
 sub create_thumbnail {
     return unless USE_THUMBNAILS;
     my $self = shift;
+    my $just_uploaded = shift;
     my $path = $self->get_path or return;
 
     # Get the media format. Try using the MIME type, and fall back on what Imager
@@ -410,9 +412,16 @@ sub create_thumbnail {
     }
 
     my $img = Imager->new;
-    $img->open(file => $path, type => $format)
-      or throw_gen error   => "Imager cannot open '$path'",
-                   payload => $img->errstr;
+    unless ( $img->open(file => $path, type => $format) ) {
+        warn 'Error creating a thumbnail for "', $self->get_uri, '": ',
+            $img->errstr, $/;
+        Bric::App::Util::add_msg(
+            'Could not create a thumbnail for [_1]: [_2]',
+            $self->get_uri,
+            $img->errstr,
+        ) if $just_uploaded;
+        return;
+    }
 
     # If either dimension is greather than the thumbnail size, create a
     # smaller version by scaling largest side to THUMBNAIL_SIZE
@@ -454,7 +463,7 @@ NONE
 sub upload_file {
     my $self = shift;
     $self->SUPER::upload_file(@_);
-    $self->create_thumbnail if USE_THUMBNAILS;
+    $self->create_thumbnail(1) if USE_THUMBNAILS;
     return $self;
 }
 

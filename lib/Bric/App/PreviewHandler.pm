@@ -200,7 +200,7 @@ B<Notes:> NONE.
 
 sub handle_err {
     my ($r, $err) = @_;
-    # Set the URI and filename for the error element.
+
     $r->uri(ERROR_URI);
     $r->filename(ERROR_FILE);
 

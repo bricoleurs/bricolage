@@ -10,6 +10,7 @@ use strict;
 use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::Util::DBI qw(:trans);
+use Bric::Util::Time qw(strfdate);
 use Bric::App::Session qw(:state);
 use Bric::App::Util qw(:aref :history :wf clear_msg);
 use Bric::App::Event qw(log_event);
@@ -169,7 +170,7 @@ sub pick_related_media : Callback {
     $self->set_redirect("$uri/edit_related_media.html");
 }
 
-sub create_related_media : Callback {
+sub create_related_media : Callback( priority => 6) {
     my $self = shift;
     $self->_drift_correction;
     my $widget = $self->class_key;
@@ -207,7 +208,7 @@ sub create_related_media : Callback {
         : $param->{"$widget|file"};
     my $m_param = {
         'title'                   => $filename,
-        'cover_date'              => $asset->get_cover_date(ISO_8601_FORMAT),
+        'cover_date'              => strfdate(),
         'priority'                => $asset->get_priority,
         'media_prof|category__id' => $asset->get_primary_category->get_id,
         'media_prof|source__id'   => $asset->get_source__id,

@@ -505,6 +505,18 @@ sub new {
 
 ################################################################################
 
+=item $pkg = Bric::Biz::Asset::Business::Media->cache_as
+
+Returns "Bric::Biz::Asset::Business::Media", so that even objects blessed into
+a subclass of the media class will use the same package name when they're
+cached.
+
+=cut
+
+sub cache_as { ref $_[0] ? __PACKAGE__ : undef }
+
+################################################################################
+
 =item $media = Bric::Biz::Asset::Business::Media->lookup( { id => $id })
 
 This will return a media asset that matches the criteria defined
@@ -1736,7 +1748,6 @@ sub revert {
         id          => $self->_get_id,
         version     => $version,
     }) or throw_gen "The requested version does not exist";
-
 
     # Delete existing contributors.
     if (my $contrib = $self->_get_contributors) {

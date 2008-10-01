@@ -63,6 +63,7 @@ Default is undefined, which has no effect.  Possible values are 'ascending' or
 $m->comp('/widgets/wrappers/table_top.mc', caption => $title);
 $m->comp('/widgets/listManager/listManager.mc',
          object => 'event',
+         state_key => 'event' . $object . $obj_id,
          constrain => $constrain,
          fields => [qw(name user_id timestamp attr)],
          alter => { attr => $attr_alter, user_id => $trig_alter },

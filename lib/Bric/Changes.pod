@@ -356,6 +356,172 @@ to install files in their proper locations. [Brian Smith and David]
 
 =back
 
+=head1 VERSION 1.10.6 (2008-??-??)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Added an " TraceEnable off " entry to the config in ApacheConfig.pm for Apache 1.3 
+to neutralize the potentially malicious use of HTTP TRACE requests.
+L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet, Alex Krohn]
+
+=item *
+
+Changed an index in the story and media instance tables to improve query
+speed. Thanks to Alex Krohn for reporting the performance issue. [David and
+Josh Berkus]
+
+=item *
+
+Tweaked F<contrib/bric_media_upload/bric_media_upload> so that it uses
+C<bric_soap site list_ids> instead of C<bric_soap category list_ids> for setting
+the login cookie. That should be more efficient for installations that have many
+more categories than they have sites. [Scott]
+
+=item *
+
+Added C<--use-related-uri> option to C<bric_soap>. [Scott, David]
+
+=item *
+
+For media uploaded through the Story Profile, the cover date now defaults to
+the current date/time instead of the cover date of the story. [Scott]
+
+=item *
+
+Added search by Keyword to "Find Media". [Scott]
+
+=item *
+
+When the "Filter by Site Context" preference is turned on, if a user does a
+search and then changes the site context, the search results will not change
+to the new site until the user submits a new search. Reported by Matt Rolf
+(Bug #1337). [David]
+
+=item *
+
+Rewrote (again) the way in which stale files are identified for expiration. It
+used to be that Bricolage would look for all resources associated with a given
+document and output channel but none of the current jobs. But if a story had
+previously been in two output channels and one was removed, Bricolage didn't
+look for stale files in that output channel. So now Bricolage asks for a list
+of resources associated with a document but none of the jobs created in a
+publish, and then expires them all, regardless of URI, output channel, or file
+system path. This should fix the expiration of stale files once and for all
+(Bug #1351). [David]
+
+=item *
+
+The links to jump to different kinds of assets on My Workspace (or a desk if
+it happens to have different kinds of assets) are now generated in a more
+sensible manner, and display as text links rather than the ugly images we had
+previously. [David]
+
+=item *
+
+The "Checkout" and "Publish Checked" buttons in the "Find" interface for
+stories, media, and templates are now displayed on the right-hand side of the
+screen, better aligning them with the checkboxes that they're associated with.
+Suggested by Matt Rolf (Bug #1361). [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Really fix bug 1232 (saving categories with 3 keywords), that was falsely claimed
+to have been fixed in 1.10.3. [Scott]
+
+=item *
+
+Fixed bug 1340, where Preview buttons weren't working within Related assets.
+[Scott & David]
+
+=item *
+
+The download link in Media Profile wasn't popping up into a new window on some
+browsers due to a typo. Spotted by Tatiana Titova. [Scott]
+
+=item *
+
+In the Contributors Manager, sometimes there aren't "New" links, and this was
+causing the latest Locale::Maketext indigestion. Spotted by John Watson. [Scott]
+
+=item *
+
+Fix for bug 1344 (spotted by Ed Guzman) and hopefully better fix for bug 1326
+(my suggestion wasn't quite right). The handling of E<lt>publish_statusE<gt>
+in bric_soap has been a bit dodgy. Also changed publish_status to deploy_status
+in C<Bric::SOAP::Template>. [Scott]
+
+=item *
+
+The state for Log lists was getting stuck, so if you go to the 2nd page of the
+log for a media, say, every log thereafter was the same. Reported by John
+Kirkwood. [Scott]
+
+=item *
+
+Fix both parts of bug 1345, Bulk Edit had problems with blank lines. [Scott]
+
+=item *
+
+Fixed CCS bug which was preventing the jump buttons from displaying in Firefox
+and Safari. [Matt Rolf]
+
+=item *
+
+Tweaked Bricolage Instance Name display. [Matt Rolf]
+
+=item *
+
+Fixed bug 1343, View Diff wasn't working in IE. Reported by Ed Guzman. [Scott]
+
+=item *
+
+A category with associated with a story different URIs but the same name as
+the primary category can now properly be deleted. Reported by Matt Rolf (Bug
+#1341). [David]
+
+=item *
+
+Media documents are now properly expired. Reported by Matt Rolf (Bug #1347).
+[David]
+
+=item *
+
+The login window no longer shows the username in the top right corner right
+after logging out. Reported by Matt Rolf (Bug #1149). [David]
+
+=item *
+
+Fixed a bug uploading a file to a related media element when that related
+media element has lockable fields. Reported by Scott (Bug #1353). [David]
+
+=item *
+
+Editing user prefs when SSL is enabled no longer breaks the User profile.
+Reported by Scott (Bug#1339). [David]
+
+=item *
+
+Reverting an image media document works again. Reported by Scott Lanning (Bug
+#1352). [David]
+
+=item *
+
+The links to jump to different kinds of assets on My Workspace (or a desk if
+it happens to have different kinds of assets) will now jump to the proper page
+when pagination is turned on. Reported by Matt Rolf (Bug #150). [David]
+
+=back
+
 =head1 VERSION 1.10.5 (2008-04-29)
 
 =head2 Improvements
@@ -447,6 +613,25 @@ Added another directory to search for Apache. [Brian Smith]
 Made the Perl program and library installers (F<lib/Makefile.PL> and
 F<bin/Makefile.PL> more intelligent in their support of the C<$BRICOLAGE_ROOT>
 configuration variable. [Brian Smith]
+
+=item *
+
+Removed redudant permission granting code from the upgrade script library,
+since `make db_grant` is always run by `make db_upgrade`, anyway. [David]
+
+=item *
+
+Eliminated extra processing and a potential error caused by mod_perl
+internally creating a sub-request. [David]
+
+=item *
+
+Bricolage no longer throws an exception when Imager fails to open an image
+file, which is what happens when Bricolage tries to create a thumbnail. Since
+most often the error will be due to a bad media file, it now just sends a
+warning to the error log and, if the file was just uploaded by the user, sends
+a message to the user, and then continues on its merry way. Suggested by Scott
+(Bug #1358). [David]
 
 =back
 
@@ -1048,7 +1233,7 @@ Element Types. [Marshall]
 
 =item *
 
-Fixed an apparently old bug with editing keywords in the Category Profile,
+Fixed an apparently old bug (1232) with editing keywords in the Category Profile,
 where you couldn't Save if there were exactly 3 keywords. [Scott]
 
 =item *

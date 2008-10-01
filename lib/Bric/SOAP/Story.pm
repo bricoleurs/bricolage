@@ -702,6 +702,7 @@ my $allowed = {
                     keys %{ Bric::Biz::Asset::Business::Story->PARAM_WHERE_MAP }
                 },
     export   => { map { $_ => 1 } qw(story_id story_ids
+                                     use_related_uri
                                      export_related_media
                                      export_related_stories) },
     create   => { map { $_ => 1 } qw(document workflow desk) },
@@ -905,8 +906,7 @@ sub load_asset {
         }
 
         # set simple fields
-        my @simple_fields = qw(name description slug primary_uri
-                               priority publish_status);
+        my @simple_fields = qw(name description slug primary_uri priority);
         $story->_set(\@simple_fields, [ @{$sdata}{@simple_fields} ]);
 
         # assign dates
@@ -916,7 +916,8 @@ sub load_asset {
             my $date = $sdata->{$name};
             if ($date) {
                 throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
-                    unless $sdata->{publish_status} or $name !~ /publish/;
+                    if not $sdata->{publish_status} and $name =~ /publish/;
+
                 my $db_date = xs_date_to_db_date($date);
                 throw_ap(error => __PACKAGE__ . "::create : bad date format for $name : $date")
                     unless defined $db_date;
@@ -925,6 +926,19 @@ sub load_asset {
                 throw_ap error => __PACKAGE__ . "::create : $name must be defined if publish_status is true"
                     if $sdata->{publish_status} and $name =~ /publish/;
             }
+        }
+
+        # almost totally ignoring whatever publish_status is set to
+        if ($update) {
+            if ($story->get_publish_date or $story->get_first_publish_date) {
+                # some publish date is set, so it must've been published
+                $story->set_publish_status(1);
+            } else {
+                $story->set_publish_status($sdata->{publish_status});
+            }
+        } else {
+            # creating, so can't have published it yet
+            $story->set_publish_status(0);
         }
 
         # remove all categories if updating

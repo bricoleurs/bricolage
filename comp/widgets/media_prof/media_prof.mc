@@ -89,6 +89,11 @@ if ($id) {
         set_state_data($widget, 'media', $media);
     }
 
+    if (not exists $param->{diff} and exists $param->{'diff.x'}) {
+        # IE only sends diff.x and diff.y for <input type="image">
+        $param->{diff} = 1;
+    }
+
     if ($param->{diff}) {
         my $version = $media ? $media->get_version : 0;
 

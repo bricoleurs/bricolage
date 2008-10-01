@@ -78,6 +78,11 @@ $m->comp("/widgets/wrappers/table_top.mc",
         value   => $state->{uri} || '' &>
         
     <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('Keyword'),
+        name    => $widget.'|keyword',
+        value   => $state->{keyword} || '' &>
+
+    <& /widgets/profile/text.mc,
         disp    => $lang->maketext('Text to search'),
         name    => $widget.'|data_text',
         value   => $state->{data_text} || '' &>

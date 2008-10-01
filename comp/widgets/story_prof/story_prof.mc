@@ -93,6 +93,11 @@ if ($id) {
 
     }
 
+    if (not exists $param->{diff} and exists $param->{'diff.x'}) {
+        # IE only sends diff.x and diff.y for <input type="image">
+        $param->{diff} = 1;
+    }
+
     if ($param->{diff}) {
         my $version = $story ? $story->get_version : 0;
 

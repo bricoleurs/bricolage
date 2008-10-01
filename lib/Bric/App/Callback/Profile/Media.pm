@@ -22,7 +22,6 @@ use Bric::Biz::Workflow::Parts::Desk;
 use Bric::Config qw(:media);
 use Bric::Util::ApacheConst qw(HTTP_OK);
 use Bric::Util::DBI qw(:trans);
-use Bric::Util::Fault qw(throw_dp);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
@@ -449,7 +448,9 @@ sub return : Callback(priority => 6) {
     my $version_view = get_state_data($widget, 'version_view');
     my $media = get_state_data($widget, 'media');
 
-    if ($version_view || $self->value eq 'diff') {
+    # note: $self->value =~ /^\d+$/ is for IE which sends the .x or .y position
+    # of the mouse for <input type="image"> buttons
+    if ($version_view || $self->value eq 'diff' || $self->value =~ /^\d+$/) {
         my $media_id = $media->get_id;
         $self->clear_my_state if $version_view;
         $self->set_redirect("/workflow/profile/media/$media_id/?checkout=1");

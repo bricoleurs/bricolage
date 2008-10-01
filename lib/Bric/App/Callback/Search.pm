@@ -105,7 +105,7 @@ sub media : Callback {
     } else {
         _build_fields(
             $self, \@field, \@crit,
-            [qw(name uri data_text)]
+            [qw(name uri keyword data_text)]
         );
         _build_id_fields(
             $self, \@field, \@crit,

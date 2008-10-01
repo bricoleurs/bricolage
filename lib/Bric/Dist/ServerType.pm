@@ -333,6 +333,11 @@ use C<ANY> for a list of possible values.
 ID of Bric::Util::Job object with which destinations may be associated. May
 use C<ANY> for a list of possible values.
 
+=item resource_id
+
+ID of Bric::Dist::Resource object with which destinations may be associated
+via jobs. May use C<ANY> for a list of possible values.
+
 =item output_channel_id
 
 ID of Bric::Biz::OutputChannel object with which destinations may be
@@ -2159,6 +2164,12 @@ $get_em = sub {
             $tables .= ', server_type__output_channel so';
             $wheres .= ' AND s.id = so.server_type__id AND '
                     .  any_where $v, 'so.output_channel__id = ?', \@params;
+        } elsif ($k eq 'resource_id') {
+            # Add job__server_type and job__resource to the lists of tables
+            # and join to it.
+            $tables .= ', job__server_type jst, job__resource jr';
+            $wheres .= ' AND s.id = jst.server_type__id AND jst.job__id = jr.job__id AND '
+                    .  any_where $v, 'jr.resource__id = ?', \@params;
         } elsif ($k eq 'grp_id') {
             # Add in the group tables a second time and join to them.
             $tables .= ", member m2, dest_member sm2";

@@ -143,6 +143,20 @@ sub lookup { throw_mni "lookup() method not implemented" }
 
 ##############################################################################
 
+=head3 cache_as
+
+  my $pkg = Bric->cache_as;
+
+Returns the class name to use when caching objects. In this default
+implementation, the cache package returned is simply C<ref $self>. Subclasses
+may wish to override this default value.
+
+=cut
+
+sub cache_as { ref $_[0] }
+
+##############################################################################
+
 =head3 cache_lookup
 
   my $obj = Bric->cache_lookup({ id => $obj_id });
@@ -160,16 +174,16 @@ sub cache_lookup {
         # We may be called during Apache startup
         return unless $req;
         my $r = Bric::Util::ApacheReq->instance($req);
-        $pkg = ref $pkg || $pkg;
+        $pkg = $pkg->cache_as || $pkg;
         while (my ($k, $v) = each %$param) {
             if (my $obj = $r->pnotes("$pkg|$k|" . lc $v)) {
                 return $obj;
             }
         }
     }
-    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+    if (CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
         my ($pkg, $param) = @_;
-        $pkg = ref $pkg || $pkg;
+        $pkg = $pkg->cache_as || $pkg;
         while (my ($k, $v) = each %$param) {
             if (exists $Bric::DEBUG_CACHE{"$pkg|$k|" . lc $v}) {
                 return $Bric::DEBUG_CACHE{"$pkg|$k|" . lc $v};
@@ -534,7 +548,7 @@ to be returned by C<lookup()>, C<list()>, and C<href()> methods.
 sub cache_me {
     my $self = shift;
     if (defined MOD_PERL) {
-        my $pkg = ref $self or return;
+        my $pkg = $self->cache_as or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
         my $req = Bric::Util::ApacheReq->request;
@@ -548,8 +562,8 @@ sub cache_me {
             $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self) => $self);
         }
     }
-    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
-        my $pkg = ref $self or return;
+    if (CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+        my $pkg = $self->cache_as or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
 
@@ -578,7 +592,7 @@ object's associated data is permanently deleted from the database.
 sub uncache_me {
     my $self = shift;
     if (defined MOD_PERL) {
-        my $pkg = ref $self or return;
+        my $pkg = $self->cache_as or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
         my $req = Bric::Util::ApacheReq->request;
@@ -593,8 +607,8 @@ sub uncache_me {
             $r->pnotes("$pkg|$m->{name}|" . lc $m->{get_meth}->($self) => undef);
         }
     }
-    if(CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
-        my $pkg = ref $self or return;
+    if (CACHE_DEBUG_MODE && $Bric::CACHE_DEBUG_MODE_RUNTIME) {
+        my $pkg = $self->cache_as or return;
         # Skip unsaved objects.
         return unless defined $self->{id};
 

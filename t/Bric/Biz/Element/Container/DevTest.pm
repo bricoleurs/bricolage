@@ -857,7 +857,7 @@ sub test_pod : Test(227) {
     is $elem->get_related_story_id, $rel_story_id,         'Check relstory id';
 
     # Test a bad default field.
-    eval { $elem->update_from_pod('foo', 'par') };
+    eval { $elem->update_from_pod("=par\n\nfoo") };
     ok my $err = $@, 'Catch invalid default field excetpion';
     isa_ok $err, 'Bric::Util::Fault::Error::Invalid';
     is $err->error, 'No such field "par" at line 1. Did you mean "para"?',

@@ -73,6 +73,10 @@ Options:
 
   --with-related-media   - tell export and publish to include related media
 
+  --use-related-uri      - tell export to use related_story_uri and
+                           related_media_uri instead of related_story_id and
+                           related_media_id
+
   --all                  - synonym for setting --with-related-stories and
                            --with-related-media
 
@@ -239,6 +243,7 @@ BEGIN {
     our %search;
     our $with_related_stories = 0;
     our $with_related_media   = 0;
+    our $use_related_uri      = 0;
     our $to_preview           = 0;
     our $publish_date;
     our $published_only       = 0;
@@ -264,6 +269,7 @@ BEGIN {
         'search=s'               => \%search,
         'with-related-stories'   => \$with_related_stories,
         'with-related-media'     => \$with_related_media,
+        'use-related-uri'        => \$use_related_uri,
         'all'                    => sub { $with_related_stories = $with_related_media   = 1 },
         'to-preview'             => \$to_preview,
         'publish-date=s'         => \$publish_date,
@@ -291,7 +297,7 @@ BEGIN {
 our ($module, $command, %search, $with_related_stories, $with_related_media,
      $to_preview, $publish_date, $published_only, $username, $password, $server,
      $verbose, $desk, $workflow, $timeout, $use_cookie, $save_cookie, $chunks,
-     $continue);
+     $continue, $use_related_uri);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
   on_fault => \&_handle_fault;
@@ -466,6 +472,7 @@ sub export {
     push @opts, name($module . '_ids', \@ids);
     push @opts, name(export_related_stories => 1) if $with_related_stories;
     push @opts, name(export_related_media   => 1) if $with_related_media;
+    push @opts, name(use_related_uri        => 1) if $use_related_uri;
 
     print $soap->export(@opts)->result;
 }

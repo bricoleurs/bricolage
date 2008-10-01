@@ -21,7 +21,7 @@
 % if ($uri) {
 <div class="row">
     <div class="label"><% $lang->maketext('Download') %>:</div>
-    <div class="input"><a href="<% $uri %>" onclick="window.open(this.href, 'download_} . SERVER_WINDOW_NAME . qq{'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a>
+    <div class="input"><a href="<% $uri %>" onclick="window.open(this.href, 'download_<% SERVER_WINDOW_NAME %>'); return false;" title="<% $lang->maketext('Download this media') %>"><% $media->get_file_name %></a>
 %       unless ($read_only) {
         <& '/widgets/profile/imageSubmit.mc',
             formName => "theForm",

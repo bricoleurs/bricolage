@@ -454,6 +454,14 @@ Friends who have spotted bugs include:
 
 =item * Jean-Michel Caricand
 
+=item * Tatiana Titova
+
+=item * John Watson
+
+=item * Ed Guzman
+
+=item * John Kirkwood
+
 =item * Roland van Ipenburg
 
 =back
