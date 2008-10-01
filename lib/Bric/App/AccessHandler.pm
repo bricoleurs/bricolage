@@ -234,7 +234,7 @@ sub logout_handler {
                     "https://$hostname$ssl_port/login/"
                 );
             } else {
-                # Need to lot out of the other port.
+                # Need to log out of the other port.
                 my $url = $r->get_server_port == &SSL_PORT
                     ? "http://$hostname$port/logout?goodbye"
                     : "https://$hostname$ssl_port/logout?goodbye";
