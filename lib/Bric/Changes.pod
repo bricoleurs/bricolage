@@ -79,7 +79,7 @@ previously. [David]
 The "Checkout" and "Publish Checked" buttons in the "Find" interface for
 stories, media, and templates are now displayed on the right-hand side of the
 screen, better aligning them with the checkboxes that they're associated with.
-Suggested by Matt Rolf. [David]
+Suggested by Matt Rolf (Bug #1361). [David]
 
 =back
 
