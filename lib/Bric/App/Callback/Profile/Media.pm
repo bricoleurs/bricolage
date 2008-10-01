@@ -12,7 +12,7 @@ use Bric::App::Callback::Desk;
 use Bric::App::Callback::Util::OutputChannel qw(update_output_channels);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
-use Bric::App::Util qw(:history :aref);
+use Bric::App::Util qw(:history :aref clear_msg);
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::ElementType;
 use Bric::Biz::Keyword;

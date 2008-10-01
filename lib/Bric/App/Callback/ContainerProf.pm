@@ -11,7 +11,7 @@ use Bric::Config qw(:time);
 use Bric::App::Authz qw(:all);
 use Bric::Util::DBI qw(:trans);
 use Bric::App::Session qw(:state);
-use Bric::App::Util qw(:aref :history :wf);
+use Bric::App::Util qw(:aref :history :wf clear_msg);
 use Bric::App::Event qw(log_event);
 use Bric::App::Callback::Desk;
 use Bric::App::Callback::Profile::Media;
