@@ -95,8 +95,9 @@ use constant DEBUG => DBI_DEBUG || 0;
 use constant DBI_TRACE => 0;
 
 use constant CONNECT_USER => $ENV{BRIC_DBI_USER} || DBI_USER;
-use constant CONNECT_PASS => $ENV{BRIC_DBI_PASS} || DBI_PASS;
-
+use constant CONNECT_PASS => exists $ENV{BRIC_DBI_PASS}
+    ? $ENV{BRIC_DBI_PASS}
+    : DBI_PASS;
 DBI->trace(DBI_TRACE);
 
 # The strftime format for DB dates. Used by Bric::Util::Time::db_date().

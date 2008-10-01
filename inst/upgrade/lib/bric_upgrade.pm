@@ -51,11 +51,11 @@ succeed, then the transaction will be commited when the script exits.
 
 If the C<-i> argument is specified on the command-line (as it is by
 F<inst/db_upgrade.pl>, this module will also switch the user context to the
-PostgreSQL administrative user. This is to allow trusted authentication to
-work properly. All upgrades must therefore be run the super user, so that the
+database administrative user. This is to allow trusted authentication to work
+properly. All upgrades must therefore be run the super user, so that the
 switch works.
 
-For those scripts that do not wish to run as the PostgreSQL user, such as to
+For those scripts that do not wish to run as the database user, such as to
 delete files from the existing Bricolage installation, just don't load this
 module and you'll be good to go.
 
@@ -65,19 +65,19 @@ module and you'll be good to go.
 
 =item * -u username
 
-The PostgreSQL super user's username.
+The database super user's username.
 
 =item * -p password
 
-The PostgreSQL super user's password.
+The database super user's password.
 
 =item * -s username
 
-The username of the PostgreSQL system user, usually "postgres".
+The username of the database system user.
 
 =item * -i uid
 
-The UID of the PostgreSQL system user, used to switch to that user's context
+The UID of the database system user, used to switch to that user's context
 while scripts are running.
 
 =back
@@ -91,7 +91,7 @@ require Exporter;
 use base qw(Exporter);
 our @EXPORT_OK = qw(prompt y_n do_sql test_column test_table test_constraint
                     test_foreign_key test_index test_function test_aggregate
-                    fetch_sql db_version test_primary_key);
+                    fetch_sql db_version test_primary_key DBD_TYPE);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 use File::Spec::Functions qw(catdir updir);
@@ -108,9 +108,6 @@ our ($opt_u, $opt_p, $opt_i, $opt_s);
 BEGIN {
     local @ARGV = @ARGV;
     getopts('u:p:i:s');
-    # Set the db admin user and password to some reasonable defaults.
-    $ENV{BRIC_DBI_PASS} ||= $opt_p ||= 'postgres';
-    $ENV{BRIC_DBI_USER} ||= $opt_u ||= 'postgres';
 }
 
 # Make sure we can load the Bricolage libraries.
@@ -122,16 +119,21 @@ BEGIN {
     unshift @INC, catdir $FindBin::Bin, updir, updir, updir, 'lib';
     require Bric::Config;
     Bric::Config->import(qw(DBI_USER DBD_TYPE));
-    require Bric::Util::DBI;
-    Bric::Util::DBI->import(qw(:all));
 }
 
 BEGIN {
     my $mod = 'bric_upgrade_' . DBD_TYPE;
     eval "require $mod";
     die $@ if $@;
-    $mod->import(qw(:all));
     shift @INC;
+
+    # Set the db admin user and password to some reasonable defaults.
+    $ENV{BRIC_DBI_USER} ||= $opt_p ||= __PACKAGE__->super_user;
+    $ENV{BRIC_DBI_PASS} ||= $opt_u ||= __PACKAGE__->super_pass;
+
+    # Load the DBI.
+    require Bric::Util::DBI;
+    Bric::Util::DBI->import(qw(:all));
 
     # use $BRICOLAGE_ROOT/lib if exists
     $_ = catdir($ENV{BRICOLAGE_ROOT}, "lib");
@@ -155,7 +157,7 @@ END
 }
 
 ##############################################################################
-# Switch to the PostgreSQL systsem user.
+# Switch to the database systsem user.
 if ($opt_i) {
     $> = $opt_i;
     die "Failed to switch EUID to $opt_i ($opt_s).\n" unless $> == $opt_i;
@@ -187,15 +189,6 @@ END {
     # Commit all transactions unless there was an error and a rollback.
     commit() unless $rolled_back;
 }
-
-##############################################################################
-# What Perl are we using?
-my $perl = $ENV{PERL} || $^X;
-
-# Tell STDERR to ignore PostgreSQL NOTICE messages by forking another Perl to
-# filter them out.
-open STDERR, "| $perl -ne 'print unless /^NOTICE:  /'"
-  or die "Cannot pipe STDERR: $!\n";
 
 ##############################################################################
 
@@ -255,6 +248,76 @@ sub y_n {
         return 1 if $ans =~ /^y/i;
         return 0 if $ans =~ /^n/i;
         print "Please answer 'y' or 'n'.\n";
+    }
+}
+
+##############################################################################
+
+=head2 fetch_sql()
+
+  exit if fetch_sql($sql);
+
+Evaluates the C<SELECT> SQL expression C<$sql> against the Bricolage database
+and attempts to fetch a value from the query. If a value is successfully
+returned, C<fetch_sql()> returns true. Otherwise, it returns false. An
+exception will also cause C<fetch_sql()> to return false. Use this function to
+determine whether the upgrades your script is about to perform have already
+been performed.
+
+This function is useful for testing for database changes that may not trigger
+an exception even if they haven't been run. For example, say you need to add a
+new value to the "event_type" table with the "key_name" column value
+'foo_grepped'. To determine whether this value has already been entered into
+the database, you simply try to select it. Use C<fetch_sql()> to do this, as
+it will return true if it manages to fetch a value, and false otherwise.
+
+  exit if fetch_sql('SELECT name FROM event_type WHERE key_name = 'foo_grepped');
+
+=cut
+
+sub fetch_sql($) {
+    my $val;
+    eval {
+        my $sth = prepare(shift);
+        execute($sth);
+        $val = fetch($sth);
+        finish($sth);
+    };
+    return $val && !$@ ? 1 : 0;
+}
+
+##############################################################################
+
+=head2 do_sql()
+
+  do_sql(@sql_statements);
+
+This function takes a list of SQL statements and executes each in turn. It
+also sets the proper permissions for the Bricolage database user to be able to
+access the tables and sequences it creates. Use this function to actually make
+changes to the Bricolage database.
+
+For example, say you need to add the table "soap_scum". Simply pass the proper
+SQL to create the table to this function, and the SQL will be executed, and
+the Bricolage database user provided the proper permissions to access it.
+
+  my $sql = qq{
+      CREATE TABLE soap_scum (
+          lname VARCHAR(64),
+          fname VARCHAR(64),
+          mname VARCHAR(64)
+     )
+  };
+
+  do_sql($sql);
+
+=cut
+
+sub do_sql {
+    # Execute each SQL statement.
+    foreach my $sql (@_) {
+        my $sth = prepare($sql);
+        execute($sth);
     }
 }
 
