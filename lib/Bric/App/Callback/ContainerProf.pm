@@ -636,6 +636,8 @@ sub _update_subelements {
         if (!$deleted) {
             my $order = $elements{$name};
             $curr_elements[$order]  = $t;
+            $t->set_displayed( $param->{"$widget|element_$id\_displayed"})
+                if $is_cont;
         }
 
         if ($is_cont) {

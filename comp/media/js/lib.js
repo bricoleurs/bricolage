@@ -1517,6 +1517,21 @@ var Container = {
                 extraParameters: 'container_prof|delete_cb=' + element_id
             });
         }
+    },
+
+    toggle: function( eid, anchor ) {
+        Effect.toggle('element_' + eid, 'blind', {duration: 0.3});
+        var displayed = $('container_' + eid + '_displayed');
+        if ( displayed.value == '0' ) {
+            // Display it.
+            anchor.innerHTML = '&#x25bc;';
+            displayed.value = '1';
+        } else {
+            // Hide it.
+            anchor.innerHTML = '&#x25ba;';
+            displayed.value = '0';
+        }
+        return false;
     }
 };
 

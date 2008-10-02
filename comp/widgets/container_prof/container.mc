@@ -2,7 +2,7 @@
 % unless ($top_level) {
 <fieldset>
 <legend class="name">
-<a href="#" style="" id="element_<% $id %>_showhide" onclick="Effect.toggle('element_<% $id %>', 'blind', {duration: 0.3}); this.innerHTML = this.innerHTML == '&#x25ba;' ? '&#x25bc;' : '&#x25ba;'; return false;" title="<% $lang->maketext('Toggle "[_1]"', escape_html($element->get_name) ) %>">&#x25ba;</a>
+<a href="#" style="" id="element_<% $id %>_showhide" onclick="Container.toggle(<% $id %>, this); return false;" title="<% $lang->maketext('Toggle "[_1]"', escape_html($element->get_name) ) %>">&#x25b<% $displayed ? 'c' : 'a' %>;</a>
 <span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
@@ -26,7 +26,7 @@
     &>
 </div>
 % }
-<ul id="element_<% $id %>" class="elements"<% $top_level ? '' : ' style="display: none"' %>>
+<ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {
     <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
@@ -48,6 +48,9 @@
 % }
 </ul>
 <input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
+% unless ($top_level ) {
+<input type="hidden" name="container_prof|element_<% $id %>_displayed" id="container_<% $id %>_displayed" value="<% $element->get_displayed %>" />
+% }
 <script type="text/javascript">
 Sortable.create('element_<% $id %>', {
     onUpdate: function(elem) {
@@ -112,6 +115,7 @@ my $type = $element->get_element_type;
 my $id   = $element->get_id;
 my $name = 'con' . $id;
 my $top_level = (get_state_data($widget, 'element') == $element);
+my $displayed = $element->get_displayed;
 
 # Get the list of fields and subelements that can be added.
 my $elem_opts = [
