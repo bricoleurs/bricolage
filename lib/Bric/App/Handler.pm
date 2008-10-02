@@ -240,7 +240,7 @@ my ($ah);
     $ah = HTML::Mason::ApacheHandler->new(%args);
 }
 
-# This ApacheHandler object will only be used to server components
+# This ApacheHandler object will only be used to serve components
 # that handle errors.
 my $gah = HTML::Mason::ApacheHandler->new(comp_root    => MASON_COMP_ROOT,
                                           data_dir     => MASON_DATA_ROOT,

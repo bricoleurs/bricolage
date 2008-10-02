@@ -16,6 +16,16 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head3 Bug Fixes
 
+=over
+
+=item *
+
+Fixed a bug where authorization failiures in callbacks could lead to a bogus
+error, rather than sending a "Permission Denied" error to the user. Reported
+by Matt Rolf (Bug #1362). [David]
+
+=back
+
 =head1 VERSION 1.10.6 (2008-10-02)
 
 =head2 Improvements

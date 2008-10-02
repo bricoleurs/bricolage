@@ -47,6 +47,7 @@ our %Lexicon = (
   '[quant,_1,story,stories] expired.' => '[quant,_1,story,stories] expired.',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
+  'You have not been granted [_1] access to the "[_2]" [_3]' => 'You have not been granted [_1] access to the “[_2]” [_3]',
  _AUTO => 1
 );
 
