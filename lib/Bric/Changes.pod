@@ -10,6 +10,12 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
+=head1 VERSION 1.10.7 (2008-??-??)
+
+=head2 Improvements
+
+=head3 Bug Fixes
+
 =head1 VERSION 1.10.6 (2008-10-02)
 
 =head2 Improvements
@@ -18,8 +24,9 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-Added an " TraceEnable off " entry to the config in ApacheConfig.pm for Apache 1.3 
-to neutralize the potentially malicious use of HTTP TRACE requests.
+Added an "TraceEnable off" entry to the config in
+L<Bric::App::ApacheConfig|Bric::App::ApacheConfig>> for Apache to neutralize
+the potentially malicious use of HTTP TRACE requests.
 L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet, Alex Krohn]
 
 =item *
@@ -110,9 +117,9 @@ causing the latest Locale::Maketext indigestion. Spotted by John Watson. [Scott]
 =item *
 
 Fix for bug 1344 (spotted by Ed Guzman) and hopefully better fix for bug 1326
-(my suggestion wasn't quite right). The handling of E<lt>publish_statusE<gt>
-in bric_soap has been a bit dodgy. Also changed publish_status to deploy_status
-in C<Bric::SOAP::Template>. [Scott]
+(my suggestion wasn't quite right). The handling of C<< <publish_status> >>
+elements in C<bric_soap> has been a bit dodgy. Also changed C<publish_status>
+to C<deploy_status> in C<Bric::SOAP::Template>. [Scott]
 
 =item *
 
@@ -160,8 +167,8 @@ media element has lockable fields. Reported by Scott (Bug #1353). [David]
 
 =item *
 
-Editing user prefs when SSL is enabled no longer breaks the User profile.
-Reported by Scott (Bug#1339). [David]
+Editing user preferences when SSL is enabled no longer breaks the User
+profile. Reported by Scott (Bug#1339). [David]
 
 =item *
 
