@@ -576,7 +576,8 @@ $get_attr = sub {
     my ($self, $key) = (shift, shift);
     my $attr = $self->_get_attr;
     if (@_) {
-        (my $val = shift) =~ s/\r\n?/\n/g;
+        my $val = shift;
+        $val =~ s/\r\n?/\n/g if defined $val;
         $attr->set_attr({
             name     => $key,
             subsys   => 'EmailAction',
