@@ -39,11 +39,11 @@ our (%AP, $REQ);
 do "./required.db" or die "Failed to read required.db : $!";
 
 # setup some defaults.
-$AP{user}        = get_default("APACHE_USER")     || 'nobody';
-$AP{group}       = get_default("APACHE_GROUP")    || 'nobody';
-$AP{port}        = get_default("APACHE_PORT")     || 80;
-$AP{ssl_port}    = get_default("APACHE_SSL_PORT") || 443;
-$AP{server_name} = get_default("APACHE_HOSTNAME") || `hostname`;
+$AP{user}        = get_default('APACHE_USER')     || 'nobody';
+$AP{group}       = get_default('APACHE_GROUP')    || 'nobody';
+$AP{port}        = get_default('APACHE_PORT')     || 80;
+$AP{ssl_port}    = get_default('APACHE_SSL_PORT') || 443;
+$AP{server_name} = get_default('APACHE_HOSTNAME') || `hostname`;
 chomp $AP{server_name};
 
 read_conf();

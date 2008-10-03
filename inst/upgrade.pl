@@ -36,10 +36,10 @@ unless ($> == 0) {
 }
 
 # setup default root
-our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
-                                   '/usr/local/bricolage' );
-our $INSTALL;
-our (%DB,$DB,%PG);
+our %UPGRADE = (
+    BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage'
+);
+our ($INSTALL, %DB,$DB,%PG);
 
 print q{
 ##########################################################################
@@ -69,26 +69,29 @@ print "\n\n==> Finished Setting-up Bricolage Upgrade Process <==\n\n";
 
 # find the bricolage to update
 sub get_bricolage_root {
-    ask_confirm("Bricolage Root Directory to Upgrade?",
-                \$UPGRADE{BRICOLAGE_ROOT});
+    ask_confirm(
+        'Bricolage Root Directory to Upgrade?',
+        \$UPGRADE{BRICOLAGE_ROOT}
+    );
 
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $UPGRADE{BRICOLAGE_ROOT}.\n")
-        unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
+        unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, 'conf', 'bricolage.conf');
 
     # verify that this Bricolage was installed with "make install"
-    hard_fail("The Bricolage Installation found in $UPGRADE{BRICOLAGE_ROOT}\n",
-              "was installed manually and cannot be automatically upgraded.")
-        unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
+    hard_fail(
+        "The Bricolage Installation found in $UPGRADE{BRICOLAGE_ROOT}\n",
+        "was installed manually and cannot be automatically upgraded."
+    ) unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, 'conf', 'install.db');
     $ENV{BRICOLAGE_ROOT} = $UPGRADE{BRICOLAGE_ROOT};
 }
 
 # read the install.db file from the chosen bricolage root
 sub read_install_db {
-    my $install_file = catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
+    my $install_file = catfile($UPGRADE{BRICOLAGE_ROOT}, 'conf', 'install.db');
     if (-e $install_file) {
         # read it in if it exists
-        do $install_file or die "Failed to read $install_file : $!";
+        do $install_file or die "Failed to read $install_file: $!\n";
     }
 }
 
@@ -105,19 +108,20 @@ sub check_version {
     # make sure we're not trying to install the same version twice
     if ($INSTALL->{VERSION} eq $VERSION) {
         print <<END;
-The installed version ("$VERSION") is the same as this version!  "make
-upgrade" is only designed to work to upgrade from one version to
-another.  Please use "make install" if you wish to overwrite your
+The installed version ("$VERSION") is the same as this version!
+`make upgrade` is only designed to work to upgrade from one version
+to another. Please use `make install` if you wish to overwrite your
 current install.
 
 END
-        exit 1 unless ask_yesno("Continue with upgrade?", 0);
+        exit 1 unless ask_yesno('Continue with upgrade?', 0);
         @todo = ($VERSION);
 
     } else {
         # read in versions.txt
         my @versions;
-        open(VER, "inst/versions.txt") or die "Cannot open inst/versions.txt : $!";
+        open VER, 'inst/versions.txt'
+            or die "Cannot open inst/versions.txt : $!";
         while (<VER>) {
             chomp;
             next if /^#/ or /^\s*$/;
@@ -148,50 +152,60 @@ END
 
     # note the plan of action
     print "Found existing version $INSTALL->{VERSION}.\n";
-    print "Will run database upgrade scripts for version(s) ",
-      join(', ', @todo), "\n"
-        if @todo;
+    print 'Will run database upgrade scripts for version(s) ',
+        join(', ', @todo), "\n" if @todo;
 }
 
 # confirm paths listed in install.db
 sub confirm_paths {
     print "\nPlease confirm the Bricolage target directories.\n\n";
-    ask_confirm("Bricolage Perl Module Directory",
-                \$INSTALL->{CONFIG}{MODULE_DIR});
-    ask_confirm("Bricolage Executable Directory",
-                \$INSTALL->{CONFIG}{BIN_DIR});
-    ask_confirm("Bricolage Man-Page Directory (! to skip)",
-                \$INSTALL->{CONFIG}{MAN_DIR});
-    ask_confirm("Mason Component Directory",
-                \$INSTALL->{CONFIG}{MASON_COMP_ROOT});
+    ask_confirm(
+        'Bricolage Perl Module Directory',
+        \$INSTALL->{CONFIG}{MODULE_DIR}
+    );
+    ask_confirm(
+        'Bricolage Executable Directory',
+        \$INSTALL->{CONFIG}{BIN_DIR}
+    );
+    ask_confirm(
+        'Bricolage Man-Page Directory (! to skip)',
+        \$INSTALL->{CONFIG}{MAN_DIR}
+    );
+    ask_confirm(
+        'Mason Component Directory',
+        \$INSTALL->{CONFIG}{MASON_COMP_ROOT}
+    );
 }
 
 # modify_vars makes small changes to variables names introduced in 1.11.0
 sub modify_vars {
     my ($x, $y, $z) = $INSTALL->{VERSION} =~ /(\d+)\.(\d+)(?:\.(\d+))?/;
     if (($x < 1) or ($x == 1 and $y < 11)) {
-	%DB = %PG;    
-	$DB->{db_type} = 'Pg';
-	$DB->{exec} = $DB->{psql};
+        %DB = %PG;
+        $DB->{db_type} = 'Pg';
+        $DB->{exec} = $DB->{psql};
     }
 }
 
 # output .db files used by installation steps
 sub output_dbs {
     # fake up the .dbs from %INSTALL
-    my %dbs = ( DB     => "database.db",
-                CONFIG => "config.db",
-                AP     => "apache.db"  );
+    my %dbs = (
+        DB     => 'database.db',
+        CONFIG => 'config.db',
+        AP     => 'apache.db',
+        REQ    => 'installed.db',
+    );
     while ( my ($key, $file) = each %dbs) {
-        # We must have a version number for PostgreSQL.
-        next if $key eq 'PG' && !$INSTALL->{$key}{version};
-        open(FILE, ">$file") or die "Unable to open $file : $!";
+        # We must have a version number for th database.
+        next if $key eq 'DB' && !$INSTALL->{$key}{version};
+        open FILE, ">$file" or die "Unable to open $file: $!\n";
         print FILE Data::Dumper->Dump([$INSTALL->{$key}], [$key]);
-        close(FILE);
+        close FILE;
     }
 
     # output upgrade.db
-    open(FILE, ">upgrade.db") or die "Unable to open upgrade.db : $!";
+    open FILE, ">upgrade.db" or die "Unable to open upgrade.db: $!\n";
     print FILE Data::Dumper->Dump([\%UPGRADE], ["UPGRADE"]);
     close(FILE);
 }

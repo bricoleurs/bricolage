@@ -126,6 +126,12 @@ The installer now sets the permissions on configuration files to `0640`,
 rather than `0644`, as before, so that the files are no longer world-readable
 on the system. [David]
 
+=item *
+
+`make upgrade` is now better at determining the installed configuration,
+rather than making you select the database server and version of Apache again,
+it properly remembers the already-intalled configuration. [David]
+
 =back
 
 =head2 Bug Fixes
