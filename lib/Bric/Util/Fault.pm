@@ -143,6 +143,12 @@ use Exception::Class
        isa => 'Bric::Util::Fault::Error',
        alias => 'throw_invalid',
      },
+   'Bric::Util::Fault::Error::Forbidden' =>
+     { description => 'Authorization denied error',
+       isa => 'Bric::Util::Fault::Error',
+       alias => 'throw_forbidden',
+       fields => [qw(perm obj)],
+     },
   );
 
 # $err->as_string() will include the stack trace
@@ -153,7 +159,7 @@ require Exporter;
 our @EXPORT_OK = qw(isa_bric_exception isa_exception rethrow_exception throw_ap
                     throw_da throw_dp throw_gen throw_mni throw_burn_error
                     throw_burn_user throw_error throw_not_unique throw_undef
-                    throw_invalid throw_auth);
+                    throw_invalid throw_auth throw_forbidden);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 #--------------------------------------#

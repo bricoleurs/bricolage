@@ -45,6 +45,9 @@ use strict;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Session qw(:user user_is_admin);
 use Bric::Util::ApacheReq;
+use Bric::App::Util ();
+use Bric::Util::Fault qw(throw_forbidden);
+use Bric::Util::Priv;
 
 ################################################################################
 # Inheritance
@@ -153,9 +156,28 @@ sub chk_authz {
 
     # If we get here, then authorization has failed.
     return undef if $no_redir;
-    $HTML::Mason::Commands::m->comp('/errors/403.mc',
-                                    perm => $chk_perm,
-                                    obj => $obj);
+    if (my $m = $HTML::Mason::Commands::m) {
+        $m->comp(
+            '/errors/403.mc',
+            perm => $chk_perm,
+            obj  => $obj,
+        );
+    } else {
+        my $pname = Bric::Util::Priv->vals_href->{$perm};
+        my $name = ref $obj ? $obj->get_name : '';
+        my $class = Bric::App::Util::get_disp_name(ref $obj || $obj);
+        throw_forbidden(
+            error => qq{You have not been granted $pname access to the "$name" $class},
+            maketext => [
+                'You have not been granted [_1] access to the "[_2]" [_3]',
+                $pname,
+                $name,
+                $class,
+            ],
+            perm => $chk_perm,
+            obj  => $obj,
+        );
+    }
 }
 
 ##############################################################################

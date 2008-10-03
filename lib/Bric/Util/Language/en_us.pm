@@ -48,6 +48,7 @@ our %Lexicon = (
   'Element "[_1]" cannot be deleted. There must be at least [quant,_2,element,elements] of this type.' => 'Element “[_1]” cannot be deleted. There must be at least [quant,_2,element,elements] of this type.',
   'Field "[_1]" appears [_2] times around line [_3]. Please remove all but [_4].' => 'Field “[_1]” appears [quant,_2,time,times] around line [_3]. Please remove all but [_4].',
   'Toggle "[_1]"' => 'Toggle “[_1]”',
+  'You have not been granted [_1] access to the "[_2]" [_3]' => 'You have not been granted [_1] access to the “[_2]” [_3]',
   _AUTO => 1,
 );
 
