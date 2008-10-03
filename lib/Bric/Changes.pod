@@ -6,17 +6,11 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.11.1 (2008-??-??)
+=head1 VERSION 1.11.1 (2008-10-03)
 
 =head2 Improvements
 
 =over
-
-=item *
-
-Added 'TraceEnable Off' directive to config settings in ApacheConfig.pm 
-to neutralize potentially malicious TRACE requests.
-L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet]
 
 =item *
 
@@ -25,12 +19,12 @@ Bret Dawson. [Greg Heo]
 
 =item *
 
-Updated Xinha include script to reflect latest Xinha updates. [Matt Rolf]
+Updated the Xinha include script to reflect latest Xinha updates. [Matt Rolf]
 
 =item *
 
-Updated SFTP.pm to use the faster Net::SSH2. [Sarah Mercier, Matt Rolf,
-Charlie Reitsma, Michael Herring]
+Updated the SFTP mover to use the faster Net::SSH2, rather than the deprecated
+Net::SFTP. [Sarah Mercier, Matt Rolf, Charlie Reitsma, Michael Herring]
 
 =item *
 
@@ -41,10 +35,10 @@ Suggested by Terence Bodola. [David]
 
 =item *
 
-Server errors sent in responxe to Ajax requests are now displayed in a modal
-lightbox widget, rather than just geting shoved into the DOM. Also, effects
+Server errors sent in response to Ajax requests are now displayed in a modal
+lightbox widget, rather than just getting shoved into the DOM. Also, effects
 that should only occur on success (such as removing a story from a desk when
-you move it) now only happen on success.
+you move it) now only happen on success. [David]
 
 =item *
 
@@ -54,8 +48,10 @@ documents to be published and then returns. Documents added to the list are
 then published when all other publish jobs in a given request have finished
 publishing. The upshot is that if you bulk publish 50 stories that all trigger
 the republication of a home page story, that home page story will be
-republished only once, rather than 50 times. Sponsored by NetStumbler and
-Kineticode, with production testing by the National Gallery of Art. [David]
+republished only once, rather than 50 times. A side-effect is memory
+consumption, so don't send too many stories to C<publish_another> from your
+templates! Sponsored by NetStumbler and Kineticode, with production testing by
+the National Gallery of Art. [David]
 
 =item *
 
@@ -69,18 +65,18 @@ The upload field for related media (available when the C<RELATED_MEDIA_UPLOAD>
 F<bricolage.conf> directive is enabled) is no longer displayed in the element
 profile. Instead, it is displayed in the "Edit" popup window, where you can
 now search for an existing media document I<or> upload a new file. This
-eliminates a bug when more than one upload fied was displayed in the "Content"
-section of a document profile. It also makes it clearer that you're editing a
-new, related media document, is the popup looks different than the main
-display window (in that it has no nav). [David]
+eliminates a bug when more than one upload field was displayed in the
+"Content" section of a document profile. It also makes it clearer that you're
+editing a new, related media document, as the popup looks different than the
+main display window (in that it has no navigation bar). [David]
 
 =item *
 
 Permission and conflict messages thrown by callbacks in response to Ajax
 requests now cause a lightbox to be thrown up with the message highlighted.
-This means that if a user tries to move a story they don't have permission to
-move, the story will not appear to be moved in the UI and the user will be
-told that she lacks the permission. [David]
+This means, for example, that if a user tries to move a story they don't have
+permission to move, the story will not appear to be moved in the UI and the
+user will be told that she lacks the permission. [David]
 
 =item *
 
@@ -94,20 +90,27 @@ in document profiles. [David]
 
 =item *
 
-Container elements in document profiles are now toggled close by default when
-you load a document. This keeps the display short for documents with lots of
-subelements in them. [David]
-
-=item *
-
 Related media and/or story subelements may now be toggled to show/hide them
 like any other subelements in a document. [David]
 
 =item *
 
 Added the "displayed" attribute to element type and container objects. Setting
-it on a subelement type causes the value to be set on the containers created
-based on that type. [David]
+it on a subelement type causes the value to be set on new containers based on
+that type. [David]
+
+=item *
+
+Container elements in the document profile are now toggled open or closed
+depending on their "displayed" attribute, which persists across saves and
+versions. This means that the appearence of a document is the same as you left
+it, or as the user who last checked it in left it. [David]
+
+=item *
+
+New container elements added in the document profile now cause the containing
+element to always be toggled open, and the newly added container is also
+toggled open. [David]
 
 =item *
 
@@ -131,21 +134,16 @@ on the system. [David]
 
 =item *
 
-Fixed non-standard installation path being ignored if changed during multi 
+Fixed non-standard installation path being ignored if changed during "multi" 
 installation mode. This was done by changing the defaults files to include
 the C<BRICOLAGE_ROOT> variable. So when C<BRICOLAGE_ROOT> is changed and the
 others are then evaled they get changed too. [Paul Orrock]
 
 =item * 
 
-Updated Admin.pod to ensure that we have at least version 1.16 of
-Params::CallbackRequest so that we detect mod_perl2 correctly when running
-Apache2. [Paul Orrock]
-
-=item *
-
-Fixed CCS bug which was preventing the jump buttons from displaying in Firefox
-and Safari. [Matt Rolf]
+Updated L<Bric::Admin|Bric::Admin> to ensure that we have at least version
+1.16 of L<Params::CallbackRequest|Params::CallbackRequest> so that we detect
+mod_perl 2 correctly when running Apache 2. [Paul Orrock]
 
 =item *
 
@@ -174,7 +172,7 @@ Fixed F<bric_dist_mon> so that it works when Bricolage is running on mod_perl
 =item *
 
 Improved compatibility of the installer with certain Apache configurations
-where the apreq2 module might be named differently. Reported by Roland van
+where the C<apreq2> module might be named differently. Reported by Roland van
 Ipenburg (Bug #1359). [David]
 
 =back
@@ -220,7 +218,7 @@ Added element occurrence specification, from Christian Muise's 2006 Google
 Summer of Code project. Element types and field types can now have required
 minimum and maximum numbers of times they appear in a document. For example,
 if a "pull quote" element type has a minimum of 2 and a maximum of 4, when a
-new story is created it will be pre-populated with 2 pull quote elments. The
+new story is created it will be pre-populated with 2 pull quote elements. The
 user can add up to two more, but no more. If either min or max are 0, then
 there is no minimum or maximum. For backwards compatibility, the upgrade will
 set existing element types and field types to have min and max set to 0.
