@@ -343,7 +343,7 @@ sub create_apache2_conf {
             } elsif ($mod eq 'apreq') {
                 # Load apreq or apreq2.
                 if (my $load = $AP->{load_modules}{"${mod}_module"}
-                    || $AP->{load_modules}{"${mod}${$REQ->{APACHE_VERSION}->[0]}_module"}
+                    || $AP->{load_modules}{"${mod}$REQ->{APACHE_VERSION}->[0]_module"}
                 ) {
                     $dso_section .= "LoadModule \t ${mod}_module $load\n";
                 }
