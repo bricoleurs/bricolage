@@ -124,8 +124,8 @@ sub add_element : Callback {
 
     # Get this element's asset object if it's a top-level asset.
     my $a_obj;
-    if ($element->get_element_type()->get_top_level()) {
-        $a_obj = $pkgs{$key}->lookup({id => $element->get_object_instance_id()});
+    if ($element->get_element_type->get_top_level) {
+        $a_obj = $pkgs{$key}->lookup({ id => $element->get_object_instance_id });
     }
 
     my ($type, $id) = unpack('A5 A*', $field);
@@ -133,12 +133,14 @@ sub add_element : Callback {
     my $element_type;
     if ($type eq 'cont_') {
         $element_type = Bric::Biz::ElementType->lookup({ id => $id });
-        $element->add_container($element_type);
+        $element->add_container($element_type)->set_displayed(1);
     } else {
         $element_type = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id });
         $element->add_field($element_type);
     }
-    $element->save();
+    # If an element is added, we want to display the parent.
+    $element->set_displayed(1);
+    $element->save;
     log_event($key.'_add_element', $a_obj, { Element => $element_type->get_key_name })
         if $a_obj;
 }

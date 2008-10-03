@@ -1407,7 +1407,8 @@ sub get_tiles { shift->get_elements(@_) }
 
 Adds an element to the current container element as a subelement. It will be
 given a C<place> attribute and an C<object_order> attribute relative to the
-other subelements of this container element.
+other subelements of this container element. The newly added container element
+will be returned.
 
 B<Throws:> NONE.
 
@@ -1458,7 +1459,7 @@ sub add_element {
     # We do not need to update the container object itself.
     $self->_set__dirty($dirty);
 
-    return $self;
+    return $element;
 }
 
 =item $container->add_tile($subelement)
