@@ -75,7 +75,7 @@ issues on the #bricolage channel on the MagNet IRC network.
 
 If you're developing Bricolage then you should be working with the latest code
 from the Bricolage Subversion repository. You can browse the Subversion
-repository at L<http://viewsvn.bricolage.cc/>.
+repository at L<https://viewsvn.bricolage.cc/>.
 
 Information on connecting to the repository to checkout a working copy is at
 L<http://www.bricolage.cc/dev/subversion/>.
@@ -664,7 +664,7 @@ the copy from the F<trunk>:
 
 Now export the branch and create the distribution tarball.
 
-  % svn export http://svn.bricolage.cc/bricolage/branches/rev_2_0
+  % svn export https://svn.bricolage.cc/bricolage/branches/rev_2_0
   % cd rev_2_0
   % make dist
 
@@ -704,8 +704,8 @@ Now that the new version of Bricolage is out free in the world, it's time to
 tag the release. Again, it's a simple copy:
 
   % svn cp -m 'Tag for the 2.0.0 release of Bricolage.' \
-    http://svn.bricolage.cc/bricolage/branches/rev_2_0 \
-    http://svn.bricolage.cc/bricolage/tags/releases/2.0.0
+    https://svn.bricolage.cc/bricolage/branches/rev_2_0 \
+    https://svn.bricolage.cc/bricolage/tags/releases/2.0.0
 
 The tag is mainly kept for the purposes of record-keeping. And since copies
 are cheap in Subversion, it's worthwhile.
