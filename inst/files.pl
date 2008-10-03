@@ -64,7 +64,7 @@ find({
     wanted   => sub {
         copy_files(
             catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_COMP_ROOT}),
-            $HOT_COPY
+            $HOT_COPY,
         )
     },
 }, './comp') unless $ENV{DEVELOPER};
@@ -74,8 +74,9 @@ find({
     no_chdir => 1,
     wanted   => sub {
         copy_files(
-            catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, "conf"),
-            0
+            catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{BRICOLAGE_ROOT}, 'conf'),
+            0,
+            0640,
         )
     },
 }, './bconf');
@@ -87,7 +88,7 @@ unless ($UPGRADE) {
         wanted   => sub {
             copy_files(
                 catdir($ENV{PERL_INSTALL_ROOT}, $CONFIG->{MASON_DATA_ROOT}),
-                $HOT_COPY
+                $HOT_COPY,
             )
         },
     }, './data');
@@ -118,6 +119,7 @@ sub create_paths {
 sub copy_files {
     my $root = shift;
     my $link = shift;
+    my $mode = shift || 0444;
     return if /\.$/;
     return if /.svn/;
     return if $UPGRADE and m!/data/!; # Don't upgrade data files.
@@ -137,7 +139,7 @@ sub copy_files {
             link($_, $targ) or die "Unable to link $_ to $targ: $!";
         } else {
             copy($_, $targ) or die "Unable to copy $_ to $targ: $!";
-            chmod((stat($_))[2], $targ)
+            chmod($mode, $targ)
                 or die "Unable to copy mode from $_ to $targ: $!";
         }
     }

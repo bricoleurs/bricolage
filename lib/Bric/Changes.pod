@@ -109,6 +109,20 @@ Added the "displayed" attribute to element type and container objects. Setting
 it on a subelement type causes the value to be set on the containers created
 based on that type. [David]
 
+=item *
+
+The installer now explicitly sets permissions on the files it installs, rather
+than using the same permissions as the files have in the distribution. This is
+because a umask could force the unpacked distribution files to have
+permissions that are inappropriate for installed files. Reported by Roland van
+Ipenburg (Bug #1360). [David]
+
+=item *
+
+The installer now sets the permissions on configuration files to `0640`,
+rather than `0644`, as before, so that the files are no longer world-readable
+on the system. [David]
+
 =back
 
 =head2 Bug Fixes
