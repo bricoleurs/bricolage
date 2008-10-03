@@ -682,7 +682,7 @@ does indeed build and properly install itself.
   % make test
   # Start the database server.
   % sudo make install
-  % make devtest
+  % sudo make devtest
   % sudo bric_apachectl start
   # Log in to the UI and test it a bit.
   % sudo make uninstall
