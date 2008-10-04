@@ -439,19 +439,19 @@ BEGIN {
             push @locs,
               '  <Location /media/wysiwyg/htmlarea/plugins/SpellChecker>',
               '    SetHandler None',
-              '    AddHandler perl-script,cgi',
+              '    AddHandler perl-script .cgi',
               '    PerlResponseHandler ModPerl::Registry',
               '  </Location>' if lc WYSIWYG_EDITOR eq 'htmlarea';
             push @locs,
               '  <Location /media/wysiwyg/xinha/plugins/SpellChecker>',
               '    SetHandler None',
-              '    AddHandler perl-script,cgi',
+              '    AddHandler perl-script .cgi',
               '    PerlResponseHandler ModPerl::Registry',
               '  </Location>' if lc WYSIWYG_EDITOR eq 'xinha';
             push @locs,
               '  <Location /media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts>',
               '    SetHandler None',
-              '    AddHandler perl-script,pl',
+              '    AddHandler perl-script .pl',
               '    PerlResponseHandler ModPerl::Registry',
               '  </Location>' if lc WYSIWYG_EDITOR eq 'fckeditor';
         }

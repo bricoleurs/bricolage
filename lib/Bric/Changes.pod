@@ -12,6 +12,15 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Bug Fixes
 
+=over
+
+=item *
+
+Fixed a bug in the loading of WYSIWYG editor callback code in the Apache
+configuration. [John Durkin]
+
+=back
+
 =head1 VERSION 1.11.1 (2008-10-03)
 
 =head2 Improvements
