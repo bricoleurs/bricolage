@@ -183,7 +183,9 @@ sub create_related_media : Callback( priority => 6) {
     return unless $param->{"$widget|file"};
 
     # Get a handle on things to restore later.
-    my $element =  get_state_data($widget, 'element');
+    my $element = $self->_locate_subelement(
+        get_state_data($widget, 'element'), $param->{id}
+    );
     my $type    = $element->get_object_type;
     my $asset   = get_state_data($type.'_prof', $type);
     my $state   = get_state($widget);

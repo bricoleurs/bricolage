@@ -19,6 +19,12 @@ This document lists the Changes to Bricolage introduced with each release.
 Fixed a bug in the loading of WYSIWYG editor callback code in the Apache
 configuration. [John Durkin]
 
+=item *
+
+Uploading a media file to a related media element to create a new media
+document not works properly when the related media element is a subelement.
+Reported by John Durkin (Bug #1364). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
