@@ -407,7 +407,7 @@ START MODULE LIST
 
 =item MasonX::Interp::WithCallbacks 1.10
 
-=item Safe
+=item Safe 2.09
 
 =item DateTime 0.21
 
