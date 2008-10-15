@@ -30,6 +30,9 @@ Fixed a bug where authorization failiures in callbacks could lead to a bogus
 error, rather than sending a "Permission Denied" error to the user. Reported
 by Matt Rolf (Bug #1362). [David]
 
+Fixed a div nesting bug which was causing buttons to improperly align depending
+on pagination choices. [Matt Rolf]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
