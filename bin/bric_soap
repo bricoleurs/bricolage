@@ -266,7 +266,7 @@ BEGIN {
            "with-related-stories"   => \$with_related_stories,
            "with-related-media"     => \$with_related_media,
            "use-related-uri"        => \$use_related_uri,
-           "all"                    => sub { $with_related_stories = 1 = $with_related_media   = 1; },
+           "all"                    => sub { $with_related_stories = $with_related_media = 1; },
            "to-preview"             => \$to_preview,
            "publish-date=s"         => \$publish_date,
            "published-only"         => \$published_only,

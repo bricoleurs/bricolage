@@ -30,8 +30,15 @@ Fixed a bug where authorization failiures in callbacks could lead to a bogus
 error, rather than sending a "Permission Denied" error to the user. Reported
 by Matt Rolf (Bug #1362). [David]
 
-Fixed a div nesting bug which was causing buttons to improperly align depending
-on pagination choices. [Matt Rolf]
+=item *
+
+Fixed a div nesting bug which was causing buttons to improperly align
+depending on pagination choices. [Matt Rolf]
+
+=item *
+
+Fixed a typo in F<bric_soap> that prevented it from compiling. Reported by
+Ashlee Caul. [David]
 
 =back
 
