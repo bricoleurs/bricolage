@@ -171,8 +171,8 @@ sub install_module {
             ? CPAN::Shell->expandany($s)
             : ref $q ? $q : CPAN::Shell->expandany($q);
         hard_fail(<<END) unless $m;
-Couldn't find $s on CPAN.  Your CPAN.pm installation
-may be broken.  To debug manually, run:
+Could not find $s on CPAN. Your CPAN.pm installation
+may be broken. To debug manually, run:
 
   $perl -MCPAN -e 'install $s'
 END
@@ -197,8 +197,21 @@ END
         # do the install. If prereqs are found they'll get put on the Queue
         # and processed in turn.
         print "Install\n";
-        $m->install;
+        $m->install or exit 1;
         print "Done\n";
+
+        if ($m->can('inst_version')) {
+            # check to make sure it worked
+            print "Checking $name installation...\n";
+            my $inst = $m->inst_version or hard_fail(
+                fail_msg( $perl, $name, $req_version)
+            );
+            my $inst = $self->inst_version or return undef;
+            local $^W = 0;
+            require CPAN::Version;
+            CPAN::Version->vge($inst, $req_version)
+                and hard_fail(fail_msg( $perl, $name, $req_version));
+        }
 
         # I don't understand why this is necessary but CPAN.pm does it when it
         # walks the queue and not doing it results in failures in some modules
@@ -209,33 +222,15 @@ END
         CPAN::Queue->delete_first($s);
     }
 
-    # check to make sure it worked
-    print "Checking $name installation...\n";
-    # try loading the module
-    eval "require $name";
-    hard_fail(<<END) if $@;
-Installation of $name failed.  Your CPAN.pm installation
-may be broken.  To debug manually, run (as root):
+    # all done.
+    print "$name installed successfully.\n";
+}
 
-  $perl -MCPAN -e shell
-
-Then at the "cpan>" prompt:
-
-  look $name
-
-You can then attempt to install the module manually with:
-
-  $perl Makefile.PL
-  make test
-  make install
-
-END
-
-    if (defined $req_version) {
-        eval { $name->VERSION($req_version) };
-        hard_fail(<<END) if $@;
-Installation of $name version $req_version failed.  Your
-CPAN.pm installation may be broken.  To debug manually,
+sub fail_msg {
+    my ($perl, $name, $req_version)
+     <<END
+Installation of $name version $req_version failed. Your
+CPAN.pm installation may be broken. To debug manually,
 run (as root):
 
   $perl -MCPAN -e shell
@@ -251,10 +246,6 @@ You can then attempt to install the module manually with:
   make install
 
 END
-    }
-
-    # all done.
-    print "$name installed successfully.\n";
 }
 
 # updates modules.db with progress

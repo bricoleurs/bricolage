@@ -10,6 +10,23 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Improvements
 
+=over
+
+=item *
+
+Added the C<is_replublish> and C<is_first_publish> methods to
+Bric::Util::Burner. [David]
+
+=item *
+
+The CPAN module installer now relies on L<CPAN|CPAN> to determine if a module
+was successfully installed and is the proper version number, rather than doing
+that work itself. This addresses an issue when installing mod_perl modules,
+which would be installed properly but the installer would think that they
+weren't. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over

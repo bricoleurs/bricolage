@@ -280,6 +280,7 @@ BEGIN {
         _page_extensions      => Bric::FIELD_NONE,
         _notes                => Bric::FIELD_NONE,
         _output_preview_msgs  => Bric::FIELD_NONE,
+        _republish            => Bric::FIELD_NONE,
     });
 }
 
@@ -1232,7 +1233,6 @@ B<Notes:> NONE.
 
 sub publish {
     my $self = shift;
-    $self->_set(['mode'], [PUBLISH_MODE]);
     my ($ats, $oc_sts) = ({}, {});
     my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
 
@@ -1246,6 +1246,7 @@ sub publish {
     $ba->set_publish_date($publish_date);
     $ba->set_publish_status(1) unless $repub;
     $ba->save;
+    $self->_set([qw(mode _republish)], [PUBLISH_MODE, $repub]);
 
     # Determine if we've published before. Set the expire date if we haven't.
     my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
@@ -1412,7 +1413,7 @@ sub publish {
         $ba->save;
     }
 
-    $self->_set(['mode'], [undef]);
+    $self->_set([qw(mode _republish)], [undef, undef]);
     return $published;
 }
 
@@ -1622,6 +1623,37 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+##############################################################################
+
+=item my $repub = $b->is_republish
+
+Returns true if the document being published has been published before.
+Returns false if it has not. Only relevant during a call to C<publish()>, so
+in templates, that's when C<publish_mode> is set to C<PUBLISH>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $repub = $b->is_first_publish
+
+Returns true if the document is being published for the first time. Returns
+false if it has not. Only relevant during a call to C<publish()>, so in
+templates, that's when C<publish_mode> is set to C<PUBLISH>.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub is_republish { shift->_get('_republish') }
+sub is_first_publish { !shift->_get('_republish') }
 
 ##############################################################################
 
