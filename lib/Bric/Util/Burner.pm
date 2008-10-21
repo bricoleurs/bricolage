@@ -1315,7 +1315,7 @@ sub publish {
     }
 
     # Expire stale resources, if necessary.
-    if (my @stale = Bric::Dist::Resource->list({
+    if (@job_ids and my @stale = Bric::Dist::Resource->list({
         "$key\_id" => $baid,
         not_job_id => ANY(@job_ids),
     })) {

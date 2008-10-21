@@ -40,6 +40,12 @@ depending on pagination choices. [Matt Rolf]
 Fixed a typo in F<bric_soap> that prevented it from compiling. Reported by
 Ashlee Caul. [David]
 
+=item *
+
+Fixed a bug where a publish would appear to fail when no publish jobs were
+created (for example, when a story is published to a destination with no
+associated servers). Reported by Ashlee Caul. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
