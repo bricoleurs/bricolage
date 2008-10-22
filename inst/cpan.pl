@@ -203,10 +203,7 @@ END
         if ($m->can('inst_version')) {
             # check to make sure it worked
             print "Checking $name installation...\n";
-            my $inst = $m->inst_version or hard_fail(
-                fail_msg( $perl, $name, $req_version)
-            );
-            my $inst = $self->inst_version or return undef;
+            my $inst = my $self->inst_version or return undef;
             local $^W = 0;
             require CPAN::Version;
             CPAN::Version->vge($inst, $req_version)
@@ -227,7 +224,7 @@ END
 }
 
 sub fail_msg {
-    my ($perl, $name, $req_version)
+    my ($perl, $name, $req_version);
      <<END
 Installation of $name version $req_version failed. Your
 CPAN.pm installation may be broken. To debug manually,

@@ -233,7 +233,7 @@ sub check_modules {
     my (@missing);
     # loop over required modules
  MOD:
-    foreach my $mod (qw(apreq2 expires perl log_config mime alias apache_ssl ssl)) {
+    foreach my $mod (qw(apreq expires perl log_config mime alias apache_ssl ssl)) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
@@ -287,7 +287,8 @@ sub check_modules {
                               "/usr/lib/apache2/libexec",
                               "/usr/local/lib/apache2/modules",
                               "/usr/local/lib/apache2/libexec",
-                             )
+			      "/usr/pkg/include",
+)
             {
                 # perl uses libfoo.so format filenames
                 if ($mod eq 'perl') {
