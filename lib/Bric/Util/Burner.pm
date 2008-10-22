@@ -1338,6 +1338,20 @@ sub publish {
                 }
             }
 
+            # Save the job.
+            $job->save;
+            log_event('job_new', $job);
+            push @job_ids, $job->get_id;
+
+            # Set up an expire job, if necessary.
+            if ($exp_date and my @res = $job->get_resources) {
+                my $expname = 'Expire "' . $ba->get_name .
+                  '" from "' . $oc->get_name . '"';
+                $self->_expire($exp_date, $ba, $bat, $expname, $user_id, \@res);
+            }
+        }
+    }
+
     # Expire stale resources, if necessary.
     if (my @stale = Bric::Dist::Resource->list({
         "$key\_id" => $baid,
@@ -1372,20 +1386,6 @@ sub publish {
         # Dissociate the stale resources from this asset.
         my $meth = $key eq 'story' ? 'del_story_ids' : 'del_media_ids';
         $_->$meth($baid)->save for @stale;
-    }
-
-            # Save the job.
-            $job->save;
-            log_event('job_new', $job);
-            push @job_ids, $job->get_id;
-
-            # Set up an expire job, if necessary.
-            if ($exp_date and my @res = $job->get_resources) {
-                my $expname = 'Expire "' . $ba->get_name .
-                  '" from "' . $oc->get_name . '"';
-                $self->_expire($exp_date, $ba, $bat, $expname, $user_id, \@res);
-            }
-        }
     }
 
     if ($published) {
