@@ -287,7 +287,7 @@ sub check_modules {
                               "/usr/lib/apache2/libexec",
                               "/usr/local/lib/apache2/modules",
                               "/usr/local/lib/apache2/libexec",
-			      "/usr/pkg/include",
+			      "/usr/pkg/include/httpd",
 )
             {
                 # perl uses libfoo.so format filenames
