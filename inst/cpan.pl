@@ -200,7 +200,7 @@ END
         $m->install or exit 1;
         print "Done\n";
 
-        if ($m->can('inst_version')) {
+        if ($req_version && $m->can('inst_version')) {
             # check to make sure it worked
             print "Checking $name installation...\n";
             my $inst = $m->inst_version or return undef;
