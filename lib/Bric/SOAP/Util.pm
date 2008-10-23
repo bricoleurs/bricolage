@@ -605,7 +605,7 @@ sub _serialize_element {
         my %attr = (
             element_type => $element->get_key_name,
             order   => $element->get_place - $diff,
-            displayed => $element->displayed,
+            displayed => $element->get_displayed,
         );
 
         my @e = $element->get_elements();
