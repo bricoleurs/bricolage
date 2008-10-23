@@ -464,6 +464,8 @@ Friends who have spotted bugs include:
 
 =item * Roland van Ipenburg
 
+=item * Denny de la Haye
+
 =back
 
 Bricolage's translation team:

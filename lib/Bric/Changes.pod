@@ -42,6 +42,11 @@ Uploading a media file to a related media element to create a new media
 document not works properly when the related media element is a subelement.
 Reported by John Durkin (Bug #1364). [David]
 
+=item *
+
+Fixed a bug where an attempt to export a story via SOAP failed due to a bad
+method call. Reported by Denny de la Haye. [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
