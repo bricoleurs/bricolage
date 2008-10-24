@@ -1,16 +1,16 @@
 #!/usr/bin/perl
-# print a tree of elements and their subelements,
+# print a tree of element types and their subelement types,
 # using a bric_soap export of elements
 # $ bric_soap element list_ids | bric_soap element export - > elements.xml
-# $ ./element-tree.pl elements.xml
-# Handles 1.6 or 1.8 versions of bric_soap.
+# $ ./element_tree.pl elements.xml
+# Handles bric_soap for Bricolage version 1.10 (not 1.8 or before).
 
 use strict;
 use warnings;
 use XML::Twig;
 
 my $CHILDMARKER = '. ';   # what's in front of subelements
-my $WITHFIELDS = 1;       # whether to display fields
+my $WITHFIELDS = 1;       # whether to display field_types
 my $WITHOCS = 1;          # whether to display output channels
 my $TOPLEVEL_ONLY = 1;    # whether to only show toplevel elements
 my %ELEMENT;
@@ -25,12 +25,12 @@ sub main {
     print_parents();
 }
 
-# get all elements with their subelements, and fields;
+# get all elements with their subelement_types, and field_types;
 # put this in %ELEMENT
 sub parse_xml_elements {
-    my $xmlfile = shift(@ARGV) || 'elements.xml';
+    my $xmlfile = shift(@ARGV) || 'element_types.xml';
     XML::Twig->new(
-        twig_roots => {'assets/element' => \&get_element_info}
+        twig_roots => {'assets/element_type' => \&get_element_info}
     )->parsefile($xmlfile);
 }
 
@@ -47,12 +47,12 @@ sub get_element_info {
     # top-level
     $ELEMENT{$name}{top_level} = $node->first_child_text('top_level');
 
-    # subelements
-    my @children = sort $node->first_child('subelements')->children_text;
+    # subelement_types
+    my @children = sort $node->first_child('subelement_types')->children_text;
     $ELEMENT{$name}{children} = [@children];
 
-    # fields
-    my @fields = $node->first_child('fields')->children('field');
+    # field_types
+    my @fields = $node->first_child('field_types')->children('field_type');
     my @fieldnames = ();
     foreach my $field (@fields) {
         my $fieldname = $field->first_child_text('key_name');
@@ -65,7 +65,7 @@ sub get_element_info {
 
         push @fieldnames, $fieldname;
     }
-    $ELEMENT{$name}{fields} = [sort @fieldnames];
+    $ELEMENT{$name}{field_types} = [sort @fieldnames];
 
     # output channels
     if ($ELEMENT{$name}{top_level}) {
@@ -73,6 +73,7 @@ sub get_element_info {
         $ELEMENT{$name}{output_channels} = [];
         foreach my $oc (@ocs) {
             my $ocname = $oc->text;
+            # xxx: this isn't handled properly - needs to get primary oc from site
             my $is_primary = exists($oc->{att}{primary}) ? 1 : 0;
             if ($is_primary) {
                 unshift @{ $ELEMENT{$name}{output_channels} }, $ocname;
@@ -91,13 +92,13 @@ sub get_parent_info {
                 $ELEMENT{$child}{parent} = $element;
             } else {
                 # should never happen
-                die "All the elements aren't there: element=$element, child=$child\n";
+                die "All the elements aren't there: element_type=$element, child=$child\n";
             }
         }
     }
 }
 
-# recursively print subelements
+# recursively print subelement_types
 sub print_children {
     my ($element, $parents) = @_;
 
@@ -122,16 +123,18 @@ sub print_children {
 
 sub print_fields {
     my $element = shift;
-    print ' (', join(', ', @{ $ELEMENT{$element}{fields} }), ')'
+    return unless exists $ELEMENT{$element}{field_types};
+    print ' (', join(', ', @{ $ELEMENT{$element}{field_types} }), ')'
       if $WITHFIELDS;
 }
 
 sub print_ocs {
     my $element = shift;
+    return unless exists $ELEMENT{$element}{output_channels};
     print '> ', join(', ', @{ $ELEMENT{$element}{output_channels} }), $/;
 }
 
-# display parent-less elements and recursively their subelements
+# display parent-less elements and recursively their subelement_types
 sub print_parents {
     my @parents = grep {!exists $ELEMENT{$_}{parent}}
       sort {lc($a) cmp lc($b)} keys %ELEMENT;
