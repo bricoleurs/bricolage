@@ -23,12 +23,16 @@ $obj
 </%args>
 <%init>;
 my $pkg;
+my $disp;
 if ($widget eq 'story_prof') {
     $pkg = get_package_name('story');
+    $disp = get_disp_name('story');
 } elsif ($widget eq 'media_prof') {
     $pkg = get_package_name('media');
+    $disp = get_disp_name('media');
 } else {
     $pkg = get_package_name('template');
+    $disp = get_disp_name('template');
 }
 
 my $deskText = qq{<select name="$widget|desk">};
@@ -79,7 +83,7 @@ if ($version) {
         name    => "$widget|delete",
         id      => $widget . "delete",
         value   => "Delete",
-        disp    => $lang->maketext('Delete this Profile'),
+        disp    => $lang->maketext("Delete this " . $disp),
         label_after => 1,
         useTable    => 0,
     &>

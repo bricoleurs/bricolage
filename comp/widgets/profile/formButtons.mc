@@ -10,7 +10,7 @@ $no_ret    => 0
 $no_save   => 0
 $stay      => ''
 $widget    => 'profile'
-$chk_label => 'Delete this Profile'
+$chk_label => 'Delete this '
 $ret_val   => 'cancel_red'
 </%args>
 
@@ -25,8 +25,7 @@ $m->comp('/widgets/profile/displayFormElement.mc',
           vals => { props => { type => 'checkbox' } },
           useTable => 0
         ) unless $no_del;
-
-$m->out('&nbsp;<span class="burgandyLabel">' . $lang->maketext($chk_label) . '</span>') unless $no_del;
+$m->out('&nbsp;<span class="burgandyLabel">' . $lang->maketext($chk_label.get_disp_name($type)) . '</span>') unless $no_del;
 </%perl>
   </td>
 </tr>

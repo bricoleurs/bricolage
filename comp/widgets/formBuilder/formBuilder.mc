@@ -120,6 +120,7 @@ var cancelValidation = false
   } else {
       $m->out( "var optionalFields = ''\n" );
   }
+  my $label = get_disp_name($type);
 </%perl>
 
 </script>
@@ -239,7 +240,7 @@ var cancelValidation = false
 <div class="delete">
 <& '/widgets/profile/displayFormElement.mc',
          key => 'delete',
-         vals => { disp => '<span class="burgandyLabel">'.$lang->maketext('Delete this Profile').'</span>',
+         vals => { disp => '<span class="burgandyLabel">'.$lang->maketext('Delete this '. $label).'</span>',
                    props => { type => 'checkbox',
                               label_after => 1 },
 #                  value => '0',
