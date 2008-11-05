@@ -14,6 +14,12 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Made "Delete this Profile" text more specific depending on location, such as
+"Delete this Story" or "Delete this Element Type", etc.  
+[Sarah Merceir and Matt Rolf]
+
+=item *
+
 Added the C<is_replublish> and C<is_first_publish> methods to
 Bric::Util::Burner. [David]
 
