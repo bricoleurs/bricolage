@@ -16,7 +16,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Made "Delete this Profile" text more specific depending on location, such as
 "Delete this Story" or "Delete this Element Type", etc.  
-[Sarah Merceir and Matt Rolf]
+[Sarah Mercier and Matt Rolf]
 
 =item *
 

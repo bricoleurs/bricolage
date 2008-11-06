@@ -53,7 +53,7 @@
                 extension => 'png',
                 globalImage => 1,
                 useTable => 0,
-                js    => qq/onclick="Desk.request({ parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); return false"/
+                js    => qq[onclick="if (Desk.confirmDelete()) Desk.request({ parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); return false"/
             &>
             </li>
 % }
