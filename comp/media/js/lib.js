@@ -1092,6 +1092,10 @@ var Desk = {
         } );
     },
 
+    confirmDelete: function() {
+        return confirm(warn_delete_msg);
+    },
+
     request: function(opts, onSuccess) {
         var options = Object.extend({
             uri: document.location,
