@@ -53,6 +53,11 @@ Reported by John Durkin (Bug #1364). [David]
 Fixed a bug where an attempt to export a story via SOAP failed due to a bad
 method call. Reported by Denny de la Haye. [David]
 
+=item *
+
+Added confirmation on Delete JavaScript action on Workspace and desk. 
+Reported by Matt Rolf (Bug 1380). [Sarah Mercier]
+  
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
