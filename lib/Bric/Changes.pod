@@ -20,7 +20,7 @@ Made "Delete this Profile" text more specific depending on location, such as
 
 =item *
 
-Added the C<is_replublish> and C<is_first_publish> methods to
+Added the C<is_republish> and C<is_first_publish> methods to
 Bric::Util::Burner. [David]
 
 =item *
@@ -58,6 +58,11 @@ method call. Reported by Denny de la Haye. [David]
 Added confirmation on Delete JavaScript action on Workspace and desk. 
 Reported by Matt Rolf (Bug 1380). [Sarah Mercier]
   
+=item *
+
+Fixed problem with rendering of radio button fields (Bug #1387).  
+[Denny de la Haye]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

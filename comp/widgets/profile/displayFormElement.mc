@@ -211,7 +211,7 @@ my $inpt_sub = sub {
         ? ($vals->{props}{class})
         : ();
     push @classes, "textInput" if ($type eq "text" || $type eq "password");
-    push @classes, "required" if ($vals->{req});
+    push @classes, "required" if (ref $vals && $vals->{req});
     my $class = ' class="' . join(" ", @classes) . '"' if scalar @classes;
 
     $extra ||= '';
