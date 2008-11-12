@@ -761,6 +761,18 @@ To translate:
     'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
   'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
   'Toggle "[_1]"' => 'Toggle “[_1]”',
+  'Delete this Story' => 'Delete this Story',
+  'Delete this Media' => 'Delete this Media',
+  'Delete this Template' => 'Delete this Template',
+  'Delete this Category' => 'Delete this Category',
+  'Delete this Contributor Type' => 'Delete this Contributor Type',
+  'Delete this Contributor' => 'Delete this Contributor',
+  'Delete this Element Type' => 'Delete this Element Type',
+  'Delete this Keyword' => 'Delete this Keyword',
+  'Delete this Media Type' => 'Delete this Media Type', 
+  'Delete this Output Channel' => 'Delete this Output Channel',
+  'Delete this Source' => 'Delete this Source',
+  'Delete this Workflow' => 'Delete this Workflow',
 
 =end comment
 

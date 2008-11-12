@@ -561,6 +561,18 @@ our %Lexicon =
 =begin comment
 
 To translate:
+  "Delete this Story" => "Delete this Story",
+  "Delete this Media" => "Delete this Media",
+  "Delete this Template" => "Delete this Template",
+  "Delete this Category" => "Delete this Category",
+  "Delete this Contributor Type" => "Delete this Contributor Type",
+  "Delete this Contributor" => "Delete this Contributor",
+  "Delete this Element Type" => "Delete this Element Type",
+  "Delete this Keyword" => "Delete this Keyword",
+  "Delete this Media Type" => "Delete this Media Type", 
+  "Delete this Output Channel" => "Delete this Output Channel",
+  "Delete this Source" => "Delete this Source",
+  "Delete this Workflow" => "Delete this Workflow",
   "All jobs" => "All jobs",
   "Today's jobs" => "Today's jobs",
   "Future jobs" => "Future jobs",
