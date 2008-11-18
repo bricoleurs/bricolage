@@ -63,6 +63,11 @@ Reported by Matt Rolf (Bug 1380). [Sarah Mercier]
 Fixed problem with rendering of radio button fields (Bug #1387).  
 [Denny de la Haye]
 
+=item *
+
+Fixed Bric.pm to load Bric::Config before anything else, which was causing
+problems on some systems. [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

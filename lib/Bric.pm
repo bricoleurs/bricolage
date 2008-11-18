@@ -52,8 +52,8 @@ use strict;
 
 ##############################################################################
 # Programmatic Dependencies
-use Bric::Util::Fault qw(:all);
 use Bric::Config qw(:qa :mod_perl CACHE_DEBUG_MODE);
+use Bric::Util::Fault qw(:all);
 use Bric::Util::ApacheReq;
 
 ##############################################################################
