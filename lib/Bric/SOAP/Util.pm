@@ -546,6 +546,11 @@ sub _deserialize_element {
     $element->delete_elements([
         map { @$_ } values %containers, values %fields
     ]);
+
+    # make sure our object order is set properly [BUG 1397]
+    my $element_list = $element->get_elements;
+    $element->reorder_elements($element_list) if ($element_list->[0]);
+
     $element->save;
     return @relations;
 }
