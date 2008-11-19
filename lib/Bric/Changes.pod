@@ -75,7 +75,7 @@ numbered at 0 rather than 2. [Paul Orrock]
 
 =item *
 
-Fix for bug 1376 && 1394, where a story imported through bric_soap didn't have
+Fix for bug 1394 && 1397, where a story imported through bric_soap didn't have
 it's object_order set properly so wouldn't preview through templates until
 saved in the UI. [Paul Orrock]
 
