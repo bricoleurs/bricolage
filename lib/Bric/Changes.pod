@@ -68,6 +68,11 @@ Fixed problem with rendering of radio button fields (Bug #1387).
 Fixed Bric.pm to load Bric::Config before anything else, which was causing
 problems on some systems. [Paul Orrock]
 
+=item *
+
+Fixed problem with Bric::SOAP so that the first field or container is correctly
+numbered at 0 rather than 2. [Paul Orrock]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

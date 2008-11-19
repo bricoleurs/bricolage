@@ -285,7 +285,10 @@ sub serialize_elements {
     my $elems = $element->get_elements;
 
     if (@$elems) {
-        my $diff =  $elems->[-1]->get_place - scalar @$elems + 1;
+		
+        # Surely this should always start at 0, changing the order you get out
+		# of the database can only be a bad idea.
+		my $diff = 0;
 
         # first serialize all data elements
         foreach my $e (@$elems) {
