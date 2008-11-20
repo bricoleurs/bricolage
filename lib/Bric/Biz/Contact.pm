@@ -1041,7 +1041,7 @@ sub set_type {
 =item my $description = $c->get_description
 
 Returns the description of the Bric::Biz::Contact object. If the contact has not
-been looked up from the database or if it's type has changed, description
+been looked up from the database or if its type has changed, description
 will be C<undef>.
 
 B<Throws:>

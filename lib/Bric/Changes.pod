@@ -21,7 +21,7 @@ Made "Delete this Profile" text more specific depending on location, such as
 =item *
 
 Added the C<is_republish> and C<is_first_publish> methods to
-Bric::Util::Burner. [David]
+L<Bric::Util::Burner>. [David]
 
 =item *
 
@@ -65,18 +65,18 @@ Fixed problem with rendering of radio button fields (Bug #1387).
 
 =item *
 
-Fixed Bric.pm to load Bric::Config before anything else, which was causing
+Fixed L<Bric> to load L<Bric::Config> before anything else, which was causing
 problems on some systems. [Paul Orrock]
 
 =item *
 
-Fixed problem with Bric::SOAP so that the first field or container is correctly
-numbered at 0 rather than 2. [Paul Orrock]
+Fixed problem with L<Bric::SOAP> so that the first field or container is 
+correctly numbered at 0 rather than 2. [Paul Orrock]
 
 =item *
 
-Fix for bug 1394 && 1397, where a story imported through bric_soap didn't have
-it's object_order set properly so wouldn't preview through templates until
+Fix for bug 1394 && 1397, where a story imported through L<Bric::SOAP> didn't
+have its object_order set properly so wouldn't preview through templates until
 saved in the UI. [Paul Orrock]
 
 =back

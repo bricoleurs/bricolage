@@ -6,7 +6,7 @@ package Bric::Biz::ElementType::Subelement;
 =head1 NAME
 
 Bric::Biz::ElementType::Subelement - Maps a subelement ElementType
-to it's parent's Element Types with occurrence relations and place.
+to its parent's Element Types with occurrence relations and place.
 
 =cut
 

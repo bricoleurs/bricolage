@@ -285,10 +285,10 @@ sub serialize_elements {
     my $elems = $element->get_elements;
 
     if (@$elems) {
-		
+
         # Surely this should always start at 0, changing the order you get out
-		# of the database can only be a bad idea.
-		my $diff = 0;
+        # of the database can only be a bad idea.
+        my $diff = 0;
 
         # first serialize all data elements
         foreach my $e (@$elems) {
@@ -575,7 +575,7 @@ sub _load_relateds {
         };
     }
 
-    # Deal with realted story.
+    # Deal with related story.
     if ($cdata->{related_story_id}) {
         push(@relations, {
             container => $container,
