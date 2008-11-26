@@ -12,6 +12,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
+=item*
+
+Added more translations in German and Russian. [Alisa Gdalina]
+
 =item *
 
 Made "Delete this Profile" text more specific depending on location, such as
