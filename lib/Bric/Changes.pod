@@ -46,6 +46,11 @@ Fixed a bug where a publish would appear to fail when no publish jobs were
 created (for example, when a story is published to a destination with no
 associated servers). Reported by Ashlee Caul. [David]
 
+=item *
+
+Fixed a bug where the media type of an uploaded file would not be detected if
+its extension had upper-case characters. Reported by Bret Dawson. [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

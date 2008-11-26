@@ -1379,7 +1379,7 @@ $lookup_ext = sub {
     my ($filename, $name) = @_;
     # Look for an extension on the file name. If there isn't one, assume the
     # argument is the suffix itself.
-    my $ext = substr $filename, rindex($filename, '.') + 1;
+    my $ext = lc substr $filename, rindex($filename, '.') + 1;
     return unless defined $ext;
 
     # Load the cache.
