@@ -17,11 +17,6 @@
     
 % }
 
-<& '/widgets/desk/desk_bottom.html',
-    offset   => $ARGS{offset} || 0,
-    show_all => $ARGS{show_all},
-&>
-
 </form>
 
 <& '/widgets/wrappers/footer.mc', param => \%ARGS &>

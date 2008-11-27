@@ -312,6 +312,14 @@ if (defined $objs && @$objs > $obj_offset) {
         $num_displayed++;
         last if $limit && $num_displayed == $limit;
     }
+
     $r->pnotes('num_displayed', $num_displayed);
+    
+    $m->comp(
+        '/widgets/desk/desk_bottom.html',
+        offset      => $offset || 0,
+        show_all    => $show_all,
+    );
+
 }
 </%init>

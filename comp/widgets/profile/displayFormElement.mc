@@ -311,7 +311,6 @@ my %formSubs = (
             } elsif ($value) {
                 $extra .= ' checked="checked"';
             }
-            $extra .= qq{ id="$id"} if defined $id;
             $indent -= 5 if ($useTable && !$readOnly);
             &$inpt_sub('checkbox', $key, $vals, $value, $js, $name, $width,
                        $indent, $useTable, $label, $readOnly, $id, $extra);

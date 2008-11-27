@@ -112,7 +112,7 @@ my $profile = sub {
         my $u = $o->get_user__id;
         my $id = $o->get_id;
         if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
-            return ['Edit', "/workflow/profile/$type/$id?checkout=1&return=active", ''];
+            return ['Edit', "/workflow/profile/$type/$id?checkout=1&amp;return=active", ''];
         } else {
             return ['View', "/workflow/profile/$type/$id?return=active", ''];
         }

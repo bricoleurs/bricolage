@@ -83,6 +83,11 @@ Fix for bug 1394 && 1397, where a story imported through L<Bric::SOAP> didn't
 have its object_order set properly so wouldn't preview through templates until
 saved in the UI. [Paul Orrock]
 
+=item *
+
+Fixed up broken / non-compliant HTML on desks, search results and workspace. 
+[Paul Orrock]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

@@ -32,7 +32,7 @@ my $profile = sub {
     my $id = $o->get_id;
     my $ret;
     if (defined $u && $u == get_user_id && chk_authz($o, EDIT, 1)) {
-        $ret = [['Edit', "/workflow/profile/$alt/$id?checkout=1&return=search", '']];
+        $ret = [['Edit', "/workflow/profile/$alt/$id?checkout=1&amp;return=search", '']];
     } else {
         $ret = [['View', "/workflow/profile/$alt/$id?return=search", '']];
     }

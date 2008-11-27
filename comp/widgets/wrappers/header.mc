@@ -119,7 +119,7 @@ if ($useSideNav) {
     my $uri = $r->uri;
     chomp $uri;
 
-    $m->out('<div name="sideNav" id="sideNav">');
+    $m->out('<div id="sideNav">');
     $m->comp("/widgets/wrappers/sideNav.mc", uri => $uri);
     $m->out('</div>');
 }
