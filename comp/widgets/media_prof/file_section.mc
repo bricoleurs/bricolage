@@ -7,7 +7,7 @@
 % } else {
 <div class="editmeta">
 % unless ($read_only) {
-<div class="row"
+<div class="row">
     <div class="label"><%$lang->maketext('File Path')%>:</div>
     <div class="input"><input type="file" name="<% $widget %>|file" size="30" />
         <& '/widgets/profile/imageSubmit.mc',

@@ -10,24 +10,24 @@
     <div class="body<% (@$sites <= 1 && $class eq 'template') ? ' short' : ' tall' %>">
     <dl>
 % if ($class ne 'template') {
-        <dt name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
-        <dd name="uri" class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $obj->get_primary_uri || '&nbsp;' %></dd>
+        <dt class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $lang->maketext('Primary URI') %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight eq 'uri' ? ' sorted' : '') %>"><% $obj->get_primary_uri || '&nbsp;' %></dd>
 % }
-        <dt name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
-        <dd name="date" class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
+        <dt class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $lang->maketext($date_label) %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight =~ m/date/ ? ' sorted' : '') %>"><% $date || '&nbsp;' %></dd>
 % if ($class eq 'template') {
-        <dt name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
-        <dd name="oc" class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $obj->get_output_channel_name || '&nbsp;' %></dd>
+        <dt class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $lang->maketext('Output Channel') %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight eq 'output_channel' ? ' sorted' : '') %>"><% $obj->get_output_channel_name || '&nbsp;' %></dd>
 % } else {
-        <dt name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
-        <dd name="type" class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
+        <dt class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $lang->maketext($type_label) %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight eq 'element_type' ? ' sorted' : '') %>"><% $type || '&nbsp;' %></dd>
 % }
 % if (@$sites > 1) {
-        <dt name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
-        <dd name="site" class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
+        <dt class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $lang->maketext('Site') %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight eq 'site_id' ? ' sorted' : '') %>"><% $site %></dd>
 % }
-        <dt name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
-        <dd name="priority" class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
+        <dt class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext('Priority') %>:</dt>
+        <dd class="<% &$rowtype %><% ($highlight eq 'priority' ? ' sorted' : '') %>"><% $lang->maketext($priors->{$obj->get_priority}) %></dd>
     </dl>
 
     <div class="actions">
