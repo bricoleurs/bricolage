@@ -638,6 +638,8 @@ div.addelement { text-align: right;}
 div.autocomplete {
   position: absolute;
   width: 250px;
+  max-height: 250px;
+  overflow: scroll;
   background-color: white;
   border: 1px solid #888;
   margin: 0px;
@@ -660,7 +662,7 @@ div.autocomplete ul li {
 div.autocomplete ul li span.value { display: none; }
 div.autocomplete span.highlight { font-weight: bold; }
 
-#new_cat_warning { color: white; font-weight: bold; padding-left: 10px; }
+#new_cat_warning { color: #c00; font-weight: bold; padding-left: 10px; }
 
 .adminBox .tabs {
   background: #F5F5E6 url("/media/images/horizline.gif") bottom left repeat-x;

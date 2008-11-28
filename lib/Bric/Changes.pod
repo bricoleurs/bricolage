@@ -35,6 +35,13 @@ that work itself. This addresses an issue when installing mod_perl modules,
 which would be installed properly but the installer would think that they
 weren't. [David]
 
+=item *
+
+Changed autocomplete category selection for stories so that if you have the
+C<FULL_SEARCH> config directive turned on, you get wildcard matching to any
+part of the uri on your entered string, so typing bar will return /bar and 
+/foo/bart . Enter / for a full list of categories. [Paul Orrock]
+
 =back
 
 =head2 Bug Fixes
