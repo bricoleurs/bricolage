@@ -850,7 +850,7 @@ sub load_asset {
                     my ($contrib) =
                       Bric::Util::Grp::Parts::Member::Contrib->list(\%init);
                     throw_ap(error => __PACKAGE__ . "::create : no contributor found matching "
-                               . "(contributer => "
+                               . "(contributor => "
                                . join(', ', map { "$_ => $c->{$_}" } keys %$c))
                       unless defined $contrib;
                 $media->add_contributor($contrib, $c->{role});
