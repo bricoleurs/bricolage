@@ -250,6 +250,14 @@ div.debug dt:after {
     padding: 0 .5em 0 10.5em;
     font-size: 1.1em;
 }
+.desk .item .head .location {
+    top: 0;
+    right: 0;
+    color: black;
+    position: absolute;
+    font-style: italic;
+    font-weight: normal;
+}
 .desk .item .head .pubstatus {
     /* float: right; */
     position: absolute;
@@ -276,7 +284,7 @@ div.debug dt:after {
     border-width: 0 1px 0 0; 
 }
 .desk .item dt, .desk .item dd {
-    padding: 5px .5em;
+    padding: 8px .5em;
     border-top: solid white 1px;
 }
 .desk .item dt { 
@@ -288,32 +296,76 @@ div.debug dt:after {
     border-right: solid white 1px;
 }
 .desk .item dd { margin-left: 11em; }
-
-.desk .item .actions { 
-    position: absolute;
-    top: 0; right: 0px;
-    width: 240px;
+.desk .item .actions p { margin: 0; padding: 5px 0; line-height: 20px; }
+.desk .item .actions {
+    top: 0px; right: 0px;
     background: transparent;
     border-top: solid white 1px;
-    padding: 0 5px;
+    padding: 0px 5px;
+    position: absolute;
+    max-width: 240px;
+    width: auto;
 }
-.desk .item .actions p { margin: 0; padding: 5px 0; line-height: 20px; }
 .desk .item .actions ul { 
     margin: 5px 0; 
     padding: 0; 
-    list-style: none; 
+    list-style: none;
+    display: inline; 
+    clear: both;
+    float: right;
+    white-space: nowrap;
 }
-.desk .item .actions ul.action li {
-    display: inline;
-    margin: 0;
-    padding: 0;
-    line-height: 2em;
+.desk .item .actions ul li {
+    clear: right;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1em;
+    float: left;
+    margin: .3em .4em;
+    max-width: 4em;
+    width: auto;
+    overflow: visible;
+}
+
+.desk .item .actions ul li button {
+    font-size: 11px;
+    font-weight: normal;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    line-height: 11px;
+    color: #006666;
+    border: 0px;
+    background: transparent;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 0px;
+    width: auto !important;
+}
+
+.desk .item .actions ul li a, .desk .item .actions ul li a:link, .desk .item .actions ul li a:visited, .desk .item .actions ul li a:active, .desk .item .actions ul li a:hover {
+    cursor: pointer;
+    display: table-row;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    white-space: nowrap;
+}   
+.desk .item .actions ul li input, .desk .item .actions ul li a img {
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -5px;
 }
 .desk .item .actions ul li.inactive { color: #999; }
 .desk .item .actions ul.action { text-align: right; }
 
-.desk .item .tall .actions ul.action { margin-bottom: 20px; }
-.desk .item .short .actions ul.action { margin-bottom: 5px; }
+.desk .item .tall .actions ul { margin-bottom: 20px; }
+.desk .item .short .actions ul { margin-bottom: 5px; }
 
 .desk .item .actions ul.view { float: right; }
 .desk .item .actions ul.action li { padding: 0px 5px 0px 0px; }
@@ -327,29 +379,38 @@ div.debug dt:after {
 .desk .item .actions select { font-size: 1em; }
 
 .desk .item .movers li { position: relative; float: right; margin: 0 0 0 5px; }
-.desk .item .movers li li { float: none; }
+.desk .item .movers li ul li { float: none; }
 
 div.popup-menu {
   position: absolute;
+  width: 10em;
   background-color: white;
   border: 1px solid #888;
   margin: 0px;
   padding: 0px;
+  padding-bottom: .4em !important;
   z-index: 1000;
+  display: block;
 }
-div.popup-menu ul {
+div.popup-menu ul{
   list-style-type: none;
-  margin: 0px !important;
-  padding: 0px !important;
+  width: 100%;
+  margin: 0em !important;
+  margin-bottom: .2em;
+  padding: 0em !important;
+  display: block;
 }
 div.popup-menu ul li {
   list-style-type: none;
-  display: block;
+  display: block !important;
   margin: 0 !important;
-  white-space: nowrap;
+  text-align: left !important;
+  width: auto !important;
+  max-width: none !important;
+  float: none !important;
 }
-div.popup-menu h4 { font-size: .9em; margin: 0; padding: 3px 4px 4px 4px; background: #EAEAEA; color: #999; border-bottom: solid #CCC 1px; }
-div.popup-menu a { display: block; padding: 3px 4px; color: black; text-decoration: none; }
+div.popup-menu h4 { display: block; font-size: .9em; padding: 1em, .2em; margin: 0em; background: #EAEAEA;  color: #999; border-bottom: solid #CCC 1px;}
+div.popup-menu a { display: block; text-align: left; color: black; text-decoration: none; }
 div.popup-menu a:hover { background-color: #336FCB; color: white; }
 
 form .row {

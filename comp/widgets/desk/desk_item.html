@@ -1,7 +1,14 @@
 <div id="<% "$class\_$id" %>" class="item">
     <div class="head">
-        <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %></div>
+        <div <% $uuid ? qq{title="$uuid" } : '' %>class="version<% ($highlight eq 'id' ? ' sorted' : '') %>"><% $id%> v.<% $obj->get_version %> </div>
         <div class="title<% ($highlight eq 'name' ? ' sorted' : $alias ? $alias : '') %>"><% $uri || $name %></div>
+        <div class="location">
+%       if ($user) {
+        <a name="user" style="vertical-align: center; cursor: default; color: black; clear: left; text-align=left; margin-right: 1em;"><% $user %></a>
+%       } else {
+        <a name="desk_location" style="vertical-align: center; cursor: default; color: black; clear: left; text-align=left; margin-right: 1em;"><% $desk->get_name %> Desk</a>
+%       }
+        </div>
         <& publish_status_span.mc,
             sorted => $highlight eq 'name' ? ' sorted' : '',
             asset => $obj
@@ -31,46 +38,23 @@
     </dl>
 
     <div class="actions">
-        <ul class="action">
-            <li><a href="<% $link %>" title="<% $vlabel %>">
-                <img src="/media/images/<% lc $vlabel %>.gif" alt="<% $vlabel %>" /></a></li>
-            <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $id %>" title="<% $lang->maketext("Notes") %>">
-                <img src="/media/images/notes.png" alt="Notes" /></a></li>
+        <ul>
+            <li><a href="<% $link %>" title="<% $vlabel %>"><img src="/media/images/<% lc $vlabel %>.gif" alt="<% $vlabel %>" /><% $vlabel %></a></li>
+            <li><a href="<% $ppage . '/' . lc $vlabel %>_notes.html?id=<% $id %>" title="<% $lang->maketext("Notes") %>"><img src="/media/images/notes.png" alt="Notes" /><% $lang->maketext("Notes") %></a></li>
 %           if ($class eq 'story') {
-            <li><a href="/workflow/profile/workspace/clone/<% $id %>" title="<% $lang->maketext("Clone") %>">
-                <img src="/media/images/clone.png" alt="<% $lang->maketext("Clone") %>" /></a></li>
+            <li><a href="/workflow/profile/workspace/clone/<% $id %>" title="<% $lang->maketext("Clone") %>"><img src="/media/images/clone.png" alt="<% $lang->maketext("Clone") %>" /><% $lang->maketext("Clone") %></a></li>
 %           }
-            <li><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Trail/Log') %>">
-                <img src="/media/images/log.png" alt="<% $lang->maketext('Trail/Log') %>" /></a></li>
+            <li style="margin-right: 1.2em;"><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Trail/Log') %>"><img src="/media/images/log.png" alt="<% $lang->maketext('Trail/Log') %>" /><% $lang->maketext('Trail/Log') %></a></li>
 % if ($can_edit) {
-            <li>
-            <& /widgets/profile/button.mc,
-                disp => "Delete",
-                name  => "${class}_delete_ids",
-                id    => "$widget\_$id",
-                value => $id,
-                button => 'trash',
-                extension => 'png',
-                globalImage => 1,
-                useTable => 0,
-                js    => qq[onclick="if (Desk.confirmDelete()) { Desk.request({ parameters: 'desk_asset|delete_cb=$class\_$id' }); Effect.Shrink('$class\_$id'); } return false"]
-            &>
-            </li>
+    <li> <a name="<% ${class} %>_delete_ids" id="<% ${widget} %>_<% $id %>" title="<% $lang->maketext('Delete') %>"  onclick="if (Desk.confirmDelete()) { Desk.request({ parameters: '<% ${widget} %>|delete_cb=<% ${class} %>_<% $id %>' }); Effect.Shrink('<% ${class} %>_<% $id %>'); } return false"> <img src="/media/images/trash.png" />Delete</a> </li>
 % }
         </ul>
 
-        <ul class="movers" style="float: right; width: 100px">
+        <ul>
 % if (!$user && $action eq 'checkin_cb') {
-            <li>
-                <& /widgets/profile/button.mc,
-                    disp => "Check in (double click to check in to " . $desk->get_name . ")",
-                    name => "check_in_$class\_$id",
-                    button => "checkin",
-                    globalImage => 1,
-                    useTable => 0,
-                    js => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . $checkin_js->(undef) . '"'
-                &>
-                <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
+            <li style"padding-right: 8em !important;">
+<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to " <% $desk->get_name %>  ")" value="Check in (double click to check in to " <% $desk->get_name %>  ")"  onclick="Desk.showMenu(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" />Check In</a>
+                <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none">
                     <h4>Check in:</h4>
                     <ul>
 % foreach (@$checkin_opts) {
@@ -81,24 +65,13 @@
             </li>
 % } elsif (!$user && $action eq 'checkout_cb') {
             <li>
-            <& /widgets/profile/button.mc,
-                  disp => "Check out",
-                  widget => $widget,
-                  cb => "checkout_cb",
-                  value => "$class\_$id",
-                  button => "checkout",
-                  globalImage => 1,
-                  useTable => 0
-              &>
-             </li>
+<a name="check_out"><input name="<% ${widget} %>|checkout_cb" id="<% ${widget} %>_checkout_cb" type="image" src="/media/images/checkout.gif" title="Check out" value="<% ${class} %>_<% $id %>"/><button type="submit" name="<% ${widget} %>|checkout_cb" id="<% ${widget} %>_checkout_cb" title="Check out" value="<% ${class} %>_<% $id %>">Check Out</button></a>
+ </li>
 % }
 
 % if (!$user && $can_edit && $move_opts) {
-            <li>
-                <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move">
-                    <img src="/media/images/move.gif" alt="Move" />
-                </a>
-                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; width: auto; display: none">
+            <li style="margin-left: 3em;"> <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move"> <img src="/media/images/move.gif" alt="Move" />Move </a>
+                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none;">
                     <h4>Move:</h4>
                     <ul>
 % foreach (@$move_opts) {
@@ -106,8 +79,8 @@
 % }
                     </ul>
 %                   if (!$obj->get_checked_out) {
-                    <h4>Other:</h4>
                     <ul>
+<li><h4 style="margin-top: .2em;">Other</h4></li>
                         <li><a href="#" onclick="<% $move_js->(($class eq 'template') ? 'deploy' : 'publish') %>"><% $lang->maketext(($class eq 'template') ? 'Deploy' : 'Publish') %></a></li>
                         <li><a href="#" onclick="<% $move_js->('shelve') %>"><% $lang->maketext('Shelve') %></a></li>
                     </ul>
@@ -119,24 +92,10 @@
 % if ($can_publish && !$obj->get_checked_out) {
             <li>
 %           if ($class eq 'template') {
-                <& /widgets/profile/button.mc,
-                    disp => "Deploy",
-                    name   => "deploy_${class}_${id}",
-                    button => "deploy",
-                    js     => 'onclick="' . &$publish_js . '"',
-                    globalImage => 1,
-                    useTable => 0
-                &>
+<a name="deploy_<% ${class} %>_<% ${id} %>" id="deploy_<% ${class} %>_<% ${id} %>" title="Deploy" onclick="<% &$publish_js %>"/><img src="/media/images/deploy.gif"/>Deploy</a>
 %           } else {
-                <& /widgets/profile/button.mc,
-                    disp => "Publish (double click to publish now)",
-                    name   => "publish_${class}_${id}",
-                    button => "publish",
-                    js     => 'onclick="Desk.showMenu(this, event); return false" ondblclick="' . &$publish_js . '"',
-                    globalImage => 1,
-                    useTable => 0
-                &>
-                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; width: auto; display: none">
+<a name="publish_<% ${class} %>_<% ${id} %>" id="publish_<% ${class} %>_<% ${id} %>" title="Publish (double click to publish now)" onclick="Desk.showMenu(this, event); return false" ondblclick="<% &$publish_js %>" /><img src="/media/images/publish.gif"/>Publish</a>
+                <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; display: none">
                     <h4>Publish:</h4>
                     <ul>
                         <li><a href="#" onclick="<% &$publish_js %>">Now</a></li>
@@ -147,12 +106,6 @@
             </li>
 % }
         </ul>
-
-%       if ($user) {
-        <p><% $user %></p>
-%       } else {
-        <p><% $desk->get_name %> Desk</p>
-%       }
     </div>
   </div>
 </div>
