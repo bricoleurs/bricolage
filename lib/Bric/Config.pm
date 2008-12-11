@@ -133,6 +133,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     PREVIEW_MASON
                     FULL_SEARCH
                     BLOB_SEARCH
+                    EXPIRE_ON_DEACTIVATE
                     DEFAULT_FILENAME
                     DEFAULT_FILE_EXT
                     ENABLE_OC_ASSET_ASSOCIATION
@@ -259,6 +260,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      DISABLE_NAV_LAYER
                                      FULL_SEARCH
                                      BLOB_SEARCH
+                                     EXPIRE_ON_DEACTIVATE
                                      ALLOW_WORKFLOW_TRANSFER
                                      ALLOW_ALL_SITES_CX
                                      RELATED_MEDIA_UPLOAD
@@ -456,7 +458,8 @@ require Bric; our $VERSION = Bric->VERSION;
                     FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE USE_THUMBNAILS
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
                     MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
-                    MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES))
+                    MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES
+                    EXPIRE_ON_DEACTIVATE))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -701,6 +704,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant AUTOGENERATE_SLUG       => $config->{AUTOGENERATE_SLUG};
     use constant FULL_SEARCH             => $config->{FULL_SEARCH};
     use constant BLOB_SEARCH             => $config->{BLOB_SEARCH};
+    use constant EXPIRE_ON_DEACTIVATE    => $config->{EXPIRE_ON_DEACTIVATE};
     use constant YEAR_SPAN_BEFORE        => $config->{YEAR_SPAN_BEFORE} || 10;
     use constant YEAR_SPAN_AFTER         => $config->{YEAR_SPAN_AFTER}  || 10;
 

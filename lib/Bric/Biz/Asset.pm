@@ -104,10 +104,15 @@ use List::Util qw(first);
 #--------------------------------------#
 # Programmatic Dependencies
 
+use Bric::App::Event qw(:all);
 use Bric::Util::Fault qw(throw_gen throw_mni);
 use Bric::Biz::Workflow;
 use Bric::Util::Time qw(:all);
 use Bric::Util::DBI qw(:all);
+use Bric::Util::Pref;
+use Bric::Config qw(:all);
+require Bric::Util::Job;
+require Bric::Util::Job::Pub;
 
 #==============================================================================#
 # Inheritance                          #
@@ -1653,6 +1658,23 @@ sub deactivate {
         my $self = shift;
 
         $self->_set( { '_active' => 0 } );
+
+        if (EXPIRE_ON_DEACTIVATE) {
+           my $tz = Bric::Util::Pref->lookup_val('Time Zone');
+           $self->set_expire_date( my $now = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT));
+           $self->save;
+           my $key = $self->key_name;
+           my $job = Bric::Util::Job::Pub->new({
+               sched_time             => $now,
+               user_id                => Bric::App::Session::get_user_id,
+               name                   => 'Expire "' . $self->get_name . '"',
+               "$key\_instance_id"    => $self->get_version_id,
+               priority               => $self->get_priority,
+               type                   => 1,
+           });
+           $job->save;
+           log_event('job_new', $job);
+         }
 
         return $self;
 }
