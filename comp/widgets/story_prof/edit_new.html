@@ -52,6 +52,7 @@ $m->comp(
     disp => 'Primary Category',
     name => 'new_category_autocomplete',
     id   => 'new_category_uri',
+    req  => 1,
 );
 </%perl>
 <div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
