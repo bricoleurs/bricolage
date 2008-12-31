@@ -678,8 +678,8 @@ sub load_asset {
                 $data->set_key_name(    $field->{key_name});
                 $data->set_name(        $field->{name}        || $field->{label});
                 $data->set_description( $field->{description});
-                $data->set_min_occurrence( $field->{min_occur});
-                $data->set_max_occurrence( $field->{max_occur});
+                $data->set_min_occurrence( $field->{min_occur} || 0 );
+                $data->set_max_occurrence( $field->{max_occur} || 0 );
                 $data->set_sql_type(    $sql_type);
                 $data->set_place(       $place);
                 $data->set_max_length(  $field->{max_size});
@@ -702,8 +702,8 @@ sub load_asset {
                     key_name      => $field->{key_name},
                     name          => $field->{name}        || $field->{label},
                     description   => $field->{description},
-                    min_occurrence => $field->{min_occur},
-                    max_occurrence => $field->{max_occur},
+                    min_occurrence => $field->{min_occur} || 0,
+                    max_occurrence => $field->{max_occur} || 0,
                     sql_type      => $sql_type,
                     place         => $place,
                     max_length    => $field->{max_size},
@@ -768,8 +768,8 @@ sub load_asset {
               # Now set the subelement stuff
               # Note: We need to get it so a subelement is returned
               my ($sub_elem) = $element->get_containers($sub_id);
-              $sub_elem->set_min_occurrence($sub_min);
-              $sub_elem->set_max_occurrence($sub_max);
+              $sub_elem->set_min_occurrence($sub_min || 0);
+              $sub_elem->set_max_occurrence($sub_max || 0);
               $sub_elem->set_place($sub_place);
               $sub_elem->save;
               
