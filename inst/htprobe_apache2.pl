@@ -175,10 +175,18 @@ sub read_modules {
 sub get_user_and_group {
     if ($AP{conf} =~ /^\s*User\s+(.*)$/m) {
         $AP{user} = $1;
+
+        # ubuntu uses env vars; just set it explicitly..
+        $AP{user} = 'www-data' if $AP{user} =~ m{^\$};
+
         print "Found Apache user: $AP{user}\n";
     }
     if ($AP{conf} =~ /^\s*Group\s+(.*)$/m) {
         $AP{group} = $1;
+
+        # ubuntu uses env vars; just set it explicitly..
+        $AP{group} = 'www-data' if $AP{group} =~ m{^\$};
+
         print "Found Apache group: $AP{group}\n";
     }
 }
@@ -233,7 +241,8 @@ sub check_modules {
     my (@missing);
     # loop over required modules
  MOD:
-    foreach my $mod (qw(apreq expires perl log_config mime alias apache_ssl ssl)) {
+    # xxx: ubuntu has mod_apreq2 - why was apreq here? do we need to check both?
+    foreach my $mod (qw(apreq2 expires perl log_config mime alias apache_ssl ssl)) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
