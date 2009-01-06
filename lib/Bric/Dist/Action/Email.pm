@@ -17,10 +17,6 @@ $LastChangedRevision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=item Date
-
-$LastChangedDate$
-
 =item Subversion ID
 
 $Id$
@@ -632,10 +628,5 @@ Manages distribution jobs, including processing all the actions required for
 each destination for which resources are to be distributed.
 
 =back
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (c) 2003-2008 Kineticode, Inc. See L<Bric::License|Bric::License>
-for complete license terms and conditions.
 
 =cut
