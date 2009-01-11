@@ -111,8 +111,6 @@ use Bric::Util::Time qw(:all);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Pref;
 use Bric::Config qw(:all);
-require Bric::Util::Job;
-require Bric::Util::Job::Pub;
 
 #==============================================================================#
 # Inheritance                          #
@@ -1664,6 +1662,8 @@ sub deactivate {
            $self->set_expire_date( my $now = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT));
            $self->save;
            my $key = $self->key_name;
+
+           require Bric::Util::Job::Pub;
            my $job = Bric::Util::Job::Pub->new({
                sched_time             => $now,
                user_id                => Bric::App::Session::get_user_id,
