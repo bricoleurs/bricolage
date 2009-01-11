@@ -116,7 +116,8 @@ Fix for bug #1400, primary category now shows as a required field. [Matt Rolf]
 
 =item *
 
-Fix for bug #1414, relabled the Associations box in edit_meta.html. [Matt Rolf] 
+Fix for bug #1414, relabled the Associations box in edit_meta.html. [Matt Rolf]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

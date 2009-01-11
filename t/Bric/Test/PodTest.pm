@@ -44,7 +44,10 @@ BEGIN {
       unless -d 't';
 
     # Find all the modules.
-    find( sub { push @$files, $File::Find::name if m/\.pm$/ or m/\.pod$/ },
+    find( sub {
+              push @$files, $File::Find::name
+                if $File::Find::dir !~ m{blib/} and (m{\.pm$} or m{\.pod$})
+          },
           'lib', catdir('t', 'Bric', 'Test') );
 
     # Find the bin directory.

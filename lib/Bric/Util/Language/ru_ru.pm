@@ -764,8 +764,6 @@ our %Lexicon = (
    '_AUTO' => 1,
 );
 
-=cut
-
 1;
 
 __END__
