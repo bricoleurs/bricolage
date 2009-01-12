@@ -56,6 +56,12 @@ associated servers). Reported by Ashlee Caul. [David]
 Fixed a bug where the media type of an uploaded file would not be detected if
 its extension had upper-case characters. Reported by Bret Dawson. [Greg Heo]
 
+=item *
+
+Changed the SOAP checkin code so that it is functinally identical to the UI
+checkin code. Hoping that this solves the issue with duplicate version
+constraint violations. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
