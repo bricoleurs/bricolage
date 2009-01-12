@@ -20,6 +20,11 @@ The "Save, Save and Stay, and Return" buttons in the Edit Categories screen
 of the story profile are moved to the right to better align with the interface
 buttons. [Matt Rolf]
 
+=item *
+
+Improved documentation of the C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf>
+directive with speficic reference to SFTP versions. [Alex Krohn]
+
 =head3 Bug Fixes
 
 =over
