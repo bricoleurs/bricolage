@@ -1406,16 +1406,14 @@ $get_em = sub {
         $order_by .= ' ' . delete $params->{OrderDirection}
             if $params->{OrderDirection};
     }
-    my $limit = LIMIT_DEFAULT if (exists $params->{Offset});
-    $limit     = (exists $params->{Limit})
-        ? delete $params->{Limit}
-        : '' if !$limit;
-        ;
-    $limit = 'LIMIT ' . $limit if $limit ne '';    
-    my $offset    = exists $params->{Offset}
+
+    my $limit = exists $params->{Limit}  ? 'LIMIT ' . delete $params->{Limit}
+              : exists $params->{Offset} ? 'LIMIT ' . LIMIT_DEFAULT
+              :                          '';
+
+    my $offset = exists $params->{Offset}
         ? 'OFFSET ' . delete $params->{Offset}
-        : ''
-        ;
+        : '';
 
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {
