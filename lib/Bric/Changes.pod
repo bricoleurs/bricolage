@@ -52,6 +52,14 @@ Made "Delete this Profile" text more specific depending on location, such as
 Added configuration directive to allow the expiration of assets when they are deleted.
 [David, Mercier, Rolf and Herring]
 
+=item *
+
+Switched to passing parameters for Net::SSH2 authentication in
+L<Bric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> so that it will first try
+auth_password, and then follow up with auth_keyboard should the first fail
+(and will also try ssh keys if you happen to have that configured). [Alex
+Krohn]
+
 =back
 
 =head2 Bug Fixes

@@ -142,7 +142,7 @@ sub put_res {
         my $connect = eval {
             $ssh2->connect($hn);
             $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
-            $ssh2->auth_password($user,$password);
+            $ssh2->auth_password( username => $user, password => $password );
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
@@ -275,7 +275,7 @@ sub del_res {
         my $connect = eval {
             $ssh2->connect($hn);
             $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
-        $ssh2->auth_password($user,$password);
+            $ssh2->auth_password( username => $user, password => $password );
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
