@@ -71,8 +71,8 @@ $size           => 10
 my ($left, $right, %seen) = ('', '');
 my (@leftVals, @rightVals);
 
-$leftCaption  = $lang->maketext($leftCaption);
-$rightCaption = $lang->maketext($rightCaption);
+$leftCaption  = $lang->maketext($leftCaption) if $leftCaption;
+$rightCaption = $lang->maketext($rightCaption) if $rightCaption;
 my %rol = map { $_ => undef } @readOnlyLeft;
 my %ror = map { $_ => undef } @readOnlyRight;
 
