@@ -1721,14 +1721,14 @@ sub checkin {
     throw_gen(error => "Cannot checkin non checked out versions")
       unless $self->_get('checked_out');
 
-    my $version = $self->_get('version');
-    $version++;
-    $self->_set({ user__id => undef,
-                  version   => $version,
-                  current_version => $version,
-                  checked_out => 0,
-                  _checkin => 1
-                });
+    my $version = $self->_get('current_version') + 1;
+    $self->_set({
+        user__id        => undef,
+        version         => $version,
+        current_version => $version,
+        checked_out     => 0,
+        _checkin        => 1
+    });
 
     return $self;
 }

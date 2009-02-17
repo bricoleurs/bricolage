@@ -201,7 +201,6 @@ sub _do_it {
         if (my $vid = $self->get_story_instance_id) {
             my $doc = Bric::Biz::Asset::Business::Story->lookup({
                 version_id => $vid,
-                checked_in => 1,
             });
             log_event(story_expire => $doc);
         }
@@ -209,7 +208,6 @@ sub _do_it {
         elsif ($vid = $self->get_media_instance_id) {
             my $doc = Bric::Biz::Asset::Business::Media->lookup({
                 version_id => $vid,
-                checked_in => 1,
             });
             log_event(media_expire => $doc);
         }

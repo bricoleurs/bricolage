@@ -808,7 +808,7 @@ sub clean_params {
     # Map inverse alias inactive to active.
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
-    unless ($param->{published_version}) {
+    unless ($param->{published_version} or $param->{version_id}) {
         # checked_out has some special cases
         # deal with the checked_out param.  The all argument is actually
         # the default behavior.

@@ -74,9 +74,11 @@ constraint violations. [David]
 
 =item *
 
-Publishes no longer fail with the error message 'Can't call method "get_id" on
-an undefined value' when the story being published is currently checked out to
-a user. Reported by Scott (Bug #1417). [David]
+Looking up a document or template by version ID no longer fails if the asset
+has been checked out and not yet checked back in since that version ID was
+created. Among other subtle bugs, this change fixes publishes that failed with
+the error message 'Can't call method "get_id" on an undefined value'. Reported
+by Scott (Bug #1417). [David]
 
 =back
 

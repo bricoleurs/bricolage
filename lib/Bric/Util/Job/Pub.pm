@@ -189,7 +189,6 @@ sub _do_it {
         # Instantiate the story.
         my $s = Bric::Biz::Asset::Business::Story->lookup({
             version_id => $sid,
-            checked_in => 1,
         });
         $burner->publish($s, 'story', $self->get_user_id,
                          $self->get_sched_time(ISO_8601_FORMAT), 1);
@@ -198,7 +197,6 @@ sub _do_it {
         # Instantiate the media.
         my $m = Bric::Biz::Asset::Business::Media->lookup({
             version_id => $mid,
-            checked_in => 1,
         });
         $burner->publish($m, 'media', $self->get_user_id,
                          $self->get_sched_time(ISO_8601_FORMAT), 1);
