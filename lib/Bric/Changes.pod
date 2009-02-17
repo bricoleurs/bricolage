@@ -98,6 +98,11 @@ so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
 for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
 [David]
 
+=item *
+
+Files uploaded as images but without any suffix (such as ".jpg") no longer
+cause an error. Reported by Scott (Bug # 1409). [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
