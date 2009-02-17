@@ -2393,11 +2393,20 @@ NONE
 sub _update_story {
     my ($self) = @_;
     return unless $self->_get__dirty();
-    my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map { "$_ = ?" } COLS) .
-      ' WHERE id=? ';
+
+    my @cols   = COLS;
+    my @fields = FIELDS;
+    unless ($self->_get('_checkin')) {
+        # Do not update current_version unless we're checking in.
+        @cols   = grep { $_ ne 'current_version' } @cols;
+        @fields = grep { $_ ne 'current_version' } @fields;
+    }
+
+    my $sql = 'UPDATE ' . TABLE . ' SET ' . join(', ', map { "$_ = ?" } @cols) .
+      ' WHERE id = ?';
 
     my $sth = prepare_c($sql, undef);
-    execute($sth, $self->_get(FIELDS), $self->_get('id'));
+    execute($sth, $self->_get(@fields), $self->_get('id'));
     return $self;
 }
 

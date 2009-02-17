@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(191) {
+sub test_select_methods: Test(201) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -233,7 +233,10 @@ sub test_select_methods: Test(191) {
     ok !$version->get_checked_out, 'Version should not be checked out';
 
     $story[0]->checkout({ user__id => $self->user_id });
-    $story[0]->save();
+    $story[0]->save;
+    is $story[0]->get_version, 1, 'Version should still be 1';
+    is $story[0]->get_current_version, 1, 'Current version should still be 1';
+    ok $story[0]->get_checked_out, 'It should now be checked out';
 
     # Make sure we can still lookup the old version.
     ok $version = $class->lookup({ version_id => $vid }),
@@ -249,6 +252,19 @@ sub test_select_methods: Test(191) {
     $story[0]->save();
     $story[0]->checkout({ user__id => $self->user_id });
     $story[0]->save();
+    is $story[0]->get_version, 2, 'Version should still be 2';
+    is $story[0]->get_current_version, 2, 'Current version should still be 2';
+    ok $story[0]->get_checked_out, 'It should be checked out';
+
+    # Publish the first version.
+    ok $version->set_publish_date(Bric::Util::Time::db_date(undef, 1)),
+        'Set publish date';
+    ok $version->set_publish_status(1), 'Set publish status';
+    ok $version->save, 'Save published version';
+
+    # Look up the story again.
+    ok $story[0] = class->lookup({ id => $story[0]->get_id }),
+        'Look up the story again';
     is $story[0]->get_version, 2, 'Version should still be 2';
     is $story[0]->get_current_version, 2, 'Current version should still be 2';
     ok $story[0]->get_checked_out, 'It should be checked out';
