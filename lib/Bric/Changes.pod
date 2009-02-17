@@ -14,6 +14,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head2 Improvements
 
+=over
+
 =item *
 
 The "Save, Save and Stay, and Return" buttons in the Edit Categories screen 
@@ -24,6 +26,14 @@ buttons. [Matt Rolf]
 
 Improved documentation of the C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf>
 directive with speficic reference to SFTP versions. [Alex Krohn]
+
+=item *
+
+Events are now logged using wallclock time rather than transaction start time,
+so that multiple events logged in a single transaction can be displayed in the
+order they were created, rather than in an arbitrary order. [David]
+
+=back
 
 =head3 Bug Fixes
 
