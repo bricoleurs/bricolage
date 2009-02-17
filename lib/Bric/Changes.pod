@@ -80,6 +80,18 @@ created. Among other subtle bugs, this change fixes publishes that failed with
 the error message 'Can't call method "get_id" on an undefined value'. Reported
 by Scott (Bug #1417). [David]
 
+=item *
+
+Fixed a bug where a scheduled publish can muck with version numbers. Reported
+by Matt Rolf, Ashlee Caul, and others. [David]
+
+=item *
+
+Fixed resource (file name) lookups whe publishing and/or previewing documents
+so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
+for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
+[David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
