@@ -737,10 +737,7 @@ sub checkout : Callback {
     my $co;
 
     foreach my $id (@$ids) {
-        my $ba = Bric::Biz::Asset::Business::Story->lookup({
-            id         => $id,
-            checked_in => 1,
-        });
+        my $ba = Bric::Biz::Asset::Business::Story->lookup({'id' => $id});
         if (chk_authz($ba, EDIT, 1)) {
             $ba->checkout({'user__id' => get_user_id()});
             $ba->save;
