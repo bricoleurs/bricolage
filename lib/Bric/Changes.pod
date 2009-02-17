@@ -62,6 +62,12 @@ Changed the SOAP checkin code so that it is functinally identical to the UI
 checkin code. Hoping that this solves the issue with duplicate version
 constraint violations. [David]
 
+=item *
+
+Publishes no longer fail with the error message 'Can't call method "get_id" on
+an undefined value' when the story being published is currently checked out to
+a user. Reported by Scott (Bug #1417). [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

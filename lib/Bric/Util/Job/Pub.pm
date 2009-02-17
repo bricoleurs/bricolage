@@ -187,13 +187,19 @@ sub _do_it {
     if (my $sid = $self->get_story_instance_id) {
         my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the story.
-        my $s = Bric::Biz::Asset::Business::Story->lookup({ version_id => $sid });
+        my $s = Bric::Biz::Asset::Business::Story->lookup({
+            version_id => $sid,
+            checked_in => 1,
+        });
         $burner->publish($s, 'story', $self->get_user_id,
                          $self->get_sched_time(ISO_8601_FORMAT), 1);
     } elsif (my $mid = $self->get_media_instance_id) {
         my $burner = Bric::Util::Burner->new({ out_dir => STAGE_ROOT });
         # Instantiate the media.
-        my $m = Bric::Biz::Asset::Business::Media->lookup({ version_id => $mid });
+        my $m = Bric::Biz::Asset::Business::Media->lookup({
+            version_id => $mid,
+            checked_in => 1,
+        });
         $burner->publish($m, 'media', $self->get_user_id,
                          $self->get_sched_time(ISO_8601_FORMAT), 1);
     }
