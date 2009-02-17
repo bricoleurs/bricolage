@@ -87,6 +87,12 @@ by Matt Rolf, Ashlee Caul, and others. [David]
 
 =item *
 
+Fixed a bug with the virtual FTP server where deploying a template by renaming
+it with ".deploy" at the end can cause the template to be stranded on a desk.
+Reported by Phillip Smith (Bug # 1372). [David]
+
+=item *
+
 Fixed resource (file name) lookups whe publishing and/or previewing documents
 so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
 for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
