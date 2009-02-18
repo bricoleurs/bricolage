@@ -126,6 +126,19 @@ Fix for bug #1400, primary category now shows as a required field. [Matt Rolf]
 
 Fix for bug #1414, relabled the Associations box in edit_meta.html. [Matt Rolf]
 
+=item *
+
+Fixed the C<get_uri()> method of
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> so that
+it URI escapes the media file name. [David]
+
+=item *
+
+Fixed bug when uploading a new media file to a related media element so that,
+when running under mod_perl 1, headers are properly sent I<before> the content
+is sent. This should fix some of the issues with the related media popup
+window. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

@@ -19,7 +19,7 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::Config qw(:media);
+use Bric::Config qw(:media :mod_perl);
 use Bric::Util::ApacheConst qw(HTTP_OK);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Grp::Parts::Member::Contrib;
@@ -773,13 +773,14 @@ sub return_to_other {
 
     my $r = $self->apache_req;
     my $widget = $self->class_key;
+    $r->send_http_header if MOD_PERL_VERSION < 2;
     $r->print(
         qq{<script type="text/javascript" src="/media/js/prototype.js"></script>\n},
         qq{<script type="text/javascript" src="/media/js/scriptaculous.js"></script>\n},
         qq{<script type="text/javascript" src="/media/js/lib.js"></script>},
         qq{<script type="text/javascript">Container.update('media', '$widget', '$prev->{elem_id}');</script>},
     );
-    $self->abort(HTTP_OK);
+    $self->abort;
 }
 
 sub handle_upload {
