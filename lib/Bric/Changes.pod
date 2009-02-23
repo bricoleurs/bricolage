@@ -60,6 +60,11 @@ auth_password, and then follow up with auth_keyboard should the first fail
 (and will also try ssh keys if you happen to have that configured). [Alex
 Krohn]
 
+=item *
+
+Upgraded Prototype and Scriptaculous libraries to versions 1.6.0.3 and 1.8.2 
+respectively. [Rolf, Mercier, Herring]
+
 =back
 
 =head2 Bug Fixes

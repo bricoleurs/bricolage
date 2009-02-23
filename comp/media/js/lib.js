@@ -1422,10 +1422,18 @@ var Container = {
 
         var element = $('element_' + container_id + '_content');
 
-        var params = 'container_id=' + container_id + '&' + Form.serialize(document.getParentByTagName(element, "form"));
+        //We need to disable the buttons on the page before we serialize the form
+        //to prevent callback death. MWR 02-23-09 
+        var buttons = $('theForm').getInputs('image');
+        buttons.invoke('disable');
+        var params = 'container_id=' + container_id + '&' + Form.serialize($('theForm'));                                               
         if (options.extraParameters != '') {
             params = params + '&' + options.extraParameters;
         }
+
+        //Now turn the buttons back on.
+        buttons.invoke('enable');
+
         // Only update the element content with the requst results if the request is
         // successful.
         new Ajax.Updater(
