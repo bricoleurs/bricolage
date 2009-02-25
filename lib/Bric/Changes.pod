@@ -144,6 +144,11 @@ when running under mod_perl 1, headers are properly sent I<before> the content
 is sent. This should fix some of the issues with the related media popup
 window. [Adrian Yee]
 
+=item *
+
+Fixed bug #1405, Add Element will now close on double click.
+[Sarah Mercier and Matt Rolf]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

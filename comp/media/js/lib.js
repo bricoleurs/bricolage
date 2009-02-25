@@ -1112,10 +1112,18 @@ var Desk = {
         } );
     },
 
+    menuHandler: function(button, event) {
+        if( Desk.visible == "shown" ) 
+          Desk.hideMenu();
+        else
+          Desk.showMenu(button, event);
+    },
+
     showMenu: function(button, event) {
         Desk.hideMenu();
         Desk.visibleMenu = button.id + "_desks";
         Element.show(Desk.visibleMenu);
+        Desk.visible = "shown";
         Event.stop(event);
         Event.observe(document, "click", Desk.hideMenu);
     },
@@ -1123,6 +1131,7 @@ var Desk = {
     hideMenu: function() {
         if (Desk.visibleMenu != '') Element.hide(Desk.visibleMenu);
         Desk.visibleMenu = '';
+        Desk.visible = "hidden";
         Event.stopObserving(document, "click", Desk.hideMenu);
     }
 };
