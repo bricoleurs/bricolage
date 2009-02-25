@@ -197,7 +197,9 @@ END
         # do the install. If prereqs are found they'll get put on the Queue
         # and processed in turn.
         print "Install\n";
-        $m->install or exit 1;
+        $m->install;
+        exit 1 unless ($m->can('uptodate') ? $m->uptodate : 0)
+                   or ($m->{install} && $m->{install} eq 'YES');
         print "Done\n";
 
         if ($req_version && $m->can('inst_version')) {
@@ -205,9 +207,9 @@ END
             print "Checking $name installation...\n";
             my $inst = $m->inst_version or return undef;
             local $^W = 0;
-            require CPAN::Version;
-            CPAN::Version->vge($inst, $req_version)
-                and hard_fail(fail_msg( $perl, $name, $req_version));
+            require CPAN::Version unless CPAN::Version->can('vcmp');
+            hard_fail(fail_msg( $perl, $name, $req_version))
+                unless CPAN::Version->vcmp( $inst, $req_version ) >= 0;
         }
 
         # I don't understand why this is necessary but CPAN.pm does it when it
