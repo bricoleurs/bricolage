@@ -985,8 +985,8 @@ function replaceAll (field) {
 function toggleMenu (el, id) {
     // Toggle <li> class: closed <-> open
     var parent = el.parentNode;
-    var newclass = parent.getAttribute('class') == 'open' ? 'closed' : 'open'
-    parent.setAttribute('class', newclass);
+    var newclass = parent.className == 'open' ? 'closed' : 'open'
+    parent.className = newclass;
 
     // Update state stored in cookie
     // first make sure to have only the menus cookie

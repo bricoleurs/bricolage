@@ -154,6 +154,9 @@ Fixed bug #1405, Add Element will now close on double click.
 Fixed bug #1426, find stories/media/template advanced search toggle now works properly.
 [Sarah Mercier and Matt Rolf]
 
+=item *
+
+Fixed bug where IE7 couldn't open the sidenav.  [Kahil Jallad]
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
