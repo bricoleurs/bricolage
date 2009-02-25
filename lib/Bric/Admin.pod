@@ -143,7 +143,7 @@ START MODULE LIST
 
 =item HTML::Mason 1.23
 
-=item DBD::Pg 2.0.0
+=item DBD::Pg 1.22
 
 =item DB_File
 
