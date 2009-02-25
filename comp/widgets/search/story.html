@@ -70,7 +70,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
         js      => qq{onclick="\$('search-type').value = 'simple'"},
         useTable => 0 &>
     
-    <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_title').value = $('search_simple').value; Element.toggle('basic-search', 'advanced-search'); return false">Show more options &raquo;</a>
+        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_title').value = $('search_simple').value; $('basic-search', 'advanced-search').invoke('toggle'); return false">Show more options &raquo;</a>
 
 </div>
 
@@ -229,7 +229,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
         button  => 'clear_values_lgreen',
         useTable => 0 &>
         
-        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_title').value; Element.toggle('basic-search', 'advanced-search'); return false">&laquo; Show fewer options</a>
+        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_title').value; $('basic-search', 'advanced-search').invoke('toggle'); return false">&laquo; Show fewer options</a>
 
         </div>
     </div>

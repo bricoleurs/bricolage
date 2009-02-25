@@ -149,6 +149,11 @@ window. [Adrian Yee]
 Fixed bug #1405, Add Element will now close on double click.
 [Sarah Mercier and Matt Rolf]
 
+=item * 
+
+Fixed bug #1426, find stories/media/template advanced search toggle now works properly.
+[Sarah Mercier and Matt Rolf]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
