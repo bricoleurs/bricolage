@@ -282,6 +282,14 @@ Folks who have submitted patches include:
 
 =item * Adrian Yee
 
+=item * Matt Rolf
+
+=item * Sarah Mercier
+
+=item * Michael Herring
+
+=item * Kahil Jallad
+
 =back
 
 Friends who have spotted bugs include:
@@ -441,8 +449,6 @@ Friends who have spotted bugs include:
 =item * Chris Schults
 
 =item * Dan McGarry
-
-=item * Matt Rolf
 
 =item * Daisuke Maki
 

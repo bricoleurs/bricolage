@@ -1551,7 +1551,11 @@ sub delete_elements {
                 $delete_count{$elem_name}++;
 
                 # Get the minimum occurrence for this parent/child relation
-                my $min_occur = $subelement_type->get_min_occurrence;
+                # Assume minimum occurrence of zero if child not present in parent type
+                my $min_occur = 0;
+                if ($subelement_type) {
+                    $min_occur = $subelement_type->get_min_occurrence;
+                }
 
                 my $occur_diff = $self->get_elem_occurrence($elem_name) - $min_occur;
 

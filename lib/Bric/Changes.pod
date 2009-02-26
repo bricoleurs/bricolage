@@ -157,6 +157,13 @@ Fixed bug #1426, find stories/media/template advanced search toggle now works pr
 =item *
 
 Fixed bug where IE7 couldn't open the sidenav.  [Kahil Jallad]
+
+=item *
+
+Fixed bug where removing a subelement or custom field from an element type
+would result in an error when editting a story with one of those elements.
+[Bret Dawson] 
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
