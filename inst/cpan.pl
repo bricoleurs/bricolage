@@ -179,6 +179,10 @@ END
 
         print "Found $s  Installing...\n";
 
+        # If dependencies were pushed in front of this module, undelay it
+        # so that it can now proceed.
+        $m->undelay;
+
         # get name of module being installed
         my $key = $m->isa('CPAN::Distribution') ? $m->called_for : $s;
 
@@ -198,9 +202,19 @@ END
         # and processed in turn.
         print "Install\n";
         $m->install;
-        exit 1 unless ($m->can('uptodate') ? $m->uptodate : 0)
-                   or ($m->{install} && $m->{install} eq 'YES');
-        print "Done\n";
+        if (
+            ($m->can('uptodate') ? $m->uptodate : 0)      # It's up-to-date
+            or ($m->{install} && $m->{install} eq 'YES')  # It was installed
+        ) {
+            # Done with that module!
+            print "Done\n";
+        } elsif (CPAN::Queue->first ne $q) {
+            # Prereqs need to be satisified.
+            next;
+        } else {
+            # Something's fucked up.
+            exit 1;
+        }
 
         if ($req_version && $m->can('inst_version')) {
             # check to make sure it worked
@@ -211,11 +225,6 @@ END
             hard_fail(fail_msg( $perl, $name, $req_version))
                 unless CPAN::Version->vcmp( $inst, $req_version ) >= 0;
         }
-
-        # I don't understand why this is necessary but CPAN.pm does it when it
-        # walks the queue and not doing it results in failures in some modules
-        # installs (SOAP::Lite, MIME::Lite).
-        $m->undelay;
 
         # remove self from the queue
         CPAN::Queue->delete_first($s);
