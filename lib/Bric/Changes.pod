@@ -164,6 +164,10 @@ Fixed bug where removing a subelement or custom field from an element type
 would result in an error when editting a story with one of those elements.
 [Bret Dawson] 
 
+=item *
+
+Fixed typing error which caused the upgrade script to fail. [Darren Embry]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

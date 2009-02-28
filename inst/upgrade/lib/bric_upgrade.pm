@@ -128,8 +128,8 @@ BEGIN {
     shift @INC;
 
     # Set the db admin user and password to some reasonable defaults.
-    $ENV{BRIC_DBI_USER} ||= $opt_p ||= __PACKAGE__->super_user;
-    $ENV{BRIC_DBI_PASS} ||= $opt_u ||= __PACKAGE__->super_pass;
+    $ENV{BRIC_DBI_USER} ||= $opt_u ||= __PACKAGE__->super_user;
+    $ENV{BRIC_DBI_PASS} ||= $opt_p ||= __PACKAGE__->super_pass;
 
     # Load the DBI.
     require Bric::Util::DBI;
