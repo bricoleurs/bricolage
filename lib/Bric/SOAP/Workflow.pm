@@ -623,7 +623,7 @@ sub checkin {
             : 'Bric::Biz::Asset::Business::' . ucfirst $type;
 
         # Look up the asset.
-        my $obj = $class->lookup( id => $id->value, checkout => 1 ) or throw_ap(
+        my $obj = $class->lookup({ id => $id->value, checkout => 1 }) or throw_ap(
             error => qq{Unable to find checked-oiut $type for id "}
                    . $id->value . '".'
         );

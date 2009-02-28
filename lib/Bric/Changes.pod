@@ -103,6 +103,11 @@ for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
 Files uploaded as images but without any suffix (such as ".jpg") no longer
 cause an error. Reported by Scott (Bug # 1409). [David]
 
+=item *
+
+Fixed a bug in the SOAP server where attempting to check in an asset results
+in an error. Reported by Ashlee Caul. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)
