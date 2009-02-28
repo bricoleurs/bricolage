@@ -118,7 +118,7 @@ sub save : Callback {
 
         # Delete old keywords.
         my $old;
-        my $keywords = { map { $_ => 1 } @{ $param->{keyword_id} } };
+        my $keywords = { map { $_ => 1 } @{ mk_aref($param->{keyword_id}) } };
         foreach ($cat->get_keywords) {
             push @$old, $_ unless $keywords->{$_->get_id};
         }

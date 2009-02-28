@@ -168,6 +168,10 @@ would result in an error when editting a story with one of those elements.
 
 Fixed typing error which caused the upgrade script to fail. [Darren Embry]
 
+=item *
+
+Deleting keywords from category would cause error. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
