@@ -614,53 +614,35 @@ sub checkin {
 
     my %seen;
     foreach my $id (@ids) {
-        my $obj;
-        my $type;
-        if ($id->name eq 'story_id') {
-            $type = 'story';
-            $obj  = Bric::Biz::Asset::Business::Story->lookup(
-                                         { id => $id->value });
-            throw_ap(error => "Unable to find story for story_id \"".$id->value."\".")
-                unless $obj;
+        # What do we have here?
+        (my $type = $id->name) =~ s/_id$//;
+        my $class = $type eq 'template'
+            ? 'Bric::Biz::Asset::Template'
+            : 'Bric::Biz::Asset::Business::' . ucfirst $type;
 
-        } elsif ($id->name eq 'media_id') {
-            $type = 'media';
-            $obj  = Bric::Biz::Asset::Business::Media->lookup(
-                                         { id => $id->value });
-            throw_ap(error => "Unable to find media object for media_id \"".$id->value."\".")
-                unless $obj;
-        } elsif ($id->name eq 'template_id') {
-            $type = 'template';
-            $obj  = Bric::Biz::Asset::Template->lookup(
-                                         { id => $id->value });
-            throw_ap(error => "Unable to find template object for template_id \"".$id->value."\".")
-                unless $obj;
-        } else {
-            throw_ap(error => "Unknown element found in checkin_ids list.");
-        }
+        # Look up the asset.
+        my $obj = $class->lookup({ id => $id->value, checkout => 1 }) or throw_ap(
+            error => qq{Unable to find checked-oiut $type for id "}
+                   . $id->value . '".'
+        );
 
-        # check check check
-        throw_ap(error => "Cannot check-in non checked-out $types{$type}: \"".$id->value."\".")
-            unless $obj->get_checked_out;
+        # Check for EDIT permission.
+        throw_ap( error => 'Access denied.' ) unless chk_authz($obj, EDIT, 1);
 
-        # Check for EDIT permission
-        throw_ap(error => "Access denied.")
-          unless chk_authz($obj, EDIT, 1);
+        # Make sure we're not trying to checkin stuff repeatedly
+        next if $seen{$type}{$id}++;
 
-        # make sure we're not trying to checkin stuff repeatedly
-        next if $seen{$type}{$id};
-        $seen{$type}{$id} = 1;
+        # Make sure that we have a desk.
+        throw_ap(
+            error => qq{Cannot check-in $types{$type} without a current desk: "}
+                  . $id->value . '".'
+        ) unless $obj->get_current_desk;
 
-        # check that we have a desk
-        my $curr_desk = $obj->get_current_desk;
-        throw_ap(error => "Cannot check-in $types{$type} without a current desk: \"".$id->value."\".")
-            unless $curr_desk;
-
-        # check 'em in
+        # Check it in.
         $obj->checkin;
         $obj->save;
 
-        # log the checkin
+        # Log the checkin.
         log_event("${type}_checkin", $obj, { Version => $obj->get_version });
     }
 

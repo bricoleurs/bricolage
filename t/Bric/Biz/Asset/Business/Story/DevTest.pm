@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(170) {
+sub test_select_methods: Test(201) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -218,14 +218,63 @@ sub test_select_methods: Test(170) {
     $story[0]->set_cover_date('2005-03-23 06:11:29');
     $story[0]->checkin();
     $story[0]->save();
+    is $story[0]->get_version, 1, 'Version should be 1';
+    is $story[0]->get_current_version, 1, 'Current version should be 1';
+    ok !$story[0]->get_checked_out, 'It should not be checked out';
     push @{$OBJ_IDS->{story}}, $story[0]->get_id();
     $self->add_del_ids( $story[0]->get_id() );
 
+    # We should be able to look up the story by version id.
+    my $vid = $story[0]->get_version_id;
+    ok my $version = $class->lookup({ version_id => $vid }),
+        'Look up by version ID';
+    is $version->get_version, 1, 'Should be version 1';
+    is $version->get_current_version, 1, 'Version version should be 1';
+    ok !$version->get_checked_out, 'Version should not be checked out';
+
     $story[0]->checkout({ user__id => $self->user_id });
+    $story[0]->save;
+    is $story[0]->get_version, 1, 'Version should still be 1';
+    is $story[0]->get_current_version, 1, 'Current version should still be 1';
+    ok $story[0]->get_checked_out, 'It should now be checked out';
+
+    # Make sure we can still lookup the old version.
+    ok $version = $class->lookup({ version_id => $vid }),
+        'Look up by version ID again';
+    is $version->get_version, 1, 'It should still be version 1';
+    is $version->get_current_version, 1, 'Current version version should still be 1';
+    ok !$version->get_checked_out, 'Version should still not be checked out';
+
     $story[0]->checkin();
+    ok !$story[0]->get_checked_out, 'It should not be checked out';
+    is $story[0]->get_version, 2, 'Version should be 2';
+    is $story[0]->get_current_version, 2, 'Current version should be 2';
     $story[0]->save();
     $story[0]->checkout({ user__id => $self->user_id });
     $story[0]->save();
+    is $story[0]->get_version, 2, 'Version should still be 2';
+    is $story[0]->get_current_version, 2, 'Current version should still be 2';
+    ok $story[0]->get_checked_out, 'It should be checked out';
+
+    # Publish the first version.
+    ok $version->set_publish_date(Bric::Util::Time::db_date(undef, 1)),
+        'Set publish date';
+    ok $version->set_publish_status(1), 'Set publish status';
+    ok $version->save, 'Save published version';
+
+    # Look up the story again.
+    ok $story[0] = class->lookup({ id => $story[0]->get_id }),
+        'Look up the story again';
+    is $story[0]->get_version, 2, 'Version should still be 2';
+    is $story[0]->get_current_version, 2, 'Current version should still be 2';
+    ok $story[0]->get_checked_out, 'It should be checked out';
+
+    # Make sure we can still lookup the old version.
+    ok $version = $class->lookup({ version_id => $vid }),
+        'Look up by version ID yet once again';
+    is $version->get_version, 1, 'It should still be version 1, of course';
+    is $version->get_current_version, 2, 'But current version version should be 2';
+    ok !$version->get_checked_out, 'Version should of course still not be checked out';
 
     # Test checked_out and checkout.
     ok my $st = class->lookup({

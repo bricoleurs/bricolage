@@ -383,6 +383,7 @@ sub _deploy {
             $cur_desk->save;
         } else {
             $pub_desk->accept({ asset => $template });
+            $cur_desk = $pub_desk;
         }
 
         # Save the deploy desk and log it.

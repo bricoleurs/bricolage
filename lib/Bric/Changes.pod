@@ -557,6 +557,27 @@ to install files in their proper locations. [Brian Smith and David]
 
 =head2 Improvements
 
+=over
+
+=item *
+
+The "Save, Save and Stay, and Return" buttons in the Edit Categories screen 
+of the story profile are moved to the right to better align with the interface
+buttons. [Matt Rolf]
+
+=item *
+
+Improved documentation of the C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf>
+directive with speficic reference to SFTP versions. [Alex Krohn]
+
+=item *
+
+Events are now logged using wallclock time rather than transaction start time,
+so that multiple events logged in a single transaction can be displayed in the
+order they were created, rather than in an arbitrary order. [David]
+
+=back
+
 =head3 Bug Fixes
 
 =over
@@ -566,6 +587,69 @@ to install files in their proper locations. [Brian Smith and David]
 Fixed a bug where authorization failiures in callbacks could lead to a bogus
 error, rather than sending a "Permission Denied" error to the user. Reported
 by Matt Rolf (Bug #1362). [David]
+
+=item *
+
+Fixed a div nesting bug which was causing buttons to improperly align
+depending on pagination choices. [Matt Rolf]
+
+=item *
+
+Fixed a typo in F<bric_soap> that prevented it from compiling. Reported by
+Ashlee Caul. [David]
+
+=item *
+
+Fixed a bug where a publish would appear to fail when no publish jobs were
+created (for example, when a story is published to a destination with no
+associated servers). Reported by Ashlee Caul. [David]
+
+=item *
+
+Fixed a bug where the media type of an uploaded file would not be detected if
+its extension had upper-case characters. Reported by Bret Dawson. [Greg Heo]
+
+=item *
+
+Changed the SOAP checkin code so that it is functinally identical to the UI
+checkin code. Hoping that this solves the issue with duplicate version
+constraint violations. [David]
+
+=item *
+
+Looking up a document or template by version ID no longer fails if the asset
+has been checked out and not yet checked back in since that version ID was
+created. Among other subtle bugs, this change fixes publishes that failed with
+the error message 'Can't call method "get_id" on an undefined value'. Reported
+by Scott (Bug #1417). [David]
+
+=item *
+
+Fixed a bug where a scheduled publish can muck with version numbers. Reported
+by Matt Rolf, Ashlee Caul, and others. [David]
+
+=item *
+
+Fixed a bug with the virtual FTP server where deploying a template by renaming
+it with ".deploy" at the end can cause the template to be stranded on a desk.
+Reported by Phillip Smith (Bug # 1372). [David]
+
+=item *
+
+Fixed resource (file name) lookups whe publishing and/or previewing documents
+so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
+for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
+[David]
+
+=item *
+
+Files uploaded as images but without any suffix (such as ".jpg") no longer
+cause an error. Reported by Scott (Bug # 1409). [David]
+
+=item *
+
+Fixed a bug in the SOAP server where attempting to check in an asset results
+in an error. Reported by Ashlee Caul. [David]
 
 =back
 
@@ -948,7 +1032,7 @@ Fixed the display of a field name when confirming changes to a field type.
 =item *
 
 Fixed a bug in the subelement type search display where the last element type
-search term was displayed in the search box. It not properly displays the last
+search term was displayed in the search box. It now properly displays the last
 subelement type search string, if any. [David]
 
 =item *

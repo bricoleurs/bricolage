@@ -2162,7 +2162,7 @@ sub save {
         $self->_set(['_checkout'], []);
     }
 
-    # Is this necessary? Seems kind of pointless. [David 2002-09-19]
+    # Once we've saved, clear the checkin flag.
     $self->_set(['_checkin'], []) if $ci;
 
     # Revert stores the old element for deletion. So save it to delete it.

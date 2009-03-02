@@ -4,7 +4,7 @@ Bric::License - The Bricolage License.
 
 =head1 LICENSE
 
-Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2006
+Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2009
 Kineticode, Inc. and others.
 
 All rights reserved.

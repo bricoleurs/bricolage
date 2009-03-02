@@ -102,8 +102,8 @@ my @SEL_PROPS = qw(id event_type_id user_id obj_id timestamp key_name name
 
 my @PROPS = (@SEL_PROPS, 'attr');
 
-my @ECOLS = qw(id event_type__id usr__id obj_id timestamp);
-my @EPROPS = qw(id event_type_id user_id obj_id timestamp);
+my @ECOLS = qw(id event_type__id usr__id obj_id);
+my @EPROPS = qw(id event_type_id user_id obj_id);
 
 my @ORD = qw(name key_name description trig_id trig class timestamp);
 my $METHS;
@@ -1407,9 +1407,9 @@ $get_em = sub {
             if $params->{OrderDirection};
     }
 
-    my $limit = exists $params->{Limit}  ? 'LIMIT ' . delete $params->{Limit}
-              : exists $params->{Offset} ? 'LIMIT ' . LIMIT_DEFAULT
-              :                          '';
+    my $limit = exists $params->{Limit}
+        ? 'LIMIT ' . delete $params->{Limit}
+        : '';
 
     my $offset = exists $params->{Offset}
         ? 'OFFSET ' . delete $params->{Offset}

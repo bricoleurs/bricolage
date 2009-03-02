@@ -1009,14 +1009,7 @@ sub preview {
             my $path = $ba->get_path;
             my $uri = $ba->get_uri($oc);
             if ($path && $uri) {
-                my $res = Bric::Dist::Resource->lookup({ path => $path,
-                                                       uri  => $uri })
-                  || Bric::Dist::Resource->new
-                    ({ path => $path,
-                       media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                       uri => $uri
-                     });
-
+                my $res = _get_resource( $path, $uri);
                 $res->add_media_ids($ba->get_id);
                 $res->save;
                 push @$resources, $res;
@@ -1319,14 +1312,7 @@ sub publish {
                 my $path = $ba->get_path;
                 my $uri = $ba->get_uri($oc);
                 if ($path && $uri) {
-                    my $res = Bric::Dist::Resource->lookup({ path => $path,
-                                                           uri  => $uri })
-                      || Bric::Dist::Resource->new({
-                          path => $path,
-                          media_type => Bric::Util::MediaType->get_name_by_ext($uri),
-                          uri => $uri
-                      });
-
+                    my $res = _get_resource( $path, $uri);
                     $res->add_media_ids($baid);
                     $res->save;
                     $job->add_resources($res);
@@ -1353,7 +1339,7 @@ sub publish {
     }
 
     # Expire stale resources, if necessary.
-    if (my @stale = Bric::Dist::Resource->list({
+    if (@job_ids and my @stale = Bric::Dist::Resource->list({
         "$key\_id" => $baid,
         not_job_id => ANY(@job_ids),
     })) {
@@ -2123,16 +2109,7 @@ sub add_resource {
     my ($story, $ext, $ress) = $self->_get(qw(story output_ext resources));
 
     # Create a resource for the distribution stuff.
-    my $res = Bric::Dist::Resource->lookup({
-        path => $file,
-        uri  => $uri,
-    }) || Bric::Dist::Resource->new({
-        path => $file,
-        uri  => $uri,
-    });
-
-    # Set the media type.
-    $res->set_media_type(Bric::Util::MediaType->get_name_by_ext($ext));
+    my $res = _get_resource( $file, $uri);
     # Add our story ID.
     $res->add_story_ids($story->get_id);
     $res->save;
@@ -2222,6 +2199,18 @@ sub _get_subclass {
     return $burner_class->new($self);
 }
 
+=item $burner->_expire($expire_date, $ba, $server_types, $exp_name, $user_id, $resources)
+
+Sets up an expiration job for resources.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
 sub _expire {
     my ($self, $exp_date, $ba, $bat, $expname, $user_id, $res) = @_;
     # Make sure we haven't expired this asset on that date already.
@@ -2246,6 +2235,33 @@ sub _expire {
         $exp_job->save;
         log_event('job_new', $exp_job);
     }
+}
+
+=item $burner->_get_resource( $path, $uri )
+
+Looks up or creates a resource objct for the given path/URI combination. SQL
+LIKE wildcard characters are escaped so as to avoid bogus lookups.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _get_resource {
+    my ($path, $uri) = @_;
+    ( my $lpath = $path) =~ s/([%_])/\\$1/g;
+    ( my $luri  = $uri)  =~ s/([%_])/\\$1/g;
+    return Bric::Dist::Resource->lookup({
+        path => $lpath,
+        uri  => $luri,
+    }) || Bric::Dist::Resource->new({
+        path       => $path,
+        uri        => $uri,
+        media_type => Bric::Util::MediaType->get_name_by_ext($uri),
+    });
 }
 
 #------------------------------------------------------------------------------#

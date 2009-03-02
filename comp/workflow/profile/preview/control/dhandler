@@ -20,7 +20,7 @@ Outputs a frameset on preview with controls to repreview pages.
 <html xmlns="http://www.w3.org/TR/1999/REC-html-in-xml"
       xml:lang="en" lang="en" >
 <head>
-<title>Bricolage Preview</title>
+<title><% get_pref('Bricolage Instance Name') %> Preview</title>
 <script type="text/javascript">
   var preview_uri = "/workflow/profile/preview/<% $m->dhandler_arg %><% $query %>";
 </script>

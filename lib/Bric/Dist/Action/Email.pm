@@ -617,9 +617,4 @@ each destination for which resources are to be distributed.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (c) 2003-2008 Kineticode, Inc. See L<Bric::License|Bric::License>
-for complete license terms and conditions.
-
 =cut

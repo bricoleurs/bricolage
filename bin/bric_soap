@@ -259,29 +259,28 @@ BEGIN {
     our $desk;
     our $workflow;
     our ($help, $man);
-    GetOptions(
-        'help'                   => \$help,
-        'man'                    => \$man,
-        'verbose+'               => \$verbose,
-        'username=s'             => \$username,
-        'password:s'             => \$password,
-        'server=s'               => \$server,
-        'search=s'               => \%search,
-        'with-related-stories'   => \$with_related_stories,
-        'with-related-media'     => \$with_related_media,
-        'use-related-uri'        => \$use_related_uri,
-        'all'                    => sub { $with_related_stories = $with_related_media   = 1 },
-        'to-preview'             => \$to_preview,
-        'publish-date=s'         => \$publish_date,
-        'published-only'         => \$published_only,
-        'desk=s'                 => \$desk,
-        'workflow=s'             => \$workflow,
-        'timeout=s'              => \$timeout,
-        'save-cookie-file=s'     => \$save_cookie,
-        'use-cookie-file=s'      => \$use_cookie,
-        'chunks=s',              => \$chunks,
-        'continue-on-errors'     => \$continue,
-    ) or  pod2usage(2);
+    GetOptions("help"                   => \$help,
+           "man"                    => \$man,
+           "verbose+"               => \$verbose,
+           "username=s"             => \$username,
+           "password:s"             => \$password,
+           "server=s"               => \$server,
+           "search=s"               => \%search,
+           "with-related-stories"   => \$with_related_stories,
+           "with-related-media"     => \$with_related_media,
+           "use-related-uri"        => \$use_related_uri,
+           "all"                    => sub { $with_related_stories = $with_related_media = 1; },
+           "to-preview"             => \$to_preview,
+           "publish-date=s"         => \$publish_date,
+           "published-only"         => \$published_only,
+           "desk=s"                 => \$desk,
+           "workflow=s"             => \$workflow,
+           "timeout=s"              => \$timeout,
+           "save-cookie-file=s"     => \$save_cookie,
+           "use-cookie-file=s"      => \$use_cookie,
+           "chunks=s",              => \$chunks,
+           "continue-on-errors"     => \$continue,
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;

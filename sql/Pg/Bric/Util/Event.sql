@@ -23,7 +23,7 @@ CREATE TABLE event (
     usr__id           INTEGER           NOT NULL,
     obj_id            INTEGER           NOT NULL,
     timestamp         TIMESTAMP         NOT NULL
-                                        DEFAULT CURRENT_TIMESTAMP,
+                                        DEFAULT timeofday()::timestamptz,
     CONSTRAINT pk_event__id PRIMARY KEY (id)
 );
 
