@@ -102,7 +102,7 @@ if (ref $job eq 'Bric::Util::Job::Dist') {
 
 # Add the form buttons and other necessities.
 $m->comp("/widgets/profile/formButtons.mc", type => $type, section => $widget,
-          no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this Job',
+          no_del => $no_del, no_save => $no_edit, chk_label => 'Cancel this ',
           ret_val => 'return_dgreen', widget => $type);
 $m->out("</form>\n");
 $m->comp('/widgets/wrappers/footer.mc', param => \%ARGS );
