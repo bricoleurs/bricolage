@@ -179,6 +179,11 @@ Deleting keywords from category would cause error. [Adrian Yee]
 New bulk edit button would cause submit error in IE7 because it didn't call
 the customSubmit function. [Kahil Jallad, Sarah Mercier] 
 
+=item *
+
+Fixed bug #1425, where the enter key would not submit an advanced search form.
+[Bret Dawson]
+
 =head1 VERSION 1.11.1 (2008-10-03)
 
 =head2 Improvements

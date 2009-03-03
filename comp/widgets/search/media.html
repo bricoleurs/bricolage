@@ -11,6 +11,8 @@ $insert
 my $advanced_search = $state->{advanced_search};
 $advanced_search = get_pref('Default Search')
   unless defined $advanced_search;
+my $initial_search_type = 'simple';
+$initial_search_type = 'advanced' if $advanced_search;
 my $asset_opts = {
         '' => $lang->maketext('All Types'),
         map { $_->get_id, $_->get_name }
@@ -54,14 +56,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
         name    => $widget.'|media_cb',
         value   => 'simple' &>
 
-    <& '/widgets/profile/button.mc',
-        disp    => $lang->maketext('Search'),
-        name    => 'simple_search',
-        button  => 'search_red',
-        js      => qq{onclick="\$('search-type').value = 'simple'"},
-        useTable => 0 &>
-
-        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_name').value = $('search_simple').value; $('basic-search', 'advanced-search').invoke('toggle'); return false">Show more options &raquo;</a>
+    <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_name').value = $('search_simple').value; $('search-button').name = 'advanced_search'; $('search-button').onclick = $('search-type').value = 'advanced'; $('basic-search', 'advanced-search', 'clear-button').invoke('toggle'); $('button-wrap').setStyle({margin: '0 0 0 0'}); return false">Show more options &raquo;</a>
 
 </div>
 
@@ -191,28 +186,33 @@ $m->comp("/widgets/wrappers/table_top.mc",
                      compact    => 1,
                      style      => 'inline',
                   &>
-        </div>
-    </div>
-    <div class="row">
-        <div class="input">
-            <& /widgets/profile/button.mc,
-                disp    => $lang->maketext('Search'),
-                name    => 'advanced_search',
-                button  => 'search_red',
-                js      => qq{onclick="\$('search-type').value = 'advanced'"},
-                useTable => 0 &>
-            <& /widgets/profile/button.mc,
-                disp    => $lang->maketext('Clear Values'),
-                widget  => $widget,
-                cb      => 'clear_cb',
-                button  => 'clear_values_lgreen',
-                useTable => 0 &>
-                
-        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_name').value; $('basic-search', 'advanced-search').invoke('toggle'); return false">&laquo; Show fewer options</a>
+
+            <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_name').value; $('search-button').name = 'simple_search'; $('search-button').onclick = $('search-type').value = 'simple'; $('basic-search', 'advanced-search', 'clear-button').invoke('toggle'); $('button-wrap').setStyle({margin: '5px 0 0 -140px'}); return false">&laquo; Show fewer options</a>
 
         </div>
     </div>
 </div>
+
+<div id="button-wrap" class="row"<% ($advanced_search) ? '' : ' style="margin: 5px 0 0 -140px;"' %>>
+    <div class="input" id="search-buttons">
+        <& /widgets/profile/button.mc,
+          id      => 'search-button',
+          disp    => $lang->maketext('Search'),
+          name    => $initial_search_type.'_search',
+          button  => 'search_red',
+          js      => qq{onclick="\$('search-type').value = '$initial_search_type'"},
+          useTable => 0 &>
+        <span id="clear-button"<% ($advanced_search) ? '' : ' style="display: none"' %>>
+            <& /widgets/profile/button.mc,
+              disp    => $lang->maketext('Clear Values'),
+              widget  => $widget,
+              cb      => 'clear_cb',
+              button  => 'clear_values_lgreen',
+              useTable => 0 &>
+        </span>        
+    </div>
+</div>
+
 <% $insert %>
 <& '/widgets/wrappers/table_bottom.mc' &>
 
