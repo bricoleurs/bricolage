@@ -53,7 +53,7 @@
         <ul>
 % if (!$user && $action eq 'checkin_cb') {
             <li style"padding-right: 8em !important;">
-<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to " <% $desk->get_name %>  ")" value="Check in (double click to check in to " <% $desk->get_name %>  ")"  onclick="Desk.showMenu(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" />Check In</a>
+<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to " <% $desk->get_name %>  ")" value="Check in (double click to check in to " <% $desk->get_name %>  ")"  onclick="Desk.menuHandler(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" />Check In</a>
                 <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none">
                     <h4>Check in:</h4>
                     <ul>
@@ -70,7 +70,7 @@
 % }
 
 % if (!$user && $can_edit && $move_opts) {
-            <li style="margin-left: 3em;"> <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.showMenu(this, event); return false" title="Move"> <img src="/media/images/move.gif" alt="Move" />Move </a>
+            <li style="margin-left: 3em;"> <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.menuHandler(this, event); return false" title="Move"> <img src="/media/images/move.gif" alt="Move" />Move </a>
                 <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none;">
                     <h4>Move:</h4>
                     <ul>
@@ -94,7 +94,7 @@
 %           if ($class eq 'template') {
 <a name="deploy_<% ${class} %>_<% ${id} %>" id="deploy_<% ${class} %>_<% ${id} %>" title="Deploy" onclick="<% &$publish_js %>"/><img src="/media/images/deploy.gif"/>Deploy</a>
 %           } else {
-<a name="publish_<% ${class} %>_<% ${id} %>" id="publish_<% ${class} %>_<% ${id} %>" title="Publish (double click to publish now)" onclick="Desk.showMenu(this, event); return false" ondblclick="<% &$publish_js %>" /><img src="/media/images/publish.gif"/>Publish</a>
+<a name="publish_<% ${class} %>_<% ${id} %>" id="publish_<% ${class} %>_<% ${id} %>" title="Publish (double click to publish now)" onclick="Desk.menuHandler(this, event); return false" ondblclick="<% &$publish_js %>" /><img src="/media/images/publish.gif"/>Publish</a>
                 <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; display: none">
                     <h4>Publish:</h4>
                     <ul>
