@@ -46,14 +46,14 @@
 %           }
             <li style="margin-right: 1.2em;"><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Trail/Log') %>"><img src="/media/images/log.png" alt="<% $lang->maketext('Trail/Log') %>" /><% $lang->maketext('Trail/Log') %></a></li>
 % if ($can_edit) {
-    <li> <a name="<% ${class} %>_delete_ids" id="<% ${widget} %>_<% $id %>" title="<% $lang->maketext('Delete') %>"  onclick="if (Desk.confirmDelete()) { Desk.request({ parameters: '<% ${widget} %>|delete_cb=<% ${class} %>_<% $id %>' }); Effect.Shrink('<% ${class} %>_<% $id %>'); } return false"> <img src="/media/images/trash.png" />Delete</a> </li>
+    <li> <a name="<% ${class} %>_delete_ids" id="<% ${widget} %>_<% $id %>" title="<% $lang->maketext('Delete') %>"  onclick="if (Desk.confirmDelete()) { Desk.request({ parameters: '<% ${widget} %>|delete_cb=<% ${class} %>_<% $id %>' }); Effect.Shrink('<% ${class} %>_<% $id %>'); } return false"> <img src="/media/images/trash.png" alt="Trash Can" />Delete</a> </li>
 % }
         </ul>
 
         <ul>
 % if (!$user && $action eq 'checkin_cb') {
-            <li style"padding-right: 8em !important;">
-<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to " <% $desk->get_name %>  ")" value="Check in (double click to check in to " <% $desk->get_name %>  ")"  onclick="Desk.menuHandler(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" />Check In</a>
+            <li style="padding-right: 8em !important;">
+<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
                 <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none">
                     <h4>Check in:</h4>
                     <ul>
