@@ -477,12 +477,13 @@ sub delete : Callback {
 
     if (chk_authz($obj, EDIT, 1)) {
         my $desk = $obj->get_current_desk;
+        $desk->checkin($obj) if $obj->get_checked_out;
         $desk->remove_asset($obj);
-        $desk->save;
-        log_event("${class}_rem_workflow", $obj);
         $obj->set_workflow_id(undef);
         $obj->deactivate;
+        $desk->save;
         $obj->save;
+        log_event("${class}_rem_workflow", $obj);
 
         if ($class eq 'template') {
             my $burn = Bric::Util::Burner->new;
