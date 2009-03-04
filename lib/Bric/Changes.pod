@@ -71,6 +71,10 @@ Display a hint about subelements in the story view. This is especially
 important when they have no related stories or media and are not revealed, so
 that you can tell what each is! [David]
 
+=item *
+
+Workspaces, Desks, and debug messages validate again. [Matt Rolf]
+
 =back
 
 =head2 Bug Fixes
