@@ -187,6 +187,12 @@ Fixed bug #1425, where the enter key would not submit an advanced search form.
 Fixed bug #1439, desks no longer have double pagination bars at the bottom.
 [Matt Rolf]
 
+=item *
+
+Fixed a bug where deleting a checked out asset from My Workspace or the desk
+would still offer an Edit link in the search results. Reported by John Durkin
+(Bug #1388). [Greg Heo]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
