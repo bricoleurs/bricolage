@@ -184,6 +184,11 @@ the customSubmit function. [Kahil Jallad, Sarah Mercier]
 Fixed bug #1425, where the enter key would not submit an advanced search form.
 [Bret Dawson]
 
+=item *
+
+Fixed bug #1439, desks no longer have double pagination bars at the bottom.
+[Matt Rolf]
+
 =head1 VERSION 1.11.1 (2008-10-03)
 
 =head2 Improvements
