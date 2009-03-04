@@ -172,8 +172,6 @@ Fixed typing error which caused the upgrade script to fail. [Darren Embry]
 
 Deleting keywords from category would cause error. [Adrian Yee]
 
-=back
-
 =item * 
 
 New bulk edit button would cause submit error in IE7 because it didn't call
@@ -188,6 +186,8 @@ Fixed bug #1425, where the enter key would not submit an advanced search form.
 
 Fixed bug #1439, desks no longer have double pagination bars at the bottom.
 [Matt Rolf]
+
+=back
 
 =head1 VERSION 1.11.1 (2008-10-03)
 
