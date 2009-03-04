@@ -79,9 +79,7 @@ Container.updateOrder('element_<% $id %>');
     </div>
 %   }
 
-<button id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" onclick="customSubmit('theForm','<% $top_level ? 'container_prof|bulk_edit_this_cb' : 'container_prof|bulk_edit_cb' %>','<% $id %>')">
-    <img src="/media/images/bulk-edit.png" alt="Bulk Edit" /> Bulk Edit
-</button>
+<span style="cursor: pointer;" id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" onclick="customSubmit('theForm','<% $top_level ? 'container_prof|bulk_edit_this_cb' : 'container_prof|bulk_edit_cb' %>','<% $id %>')" > <img src="/media/images/bulk-edit.png" alt="Bulk Edit" />Bulk Edit</span>
 </div>
 % unless ($top_level) {
 </fieldset>
