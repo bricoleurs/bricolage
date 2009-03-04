@@ -17,8 +17,9 @@ Test::Class
 Apache Service Location
 
   Under normal circumstances this would be /usr/sbin/httpd, but on the Ubuntu
-  system it should be /usr/sbin/apache(-perl). This will arise when you try to
-  install Bricolage as one of the questions.
+  system it should be /usr/sbin/apache(-perl). (As of Intrepid Ibex, at least,
+  only Apache 2 is supported, so this is /usr/sbin/apache2.) This will arise
+  when you try to install Bricolage as one of the questions.
 
 Postgres Setup
 
