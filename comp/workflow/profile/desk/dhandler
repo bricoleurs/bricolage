@@ -22,11 +22,6 @@
 
 % }
 
-<& '/widgets/desk/desk_bottom.html',
-    offset   => $offset,
-    show_all => $show_all 
-&>
-
 </form>
 
 % }
