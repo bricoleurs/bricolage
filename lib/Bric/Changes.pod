@@ -65,6 +65,12 @@ Krohn]
 Upgraded Prototype and Scriptaculous libraries to versions 1.6.0.3 and 1.8.2 
 respectively. [Rolf, Mercier, Herring]
 
+=item *
+
+Display a hint about subelements in the story view. This is especially
+important when they have no related stories or media and are not revealed, so
+that you can tell what each is! [David]
+
 =back
 
 =head2 Bug Fixes

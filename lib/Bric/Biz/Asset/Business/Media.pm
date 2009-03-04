@@ -1412,9 +1412,10 @@ sub get_uri {
                    "associated with media '" . $self->get_name . "'")
       unless $self->get_output_channels($oc->get_id);
 
-    return Bric::Util::Trans::FS->cat_uri
-      ($self->_construct_uri($self->get_category_object, $oc),
-       $oc->get_filename($self));
+    return Bric::Util::Trans::FS->cat_uri(
+        $self->_construct_uri($self->get_category_object, $oc),
+        escape_uri($oc->get_filename($self))
+    );
 }
 
 ##############################################################################

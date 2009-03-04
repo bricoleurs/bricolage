@@ -6,6 +6,9 @@
 <span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
+% if ($hint_val) {
+<p class="hint"><strong><% $hint_name %>:</strong> <% $hint_val  %></p>
+% }
 % if ($type->is_related_story) {
 <div id="element_<% $id %>_rel_story">
     <& '_related.html',
@@ -119,6 +122,15 @@ my $id   = $element->get_id;
 my $name = 'con' . $id;
 my $top_level = (get_state_data($widget, 'element') == $element);
 my $displayed = $element->get_displayed;
+
+# Find something to indicate what the element contains.
+my ($hint_name, $hint_val);
+foreach my $field ($element->get_fields) {
+    $hint_val  = $field->get_value or next;
+    $hint_name = $field->get_name;
+    $hint_val  = substr($hint_val, 0, 64);
+    last;
+}
 
 # Get the list of fields and subelements that can be added.
 my $elem_opts = [
