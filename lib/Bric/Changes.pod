@@ -201,7 +201,12 @@ Fixed bug #1439, desks no longer have double pagination bars at the bottom.
 
 Fixed a bug where deleting a checked out asset from My Workspace or the desk
 would still offer an Edit link in the search results. Reported by John Durkin
-(Bug #1388). [Greg Heo]
+and Matt Rolf(Bug #1388). [Greg Heo]
+
+=item *
+
+Fixed bug #1386, help button no longer wipes unsaved values from pages when
+clicked. [Sarah Mercier]
 
 =back
 
