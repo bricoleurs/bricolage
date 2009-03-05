@@ -945,6 +945,7 @@ sub test_new_grp_ids: Test(4) {
               'asset_grp_ids');
 }
 
+##############################################################################
 sub test_upload_before_save : Test(6) {
     my $self    = shift;
     my $class   = $self->class;
@@ -968,7 +969,7 @@ sub test_upload_before_save : Test(6) {
 
     # Upload a file before saving the media.
     ok open my $file, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
-    ok $media->upload_file($file, __FILE__), 'Upload a media file';
+    ok $media->upload_file($file, 'foo.png'), 'Upload a media file';
 
     # Now save the media.
     ok $media->save, 'Save the media document';

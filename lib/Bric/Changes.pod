@@ -108,6 +108,16 @@ cause an error. Reported by Scott (Bug # 1409). [David]
 Fixed a bug in the SOAP server where attempting to check in an asset results
 in an error. Reported by Ashlee Caul. [David]
 
+=item *
+
+Republishing a story will no longer delete files from that story on preview
+servers. Similarly, Publish a media document with a new file but with the same
+name as a previously-published version will no longer cause that file to be
+deleted from production destionations. This bug has been fixed and refixed
+numerous times, but this time tests have been added to make sure that it
+I<stays> fixed. Reported by Matt Rolf, Ashlee Caul, and others (Bug # 1368).
+[David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

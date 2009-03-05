@@ -1212,7 +1212,7 @@ sub publish {
     my $at = $ats->{$ba->get_element_type_id} ||= $ba->get_element_type;
     my $ocs = $ba->get_output_channels;
 
-    my @job_ids;
+    my (@job_ids, %uris);
     foreach my $oc (@$ocs) {
         my $ocid = $oc->get_id;
         my $base_path = $fs->cat_dir($self->get_out_dir, 'oc_'. $ocid);
@@ -1290,6 +1290,7 @@ sub publish {
             $job->save;
             log_event('job_new', $job);
             push @job_ids, $job->get_id;
+            $uris{$_->get_uri} = undef for $job->get_resources;
 
             # Set up an expire job, if necessary.
             if ($exp_date and my @res = $job->get_resources) {
@@ -1303,6 +1304,7 @@ sub publish {
     # Expire stale resources, if necessary.
     if (@job_ids and my @stale = Bric::Dist::Resource->list({
         "$key\_id" => $baid,
+        not_uri    => ANY(keys %uris),
         not_job_id => ANY(@job_ids),
     })) {
         # Yep, there are old resources to expire. Map them to destinations.
@@ -1310,7 +1312,8 @@ sub publish {
         my %dest_for;
         for my $res (@stale) {
             for my $dest (Bric::Dist::ServerType->list({
-                resource_id => $res->get_id
+                resource_id => $res->get_id,
+                active      => 1,
             })) {
                 $dest_for{$dest->get_id} ||= $dest;
                 push @{ $resources_for{$dest->get_id} ||= [] }, $res;
@@ -2126,25 +2129,25 @@ sub _expire {
     # Make sure we haven't expired this asset on that date already.
     # XXX There could potentially be some files missed because of
     # changes between versions, but that should be extremely uncommon.
-    unless (Bric::Util::Job::Dist->list_ids({
+    return if Bric::Util::Job::Dist->list_ids({
         sched_time  => $exp_date,
         resource_id => $res->[0]->get_id,
         type        => 1,
-    })->[0]) {
-        # We'll need to expire it.
-        my $exp_job = Bric::Util::Job::Dist->new({
-            sched_time   => $exp_date,
-            user_id      => $user_id,
-            server_types => $bat,
-            name         => $expname,
-            resources    => $res,
-            type         => 1,
-            priority     => $ba->get_priority,
-            $ba->key_name . '_instance_id' => $ba->get_version_id,
-        });
-        $exp_job->save;
-        log_event('job_new', $exp_job);
-    }
+    })->[0];
+
+    # We'll need to expire it.
+    my $exp_job = Bric::Util::Job::Dist->new({
+        sched_time   => $exp_date,
+        user_id      => $user_id,
+        server_types => $bat,
+        name         => $expname,
+        resources    => $res,
+        type         => 1,
+        priority     => $ba->get_priority,
+        $ba->key_name . '_instance_id' => $ba->get_version_id,
+    });
+    $exp_job->save;
+    log_event('job_new', $exp_job);
 }
 
 =item $burner->_get_resource( $path, $uri )
