@@ -118,6 +118,12 @@ numerous times, but this time tests have been added to make sure that it
 I<stays> fixed. Reported by Matt Rolf, Ashlee Caul, and others (Bug # 1368).
 [David]
 
+=item *
+
+Fixed a bug in the virtual FTP server so that, when a template is deployed by
+uploading it with F<.deploy> appended to its name, it is properly removed from
+that deploy desk. Reported by Phillip Smith (Bug #1372). [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

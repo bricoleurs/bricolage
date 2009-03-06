@@ -389,8 +389,8 @@ sub _deploy {
             $cur_desk->save;
         } else {
             $pub_desk->accept({ asset => $template });
-            $cur_desk = $pub_desk;
         }
+        $cur_desk = $pub_desk;
 
         # Save the deploy desk and log it.
         $pub_desk->save;
@@ -412,7 +412,7 @@ sub _deploy {
     $cur_desk->remove_asset($template);
     $cur_desk->save;
 
-            # clear the workflow ID
+    # clear the workflow ID
     if ($template->get_workflow_id) {
         $template->set_workflow_id(undef);
         Bric::Util::Event->new({
