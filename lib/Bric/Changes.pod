@@ -86,6 +86,12 @@ Factored the creation of a canonical URL for a request into a new method,
 C<< Bric::Util::ApacheReq->url >>. This removes a fair bit of duplicate code
 found here and there. [David]
 
+=item *
+
+Added the C<publishing()>, C<previewing()>, and C<compling()> sugar methods to
+L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the same
+code to check modes in templates all the time. [David]
+
 =back
 
 =head2 Bug Fixes

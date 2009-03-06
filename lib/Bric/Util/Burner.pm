@@ -194,8 +194,10 @@ Profit.
 use base qw(Bric Exporter);
 
 our @EXPORT_OK = qw(PUBLISH_MODE PREVIEW_MODE SYNTAX_MODE);
-our %EXPORT_TAGS = ( all => \@EXPORT_OK,
-                     modes => \@EXPORT_OK);
+our %EXPORT_TAGS = (
+    all   => \@EXPORT_OK,
+    modes => \@EXPORT_OK
+);
 
 #==============================================================================#
 # Dependencies                         #
@@ -235,7 +237,7 @@ use URI;
 #======================================#
 use constant PUBLISH_MODE => 1;
 use constant PREVIEW_MODE => 2;
-use constant SYNTAX_MODE => 3;
+use constant SYNTAX_MODE  => 3;
 
 #==============================================================================#
 # Fields                               #
@@ -592,6 +594,21 @@ B<Throws:> NONE.
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
+
+=item my $publishing = $burner->publishing
+
+=item my $previewing = $burner->previewing
+
+=item my $compiling = $burner->compiling
+
+Returns true if the burner is currently in publish, preview, or syntax mode,
+respectively. Really it's just sugar for checking the mode directly.
+
+=cut
+
+sub previewing { (shift->get_mode || 0) == PREVIEW_MODE }
+sub publishing { (shift->get_mode || 0) == PUBLISH_MODE }
+sub compiling  { (shift->get_mode || 0) == SYNTAX_MODE  }
 
 =item my $encoding = $burner->get_encoding
 

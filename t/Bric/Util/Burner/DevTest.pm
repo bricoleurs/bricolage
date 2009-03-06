@@ -5,7 +5,7 @@ use warnings;
 use utf8;
 use base qw(Bric::Test::DevBase);
 use Test::More;
-use Bric::Util::Burner;
+use Bric::Util::Burner qw(:modes);
 use Bric::Biz::Asset::Template;
 use Bric::Util::Trans::FS;
 use Bric::Util::Time qw(strfdate);
@@ -808,6 +808,36 @@ sub subclass_burn_test {
 
     # Clean up our mess.
     unlink $file, $file1, $file2, $prev_file, $prev_file1;
+}
+
+sub test_modes : Test(10) {
+    my $self = shift;
+
+    # We'll need something to test.
+    ok my $burner = Bric::Util::Burner->new, 'Construct a burner';
+
+    # Set up mocking the mode.
+    my $mode;
+    my $mock = Test::MockModule->new(ref $burner);
+    $mock->mock('get_mode' => sub { $mode });
+
+    # Mock publish mode.
+    $mode = PUBLISH_MODE;
+    ok $burner->publishing, 'Burner should be publishing';
+    ok !$burner->previewing, 'It should not be previewing';
+    ok !$burner->compiling, 'It should not be compiling';
+
+    # Mock preview mode.
+    $mode = PREVIEW_MODE;
+    ok !$burner->publishing, 'Burner should not be publishing';
+    ok $burner->previewing, 'It should be previewing';
+    ok !$burner->compiling, 'It should not be compiling';
+
+    # Mock syntax mode.
+    $mode = SYNTAX_MODE;
+    ok !$burner->publishing, 'Burner should not be publishing';
+    ok !$burner->previewing, 'It should not be previewing';
+    ok $burner->compiling, 'It should be compiling';
 }
 
 ##############################################################################
