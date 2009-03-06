@@ -59,7 +59,8 @@ Sortable.create('element_<% $id %>', {
     onUpdate: function(elem) {
         Container.updateOrder(elem);
     },
-    handle: 'name'
+    handle: 'name',
+    scroll: window
 });
 Container.updateOrder('element_<% $id %>');
 </script>

@@ -75,6 +75,11 @@ that you can tell what each is! [David]
 
 Workspaces, Desks, and debug messages validate again. [Matt Rolf]
 
+=item * 
+
+Dragging container elements to the edge of the browser window will now 
+scroll the page. Reported by Matt Rolf. [Sarah Mercier]
+
 =back
 
 =head2 Bug Fixes

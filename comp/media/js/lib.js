@@ -1469,6 +1469,7 @@ var Container = {
                 Container.updateOrder(elem);
             },
             handle: 'name'
+            scroll: window
         });
 
         $('container_prof_' + list.id).value = Sortable.sequence(list);
