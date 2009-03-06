@@ -80,6 +80,12 @@ Workspaces, Desks, and debug messages validate again. [Matt Rolf]
 Dragging container elements to the edge of the browser window will now 
 scroll the page. Reported by Matt Rolf. [Sarah Mercier]
 
+=item *
+
+Factored the creation of a canonical URL for a request into a new method,
+C<< Bric::Util::ApacheReq->url >>. This removes a fair bit of duplicate code
+found here and there. [David]
+
 =back
 
 =head2 Bug Fixes

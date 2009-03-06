@@ -131,7 +131,7 @@ sub handler {
         if (ALWAYS_USE_SSL && SSL_ENABLE && LISTEN_PORT == $r->get_server_port) {
             $r->custom_response(
                 HTTP_FORBIDDEN,
-                'https://'. $r->hostname . $ssl_port . '/logout/'
+                Bric::Util::ApacheReq->url( ssl => 1, uri => '/logout/' )
             );
             return HTTP_FORBIDDEN;
         }
@@ -182,17 +182,10 @@ sub handler {
         # that function, too.
 #        set_redirect('/');
         my $hostname = $r->hostname;
-        if (SSL_ENABLE) {
-            $r->custom_response(
-                HTTP_FORBIDDEN,
-                "https://$hostname$ssl_port/login/"
-            );
-        } else {
-            $r->custom_response(
-                HTTP_FORBIDDEN,
-                "http://$hostname$port/login/"
-            );
-        }
+        $r->custom_response(
+            HTTP_FORBIDDEN,
+            Bric::Util::ApacheReq->url( ssl => 1, uri => '/login/' )
+        );
         return HTTP_FORBIDDEN;
     };
     return $@ ? handle_err($r, $@) : $ret;
@@ -234,13 +227,14 @@ sub logout_handler {
                 # Logged out of both ports.
                 $r->custom_response(
                     HTTP_FORBIDDEN,
-                    "https://$hostname$ssl_port/login/"
+                    Bric::Util::ApacheReq->url( ssl => 1, uri => '/login/' )
                 );
             } else {
                 # Need to log out of the other port.
-                my $url = $r->get_server_port == &SSL_PORT
-                    ? "http://$hostname$port/logout?goodbye"
-                    : "https://$hostname$ssl_port/logout?goodbye";
+                my $url = Bric::Util::ApacheReq->url(
+                    ssl => $r->get_server_port != &SSL_PORT,
+                    uri => '/logout?goodbye',
+                );
                 $r->custom_response( HTTP_MOVED_TEMPORARILY, $url );
                 return HTTP_MOVED_TEMPORARILY;
             }

@@ -43,7 +43,7 @@ L<Apache2::ServerUtil|Apache2::ServerUtil>, as appropriate.
 =cut
 
 use strict;
-use Bric::Config qw(:mod_perl);
+use Bric::Config qw(:mod_perl :ssl);
 BEGIN {
     if (MOD_PERL) {
         if (MOD_PERL_VERSION < 2) {
@@ -122,6 +122,34 @@ sub server {
       : Apache2::ServerUtil->server;
 }
 
+=item my $url = Bric::Util::ApacheReq->url();
+
+    my $url = Bric::Util::ApacheReq->url;
+    my $url = Bric::Util::ApacheReq->url( uri => '/foo/bar' );
+    my $url = Bric::Util::ApacheReq->url( ssl => 1 );
+
+Returns a URL for the server, with the correct scheme (http or https), host
+name, and port (if needed). Pass in a C<url> parameter (including a leading
+slash) to have a particular URI path included in the URL. If it's not passed,
+or is C<undef>, it defaults to "/". If you're prefer to have SSL if it's
+enabled, pass in an C<ssl> parameter with a true value.
+
+=cut
+
+sub url {
+    my $req  = shift->instance;
+    my %p = @_;
+    my $http = 'http';
+    my $port;
+    if ( SSL_ENABLE && (ALWAYS_USE_SSL || $p{ssl}) ) {
+        $http .= 's';
+        $port  = SSL_PORT eq '*' || SSL_PORT == 443 ? '' : ':' . SSL_PORT;
+    } else {
+        $port  = LISTEN_PORT eq '*' || LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
+    }
+    return "$http://" . $req->hostname . $port . (defined $p{uri} ? $p{uri} : '/');
+}
+
 =back
 
 =head2 Public Functions
@@ -130,11 +158,11 @@ sub server {
 
 =item my %args = parse_args(scalar $r->args);
 
-In mod_perl, C<< $r->args >> could be used in list context, to return a parsed hash
-of key => value, but in mod_perl2 it can only be used in scalar context.
-This implements the old behavior for mod_perl2 using C<parse_args>
-from C<Apache2::compat>. Always call C<< $r->args >> in scalar context
-in Bricolage code, then use this function to parse the result if necessary.
+In mod_perl, C<< $r->args >> could be used in list context, to return a parsed
+hash of C<< key => value >>, but in mod_perl2 it can only be used in scalar
+context. This implements the old behavior for mod_perl2 using C<parse_args>
+from C<Apache2::compat>. Always call C<< $r->args >> in scalar context in
+Bricolage code, then use this function to parse the result if necessary.
 
 =cut
 

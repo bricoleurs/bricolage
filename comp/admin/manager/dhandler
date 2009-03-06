@@ -240,10 +240,8 @@ $fmt = get_pref('List Name Format') if $type eq 'job' || $type eq 'alert_type';
 my $prefix = '';
 if ($type eq 'user') {
     # We'll probably need to redirect them to ssl if its enabled
-    if (get_state_name('login') ne 'ssl') {
-        if (SSL_ENABLE) {
-            $prefix = 'https://' . $r->hostname . $ssl_port;
-        }
+    if (SSL_ENABLE && get_state_name('login') ne 'ssl') {
+        $prefix = Bric::Util::ApacheReq->url( ssl => 1, uri => '' );
     }
 }
 
@@ -359,9 +357,6 @@ my $job_type_sub = sub {
         return 'Publish';
     }
 };
-
-# We'll use these variables for redirection relative to the user profiles.
-my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 
 # Define the look and feel for each type of manager.
 my $def = {
