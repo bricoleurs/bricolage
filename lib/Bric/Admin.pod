@@ -9,12 +9,16 @@ configuring, or tuning a Bricolage system.
 
 =head1 QUICK INSTALLATION INSTRUCTIONS
 
-Follow these instructions if you are both impatient and expert.
+For the really impatient you can just download a VMWare image with Bricolage
+already set up for you running under Ubuntu. See 
+L<http://www.bricolage.cc/news/announce/2008/06/01/vmware/> for more details.
 
-Debian users can get skip most of the download and installation by downloading
-the debian package from L<http://people.debian.org/~erich/bricolage/>. After
-installing, be sure to follow the instructions in
-F</usr/share/doc/README.Debian> to complete the installation.
+There are lots of hints and tips for installation at the Bricolage Wiki, 
+L<http://wiki.bricolage.cc/bin/view/Bric/InstallationTips>, along with other
+tutorials and useful bits.
+
+Don't forget to read the README for your OS first for known issues and 
+helpful tips. These can be found in the root of the unpacked Bricolage tarball.
 
 =over
 
@@ -25,12 +29,18 @@ Install Perl 5.8.0 or greater.
 =item 2
 
 Install Apache 1.3.34 or greater -- or Apache 2.0.55 or greater -- with
-mod_perl, mod_log_config, mod_mime, mod_alias, and (on Apache 2) mod_apreq.
+mod_perl, mod_log_config, mod_mime, mod_alias. 
+
+On Apache 2 you will also need to install mod_apreq and make sure that it and 
+all the modules above appear in the list in the mods-enabled directory in your
+apache2 base directory. You will also need to use the prefork mpm rather than 
+the threaded worker mpm in Apache 2.
+
 For SSL also install mod_ssl or (on Apache 1 only apache-ssl).
 
 =item 3
 
-Install PostgreSQL 7.3 or greater or MySQL 5.0.3 or greater.
+Install PostgreSQL 7.3 or greater (8.1+ preferred) or MySQL 5.0.3 or greater.
 
 =item 4
 
