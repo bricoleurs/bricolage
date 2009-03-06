@@ -143,9 +143,10 @@ sub url {
     my $port;
     if ( SSL_ENABLE && (ALWAYS_USE_SSL || $p{ssl}) ) {
         $http .= 's';
-        $port  = SSL_PORT eq '*' || SSL_PORT == 443 ? '' : ':' . SSL_PORT;
+        # Yes string comparisons, because the constants are inlined.
+        $port  = SSL_PORT eq '*' || SSL_PORT eq '443' ? '' : ':' . SSL_PORT;
     } else {
-        $port  = LISTEN_PORT eq '*' || LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
+        $port  = LISTEN_PORT eq '*' || LISTEN_PORT eq '80' ? '' : ':' . LISTEN_PORT;
     }
     return "$http://" . $req->hostname . $port . (defined $p{uri} ? $p{uri} : '/');
 }
