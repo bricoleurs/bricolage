@@ -132,6 +132,11 @@ Fixed a bug in the virtual FTP server so that, when a template is deployed by
 uploading it with F<.deploy> appended to its name, it is properly removed from
 that deploy desk. Reported by Phillip Smith (Bug #1372). [David]
 
+=item *
+
+The "Logged in as" link at the top of every screen now properly uses SSL when
+appropriate. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

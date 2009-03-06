@@ -158,8 +158,10 @@ if ($useSideNav) {
         </div>
 % }
 % if (defined get_user_id()) {
+%     my $prefix = SSL_ENABLE && get_state_name('login') ne 'ssl'
+%         ? 'https://' . $r->hostname . (SSL_PORT == 443 ? '' : ':' . SSL_PORT) : '';
         <div class="userinfo">
-            Logged in as <a href="/admin/profile/user/<% get_user_id %>" title="<% $lang->maketext("User Profile") %>"><strong><% get_user_object->format_name %></strong></a>
+            Logged in as <a href="<% $prefix %>/admin/profile/user/<% get_user_id %>" title="<% $lang->maketext("User Profile") %>"><strong><% get_user_object->format_name %></strong></a>
         </div>
 % }
     </div>
