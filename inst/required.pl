@@ -89,13 +89,13 @@ unless (
 ) {
     hard_fail(
         "Required software not found:\n\n",
-        $RESULTS{PG}      ? '' :
+        ($RESULTS{PG} or ($REQ{DB_TYPE} eq 'mysql')) ? '' :
             "\tPostgreSQL >= 7.3.0       (http://postgresql.org)\n",
-        $RESULTS{MYSQL}   ? '' :
+        ($RESULTS{MYSQL} or ($REQ{DB_TYPE} eq 'Pg')) ? '' :
             "\tMySQL client >= 4.1.0     (http://mysql.com)\n",
-        $RESULTS{APACHE}  ? '' :
+        ($RESULTS{APACHE} or ($REQ{HTTPD_VERSION} eq 'apache2')) ? '' :
             "\tApache >= 1.3.34 && < 2.0 (http://httpd.apache.org)\n",
-        $RESULTS{APACHE2} ? '' :
+        ($RESULTS{APACHE2} or ($REQ{HTTPD_VERSION} eq 'apache')) ? '' :
             "\tApache >= 2.0.55          (http://httpd.apache.org)\n",
         $RESULTS{EXPAT}   ? '' :
             "\texpat >= 1.95.0           (http://expat.sourceforge.net)\n",

@@ -325,8 +325,11 @@ sub check_modules {
 
     hard_fail("The following Apache modules are required by Bricolage and\n",
               "are missing from your installation:\n",
-              (map { "\tmod_$_\n" } @missing), "\n")
-      if @missing;
+              (map { "\tmod_$_\n" } @missing), "\n",
+              "Please install them or, if they are installed, you may need to enable them in\n",
+              "the mods-enabled directory of your apache2 installation or use a2enmod <module>,\n",
+              "if you have that installed on your operating system.\n")
+        if @missing;
 
     # Make sure that a DSO mod_perl is okay.
     # (I assume this still applies for Apache 2?)

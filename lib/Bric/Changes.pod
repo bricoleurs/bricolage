@@ -49,8 +49,8 @@ Made "Delete this Profile" text more specific depending on location, such as
 
 =item *
 
-Added configuration directive to allow the expiration of assets when they are deleted.
-[David, Mercier, Rolf and Herring]
+Added configuration directive to allow the expiration of assets when they are
+deleted. [David, Mercier, Rolf and Herring]
 
 =item *
 
@@ -172,8 +172,8 @@ Fixed bug #1405, Add Element will now close on double click.
 
 =item * 
 
-Fixed bug #1426, find stories/media/template advanced search toggle now works properly.
-[Sarah Mercier and Matt Rolf]
+Fixed bug #1426, find stories/media/template advanced search toggle now works 
+properly. [Sarah Mercier and Matt Rolf]
 
 =item *
 
@@ -213,6 +213,12 @@ Fixed bug #1439, desks no longer have double pagination bars at the bottom.
 Fixed a bug where deleting a checked out asset from My Workspace or the desk
 would still offer an Edit link in the search results. Reported by John Durkin
 and Matt Rolf(Bug #1388). [Greg Heo]
+
+=item *
+
+Fixed bug in C<inst/required.pl> so it remembers what you're trying to install 
+when telling you what's missing. Also added documentation to 
+C<inst/htprobe_apache2.pl> about not finding apreq module.
 
 =item *
 
