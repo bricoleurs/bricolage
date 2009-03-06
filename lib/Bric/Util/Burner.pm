@@ -2281,7 +2281,7 @@ if (my $code = delete $Bric::Config::INC{PERL_LOADER}) {
 
 # These *must* come after the above code to ensure that all the symbols
 # are available to be loaded.
-require Bric::Util::Burner::Template if eval { require HTML::Template };
+require Bric::Util::Burner::Template if eval { require HTML::Template::Expr };
 require Bric::Util::Burner::TemplateToolkit
     if eval { require Template && $Template::VERSION >= 2.14 };
 require Bric::Util::Burner::PHP if eval { require PHP::Interpreter };
