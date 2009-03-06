@@ -218,12 +218,17 @@ and Matt Rolf(Bug #1388). [Greg Heo]
 
 Fixed bug in C<inst/required.pl> so it remembers what you're trying to install 
 when telling you what's missing. Also added documentation to 
-C<inst/htprobe_apache2.pl> about not finding apreq module.
+C<inst/htprobe_apache2.pl> about not finding apreq module. [Paul Orrock]
 
 =item *
 
 Fixed bug #1386, help button no longer wipes unsaved values from pages when
 clicked. [Sarah Mercier]
+
+=item *
+
+Added a check to C<inst/required.pl> to check for a preforking apache2 rather 
+than a threaded worker apache2. [Paul Orrock]
 
 =back
 

@@ -369,6 +369,15 @@ sub find_apache2 {
 
     print "Found acceptable version of Apache: $x.$y.$z.\n";
     $REQ{APACHE_VERSION} = [$x,$y,$z];
+
+    print "Checking for preforking apache2 ... \n";
+    my $compiled_modules = `$REQ{APACHE_EXE} -l`;
+    return hard_fail("Bricolage and mod_perl should be run under the prefork ".
+        "version of Apache2,\nrather than the threaded worker version. Please ".
+        "re-compile or install\nthe preforked version. \n"
+    ) unless ($compiled_modules =~ /prefork\.c/);
+    print "Found prefork built in module\n";
+
     return 1;
 }
 
