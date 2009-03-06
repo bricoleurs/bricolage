@@ -1468,7 +1468,7 @@ var Container = {
             onUpdate: function(elem) {
                 Container.updateOrder(elem);
             },
-            handle: 'name'
+            handle: 'name',
             scroll: window
         });
 
