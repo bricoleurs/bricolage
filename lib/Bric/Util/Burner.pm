@@ -1414,6 +1414,17 @@ sub publish_another {
       ? 'story'
       : 'media';
 
+    # Publishing checked-out stories is a really bad idea.
+    if ($ba->get_checked_out) {
+        my $uri = $ba->get_uri;
+        throw_burn_error(
+            error => qq{Cannot publish $key "$uri" because it is checked out. }
+                   . 'Your best bet is to pass `published_version => 1` when '
+                   . 'looking up documents to pass to burn_another()',
+            mode  => $self->get_mode,
+        );
+    }
+
     # Don't bother if it's the same as the current story.
     if ($key eq 'story' and my $story = $self->get_story) {
         return if $ba->get_id == $story->get_id;

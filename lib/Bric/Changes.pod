@@ -33,6 +33,14 @@ Events are now logged using wallclock time rather than transaction start time,
 so that multiple events logged in a single transaction can be displayed in the
 order they were created, rather than in an arbitrary order. [David]
 
+=item *
+
+C<< Bric::Util::Burner->publish_another >> will now throw an exception if the
+document you pass to it is checked out. This is because publishing a story
+that's checked out can cause no end of havoc. The solution, as mentioned in
+the error message, is to pass C<published_version => 1> when looking for
+documents to publish from within templates. [David]
+
 =back
 
 =head3 Bug Fixes
