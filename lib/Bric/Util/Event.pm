@@ -1395,7 +1395,7 @@ $get_em = sub {
 #                 ', member m, event_member em';
     my $wheres = 'e.event_type__id = t.id AND t.class__id = c.id'; # .
 #      ' AND e.id = em.object_id AND m.id = em.member__id';
-    my @params;
+    my (@params, @limits);
 
     # Handle query metadata.
     my $order_by = 'e.timestamp DESC, e.id DESC';
@@ -1407,13 +1407,16 @@ $get_em = sub {
             if $params->{OrderDirection};
     }
 
-    my $limit = exists $params->{Limit}
-        ? 'LIMIT ' . delete $params->{Limit}
-        : '';
-
-    my $offset = exists $params->{Offset}
-        ? 'OFFSET ' . delete $params->{Offset}
-        : '';
+    my $limit = '';
+    if ($params->{Limit}) {
+        push @limits, delete $params->{Limit};
+        $limit = ' LIMIT ?';
+    }
+    my $offset = '';
+    if ($params->{Offset}) {
+        push @limits, delete $params->{Offset};
+        $offset = ' OFFSET ?';
+    }
 
     while (my ($k, $v) = each %$params) {
         if ($k eq 'timestamp') {
@@ -1473,7 +1476,7 @@ $get_em = sub {
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;
 
-    execute($sel, @params);
+    execute($sel, @params, @limits);
     my (@d, @events, $attrs, $key, $val); # , $grp_ids, %seen
     $pkg = ref $pkg || $pkg;
     bind_columns($sel, \@d[0..$#SEL_PROPS], \$key, \$val);
