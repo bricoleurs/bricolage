@@ -8,6 +8,7 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Media::Image;
 use Bric::Util::DBI qw(:standard :junction);
 use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Util::Time qw(strfdate);
 use Test::MockModule;
 sub class { 'Bric::Biz::Asset::Business::Media' }
@@ -946,7 +947,7 @@ sub test_new_grp_ids: Test(4) {
 }
 
 ##############################################################################
-sub test_upload_before_save : Test(6) {
+sub test_upload_before_save : Test(26) {
     my $self    = shift;
     my $class   = $self->class;
 
@@ -962,6 +963,10 @@ sub test_upload_before_save : Test(6) {
         goto $cat_dir;
     });
 
+    # Let's force lowercase-only.
+    $self->{oc} = my $oc = $self->get_elem->get_output_channels->[0];
+    $oc->set_uri_case(LOWERCASE)->save;
+
     ok my $media = $self->construct(
         name      => 'Flubberman',
         file_name => 'fun.foo',
@@ -969,7 +974,7 @@ sub test_upload_before_save : Test(6) {
 
     # Upload a file before saving the media.
     ok open my $file, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
-    ok $media->upload_file($file, 'foo.png'), 'Upload a media file';
+    ok $media->upload_file($file, 'Some file.png'), 'Upload a media file';
 
     # Now save the media.
     ok $media->save, 'Save the media document';
@@ -981,7 +986,58 @@ sub test_upload_before_save : Test(6) {
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(@id_dirs, "v.$version");
     like $media->get_location, qr/$dir/, 'The ID should be in the location';
+
+    is $media->get_file_name, 'Some file.png', 'The file name should be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'But the URI should be lowercased and URI escaped';
+
+    # Change the cover date.
+    ok $media->set_cover_date('1968-12-19 19:42:00'), 'Set the cover date';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+
+    # Change the category.
+    ok my $cat = Bric::Biz::Category->new({
+        name        => 'Testing',
+        site_id     => 100,
+        parent_id   => 1,
+        directory   => 'testing',
+    }), 'Create a new category';
+    ok $cat->save, 'Save the new category';
+    $self->add_del_ids($cat->get_id, 'category');
+
+    ok $media->set_category__id($cat->get_id), 'Change the category ID';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+
+    # Change the primary output channel.
+    ok my $oc2 = Bric::Biz::OutputChannel->new({
+        name     => 'Foo',
+        site_id  => 100,
+        uri_case => LOWERCASE,
+    }), 'Create a new OC';
+    ok $oc2->save, 'Save the new category';
+    $self->add_del_ids($oc2->get_id, 'output_channel');
+
+    ok $media->set_primary_oc_id($oc2->get_id), 'Change the primary OC';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+    like $media->get_uri($oc2), qr{/some%20file[.]png$},
+        'And the URI should be lowercased when the OC is passed to uri()';
 }
+
+sub cleanup_oc : Test(teardown) {
+    my $oc = shift->{oc} or return;
+    $oc->set_uri_case(MIXEDCASE)->save;
+}
+
 
 1;
 __END__

@@ -137,6 +137,15 @@ that deploy desk. Reported by Phillip Smith (Bug #1372). [David]
 The "Logged in as" link at the top of every screen now properly uses SSL when
 appropriate. [David]
 
+=item *
+
+Fixed an inconsistency in how the case of file names in media documents was
+not always properly set according to the rules for the output channel. This
+means that if your media document's output channel requires lowercase URIs,
+the URI for the media document will always be lowercase, including the file
+name. The file name is also now always consistently URI escaped (Bug #1419).
+[David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

@@ -1233,8 +1233,10 @@ sub set_category__id {
     my ($uri, $update_uri);
     if ($self->get_file_name) {
         $update_uri = 1;
-        $uri = Bric::Util::Trans::FS->cat_uri
-          ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+        $uri = Bric::Util::Trans::FS->cat_uri(
+            $self->_construct_uri($cat, $oc),
+            $ESCAPE_URI->($oc->get_filename($self))
+        );
     }
 
     # If we've changed the category we need to repreview it if on autopreview
@@ -1261,8 +1263,10 @@ sub set_primary_oc_id {
             my $oc = Bric::Biz::OutputChannel->lookup({ id => $id });
             my $cat = $self->get_category_object;
             $update_uri = 1;
-            $uri = Bric::Util::Trans::FS->cat_uri
-              ( $self->_construct_uri($cat, $oc), $oc->get_filename($self));
+            $uri = Bric::Util::Trans::FS->cat_uri(
+                $self->_construct_uri($cat, $oc),
+                $ESCAPE_URI->($oc->get_filename($self))
+            );
         }
         $self->_set([qw(primary_oc_id uri   _update_uri)] =>
                     [   $id,          $uri, $update_uri]);
@@ -1327,7 +1331,6 @@ sub set_cover_date {
     my $cover_date = db_date(shift);
     my ($old, $cat, $cat_id) =
       $self->_get(qw(cover_date _category_obj category__id));
-    my $fn = $self->get_file_name;
 
     return $self unless (defined $cover_date && not defined $old)
       || (not defined $cover_date && defined $old)
@@ -1338,13 +1341,15 @@ sub set_cover_date {
     $self->_set(['cover_date'] => [$cover_date]);
 
     my ($uri, $update_uri);
-    if (defined $fn) {
+    if (defined $self->get_file_name) {
         $update_uri = 1;
         $cat ||= Bric::Biz::Category->lookup({ id => $cat_id });
         my $oc = $self->get_primary_oc;
         if ($cat and $oc) {
-            $uri = Bric::Util::Trans::FS->cat_uri
-              ($self->_construct_uri($cat, $oc), $fn);
+            $uri = Bric::Util::Trans::FS->cat_uri(
+                $self->_construct_uri($cat, $oc),
+                $ESCAPE_URI->($oc->get_filename($self))
+            );
         }
     }
 
@@ -1427,9 +1432,10 @@ sub get_uri {
                    "associated with media '" . $self->get_name . "'")
       unless $self->get_output_channels($oc->get_id);
 
-    return Bric::Util::Trans::FS->cat_uri
-      ($self->_construct_uri($self->get_category_object, $oc),
-       $oc->get_filename($self));
+    return Bric::Util::Trans::FS->cat_uri(
+        $self->_construct_uri($self->get_category_object, $oc),
+        $ESCAPE_URI->($oc->get_filename($self))
+    );
 }
 
 ##############################################################################
