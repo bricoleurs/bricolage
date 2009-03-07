@@ -961,7 +961,7 @@ sub test_new_grp_ids: Test(4) {
               'asset_grp_ids');
 }
 
-sub test_upload_before_save : Test(9) {
+sub test_upload_before_save : Test(26) {
     my $self    = shift;
     my $class   = $self->class;
 
@@ -1005,6 +1005,46 @@ sub test_upload_before_save : Test(9) {
     like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
     like $media->get_uri, qr{/some%20file[.]png$},
         'But the URI should be lowercased and URI escaped';
+
+    # Change the cover date.
+    ok $media->set_cover_date('1968-12-19 19:42:00'), 'Set the cover date';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+
+    # Change the category.
+    ok my $cat = Bric::Biz::Category->new({
+        name        => 'Testing',
+        site_id     => 100,
+        parent_id   => 1,
+        directory   => 'testing',
+    }), 'Create a new category';
+    ok $cat->save, 'Save the new category';
+    $self->add_del_ids($cat->get_id, 'category');
+
+    ok $media->set_category__id($cat->get_id), 'Change the category ID';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+
+    # Change the primary output channel.
+    ok my $oc2 = Bric::Biz::OutputChannel->new({
+        name     => 'Foo',
+        site_id  => 100,
+        uri_case => LOWERCASE,
+    }), 'Create a new OC';
+    ok $oc2->save, 'Save the new category';
+    $self->add_del_ids($oc2->get_id, 'output_channel');
+
+    ok $media->set_primary_oc_id($oc2->get_id), 'Change the primary OC';
+    is $media->get_file_name, 'Some file.png', 'The file name should still be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'And the URI should still be lowercased and URI escaped';
+    like $media->get_uri($oc2), qr{/some%20file[.]png$},
+        'And the URI should be lowercased when the OC is passed to uri()';
 }
 
 sub cleanup_oc : Test(teardown) {

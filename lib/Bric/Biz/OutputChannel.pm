@@ -1135,8 +1135,9 @@ sub get_filename {
     }
 
     # Return the filename with the proper case.
-    return $case eq MIXEDCASE ? $fn :
-      $case eq LOWERCASE ? lc $fn : uc $fn;
+    return $case eq MIXEDCASE ? $fn
+         : $case eq LOWERCASE ? lc $fn
+                              : uc $fn;
 }
 
 =item $oc = $oc->set_file_ext($file_ext)
