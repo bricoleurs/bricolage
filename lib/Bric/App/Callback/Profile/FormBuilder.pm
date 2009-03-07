@@ -146,13 +146,17 @@ $do_contrib_type = sub {
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
         next if $del_attrs{$aname};
 
-        $obj->set_member_attr({ name => $aname,
-                                sql_type => $obj->get_member_attr_sql_type
-                                            ({ name => $aname}),
-                                value => $param->{"attr|$aname"} });
-        $obj->set_member_meta({ name => $aname,
-                                field => 'pos',
-                                value => $pos{$aname} });
+        $obj->set_member_attr({
+            name => $aname,
+            sql_type => $obj->get_member_attr_sql_type
+                ({ name => $aname}),
+            value => $param->{"attr|$aname"},
+        });
+        $obj->set_member_meta({
+            name => $aname,
+            field => 'pos',
+            value => $pos{$aname},
+        });
     }
     my $no_save;
     # Add in any new attributes.
@@ -174,18 +178,21 @@ $do_contrib_type = sub {
             my $value = $sqltype eq 'date' ? undef : $param->{fb_value};
 
             # Set it for all members of this group.
-            $obj->set_member_attr({ name => $param->{fb_name},
-                                    sql_type => $sqltype,
-                                    value => $value
-                                  });
+            $obj->set_member_attr({
+                name => $param->{fb_name},
+                sql_type => $sqltype,
+                value => $value
+            });
 
             $param = $clean_param->($param);
 
             # Record the metadata so we can properly display the form element.
             while (my ($k, $v) = each %meta_props) {
-                $obj->set_member_meta({ name => $param->{fb_name},
-                                        field => $k,
-                                        value => $param->{$v} });
+                $obj->set_member_meta({
+                    name => $param->{fb_name},
+                    field => $k,
+                    value => $param->{$v}
+                });
             }
             # Log that we've added it.
             log_event("${key}_ext", $obj, { 'Name' => $param->{fb_name} });

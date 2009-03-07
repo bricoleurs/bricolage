@@ -8,6 +8,7 @@ use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Media::Image;
 use Bric::Util::DBI qw(:standard :junction);
 use Bric::Biz::Keyword;
+use Bric::Biz::OutputChannel qw(:case_constants);
 use Bric::Util::Time qw(strfdate);
 use Test::MockModule;
 sub class { 'Bric::Biz::Asset::Business::Media' }
@@ -40,15 +41,16 @@ sub get_elem {
 my $z;
 sub new_args {
     my $self = shift;
-    ( element_type  => $self->get_elem,
-      user__id      => $self->user_id,
-      file_name     => 'fun.foo' . ++$z,
-      source__id    => 1,
-      primary_oc_id => 1,
-      site_id       => 100,
-      category__id  => 1,
-      cover_date    => '2005-03-22 21:07:56',
-    )
+    return (
+        element_type  => $self->get_elem,
+        user__id      => $self->user_id,
+        file_name     => 'fun.foo' . ++$z,
+        source__id    => 1,
+        primary_oc_id => 1,
+        site_id       => 100,
+        category__id  => 1,
+        cover_date    => '2005-03-22 21:07:56',
+    );
 }
 
 ##############################################################################
@@ -959,7 +961,7 @@ sub test_new_grp_ids: Test(4) {
               'asset_grp_ids');
 }
 
-sub test_upload_before_save : Test(6) {
+sub test_upload_before_save : Test(9) {
     my $self    = shift;
     my $class   = $self->class;
 
@@ -975,6 +977,10 @@ sub test_upload_before_save : Test(6) {
         goto $cat_dir;
     });
 
+    # Let's force lowercase-only.
+    $self->{oc} = my $oc = $self->get_elem->get_output_channels->[0];
+    $oc->set_uri_case(LOWERCASE)->save;
+
     ok my $media = $self->construct(
         name      => 'Flubberman',
         file_name => 'fun.foo',
@@ -982,7 +988,7 @@ sub test_upload_before_save : Test(6) {
 
     # Upload a file before saving the media.
     ok open my $file, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
-    ok $media->upload_file($file, __FILE__), 'Upload a media file';
+    ok $media->upload_file($file, 'Some file.png'), 'Upload a media file';
 
     # Now save the media.
     ok $media->save, 'Save the media document';
@@ -994,6 +1000,16 @@ sub test_upload_before_save : Test(6) {
     my @id_dirs = $id =~ /(\d\d?)/g;
     my $dir = Bric::Util::Trans::FS->cat_dir(@id_dirs, "v.$version");
     like $media->get_location, qr/$dir/, 'The ID should be in the location';
+
+    is $media->get_file_name, 'Some file.png', 'The file name should be uppercase';
+    like $media->get_location, qr{/Some file[.]png$}, 'So should the location';
+    like $media->get_uri, qr{/some%20file[.]png$},
+        'But the URI should be lowercased and URI escaped';
+}
+
+sub cleanup_oc : Test(teardown) {
+    my $oc = shift->{oc} or return;
+    $oc->set_uri_case(MIXEDCASE)->save;
 }
 
 1;

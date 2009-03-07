@@ -20,12 +20,13 @@ sub class { 'Bric::Biz::Asset::Business' }
 # necessary in subclasses.
 sub new_args {
     my $self = shift;
-    ( element_type  => $self->get_elem,
-      user__id      => $self->user_id,
-      source__id    => 1,
-      primary_oc_id => 1,
-      site_id       => 100,
-    )
+    return (
+        element_type  => $self->get_elem,
+        user__id      => $self->user_id,
+        source__id    => 1,
+        primary_oc_id => 1,
+        site_id       => 100,
+    );
 }
 
 sub pe {

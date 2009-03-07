@@ -43,11 +43,11 @@ require Bric; our $VERSION = Bric->VERSION;
  # (deprecated) Get/Set the quantifier flag.
  $field      = $field->set_quantifier( $quantifier )
  $quantifier = $field->get_quantifier()
- 
+
  # Get/Set min occurrence specification limit
  $field = $field->set_min_occurrence($amount)
  $min = $field->get_min_occurrence()
- 
+
  # Get/Set max occurrence specification limit
  $field = $field->set_max_occurrence($amount)
  $max = $field->get_max_occurrence()
@@ -141,7 +141,7 @@ my @COLS = qw(
     vals
     multiple
     default_val
-    active    
+    active
 );
 
 my @ATTRS = qw(
@@ -488,7 +488,7 @@ of possible values.
 =item active
 
 Boolean valule indicating whether or not the field is active.
-	
+
 =item max_occurrence
 
 Specifies an upper limit to how many instances there may be of this field type.
@@ -1139,7 +1139,7 @@ B<Notes:> NONE.
 Return the maximum occurrence
 
 B<Throws:> NONE.
-    
+
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1149,7 +1149,7 @@ B<Notes:> NONE.
 Sets the maximum occurrence this field type may occur.
 
 B<Throws:> NONE.
-    
+
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1159,7 +1159,7 @@ B<Notes:> NONE.
 Return the minimum occurrence
 
 B<Throws:> NONE.
-    
+
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
@@ -1169,7 +1169,7 @@ B<Notes:> NONE.
 Sets the minimum occurrence this field type may occur.
 
 B<Throws:> NONE.
-    
+
 B<Side Effects:> NONE.
 
 B<Notes:> NONE.
