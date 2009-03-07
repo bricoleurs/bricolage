@@ -1274,23 +1274,24 @@ sub publish {
         $self->_set(['base_path'], [$base_path]);
 
         # Get a list of server types this category applies to.
-        my $bat = $oc_sts->{$ocid} ||=
-            Bric::Dist::ServerType->list({ can_publish       => 1,
-                                           active            => 1,
-                                           output_channel_id => $ocid });
+        my $bat = $oc_sts->{$ocid} ||= Bric::Dist::ServerType->list({
+            can_publish       => 1,
+            active            => 1,
+            output_channel_id => $ocid,
+        });
 
         # Make sure we have some destinations.
         unless (@$bat) {
             my $errstr = q{Cannot publish asset "} . $ba->get_name
               . q{" to "} . $oc->get_name . q{" because there }
                . "are no Destinations associated with this output channel.";
-            throw_burn_error error => $errstr,
-                             mode  => $self->get_mode,
-                             oc    => $oc->get_name,
-                             elem  => $at->get_name,
+            throw_burn_error error   => $errstr,
+                             mode    => $self->get_mode,
+                             oc      => $oc->get_name,
+                             elem    => $at->get_name,
                              element => $at
-              if $die_err;
-              add_msg($errstr);
+                if $die_err;
+            add_msg($errstr);
             next;
         }
 

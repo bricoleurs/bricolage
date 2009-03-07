@@ -1659,7 +1659,9 @@ sub deactivate {
 
         if (EXPIRE_ON_DEACTIVATE) {
            my $tz = Bric::Util::Pref->lookup_val('Time Zone');
-           $self->set_expire_date( my $now = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT));
+           $self->set_expire_date(
+               my $now = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT)
+           );
            $self->save;
            my $key = $self->key_name;
 
