@@ -122,13 +122,15 @@ my $name = 'con' . $id;
 my $top_level = (get_state_data($widget, 'element') == $element);
 my $displayed = $element->get_displayed;
 
-# Find something to indicate what the element contains.
+# Find something to indicate what the element contains, if appropriate.
 my ($hint_name, $hint_val);
-foreach my $field ($element->get_fields) {
-    $hint_val  = $field->get_value or next;
-    $hint_name = $field->get_name;
-    $hint_val  = substr($hint_val, 0, 64);
-    last;
+if ($element->get_parent_id) {
+    for my $field ($element->get_fields) {
+        $hint_val  = $field->get_value or next;
+        $hint_name = $field->get_name;
+        $hint_val  = substr($hint_val, 0, 64);
+        last;
+    }
 }
 
 # Get the list of fields and subelements that can be added.
