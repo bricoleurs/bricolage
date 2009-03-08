@@ -7,7 +7,7 @@
 </legend>
 % }
 % if ($hint_val) {
-<p class="hint" id="element_<% $id %>_hint" style="display: none"><strong><% $hint_name %>:</strong> <% $hint_val %></p>
+<p class="hint" id="element_<% $id %>_hint" style="display: none"><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
 % }
 % if ($type->is_related_story) {
 <div id="element_<% $id %>_rel_story">
