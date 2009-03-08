@@ -521,9 +521,16 @@ sub load_asset {
             }
         }
 
-        # remove all keywords if updating
-        $category->del_keywords([ $category->get_keywords ])
-            if $update and $category->get_keywords;
+        # delete old keywords if updating
+        if ($update) {
+            my $old;
+            my @keywords = ($cdata->{keywords} and $cdata->{keywords}{keyword}) ? @{$cdata->{keywords}{keyword}} : ();
+            my $keywords = { map { $_ => 1 } @keywords };
+            foreach ($category->get_keywords) {
+                push @$old, $_ unless $keywords->{$_->get_id};
+            }
+            $category->del_keywords(@$old) if $old;
+        }
 
         # add keywords, if we have any
         if ($cdata->{keywords} and $cdata->{keywords}{keyword}) {
@@ -531,8 +538,19 @@ sub load_asset {
             my @kws;
             foreach (@{$cdata->{keywords}{keyword}}) {
                 (my $name = $_) =~ s/([_%\\])/\\$1/g;
-                my $kw = Bric::Biz::Keyword->lookup({ name => $name })
-                  || Bric::Biz::Keyword->new({ name => $_ })->save;
+                my $kw = Bric::Biz::Keyword->lookup({ name => $name });
+                if ($kw) {
+                    throw_ap(error => __PACKAGE__ . qq|::create : access denied for keyword "$name"|)
+                      unless chk_authz($kw, READ, 1);
+                } else {
+                    if (chk_authz('Bric::Biz::Keyword', CREATE, 1)) {
+                        $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+                        log_event('keyword_new', $kw);
+                    }
+                    else {
+                        throw_ap(error => __PACKAGE__ . '::create : access denied for creating new keywords.');
+                    }
+                }
                 push @kws, $kw;
             }
 

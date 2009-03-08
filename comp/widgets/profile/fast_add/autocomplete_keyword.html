@@ -1,6 +1,6 @@
 <ul>
 % foreach my $keyword (@$possible_keywords) {
-%   next if $existing_keywords{$keyword->get_id} || $other_new_keywords{$keyword->get_name};
+%   next if $existing_keywords{$keyword->get_id} || $other_new_keywords{$keyword->get_name} || !chk_authz($keyword, READ, 1);
 %   (my $name = $keyword->get_name) =~ s|(\E$add_keyword\U)|<span class="highlight">$1</span>|ig;
     <li><% $name %></li>
 % }

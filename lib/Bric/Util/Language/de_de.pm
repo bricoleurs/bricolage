@@ -787,6 +787,7 @@ any error pointers.
 
 To Translate:
 'Invalid codeselect code (didn't return an array ref of even size)' => 'Ungültiger codeselect Code (didn't return an array ref of even size)',
+'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   
   
   

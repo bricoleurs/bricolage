@@ -773,6 +773,7 @@ To translate:
   'Delete this Output Channel' => 'Delete this Output Channel',
   'Delete this Source' => 'Delete this Source',
   'Delete this Workflow' => 'Delete this Workflow',
+  'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
 
 =end comment
 

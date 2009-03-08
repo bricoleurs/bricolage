@@ -1042,8 +1042,16 @@ sub load_asset {
         throw_ap(error => __PACKAGE__ . "::create : no primary output channel defined!")
           unless defined $story->get_primary_oc_id;
 
-        # remove all keywords if updating
-        $story->del_keywords($story->get_keywords) if $update;
+        # delete old keywords if updating
+        if ($update) {
+            my $old;
+            my @keywords = ($sdata->{keywords} and $sdata->{keywords}{keyword}) ? @{$sdata->{keywords}{keyword}} : ();
+            my $keywords = { map { $_ => 1 } @keywords };
+            foreach ($story->get_keywords) {
+                push @$old, $_ unless $keywords->{$_->get_id};
+            }
+            $story->del_keywords(@$old) if $old;
+        }
 
         # add keywords, if we have any
         if ($sdata->{keywords} and $sdata->{keywords}{keyword}) {
@@ -1053,9 +1061,17 @@ sub load_asset {
             foreach (@{$sdata->{keywords}{keyword}}) {
                 (my $look = $_) =~ s/([_%\\])/\\$1/g;
                 my $kw = Bric::Biz::Keyword->lookup({ name => $look });
-                unless ($kw) {
-                    $kw = Bric::Biz::Keyword->new({ name => $_})->save;
-                    log_event('keyword_new', $kw);
+                if ($kw) {
+                    throw_ap(error => __PACKAGE__ . qq|::create : access denied for keyword "$look"|)
+                      unless chk_authz($kw, READ, 1);
+                } else {
+                    if (chk_authz('Bric::Biz::Keyword', CREATE, 1)) {
+                        $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+                        log_event('keyword_new', $kw);
+                    }
+                    else {
+                        throw_ap(error => __PACKAGE__ . '::create : access denied for creating new keywords.');
+                    }
                 }
                 push @kws, $kw;
             }

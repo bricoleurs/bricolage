@@ -766,6 +766,13 @@ our %Lexicon = (
 
 1;
 
+=begin comment
+
+To Translate:
+  'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
+
+==end comment
+
 __END__
 
 =head1 AUTHOR

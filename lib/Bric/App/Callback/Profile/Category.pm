@@ -7,10 +7,12 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'category';
 
 use strict;
+use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref);
 use Bric::Biz::Category;
 use Bric::Biz::Keyword;
+use Bric::Util::Fault qw(throw_forbidden);
 use Bric::Util::Grp;
 use Bric::Util::Trans::FS;
 
@@ -129,9 +131,20 @@ sub save : Callback {
         foreach (@{ mk_aref($param->{new_keyword}) }) {
             next unless $_;
             my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-            unless ($kw) {
-                $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
-                log_event('keyword_new', $kw);
+            if ($kw) {
+                chk_authz($kw, READ);
+            } else {
+                if (chk_authz('Bric::Biz::Keyword', CREATE, 1)) {
+                    $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+                    log_event('keyword_new', $kw);
+                } else {
+                    throw_forbidden(
+                        maketext => [
+                            'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
+                            $_,
+                        ],
+                    );
+                }
             }
             push @$new, $kw;
         }

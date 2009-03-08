@@ -891,9 +891,20 @@ sub _handle_keywords {
     foreach (@{ mk_aref($param->{new_keyword}) }) {
         next unless $_;
         my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
-        unless ($kw) {
-            $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
-            log_event('keyword_new', $kw);
+        if ($kw) {
+            chk_authz($kw, READ);
+        } else {
+            if (chk_authz('Bric::Biz::Keyword', CREATE, 1)) {
+                $kw = Bric::Biz::Keyword->new({ name => $_ })->save;
+                log_event('keyword_new', $kw);
+            } else {
+                throw_forbidden(
+                    maketext => [
+                        'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
+                        $_,
+                    ],
+                );
+            }
         }
         push @$new, $kw;
     }

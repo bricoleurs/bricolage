@@ -92,6 +92,11 @@ Added the C<publishing()>, C<previewing()>, and C<compling()> sugar methods to
 L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the same
 code to check modes in templates all the time. [David]
 
+=item *
+
+Take keyword permissions into account when accessing or creating keywords from
+the story and media profiles as well as category manager. [Adrian Yee]
+
 =back
 
 =head2 Bug Fixes
