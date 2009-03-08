@@ -97,6 +97,10 @@ code to check modes in templates all the time. [David]
 Take keyword permissions into account when accessing or creating keywords from
 the story and media profiles as well as category manager. [Adrian Yee]
 
+=item *
+
+Only show the subelement hint when the container is collapsed. [Adrian Yee]
+
 =back
 
 =head2 Bug Fixes
