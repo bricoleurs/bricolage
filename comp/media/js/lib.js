@@ -1473,6 +1473,7 @@ var Container = {
         });
 
         $('container_prof_' + list.id).value = Sortable.sequence(list);
+        alert($('container_prof_' + list.id));
     },
 
     confirmDelete: function() {

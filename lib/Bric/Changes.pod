@@ -245,6 +245,12 @@ clicked. [Sarah Mercier]
 Added a check to C<inst/required.pl> to check for a preforking apache2 rather 
 than a threaded worker apache2. [Paul Orrock]
 
+=item *
+
+A newly created field with an underscore in its key name will no longer
+disappear as soon as you create it. Reported by Krzysztof Rudnik (Bug #1140).
+[David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

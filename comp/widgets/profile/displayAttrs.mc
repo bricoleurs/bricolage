@@ -9,6 +9,7 @@ $useEdit     => 0
 </%args>
 <%once>;
 my @meta_props = qw(type length maxlength rows cols multiple size precision);
+my $keyname_re = '^attr_([a-z0-9_]+)$';
 </%once>
 <%perl>;
 my $num_fields = @$attr;
@@ -39,7 +40,7 @@ foreach my $attr (@$attr) {
         }
         $props->{vals} = $val_prop;
     }
-    
+
     # Assemble the vals argument.
     my $vals = {
         value => $attr->{value},
@@ -56,7 +57,7 @@ foreach my $attr (@$attr) {
      ) if (!$readOnly);
 
     $m->out($attr->{meta}{disp}{value} . qq{:</h3>});
-    
+
     $m->out(qq{<div class="content">});
 
     # Spit out the attribute.
@@ -67,7 +68,7 @@ foreach my $attr (@$attr) {
          localize => $localize,
          readOnly => $readOnly
     );
-    
+
     if ($useEdit) {
         $m->out(qq{<div class="edit">\n});
 
@@ -88,12 +89,12 @@ foreach my $attr (@$attr) {
             button    => 'delete',
             extension => 'png',
             globalImage => 1,
-            js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs'); } return false"],
+            js        => qq[onclick="if (Container.confirmDelete()) { Element.remove(this.parentNode.parentNode.parentNode); \$('attr_pos').value = Sortable.sequence('attrs', { format: '$keyname_re' }); } return false"],
             useTable  => 0
         );
         $m->out("</div>\n");
     }
-    
+
     $m->out("</div>");
 
     $m->out("</li>\n");
@@ -104,12 +105,12 @@ $m->out("</ul></div>");
 % if ($usePosition) {
 <input type="hidden" name="attr_pos" id="attr_pos" value="" />
 <script type="text/javascript">
-Sortable.create('attrs', { 
-    onUpdate: function(elem) { 
-        $('attr_pos').value = Sortable.sequence(elem);
+Sortable.create('attrs', {
+    onUpdate: function(elem) {
+        $('attr_pos').value = Sortable.sequence(elem, { format: '<% $keyname_re %>' });
     },
     handle: 'name'
 });
-$('attr_pos').value = Sortable.sequence('attrs');
+$('attr_pos').value = Sortable.sequence('attrs', { format: '<% $keyname_re %>' });
 </script>
 % }

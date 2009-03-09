@@ -103,10 +103,10 @@ $base_handler = sub {
         $self->set_redirect(last_page());
     } else {
         # Process its data
-        my $name = $param->{'name'};
-        my $disp_name = $conf{$key}{'disp_name'};
+        my $name = $param->{name};
+        my $disp_name = $conf{$key}{disp_name};
 
-        if ($param->{'delete'}) {
+        if ($param->{delete}) {
             $obj->deactivate();
             $obj->save();
             $self->add_message(qq{$disp_name profile "[_1]" deleted.}, $name);
@@ -114,9 +114,9 @@ $base_handler = sub {
             $self->set_redirect("/admin/manager/$key/");
         } else {
             if ($key eq 'contrib_type') {
-                $param->{'obj'} = $do_contrib_type->($self, $obj, $key, $class);
+                $param->{obj} = $do_contrib_type->($self, $obj, $key, $class);
             } elsif ($key eq 'element_type') {
-                $param->{'obj'} = $do_element_type->($self, $obj, $key, $class);
+                $param->{obj} = $do_element_type->($self, $obj, $key, $class);
             }
         }
     }
@@ -597,20 +597,20 @@ $add_new_attrs = sub {
               : ($param->{'fb_maxlength'} eq '0') ? 0 : undef;
 
             my $atd = $obj->new_field_type({
-                key_name    => $key_name,
-                name        => $param->{fb_disp},
+                key_name       => $key_name,
+                name           => $param->{fb_disp},
                 min_occurrence => $param->{fb_minOccur},
                 max_occurrence => $param->{fb_maxOccur},
-                sql_type    => $sqltype,
-                place       => $param->{fb_position},
-                max_length  => $max,
-                widget_type => $param->{fb_type},
-                length      => $param->{fb_size},
-                rows        => $param->{fb_rows},
-                cols        => $param->{fb_cols},
-                multiple    => $param->{fb_allowMultiple} ? 1 : 0,
-                vals        => $param->{fb_vals},
-                precision   => $param->{fb_precision} || undef,
+                sql_type       => $sqltype,
+                place          => $param->{fb_position},
+                max_length     => $max,
+                widget_type    => $param->{fb_type},
+                length         => $param->{fb_size},
+                rows           => $param->{fb_rows},
+                cols           => $param->{fb_cols},
+                multiple       => $param->{fb_allowMultiple} ? 1 : 0,
+                vals           => $param->{fb_vals},
+                precision => $param->{fb_precision} || undef,
                 default_val => $param->{fb_type} eq 'checkbox' ? 1 : $param->{fb_value},
             });
 
