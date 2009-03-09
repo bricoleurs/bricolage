@@ -256,6 +256,12 @@ disappear as soon as you create it. Reported by Krzysztof Rudnik (Bug #1140).
 Documents no longer drop off the publish desk when a publish fails. Reported
 by Krzysztof Rudnik (Bug #1141). [David]
 
+=item *
+
+An error in the related media popup window no longer pulls in the side
+navigation, since it doesn't belong in the popup. Reported by Matt Rolf (Bug #
+1433). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

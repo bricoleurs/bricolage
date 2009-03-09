@@ -4,12 +4,15 @@ clear_msg();
 $m->clear_buffer;
 # Check to see if this is a preview screen.
 my $prev = $r->pnotes('burner.preview');
-$m->comp('/widgets/wrappers/header.mc',
-         title      => '404 NOT FOUND',
-         context    => 'Invalid page request',
-         debug      => QA_MODE,
-         useSideNav => !$prev,
-         no_toolbar => !$prev);
+$m->comp(
+    '/widgets/wrappers/header.mc',
+    title      => '404 NOT FOUND',
+    context    => 'Invalid page request',
+    debug      => QA_MODE,
+    useSideNav => !$prev,
+    no_toolbar => !$prev,
+    popup      => !!get_state_data('_profile_return'), # Should be a popup when creating related media.
+);
 </%perl>
 <p><% $lang->maketext('The URL you requested, <b>[_1]</b>, was not found on this server', $r->uri)%>.</p>
 

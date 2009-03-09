@@ -6,7 +6,8 @@
         useSideNav => !$prev,
         no_toolbar => !$prev,
         context    => 'An error occurred.',
-        debug      => QA_MODE || TEMPLATE_QA_MODE
+        debug      => QA_MODE || TEMPLATE_QA_MODE,
+        popup      => !!get_state_data('_profile_return'), # Should be a popup when creating related media.
  &>
 
 <p><% $lang->maketext('An error occurred while processing your request:')%></p>
