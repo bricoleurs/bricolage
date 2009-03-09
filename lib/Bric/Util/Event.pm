@@ -1403,19 +1403,20 @@ $get_em = sub {
         $order_by = $ord eq 'timestamp' ? 'e.timestamp'
                                         : $TXT_MAP{$ord} || $NUM_MAP{$ord}
                                         ;
-        $order_by .= ' ' . delete $params->{OrderDirection}
-            if $params->{OrderDirection};
+        if (my $dir = delete $params->{OrderDirection}) {
+            $order_by .= lc $dir eq 'desc' ? ' DESC' : ' ASC';
+        }
     }
 
     my $limit = '';
-    if ($params->{Limit}) {
+    if (exists $params->{Limit}) {
         push @limits, delete $params->{Limit};
-        $limit = ' LIMIT ?';
+        $limit = 'LIMIT ?';
     }
     my $offset = '';
-    if ($params->{Offset}) {
+    if (exists $params->{Offset}) {
         push @limits, delete $params->{Offset};
-        $offset = ' OFFSET ?';
+        $offset = 'OFFSET ?';
     }
 
     while (my ($k, $v) = each %$params) {
