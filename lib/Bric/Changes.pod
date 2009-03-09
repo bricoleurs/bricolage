@@ -146,6 +146,11 @@ the URI for the media document will always be lowercase, including the file
 name. The file name is also now always consistently URI escaped (Bug #1419).
 [David]
 
+=item *
+
+Eliminated a SQL injection vulnerability in the querying for stories, media,
+and templates. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

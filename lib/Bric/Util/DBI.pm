@@ -781,8 +781,8 @@ sub build_query {
       $grp_by
       $order\n};
 
-    $sql .= qq{      LIMIT $limit\n} if $limit;
-    $sql .= qq{      OFFSET $offset\n} if $offset;
+    $sql .= qq{      LIMIT $limit\n}   if $limit  && $limit  =~ /^\d+$/;
+    $sql .= qq{      OFFSET $offset\n} if $offset && $offset =~ /^\d+$/;
     return \$sql;
 }
 
