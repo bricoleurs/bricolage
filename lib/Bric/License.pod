@@ -474,6 +474,8 @@ Friends who have spotted bugs include:
 
 =item * Denny de la Haye
 
+=item * Krzysztof Rudnik
+
 =back
 
 Bricolage's translation team:
