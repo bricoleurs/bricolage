@@ -251,6 +251,11 @@ A newly created field with an underscore in its key name will no longer
 disappear as soon as you create it. Reported by Krzysztof Rudnik (Bug #1140).
 [David]
 
+=item *
+
+Documents no longer drop off the publish desk when a publish fails. Reported
+by Krzysztof Rudnik (Bug #1141). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

@@ -98,7 +98,7 @@
                 <div id="<% "publish_${class}_${id}_desks" %>" class="popup-menu" style="right: 0; display: none">
                     <h4>Publish:</h4>
                     <ul>
-                        <li><a href="#" onclick="<% &$publish_js %>">Now</a></li>
+                        <li><a href="#" onclick="<% $publish_js->() %>">Now</a></li>
                         <li><a href="<% $r->uri %>?desk_asset|publish_cb=1&amp;desk_asset|<% $class %>_pub_ids=<% $obj->get_version_id %>">Later</a></li>
                     </ul>
                 </div>
@@ -288,7 +288,7 @@ my $move_js = sub {
                                        "desk_asset|move_cb=${class}_${id}",
                                        "desk_asset|next_desk=$next_desk");
         if ($next_desk eq 'shelve') {
-            return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+            return "Desk.request({ parameters: '$parameters' }, function(r) { Effect.DropOut('${class}_${id}') }); return false";
         } else {
             return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
         }
@@ -300,10 +300,10 @@ my $publish_js = sub {
     my $uri = $r->uri;
     if ($class eq 'template') {
         my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('template_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('template_${id}') }); return false";
     } else {
         my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
-        return "Desk.request({ parameters: '$parameters' }); Effect.DropOut('${class}_${id}'); return false";
+        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') } ); return false";
     }
 };
 
