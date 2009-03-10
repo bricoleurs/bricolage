@@ -271,8 +271,10 @@ window. Thanks to John Durkin for the spot (Bug #1431). [David]
 =item *
 
 When creating a new media document via the related media popup, the popup
-window now closes in Camino once the media document has been created and
-saved. [David]
+window now closes in Camino and Safari once the media document has been
+created and saved, and in Safari it now properly updates the related media
+element with which it is newly associated. Reported by Matt Rolf (Bug #1432).
+[David]
 
 =back
 
