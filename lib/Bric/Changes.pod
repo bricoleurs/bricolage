@@ -262,6 +262,12 @@ An error in the related media popup window no longer pulls in the side
 navigation, since it doesn't belong in the popup. Reported by Matt Rolf (Bug #
 1433). [David]
 
+=item *
+
+Adding a contributor to a media document when creating the media document from
+a related media popup no longer mysteriously closes the related media popup
+window. Thanks to John Durkin for the spot (Bug #1431). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

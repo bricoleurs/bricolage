@@ -87,7 +87,7 @@ Event.observe(window, "load", function() { <% $jsInit %>; });
 % }
 
 % if ($no_toolbar) {
-if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name != 'BricolagePopup') {
+if (window.name != 'Bricolage_<% SERVER_WINDOW_NAME %>' && window.name !~ 'BricolagePopup') {
     // Redirect to the window opening page.
     location.href = '/login/welcome.html?referer=<% $r->uri %>';
 } else {
