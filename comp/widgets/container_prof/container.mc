@@ -88,7 +88,7 @@ Container.updateOrder('element_<% $id %>');
 
 % if ( $parent && !$top_level) {
 %     my $minimum_occurrence = 0;
-%     if (my $sub_type = $parent->get_element_type->get_containers($element->get_key_name) ) { 
+%     if (my $sub_type = $parent->get_element_type->get_containers($element->get_key_name) ) {
 %         $minimum_occurrence = $sub_type->get_min_occurrence;
 %     }
 %     if ( $minimum_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {

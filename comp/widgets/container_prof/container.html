@@ -1,6 +1,7 @@
 <& 'container.mc',
     widget  => $widget,
-    element => $element
+    element => $element,
+    parent  => $parent,
 &>
 
 <%once>
@@ -21,9 +22,13 @@ $find_subelement = sub {
 
 <%init>
 my $element = get_state_data($widget, 'element');
-my $container_id = $ARGS{"container_id"};
-
+my $container_id = $ARGS{container_id};
 $element = $find_subelement->($element, $container_id) if $container_id;
+# Find the parent element in the session for the appropriate type of profile
+# (story or media).
+my $type = $element->get_object_type;
+my $doc = get_state_data("$type\_prof", $type);
+my $parent = $find_subelement->($doc->get_element, $element->get_parent_id);
 </%init>
 
 <%flags>

@@ -276,6 +276,12 @@ created and saved, and in Safari it now properly updates the related media
 element with which it is newly associated. Reported by Matt Rolf (Bug #1432).
 [David]
 
+=item *
+
+Fixed a bug where, once child elements were added or deleted, from a container
+element, the container was prevented from being deleted until the page is
+refreshed. Reported by Matt Rolf (Bug #1392). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
