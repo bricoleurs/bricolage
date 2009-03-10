@@ -1509,21 +1509,24 @@ var Container = {
         return Container.update_related('unrelate', type, widget, container_id, asset_id);
     },
 
-    // Update the display of an element, but do nothing else.
-    update: function( type, widget, container_id ) {
+    // Update the display of an element, but do nothing else. If sync is true,
+    // it should *not* be asynchronous.
+    update: function( type, widget, container_id, sync ) {
         new Ajax.Updater(
-           { success: window.opener.document.getElementById(
-                'element_' + container_id + '_rel_' + type
-            ) },
-            '/widgets/container_prof/_related.html', {
-                parameters: 'type=' + type + '&widget=' + widget +
-                    '&container_id=' + container_id,
-                asynchronous: true,
-                onSuccess: function(r) { window.close(); },
-                onFailure: Bricolage.handleError,
-                on403: Bricolage.handleForbidden,
-                on409: Bricolage.handleConflict
-          }
+           {
+               success: window.opener.document.getElementById(
+                    'element_' + container_id + '_rel_' + type
+               )
+           },
+           '/widgets/container_prof/_related.html', {
+               parameters: 'type=' + type + '&widget=' + widget +
+                   '&container_id=' + container_id,
+               asynchronous: !sync,
+               onSuccess: function(r) { window.close(); },
+               onFailure: Bricolage.handleError,
+               on403: Bricolage.handleForbidden,
+               on409: Bricolage.handleConflict
+           }
         )
     },
 
