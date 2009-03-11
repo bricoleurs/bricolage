@@ -101,6 +101,11 @@ the story and media profiles as well as category manager. [Adrian Yee]
 
 Only show the subelement hint when the container is collapsed. [Adrian Yee]
 
+=item *
+
+Cover date is now required at the database level. It has always been required
+in the UI. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -286,6 +291,11 @@ refreshed. Reported by Matt Rolf (Bug #1392). [David]
 
 The pagination links now work in the edit related popup window. Reported by
 Adam Wilson (Bug #1428). [David]
+
+=item *
+
+The "Related Story" popup now properly closes in Camino when a "relate" or
+"un-relate" link is clicked. [David]
 
 =back
 

@@ -77,7 +77,7 @@ CREATE TABLE story_instance (
     usr__id        INTEGER      NOT NULL,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
-    cover_date     TIMESTAMP,
+    cover_date     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     note           TEXT,
     checked_out    BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_story_instance__id PRIMARY KEY (id)

@@ -60,7 +60,7 @@ CREATE TABLE media_instance (
     file_name           VARCHAR(256),
     location            VARCHAR(256),
     uri                 VARCHAR(256),
-    cover_date          TIMESTAMP NULL DEFAULT NULL,
+    cover_date          TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     note                TEXT,
     checked_out         BOOLEAN    NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_media_instance__id PRIMARY KEY (id)
