@@ -282,6 +282,11 @@ Fixed a bug where, once child elements were added or deleted, from a container
 element, the container was prevented from being deleted until the page is
 refreshed. Reported by Matt Rolf (Bug #1392). [David]
 
+=item *
+
+The pagination links now work in the edit related popup window. Reported by
+Adam Wilson (Bug #1428). [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
