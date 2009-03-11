@@ -297,6 +297,11 @@ Adam Wilson (Bug #1428). [David]
 The "Related Story" popup now properly closes in Camino when a "relate" or
 "un-relate" link is clicked. [David]
 
+=item *
+
+A call to C<list()> or C<lookup()> in L<Bric::Util::Event|Bric::Util::Event>
+with an "Offset" parameter but no "Limit" now works properly on MySQL. [David]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

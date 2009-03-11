@@ -1415,6 +1415,11 @@ $get_em = sub {
     }
     my $offset = '';
     if (exists $params->{Offset}) {
+        if (DBD_TYPE eq 'mysql' && !$limit) {
+            # Fuck you, MySQL.
+            push @limits, LIMIT_DEFAULT;
+            $limit = 'LIMIT ?';
+        }
         push @limits, delete $params->{Offset};
         $offset = 'OFFSET ?';
     }

@@ -56,7 +56,7 @@ use constant DSN_STRING => 'database=' . DB_NAME
 use constant DBH_ATTR => ( );
 
 # This is the maximum for LIMIT rowcount in MySQL
-use constant LIMIT_DEFAULT => " 18446744073709551615 ";
+use constant LIMIT_DEFAULT => '18446744073709551615';
 
 ##############################################################################
 # Inheritance

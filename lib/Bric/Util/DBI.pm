@@ -814,7 +814,7 @@ sub build_query {
       $order\n};
 
     # LIMIT OFFSET compatibility measure for MySQL
-    $limit = LIMIT_DEFAULT if $offset and !$limit;
+    $limit = LIMIT_DEFAULT if DBD_TYPE eq 'mysql' and $offset and !$limit;
     $sql .= qq{      LIMIT $limit\n}   if $limit  && $limit  =~ /^\d+$/;
     $sql .= qq{      OFFSET $offset\n} if $offset && $offset =~ /^\d+$/;
     return \$sql;
