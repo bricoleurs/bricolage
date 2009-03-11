@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.7 (2008-??-??)
+=head1 VERSION 1.10.7 (2009-03-11)
 
 =head2 Improvements
 
@@ -18,14 +18,14 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
-The "Save, Save and Stay, and Return" buttons in the Edit Categories screen 
+The "Save, Save and Stay, and Return" buttons in the Edit Categories screen
 of the story profile are moved to the right to better align with the interface
 buttons. [Matt Rolf]
 
 =item *
 
 Improved documentation of the C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf>
-directive with speficic reference to SFTP versions. [Alex Krohn]
+directive with specific reference to SFTP versions. [Alex Krohn]
 
 =item *
 
@@ -38,7 +38,7 @@ order they were created, rather than in an arbitrary order. [David]
 C<< Bric::Util::Burner->publish_another >> will now throw an exception if the
 document you pass to it is checked out. This is because publishing a story
 that's checked out can cause no end of havoc. The solution, as mentioned in
-the error message, is to pass C<published_version => 1> when looking for
+the error message, is to pass C<< published_version => 1 >> when looking for
 documents to publish from within templates. [David]
 
 =back
@@ -101,9 +101,9 @@ Reported by Phillip Smith (Bug # 1372). [David]
 
 =item *
 
-Fixed resource (file name) lookups whe publishing and/or previewing documents
+Fixed resource (file name) lookups when publishing and/or previewing documents
 so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
-for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
+for example, C</foo/bar> with C</foo_bar>. Reported by Scott (Bug # 1368).
 [David]
 
 =item *
@@ -119,9 +119,9 @@ in an error. Reported by Ashlee Caul. [David]
 =item *
 
 Republishing a story will no longer delete files from that story on preview
-servers. Similarly, Publish a media document with a new file but with the same
+servers. Similarly, publishing a media document with a new file but with the same
 name as a previously-published version will no longer cause that file to be
-deleted from production destionations. This bug has been fixed and refixed
+deleted from production destinations. This bug has been fixed and refixed
 numerous times, but this time tests have been added to make sure that it
 I<stays> fixed. Reported by Matt Rolf, Ashlee Caul, and others (Bug # 1368).
 [David]
