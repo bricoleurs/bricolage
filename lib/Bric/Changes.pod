@@ -157,6 +157,10 @@ Fixed an issue where a document gets renamed so that a single character is
 replaced with an underscore: The old file was not getting removed upon
 publish. Reported by Ashlee Caul (Bug #1446). [David]
 
+=item *
+
+The C<bric_media_upload> app works again. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

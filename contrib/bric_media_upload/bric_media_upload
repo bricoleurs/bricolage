@@ -398,6 +398,7 @@ sub create_or_update_media {
   <description></description>
   <uri>$media_uri</uri>
   <priority>3</priority>
+  <publish_status>0</publish_status>
   <active>1</active>
   <source>$content_source</source>
   <cover_date>$media_cover_date</cover_date>
