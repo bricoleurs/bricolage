@@ -60,9 +60,9 @@ my $field_values = sub {
           $o->get_title . '</a>';
     } elsif ($field eq 'action') {
         if ($relate_id == $o->get_id) {
-            return qq{<a href="#" class="redLink" onclick="Container.unrelate('story', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Un-relate</a>};            
+            return qq{<a href="#" class="redLink" onclick="Container.unrelate('story', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{, true); return false">Un-relate</a>};
         } else {
-            return qq{<a href="#" class="redLink" onclick="Container.relate('story', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{); return false">Relate</a>};
+            return qq{<a href="#" class="redLink" onclick="Container.relate('story', '$widget', } . $element->get_id . ', ' . $o->get_id . qq{, true); return false">Relate</a>};
         }
     }
 };

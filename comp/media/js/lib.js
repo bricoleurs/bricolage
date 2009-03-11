@@ -1483,7 +1483,7 @@ var Container = {
     // returns the updated partial, which is then inserted into the parent
     // window. Takes the container ID to which to add the asset and the ID of
     // the asset to relate
-    update_related: function(action, type, widget, container_id, asset_id) {
+    update_related: function(action, type, widget, container_id, asset_id, sync) {
         new Ajax.Updater(
            { success: window.opener.document.getElementById(
                 'element_' + container_id + '_rel_' + type
@@ -1492,7 +1492,7 @@ var Container = {
                 parameters: 'type=' + type + '&widget=' + widget +
                     '&container_id=' + container_id + '&container_prof|' +
                      action + '_' + type + '_cb=' + asset_id,
-                asynchronous: true,
+                asynchronous: !sync,
                 onSuccess: function(r) { window.close(); },
                 onFailure: Bricolage.handleError,
                 on403: Bricolage.handleForbidden,
@@ -1501,12 +1501,12 @@ var Container = {
         )
     },
 
-    relate: function(type, widget, container_id, asset_id) {
-        return Container.update_related('relate', type, widget, container_id, asset_id);
+    relate: function(type, widget, container_id, asset_id, sync) {
+        return Container.update_related('relate', type, widget, container_id, asset_id, sync);
     },
 
-    unrelate: function(type, widget, container_id, asset_id) {
-        return Container.update_related('unrelate', type, widget, container_id, asset_id);
+    unrelate: function(type, widget, container_id, asset_id, sync) {
+        return Container.update_related('unrelate', type, widget, container_id, asset_id, sync);
     },
 
     // Update the display of an element, but do nothing else. If sync is true,
