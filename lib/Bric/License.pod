@@ -476,6 +476,8 @@ Friends who have spotted bugs include:
 
 =item * Krzysztof Rudnik
 
+=item * Adam Wilson
+
 =back
 
 Bricolage's translation team:
