@@ -151,6 +151,12 @@ name. The file name is also now always consistently URI escaped (Bug #1419).
 Eliminated a SQL injection vulnerability in the querying for stories, media,
 and templates. [David]
 
+=item *
+
+Fixed an issue where a document gets renamed so that a single character is
+replaced with an underscore: The old file was not getting removed upon
+publish. Reported by Ashlee Caul (Bug #1446). [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

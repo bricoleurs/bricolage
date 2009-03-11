@@ -1242,10 +1242,11 @@ sub publish {
         if ($exp_date && $exp_date lt $publish_date) {
             # Don't really publish it, just expire it.
             return 1 unless $ba->get_publish_status;
+            (my $search_path = $base_path) =~ s/([_%])/\\$1/g;
             my @stale = Bric::Dist::Resource->list({
                 "$key\_id" => $baid,
                 $key eq 'story'
-                    ? (path  => "$base_path/%")
+                    ? (path  => "$search_path/%")
                     : (oc_id => $oc->get_id),
             }) or next;
             my $expname = 'Expire "' . $ba->get_name .
@@ -1289,8 +1290,13 @@ sub publish {
             # Save the job.
             $job->save;
             log_event('job_new', $job);
+
+            # Stash away its ID and the SQL LIKE-escaped URI.
             push @job_ids, $job->get_id;
-            $uris{$_->get_uri} = undef for $job->get_resources;
+            $uris{$_} = undef for map {
+                (my $u = $_->get_uri) =~ s/([_%])/\\$1/g;
+                $u;
+            } $job->get_resources;
 
             # Set up an expire job, if necessary.
             if ($exp_date and my @res = $job->get_resources) {
@@ -2176,8 +2182,8 @@ B<Notes:> NONE.
 
 sub _get_resource {
     my ($path, $uri) = @_;
-    ( my $lpath = $path) =~ s/([%_])/\\$1/g;
-    ( my $luri  = $uri)  =~ s/([%_])/\\$1/g;
+    ( my $lpath = $path) =~ s/([_%])/\\$1/g;
+    ( my $luri  = $uri)  =~ s/([_%])/\\$1/g;
     return Bric::Dist::Resource->lookup({
         path => $lpath,
         uri  => $luri,
