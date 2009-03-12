@@ -302,6 +302,12 @@ The "Related Story" popup now properly closes in Camino when a "relate" or
 A call to C<list()> or C<lookup()> in L<Bric::Util::Event|Bric::Util::Event>
 with an "Offset" parameter but no "Limit" now works properly on MySQL. [David]
 
+=item *
+
+Fixed a mispelled method (introduced in 1.11.1) that would've caused an
+unfriendly error message if the Cover Date was partially completed on New
+Story. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

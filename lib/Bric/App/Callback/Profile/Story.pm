@@ -452,7 +452,7 @@ sub create : Callback {
 
     # Set the slug and cover date and save the story.
     if ($param->{'cover_date-partial'}) {
-        $self->rais_conflict('Cover Date incomplete.');
+        $self->raise_conflict('Cover Date incomplete.');
         return;
     }
 
