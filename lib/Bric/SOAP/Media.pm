@@ -442,7 +442,7 @@ Throws:
 
 Side Effects: NONE
 
-NNotes: The setting for publish_status for new media is ignored and
+Notes: The setting for publish_status for new media is ignored and
 always 0 for new stories.  Updated media do get their publish_status
 set from the incoming document.
 
