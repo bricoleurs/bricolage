@@ -304,7 +304,7 @@ with an "Offset" parameter but no "Limit" now works properly on MySQL. [David]
 
 =item *
 
-Fixed a mispelled method (introduced in 1.11.1) that would've caused an
+Fixed a misspelled method (introduced in 1.11.1) that would've caused an
 unfriendly error message if the Cover Date was partially completed on New
 Story. [Scott]
 
