@@ -29,7 +29,7 @@ weren't. [David]
 
 Changed autocomplete category selection for stories so that if you have the
 C<FULL_SEARCH> config directive turned on, you get wildcard matching to any
-part of the uri on your entered string, so typing bar will return /bar and 
+part of the uri on your entered string, so typing bar will return /bar and
 /foo/bart . Enter / for a full list of categories. [Paul Orrock]
 
 =item *
@@ -62,7 +62,7 @@ Krohn]
 
 =item *
 
-Upgraded Prototype and Scriptaculous libraries to versions 1.6.0.3 and 1.8.2 
+Upgraded Prototype and Scriptaculous libraries to versions 1.6.0.3 and 1.8.2
 respectively. [Rolf, Mercier, Herring]
 
 =item *
@@ -75,9 +75,9 @@ that you can tell what each is! [David]
 
 Workspaces, Desks, and debug messages validate again. [Matt Rolf]
 
-=item * 
+=item *
 
-Dragging container elements to the edge of the browser window will now 
+Dragging container elements to the edge of the browser window will now
 scroll the page. Reported by Matt Rolf. [Sarah Mercier]
 
 =item *
@@ -130,12 +130,12 @@ method call. Reported by Denny de la Haye. [David]
 
 =item *
 
-Added confirmation on Delete JavaScript action on Workspace and desk. 
+Added confirmation on Delete JavaScript action on Workspace and desk.
 Reported by Matt Rolf (Bug 1380). [Sarah Mercier]
-  
+
 =item *
 
-Fixed problem with rendering of radio button fields (Bug #1387).  
+Fixed problem with rendering of radio button fields (Bug #1387).
 [Denny de la Haye]
 
 =item *
@@ -145,7 +145,7 @@ problems on some systems. [Paul Orrock]
 
 =item *
 
-Fixed problem with L<Bric::SOAP> so that the first field or container is 
+Fixed problem with L<Bric::SOAP> so that the first field or container is
 correctly numbered at 0 rather than 2. [Paul Orrock]
 
 =item *
@@ -156,7 +156,7 @@ saved in the UI. [Paul Orrock]
 
 =item *
 
-Fixed up broken / non-compliant HTML on desks, search results and workspace. 
+Fixed up broken / non-compliant HTML on desks, search results and workspace.
 [Paul Orrock]
 
 =item *
@@ -190,9 +190,9 @@ window. [Adrian Yee]
 Fixed bug #1405, Add Element will now close on double click.
 [Sarah Mercier and Matt Rolf]
 
-=item * 
+=item *
 
-Fixed bug #1426, find stories/media/template advanced search toggle now works 
+Fixed bug #1426, find stories/media/template advanced search toggle now works
 properly. [Sarah Mercier and Matt Rolf]
 
 =item *
@@ -203,7 +203,7 @@ Fixed bug where IE7 couldn't open the sidenav.  [Kahil Jallad]
 
 Fixed bug where removing a subelement or custom field from an element type
 would result in an error when editting a story with one of those elements.
-[Bret Dawson] 
+[Bret Dawson]
 
 =item *
 
@@ -213,10 +213,10 @@ Fixed typing error which caused the upgrade script to fail. [Darren Embry]
 
 Deleting keywords from category would cause error. [Adrian Yee]
 
-=item * 
+=item *
 
 New bulk edit button would cause submit error in IE7 because it didn't call
-the customSubmit function. [Kahil Jallad, Sarah Mercier] 
+the customSubmit function. [Kahil Jallad, Sarah Mercier]
 
 =item *
 
@@ -236,8 +236,8 @@ and Matt Rolf(Bug #1388). [Greg Heo]
 
 =item *
 
-Fixed bug in C<inst/required.pl> so it remembers what you're trying to install 
-when telling you what's missing. Also added documentation to 
+Fixed bug in C<inst/required.pl> so it remembers what you're trying to install
+when telling you what's missing. Also added documentation to
 C<inst/htprobe_apache2.pl> about not finding apreq module. [Paul Orrock]
 
 =item *
@@ -247,7 +247,7 @@ clicked. [Sarah Mercier]
 
 =item *
 
-Added a check to C<inst/required.pl> to check for a preforking apache2 rather 
+Added a check to C<inst/required.pl> to check for a preforking apache2 rather
 than a threaded worker apache2. [Paul Orrock]
 
 =item *
@@ -438,12 +438,12 @@ it properly remembers the already-intalled configuration. [David]
 
 =item *
 
-Fixed non-standard installation path being ignored if changed during "multi" 
+Fixed non-standard installation path being ignored if changed during "multi"
 installation mode. This was done by changing the defaults files to include
 the C<BRICOLAGE_ROOT> variable. So when C<BRICOLAGE_ROOT> is changed and the
 others are then evaled they get changed too. [Paul Orrock]
 
-=item * 
+=item *
 
 Updated L<Bric::Admin|Bric::Admin> to ensure that we have at least version
 1.16 of L<Params::CallbackRequest|Params::CallbackRequest> so that we detect
@@ -686,7 +686,7 @@ to install files in their proper locations. [Brian Smith and David]
 
 =item *
 
-The "Save, Save and Stay, and Return" buttons in the Edit Categories screen 
+The "Save, Save and Stay, and Return" buttons in the Edit Categories screen
 of the story profile are moved to the right to better align with the interface
 buttons. [Matt Rolf]
 
@@ -1367,7 +1367,7 @@ message is displayed. [Scott]
 
 =item *
 
-Added output channel name to "Could not find template" error message in 
+Added output channel name to "Could not find template" error message in
 the Mason Burner. [Paul Orrock]
 
 =item *
@@ -1422,7 +1422,7 @@ F<postgresql.conf> are available in PostgreSQL 8.1 and later. [David]
 
 =item *
 
-Improved verbose output in F<contrib/bric_media_upload> to include bric_soap 
+Improved verbose output in F<contrib/bric_media_upload> to include bric_soap
 commands in output. Also now uses /usr/bin/perl instead of /usr/local/bin/perl
 to be consistent with other scripts and bricolage core. [Paul Orrock]
 
@@ -1697,7 +1697,7 @@ copy that file from the distribution source. [Scott]
 
 =item *
 
-Changing the category of a media object now calls a preview of the asset if 
+Changing the category of a media object now calls a preview of the asset if
 AUTO_PREVIEW_MEDIA is turned on. [Paul Orrock]
 
 =item *
@@ -1833,7 +1833,7 @@ the list, rather than 20 or more items. [David]
 
 Added a CSS ID to the C<< <body> >> tag in the UI, of the form
 "bricolage_C<VHOST_SERVER_NAME>", where C<VHOST_SERVER_NAME> is the value
-defined in F<bricolage.conf>.  Use this ID when writing user stylesheets 
+defined in F<bricolage.conf>.  Use this ID when writing user stylesheets
 to override the look of the Bricolage UI (see SkinningBricolage in the Wiki)
 [Marshall]
 
@@ -3506,7 +3506,7 @@ have the proper permissions (CREATE on the start desk). (bug 1203) [Marshall]
 
 =item *
 
-The code of a template no longer disappears when you click "Trail" in the 
+The code of a template no longer disappears when you click "Trail" in the
 Template Profile. (bug 1204) [Marshall]
 
 =item *
