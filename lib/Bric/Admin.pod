@@ -157,6 +157,8 @@ START MODULE LIST
 
 =item Test::File::Contents 0.02
 
+=item Test::File
+
 =item Text::Balanced
 
 =item XML::Parser 2.34
