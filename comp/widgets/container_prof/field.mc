@@ -34,7 +34,20 @@
     &>
     </div>
 % }
+% unless ($element->is_autopopulated) {
+    <div class="copy">
+        <& '/widgets/profile/button.mc',
+            disp      => $lang->maketext("Copy"),
+            name      => 'copy_' . $name,
+            button    => 'copy',
+            extension => 'png',
+            globalImage => 1,
+            js        => q{onclick="Container.copyElement(} . $element->get_parent_id . ', ' . $element->get_id . qq{); return false;"},
+            useTable  => 0
+        &>
+    </div>
 </div>
+% }
 
 <%args>
 $widget

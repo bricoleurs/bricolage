@@ -770,6 +770,7 @@ our %Lexicon = (
 
 To Translate:
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
+  'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
 
 ==end comment
 

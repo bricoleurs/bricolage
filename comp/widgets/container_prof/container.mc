@@ -73,11 +73,17 @@ Container.updateOrder('element_<% $id %>');
     <div id="element_<% $id %>_add_desks" class="popup-menu" style="display: none; width: 10em; padding: 0;">
         <ul>
 %           foreach my $opt (@$elem_opts) {
-            <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false"><% $opt->[1] %></a></li>
+            <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false" rel="<% $opt->[0] %>"><% $opt->[1] %></a></li>
 %           }
+            <li style="display: none !important"><a href="#" onclick="Container.addElement(<% $id %>, 'copy_buffer'); return false">Paste</a></li>
         </ul>
     </div>
     </div>
+%   if (keys %paste) {
+    <script type="text/javascript">
+        Container.updatePaste('<% $paste{id} %>', '<% $paste{text} %>');
+    </script>
+%   }
 %   }
 
 <span style="cursor: pointer;" id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" onclick="customSubmit('theForm','<% $top_level ? 'container_prof|bulk_edit_this_cb' : 'container_prof|bulk_edit_cb' %>','<% $id %>')" > <img src="/media/images/bulk-edit.png" alt="Bulk Edit" />Bulk Edit</span>
@@ -94,16 +100,27 @@ Container.updateOrder('element_<% $id %>');
 %     if ( $minimum_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
 <div class="delete">
     <& '/widgets/profile/button.mc',
-        disp      => $lang->maketext("Delete"),
-        name      => 'delete_' . $name,
-        button    => 'delete',
-        extension => 'png',
+        disp        => $lang->maketext("Delete"),
+        name        => 'delete_' . $name,
+        button      => 'delete',
+        extension   => 'png',
         globalImage => 1,
-        js        => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
-        useTable  => 0
+        js          => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
+        useTable    => 0
     &>
 </div>
 %     }
+<div class="copy">
+    <& '/widgets/profile/button.mc',
+        disp        => $lang->maketext("Copy"),
+        name        => 'copy_' . $name,
+        button      => 'copy',
+        extension   => 'png',
+        globalImage => 1,
+        js          => q{onclick="Container.copyElement(} . $element->get_parent_id . ', ' . $element->get_id . qq{); return false;"},
+        useTable    => 0
+    &>
+</div>
 % }
 
 </div>
@@ -144,4 +161,18 @@ my $elem_opts = [
         $element->get_possible_field_types,
         grep { chk_authz($_, READ, 1) } $element->get_possible_containers
 ];
+
+my %paste;
+my $buffer = get_state_data('copy_buffer', 'buffer');
+if ($buffer) {
+    my $buff_type = $buffer->is_container ? $buffer->get_element_type : $buffer->get_field_type;
+    my $id = ($buff_type->can('get_sites') ? 'cont_' : 'data_') . $buff_type->get_id;
+
+# Info about the element in the buffer that is used to determine if it can be
+# added to the containers on the page
+    %paste = (
+        id   => $id,
+        text => $lang->maketext('Paste ([_1])', $buffer->get_name),
+    );
+}
 </%init>

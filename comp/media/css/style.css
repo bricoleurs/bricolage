@@ -688,9 +688,16 @@ div.addelement { text-align: right;}
 }
 #containerprof .content .delete {
     position: absolute;
-    top: 0; right: 0;
+    top: 5px; right: 0;
 }
-#containerprof .container .delete { top: 5px; }
+#containerprof .content > .delete { top: 0; }
+#containerprof .container > .content > .delete { top: 8px; }
+#containerprof .content .copy {
+    position: absolute;
+    top: 24px; right: 0;
+}
+#containerprof .content > .copy { top: 19px; }
+#containerprof .container > .content > .copy { top: 27px; }
 #containerprof .actions { background: transparent; }
 #containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
 #containerprof div.popup-menu ul li { white-space: normal; }

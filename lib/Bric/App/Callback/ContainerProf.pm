@@ -25,6 +25,7 @@ use Bric::Util::Trans::FS;
 use Bric::Biz::Workflow qw(:wf_const);
 eval { require Text::Levenshtein };
 require Text::Soundex if $@;
+use Clone;
 
 my $STORY_URL  = '/workflow/profile/story/';
 my $STORY_CONT = '/workflow/profile/story/container/';
@@ -128,16 +129,28 @@ sub add_element : Callback {
         $a_obj = $pkgs{$key}->lookup({ id => $element->get_object_instance_id });
     }
 
-    my ($type, $id) = unpack('A5 A*', $field);
-
     my $element_type;
-    if ($type eq 'cont_') {
-        $element_type = Bric::Biz::ElementType->lookup({ id => $id });
-        $element->add_container($element_type)->set_displayed(1);
-    } else {
-        $element_type = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id });
-        $element->add_field($element_type);
+    # Pasting an element from the copy buffer
+    if ($field eq 'copy_buffer') {
+        my $copy_buffer = get_state_data('copy_buffer', 'buffer');
+        if ($copy_buffer) {
+            my $clone = Clone::clone($copy_buffer)->prepare_clone;
+            $element_type = $clone->is_container ? $clone->get_element_type : $clone->get_field_type;
+            $element->add_element($clone);
+        }
     }
+    else {
+        my ($type, $id) = unpack('A5 A*', $field);
+
+        if ($type eq 'cont_') {
+            $element_type = Bric::Biz::ElementType->lookup({ id => $id });
+            $element->add_container($element_type)->set_displayed(1);
+        } else {
+            $element_type = Bric::Biz::ElementType::Parts::FieldType->lookup({ id => $id });
+            $element->add_field($element_type);
+        }
+    }
+
     # If an element is added, we want to display the parent.
     $element->set_displayed(1);
     $element->save;
@@ -159,6 +172,20 @@ sub update : Callback(priority => 1) {
     # the case may be.
 #    my $element = get_state_data($self->class_key, 'element');
 #    $element->save;
+}
+
+sub copy : Callback {
+    my $self = shift;
+    $self->_drift_correction;
+    my $param = $self->params;
+    return if $param->{_inconsistent_state_};
+
+    my $widget = $self->class_key;
+
+    my $element = get_state_data($widget, 'element');
+    my $copy_element = $self->_locate_subelement($element, $self->value, 1);
+
+    set_state_data('copy_buffer', 'buffer', $copy_element);
 }
 
 sub pick_related_media : Callback {
@@ -571,7 +598,7 @@ sub _delete_element {
 }
 
 sub _locate_subelement {
-    my ($self, $element, $locate_id) = @_;
+    my ($self, $element, $locate_id, $inc_fields) = @_;
     $locate_id ||= $self->value;
 
     {
@@ -580,9 +607,13 @@ sub _locate_subelement {
     }
 
     foreach my $t ($element->get_elements) {
+        if ($inc_fields) {
+            no warnings 'uninitialized';
+            return $t if $t->get_id == $locate_id;
+        }
         next unless $t->is_container;
 
-        my $locate_element = $self->_locate_subelement($t, $locate_id);
+        my $locate_element = $self->_locate_subelement($t, $locate_id, $inc_fields);
         return $locate_element if $locate_element;
     }
 }

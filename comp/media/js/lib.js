@@ -1544,6 +1544,40 @@ var Container = {
         }
     },
 
+    copyElement: function(container_id, element_id) {
+        Container.refresh(container_id, {
+            extraParameters: 'container_prof|copy_cb=' + element_id
+        });
+    },
+
+    /*
+    Update the Paste item on all the "Add Element" popup menus.
+    input:
+        id - the container or field type id (cont_* or data_*) of the element in the buffer
+        text - the text to show for the menu item
+    */
+    updatePaste: function(id, text) {
+        $$('.actions .popup-menu ul').each(function (menu) {
+            var found = false;
+            var links = menu.getElementsByTagName('a');
+            for (var i = 0; i < links.length - 1; i++) {
+                if (links[i].getAttribute('rel') == id) {
+                    found = true;
+                    break;
+                }
+            }
+
+            // The last element of the list is always Paste
+            if (found) {
+                links[links.length - 1].parentNode.style.display = '';
+                links[links.length - 1].innerHTML = text;
+            }
+            else {
+                links[links.length - 1].parentNode.style.display = 'none';
+            }
+        });
+    },
+
     toggle: function( eid, anchor ) {
         Effect.toggle('element_' + eid, 'blind', {duration: 0.3});
         Effect.toggle('element_' + eid + '_hint', 'blind', {duration: 0.3});

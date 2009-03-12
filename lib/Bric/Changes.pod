@@ -106,6 +106,11 @@ Only show the subelement hint when the container is collapsed. [Adrian Yee]
 Cover date is now required at the database level. It has always been required
 in the UI. [David]
 
+=item *
+
+Added support for copying and pasting elements in the story profile.
+[Adrian Yee]
+
 =back
 
 =head2 Bug Fixes
