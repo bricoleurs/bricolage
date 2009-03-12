@@ -320,6 +320,11 @@ no trailing slash, like C</foo/bar>, which led to an error. This was fixed by
 making C<< Bric::Biz::Category->lookup >> (and C<list>, C<list_ids>) work by
 looking up with a C<uri> not ending with a slash. [Scott]
 
+=item * 
+
+Fix for bug #1390, newer versions of Safari properly handle the autocomplete
+form. [Matt Rolf with much work by Sarah Mercier]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
