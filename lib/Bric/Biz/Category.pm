@@ -1612,6 +1612,10 @@ sub _do_list {
             $wheres .= ' AND a.site__id = site.id AND site.active = TRUE';
         } else {
             # It's a simpler string comparison.
+
+            # category must end with slash
+            $v .= '/' if $k eq 'uri' && $v !~ m{/$};
+
             $wheres .= ' AND '
               . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
         }

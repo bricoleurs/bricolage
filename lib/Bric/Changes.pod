@@ -308,6 +308,13 @@ Fixed a misspelled method (introduced in 1.11.1) that would've caused an
 unfriendly error message if the Cover Date was partially completed on New
 Story. [Scott]
 
+=item *
+
+It was possible in New Story, despite auto_completion, to enter a category with
+no trailing slash, like C</foo/bar>, which led to an error. This was fixed by
+making C<< Bric::Biz::Category->lookup >> (and C<list>, C<list_ids>) work by
+looking up with a C<uri> not ending with a slash. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

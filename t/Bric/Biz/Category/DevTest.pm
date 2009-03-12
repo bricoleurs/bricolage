@@ -30,7 +30,7 @@ sub cleanup_attrs : Test(teardown) {
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(17) {
+sub test_lookup : Test(19) {
     my $self = shift;
 
     ok (my $cat = Bric::Biz::Category->new({%cat}), "Create $cat{name}");
@@ -49,6 +49,11 @@ sub test_lookup : Test(17) {
     # Look up on site and uri
     ok ($cat = Bric::Biz::Category->lookup({uri => '/testing/', site_id => 100}),
         "Look up $cat{name} on URI and Site");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
+    # Same but without a trailing slash
+    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site_id => 100}),
+        "Look up $cat{name} on URI with no trailing slash and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Make sure we've got the ad string.
