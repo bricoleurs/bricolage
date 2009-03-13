@@ -731,12 +731,6 @@ B<Notes:> NONE.
 
 =cut
 
-sub get_max_length {
-    my $self = shift;
-    return $self if $self->_get('max_length');
-    return;
-}
-
 ##############################################################################
 
 =item my $sql_type = $data->get_sql_type
