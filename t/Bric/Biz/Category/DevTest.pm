@@ -5,6 +5,7 @@ use base qw(Bric::Test::DevBase);
 use Test::More;
 use Bric::Biz::Category;
 use Bric::Biz::Site;
+use Bric::Util::DBI qw(:junction);
 use Bric::Util::Grp::CategorySet;
 use Bric::Util::Priv::Parts::Const qw(:all);
 
@@ -30,7 +31,7 @@ sub cleanup_attrs : Test(teardown) {
 # Test constructors.
 ##############################################################################
 # Test the lookup() method.
-sub test_lookup : Test(19) {
+sub test_lookup : Test(21) {
     my $self = shift;
 
     ok (my $cat = Bric::Biz::Category->new({%cat}), "Create $cat{name}");
@@ -54,6 +55,11 @@ sub test_lookup : Test(19) {
     # Same but without a trailing slash
     ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site_id => 100}),
         "Look up $cat{name} on URI with no trailing slash and Site");
+    is ($cat->get_id, $id,                        'Check that ID is the same');
+
+    # Same but using ANY
+    ok ($cat = Bric::Biz::Category->lookup({uri => ANY('/testing'), site_id => 100}),
+        "Look up $cat{name} on URI with no trailing slash and using ANY and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Make sure we've got the ad string.

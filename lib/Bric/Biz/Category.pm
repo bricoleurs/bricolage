@@ -1613,8 +1613,14 @@ sub _do_list {
         } else {
             # It's a simpler string comparison.
 
-            # category must end with slash
-            $v .= '/' if $k eq 'uri' && $v !~ m{/$};
+            # category uri must end with slash
+            if ($k eq 'uri') {
+                if (ref $v) {    # ANY, NONE
+                    s{/*$}{/} for @$v;
+                } else {         # just a string
+                    $v =~ s{/*$}{/};
+                }
+            }
 
             $wheres .= ' AND '
               . any_where($v, "LOWER(a.$k) LIKE LOWER(?)", \@params);
