@@ -316,3 +316,5 @@ Sam Tregar <stregar@about-inc.com>
 L<Bric::Admin>
 
 =cut
+
+1;
