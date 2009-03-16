@@ -766,7 +766,7 @@ To translate:
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
   'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
   'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
-  'Toggle &quot;[_1]&quot;' => 'Toggle “[_1]”',
+  'Toggle "[_1]"' => 'Toggle “[_1]”',
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
 

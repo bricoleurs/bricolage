@@ -2,7 +2,7 @@
 % unless ($top_level) {
 <fieldset>
 <legend class="name">
-<a href="#" style="" id="element_<% $id %>_showhide" onclick="Container.toggle(<% $id %>, this); return false;" title="<% $lang->maketext('Toggle &quot;[_1]&quot;', escape_html($element->get_name) ) %>">&#x25b<% $displayed ? 'c' : 'a' %>;</a>
+<a href="#" style="" id="element_<% $id %>_showhide" onclick="Container.toggle(<% $id %>, this); return false;" title="<% escape_html $lang->maketext('Toggle "[_1]"', $element->get_name)  %>">&#x25b<% $displayed ? 'c' : 'a' %>;</a>
 <span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
