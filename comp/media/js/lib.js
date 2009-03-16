@@ -1580,7 +1580,10 @@ var Container = {
 
     toggle: function( eid, anchor ) {
         Effect.toggle('element_' + eid, 'blind', {duration: 0.3});
-        Effect.toggle('element_' + eid + '_hint', 'blind', {duration: 0.3});
+        var hint_element = $('element_' + eid + '_hint');
+        if (hint_element) {
+            Effect.toggle(hint_element, 'blind', {duration: 0.3});
+        }
         var displayed = $('container_' + eid + '_displayed');
         if ( displayed.value == '0' ) {
             // Display it.
