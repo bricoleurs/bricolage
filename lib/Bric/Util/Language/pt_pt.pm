@@ -760,7 +760,7 @@ To translate:
   '[_1] cannot be a subelement of [_2].' => '[_1] cannot be a subelement of [_2].',
     'You cannot add a note to "[_1]" because it is not checked out to you' => 'You cannot add a note to "[_1]" because it is not checked out to you',
   'Could not create a thumbnail for [_1]: [_2]' => 'Could not create a thumbnail for [_1]: [_2]',
-  'Toggle "[_1]"' => 'Toggle “[_1]”',
+  'Toggle &quot;[_1]&quot;' => 'Toggle “[_1]”',
   'Delete this Story' => 'Delete this Story',
   'Delete this Media' => 'Delete this Media',
   'Delete this Template' => 'Delete this Template',
