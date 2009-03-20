@@ -1205,9 +1205,7 @@ sub set_category__id {
       || (not defined $cat_id && defined $old_cat_id)
       || ($cat_id != $old_cat_id);
 
-    print STDERR "######### $cat_id\n" if $ENV{FOO};
     my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
-    print STDERR "######### $cat\n" if $ENV{FOO};
     my $oc = $self->get_primary_oc;
 
     my $c_cat = $self->get_category_object();
