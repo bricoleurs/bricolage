@@ -465,7 +465,7 @@ NONE
 sub upload_file {
     my $self = shift;
     $self->SUPER::upload_file(@_);
-    $self->create_thumbnail(1) if USE_THUMBNAILS;
+    $self->create_thumbnail(1) if USE_THUMBNAILS && !$self->_get('_upload_data');
     return $self;
 }
 

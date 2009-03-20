@@ -45,7 +45,7 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
-use Bric::App::Session qw(get_user_id);
+use Bric::App::Session;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
@@ -1633,7 +1633,7 @@ sub upload_file {
                 my $method = $auto_fields->{$name};
                 my $val = $media_func->$method();
                 $dt->set_value(defined $val ? $val : '');
-                $dt->save;
+                $dt->save if $dt->get_id;
             }
         }
     }
@@ -1896,8 +1896,8 @@ sub save {
                 $self->_insert_instance();
                 if (my $upload_data = $self->_get('_upload_data')) {
                     # Ah, we need to handle a file upload.
-                    $self->upload_file(@$upload_data);
                     $self->_set(['_upload_data'] => [undef]);
+                    $self->upload_file(@$upload_data);
                     # Update to save the file location data.
                     $self->_update_instance;
                 }
@@ -2376,7 +2376,7 @@ sub _preview {
         _output_preview_msgs => 0,
     });
 
-    $burner->preview($self, 'media', get_user_id, $_->get_id)
+    $burner->preview($self, 'media', Bric::App::Session::get_user_id, $_->get_id)
         for $self->get_output_channels;
     $self->_set(['needs_preview'] => [0]);
 }

@@ -951,25 +951,13 @@ sub test_upload_before_save : Test(26) {
     my $self    = shift;
     my $class   = $self->class;
 
-    # Cache the cat_dir sub, and set up a path that's okay to write to.
-    my $cat_dir = \&Bric::Util::Trans::FS::cat_dir;
-
-    my @paths =  (undef, $cat_dir->(undef, $ENV{BRIC_TEMP_DIR}, '_media'));
-
-    my $mock_fs = Test::MockModule->new('Bric::Util::Trans::FS');
-    $mock_fs->mock(mk_path => 1);
-    $mock_fs->mock(cat_dir => sub {
-        return shift @paths if @paths;
-        goto $cat_dir;
-    });
-
     # Let's force lowercase-only.
     $self->{oc} = my $oc = $self->get_elem->get_output_channels->[0];
     $oc->set_uri_case(LOWERCASE)->save;
 
     ok my $media = $self->construct(
         name      => 'Flubberman',
-        file_name => 'fun.foo',
+        file_name => 'Some file.png',
     ), 'Create a new media object';
 
     # Upload a file before saving the media.
