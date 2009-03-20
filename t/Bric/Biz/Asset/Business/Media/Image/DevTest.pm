@@ -22,7 +22,7 @@ sub test_class_id : Test(1) {
 }
 
 ##############################################################################
-sub test_thumnail : Test(9) {
+sub test_thumbnail : Test(9) {
     my $self = shift;
     my $class = $self->class;
 
