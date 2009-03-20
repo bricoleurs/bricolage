@@ -375,6 +375,11 @@ form. [Matt Rolf with much work by Sarah Mercier]
 Fixed C<< Bric::Biz::Element::Field->get_max_length >> to correctly return the
 max_length. [Adrian Yee]
 
+=item * 
+
+Fixed bug in L<auto_complete.html> so that lookups of parent categories now
+correctly use the site id [Rolf Schaufelberger, Paul Orrock]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
