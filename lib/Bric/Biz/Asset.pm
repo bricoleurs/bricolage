@@ -982,9 +982,9 @@ NONE
 
 ################################################################################
 
-=item $user__id = $asset->get_user__id()
+=item $user_id = $asset->get_user_id()
 
-Returns the user__id of the person to whom the asset is checked out to
+Returns the user_id of the person to whom the asset is checked out to
 
 B<Throws:>
 
@@ -999,6 +999,8 @@ B<Notes:>
 NONE
 
 =cut
+
+sub get_user_id { shift->_get('user__id') }
 
 ################################################################################
 
@@ -1067,7 +1069,7 @@ NONE
 
 ################################################################################
 
-=item $user__id = $asset->get_modifier()
+=item $user_id = $asset->get_modifier()
 
 Returns the user id of the person who edited this version of the asset.   If
 the asset is checked out it will be the same as the user who checked it out.

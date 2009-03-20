@@ -39,7 +39,7 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Grp::Media;
 use Bric::Util::Time qw(:all);
 use Bric::App::MediaFunc;
-use Bric::App::Session qw(get_user_id);
+use Bric::App::Session;
 use File::Temp qw( tempfile );
 use Bric::Config qw(:media :thumb MASON_COMP_ROOT PREVIEW_ROOT);
 use Bric::Util::Fault qw(:all);
@@ -1205,7 +1205,9 @@ sub set_category__id {
       || (not defined $cat_id && defined $old_cat_id)
       || ($cat_id != $old_cat_id);
 
+    print STDERR "######### $cat_id\n" if $ENV{FOO};
     my $cat = Bric::Biz::Category->lookup({ id => $cat_id });
+    print STDERR "######### $cat\n" if $ENV{FOO};
     my $oc = $self->get_primary_oc;
 
     my $c_cat = $self->get_category_object();
@@ -1235,7 +1237,6 @@ sub set_category__id {
 
 sub get_primary_uri { shift->get_uri }
 
-
 ##############################################################################
 # Documented in Bric::Biz::Asset::Business.
 
@@ -1263,7 +1264,7 @@ sub set_primary_oc_id {
 
 ################################################################################
 
-=item $category_id = $media->get_category__id()
+=item $category_id = $media->get_category_id()
 
 Returns the category id that has been associated with this media object
 
@@ -1274,6 +1275,8 @@ B<Side Effects:> NONE.
 B<Notes:> NONE.
 
 =cut
+
+sub get_category_id { shift->_get('category__id') }
 
 =item $self = $media->set_cover_date($cover_date)
 
@@ -1494,16 +1497,16 @@ sub get_media_type {
 
 =item $media = $media->upload_file($file_handle, $file_name)
 
-=item $media = $media->upload_file($file_handle, $file_name, $media_type)
+=item $media = $media->upload_file($imgager, $file_name, $media_type)
 
 =item $media = $media->upload_file($file_handle, $file_name, $media_type, $size)
 
-Reads a file from the passed $file_handle and stores it in the media object
-under $file_name. If $media_type is passed, it will be used to set the media
-type of the file. Otherwise, C<upload_file()> will use Bric::Util::MediaType
-to determine the media type. If $size is passed, its value will be used for
-the size of the file; otherwise, C<upload_file()> will figure out the file
-size itself.
+Reads a file from the passed $file_handle or L<Imager|Imager> object and
+stores it in the media object under $file_name. If $media_type is passed, it
+will be used to set the media type of the file. Otherwise, C<upload_file()>
+will use Bric::Util::MediaType to determine the media type. If $size is
+passed, its value will be used for the size of the file; otherwise,
+C<upload_file()> will figure out the file size itself.
 
 B<Throws:> NONE.
 
@@ -1559,12 +1562,18 @@ sub upload_file {
 
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
-    local *FILE;
-    open FILE, ">$path" or throw_gen "Unable to open '$path': $!";
-    my $buffer;
-    while (read($fh, $buffer, 4096)) { print FILE $buffer }
-    close $fh;
-    close FILE;
+    if (ref $fh eq 'Imager') {
+        $fh->write( file => $path ) or throw_gen(
+            error   => "Imager cannot write '$path'",
+            payload => $fh->errstr
+        );
+    } else {
+        my $buffer;
+        open my $out, '>', $path or throw_gen "Unable to open '$path': $!";
+        while (read($fh, $buffer, 4096)) { print $out $buffer }
+        close $fh;
+        close $out;
+    }
     $self->_set(['needs_preview'] => [1]) if AUTO_PREVIEW_MEDIA;
 
     # Set the media type and the file size.
@@ -1618,7 +1627,7 @@ sub upload_file {
                 my $method = $auto_fields->{$name};
                 my $val = $media_func->$method();
                 $dt->set_value(defined $val ? $val : '');
-                $dt->save;
+                $dt->save if $dt->get_id;
             }
         }
     }
@@ -1881,8 +1890,8 @@ sub save {
                 $self->_insert_instance();
                 if (my $upload_data = $self->_get('_upload_data')) {
                     # Ah, we need to handle a file upload.
-                    $self->upload_file(@$upload_data);
                     $self->_set(['_upload_data'] => [undef]);
+                    $self->upload_file(@$upload_data);
                     # Update to save the file location data.
                     $self->_update_instance;
                 }
@@ -2361,7 +2370,7 @@ sub _preview {
         _output_preview_msgs => 0,
     });
 
-    $burner->preview($self, 'media', get_user_id, $_->get_id)
+    $burner->preview($self, 'media', Bric::App::Session::get_user_id, $_->get_id)
         for $self->get_output_channels;
     $self->_set(['needs_preview'] => [0]);
 }

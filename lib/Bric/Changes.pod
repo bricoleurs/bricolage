@@ -8,6 +8,70 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.11.2 (2008-??-??)
 
+=head2 New Features
+
+=over
+
+=item *
+
+Added configuration directive to allow the expiration of assets when they are
+deleted. [David, Mercier, Rolf and Herring]
+
+=item *
+
+Added the C<publishing()>, C<previewing()>, and C<compling()> sugar methods to
+L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the same
+code to check modes in templates all the time. [David]
+
+=item *
+
+Take keyword permissions into account when accessing or creating keywords from
+the story and media profiles as well as category manager. [Adrian Yee]
+
+=item *
+
+Added support for copying and pasting elements in the story profile.
+[Adrian Yee]
+
+=item *
+
+Added the C<find_or_create_alternate()> method to
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> class.
+This method makes it easy for templates to create alternate representations of
+an image as a new media document as a new media document. Useful for
+generating thumbnails and the like. As a side-effect, L<Imager|Imager> is now
+a required module. [David]
+
+=item *
+
+Since L<Imager|Imger> is not a required module, the C<USE_THUMBNAILS>
+directive is now enabled by default, as well. [David]
+
+=item *
+
+Added the following aliases, so I can pretend that the versions with double underscores don't exist:
+
+=over
+
+=item C<Bric::Biz::Asset::Business::set_source_id()>
+
+=item C<Bric::Biz::Asset::Business::get_source_id()>
+
+=item C<Bric::Biz::Asset::get_user_id()>
+
+=item C<Bric::Biz::Asset::Business::Media::get_category_id()>
+
+=back
+
+=item *
+
+Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
+C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
+thread-saftey reasons." This change backward-compatible with older versions of
+XML::LibXML. [David]
+
+=back
+
 =head2 Improvements
 
 =over
@@ -30,7 +94,7 @@ weren't. [David]
 Changed autocomplete category selection for stories so that if you have the
 C<FULL_SEARCH> config directive turned on, you get wildcard matching to any
 part of the uri on your entered string, so typing bar will return /bar and
-/foo/bart . Enter / for a full list of categories. [Paul Orrock]
+/foo/bart . Enter "/" for a full list of categories. [Paul Orrock]
 
 =item *
 
@@ -49,11 +113,6 @@ Made "Delete this Profile" text more specific depending on location, such as
 
 =item *
 
-Added configuration directive to allow the expiration of assets when they are
-deleted. [David, Mercier, Rolf and Herring]
-
-=item *
-
 Switched to passing parameters for Net::SSH2 authentication in
 L<Bric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> so that it will first try
 auth_password, and then follow up with auth_keyboard should the first fail
@@ -69,7 +128,7 @@ respectively. [Rolf, Mercier, Herring]
 
 Display a hint about subelements in the story view. This is especially
 important when they have no related stories or media and are not revealed, so
-that you can tell what each is! [David]
+that you can tell what each is! [David & Adrian Yee]
 
 =item *
 
@@ -88,28 +147,14 @@ found here and there. [David]
 
 =item *
 
-Added the C<publishing()>, C<previewing()>, and C<compling()> sugar methods to
-L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the same
-code to check modes in templates all the time. [David]
-
-=item *
-
-Take keyword permissions into account when accessing or creating keywords from
-the story and media profiles as well as category manager. [Adrian Yee]
-
-=item *
-
-Only show the subelement hint when the container is collapsed. [Adrian Yee]
-
-=item *
-
 Cover date is now required at the database level. It has always been required
 in the UI. [David]
 
 =item *
 
-Added support for copying and pasting elements in the story profile.
-[Adrian Yee]
+Calls to `log_event()` are immediately logged when not running under mod_perl
+or bric_queued. This is so that events will now always be properly logged.
+[David]
 
 =back
 

@@ -443,6 +443,8 @@ START MODULE LIST
 
 =item Clone
 
+=item Imager
+
 =item HTML::Template (optional)
 
 =item HTML::Template::Expr (optional)
@@ -464,8 +466,6 @@ START MODULE LIST
 =item HTTP::DAV (optional)
 
 =item Crypt::SSLeay (optional)
-
-=item Imager (optional)
 
 =item Text::Aspell (optional)
 
@@ -2442,7 +2442,7 @@ files in the Bricolage UI, and icon display in the UI for all other media
 files. See F<contrib/copy_gnome_icons> for a scipt to copy GNOME icons into
 the Bricolage root for use in the UI. Only one icon is included by default,
 with thanks to the KDE project's license for the graphic
-(L<http://artist.kde.org/new/license.html#others>). Disabled by default.
+(L<http://artist.kde.org/new/license.html#others>). Enabled by default.
 
 =item *
 

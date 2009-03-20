@@ -983,7 +983,7 @@ sub what_can {
 
     # Set $acl, if necessary.
     unless ($acl) {
-        $acl = Bric::Util::Priv->get_acl($id);
+        $acl = Bric::Util::Priv->get_acl($id) || {};
         $self->_set(['_acl'], [$acl]);
     }
 

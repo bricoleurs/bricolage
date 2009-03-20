@@ -175,7 +175,7 @@ our %Lexicon = (
   'Desks' => 'Büros',
   'Destinations' => 'Ziele',
   'Directory' => 'Verzeichnis',
-  'Display Name' => 'Namen Anzeigen', 
+  'Display Name' => 'Namen Anzeigen',
   'Domain Name' => 'Domainname',
   'Download' => 'Download',
   'Element' => 'Element',
@@ -298,7 +298,7 @@ our %Lexicon = (
   'Separator String' => 'Trennzeichen',
   'Simple Search' => 'Einfache Suche',
   'Site Profile' => 'Siteprofil',
-  'Sites' => 'Sites', 
+  'Sites' => 'Sites',
   'Site'  => 'Site',
   'Slug' => 'Kurzname',
   'Source' => 'Quelle',
@@ -340,7 +340,7 @@ our %Lexicon = (
   'and' => 'und',
   'D (for Deployed)'  => 'D',
   'P (for Published)' => 'P',
-  
+
 # Action Commands
 
    'Associate' => 'Assoziieren',
@@ -391,7 +391,7 @@ our %Lexicon = (
    'Delete this Contributor' => 'Diesen Mitarbeiter löschen',
    'Delete this Element Type' => 'Diesen Elementtyp löschen',
    'Delete this Keyword' => 'Diese Schlüsselname löschen',
-   'Delete this Media Type' => 'Diesen Medientyp löschen', 
+   'Delete this Media Type' => 'Diesen Medientyp löschen',
    'Delete this Output Channel' => 'Diesen Ausgabekanal löschen',
    'Delete this Source' => 'Diese Quelle löschen',
    'Delete this Workflow' => 'Dieses Workflow löschen',
@@ -789,23 +789,8 @@ To Translate:
 'Invalid codeselect code (didn't return an array ref of even size)' => 'Ungültiger codeselect Code (didn't return an array ref of even size)',
 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
 'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
-  
-  
-  
-  
-  
- 
-  
-  
-  
+'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
 
-  
-  
- 
- 
-  
- 
- 
 =end comment
 
 =cut

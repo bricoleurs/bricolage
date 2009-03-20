@@ -240,7 +240,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      MASON_COMP_ROOT
                                      AUTO_PREVIEW_MEDIA
                                      PREVIEW_MASON)],
-                    pub       => [qw(PUBLISH_RELATED_ASSETS 
+                    pub       => [qw(PUBLISH_RELATED_ASSETS
                                      PUBLISH_RELATED_FAIL_BEHAVIOR)],
                     dist      => [qw(ENABLE_DIST
                                      QUEUE_PUBLISH_JOBS
@@ -443,7 +443,8 @@ require Bric; our $VERSION = Bric->VERSION;
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR
                     ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS
-                    ENABLE_OC_ASSET_ASSOCIATION RELATED_MEDIA_UPLOAD)) {
+                    ENABLE_OC_ASSET_ASSOCIATION RELATED_MEDIA_UPLOAD
+                    USE_THUMBNAILS)) {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '1';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
         }
@@ -455,7 +456,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     ALLOW_WORKFLOW_TRANSFER ALLOW_ALL_SITES_CX
                     STORY_URI_WITH_FILENAME ENABLE_FTP_SERVER
                     ENABLE_CATEGORY_BROWSER QUEUE_PUBLISH_JOBS
-                    FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE USE_THUMBNAILS
+                    FTP_DEPLOY_ON_UPLOAD FTP_UNLINK_BEFORE_MOVE
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
                     MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
                     MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES

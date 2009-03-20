@@ -14,18 +14,7 @@ use Test::MockModule;
 sub class { 'Bric::Biz::Asset::Business::Media' }
 sub table { 'media' }
 
-my ($CATEGORY) = Bric::Biz::Category->list();
-
-# this will be filled during setup
-my $OBJ_IDS = {};
-my $OBJ = {};
-my @CATEGORY_GRP_IDS;
-my @WORKFLOW_GRP_IDS;
-my @DESK_GRP_IDS;
-my @MEDIA_GRP_IDS;
-my @ALL_DESK_GRP_IDS;
-my @REQ_DESK_GRP_IDS;
-my @EXP_GRP_IDS;
+    my ($CATEGORY) = Bric::Biz::Category->list();
 
 ##############################################################################
 # The element object we'll use throughout.
@@ -60,6 +49,17 @@ sub new_args {
 sub test_select_methods: Test(142) {
     my $self = shift;
     my $class = $self->class;
+
+    # this will be filled during setup
+    my $OBJ_IDS = {};
+    my $OBJ = {};
+    my @CATEGORY_GRP_IDS;
+    my @WORKFLOW_GRP_IDS;
+    my @DESK_GRP_IDS;
+    my @MEDIA_GRP_IDS;
+    my @ALL_DESK_GRP_IDS;
+    my @REQ_DESK_GRP_IDS;
+    my @EXP_GRP_IDS;
 
     # let's grab existing 'All' group info
     my $all_workflow_grp_id = Bric::Biz::Workflow->INSTANCE_GROUP_ID;
@@ -174,6 +174,7 @@ sub test_select_methods: Test(142) {
                              site_id     => 100,
                              note        => 'Note 1',
                            });
+
     $media[0]->set_category__id($OBJ->{category}->[0]->get_id());
     $media[0]->set_cover_date('2005-03-23 06:11:29');
     $media[0]->add_contributor($self->contrib, 'DEFAULT');
@@ -965,29 +966,21 @@ sub test_upload_before_save : Test(26) {
     my $self    = shift;
     my $class   = $self->class;
 
-    # Cache the cat_dir sub, and set up a path that's okay to write to.
-    my $cat_dir = \&Bric::Util::Trans::FS::cat_dir;
-
-    my @paths =  (undef, $cat_dir->(undef, $ENV{BRIC_TEMP_DIR}, '_media'));
-
-    my $mock_fs = Test::MockModule->new('Bric::Util::Trans::FS');
-    $mock_fs->mock(mk_path => 1);
-    $mock_fs->mock(cat_dir => sub {
-        return shift @paths if @paths;
-        goto $cat_dir;
-    });
-
     # Let's force lowercase-only.
     $self->{oc} = my $oc = $self->get_elem->get_output_channels->[0];
     $oc->set_uri_case(LOWERCASE)->save;
 
     ok my $media = $self->construct(
         name      => 'Flubberman',
-        file_name => 'fun.foo',
+        file_name => 'Some file.png',
     ), 'Create a new media object';
 
     # Upload a file before saving the media.
-    ok open my $file, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
+    my $fn = Bric::Util::Trans::FS->cat_file(
+        Bric::Config::MASON_COMP_ROOT->[0][1],
+        qw(media images log.png)
+    );
+    ok open my $file, '<', $fn or die "Cannot open $fn: $!";
     ok $media->upload_file($file, 'Some file.png'), 'Upload a media file';
 
     # Now save the media.

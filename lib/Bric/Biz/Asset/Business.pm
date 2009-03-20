@@ -640,7 +640,7 @@ NONE
 
 ################################################################################
 
-=item $biz = $biz->set_source__id($s_id)
+=item $biz = $biz->set_source_id($s_id)
 
 Sets the source id upon this story
 
@@ -660,7 +660,7 @@ NONE
 
 ################################################################################
 
-=item $source = $biz->get_source__id()
+=item $source = $biz->get_source_id()
 
 Returns the source id from this business asset
 
@@ -677,6 +677,9 @@ B<Notes:>
 NONE
 
 =cut
+
+sub get_source_id { shift->_get('source__id') }
+sub set_source_id { shift->_set(['source__id'] => [shift]) }
 
 ################################################################################
 

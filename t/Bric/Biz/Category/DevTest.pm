@@ -44,21 +44,22 @@ sub test_lookup : Test(21) {
     $self->add_del_ids([$cat->get_asset_grp_id], 'grp');
 
     # Look up the ID in the database.
+    my $uri = '/testing';
     ok ($cat = Bric::Biz::Category->lookup({id => $id}), "Look up $cat{name}");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Look up on site and uri
-    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing/', site_id => 100}),
+    ok ($cat = Bric::Biz::Category->lookup({uri => "$uri/", site_id => 100}),
         "Look up $cat{name} on URI and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Same but without a trailing slash
-    ok ($cat = Bric::Biz::Category->lookup({uri => '/testing', site_id => 100}),
+    ok ($cat = Bric::Biz::Category->lookup({uri => $uri, site_id => 100}),
         "Look up $cat{name} on URI with no trailing slash and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 
     # Same but using ANY
-    ok ($cat = Bric::Biz::Category->lookup({uri => ANY('/testing'), site_id => 100}),
+    ok ($cat = Bric::Biz::Category->lookup({uri => ANY($uri), site_id => 100}),
         "Look up $cat{name} on URI with no trailing slash and using ANY and Site");
     is ($cat->get_id, $id,                        'Check that ID is the same');
 

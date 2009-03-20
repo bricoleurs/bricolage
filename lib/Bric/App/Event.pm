@@ -145,6 +145,7 @@ sub log_event {
         user      => get_user_object,
         timestamp => strfdate(),
     };
+    commit_events() unless Bric::Config::MOD_PERL || $ENV{BRIC_QUEUED};
 }
 
 =item my $bool = commit_events()

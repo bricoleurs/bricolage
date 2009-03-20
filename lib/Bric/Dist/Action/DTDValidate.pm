@@ -142,14 +142,10 @@ sub do_it {
             status_msg "Validating $uri";
 
             # Parse the file.
-            my $doc = eval { $parser->parse_file($path) };
+            eval { $parser->parse_file($path)->validate };
 
-            # Handle any parsing exceptions.
+            # Handle any parsing or validation exceptions.
             handle_err($@, 'Error parsing XML', $path, $uri, 1) if $@;
-
-            # Now validate the XML.
-            handle_err($parser->get_last_error, 'XML validation error',
-                       $path, $uri) unless $doc->is_valid;
         }
     }
     return $self;
