@@ -818,9 +818,9 @@ sub _modify_image {
     my $format;
     if (my $mime = $self->get_media_type) {
         (my $mt = $mime->get_name) =~ s{.*/}{};
-        $format = $Imager::FORMATGUESS->(".$mt") || $Imager::FORMATGUESS->($path);
+        $format = $Imager::FORMATGUESS->(lc ".$mt") || $Imager::FORMATGUESS->(lc $path);
     } else {
-        $format = $self::FORMATGUESS->($path);
+        $format = $self::FORMATGUESS->(lc $path);
     }
 
     unless ($format) {

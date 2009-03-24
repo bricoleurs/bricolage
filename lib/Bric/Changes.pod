@@ -44,7 +44,7 @@ a required module. [David]
 
 =item *
 
-Since L<Imager|Imger> is not a required module, the C<USE_THUMBNAILS>
+Since L<Imager|Imager> is now a required module, the C<USE_THUMBNAILS>
 directive is now enabled by default, as well. [David]
 
 =item *
@@ -155,6 +155,11 @@ in the UI. [David]
 Calls to `log_event()` are immediately logged when not running under mod_perl
 or bric_queued. This is so that events will now always be properly logged.
 [David]
+
+=item *
+
+Made the thumbnail format-guesser case-insensitive (e.g. .JPG or .PDF will also
+work now). [Scott]
 
 =back
 
