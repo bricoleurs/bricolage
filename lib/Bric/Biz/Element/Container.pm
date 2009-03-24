@@ -2611,6 +2611,12 @@ sub _deserialize_pod {
             else {
                 $kn = $def_field;
                 $field_type = $field_types{$kn};
+
+                # we weren't expecting this default field *here*,
+                # so just ignore it
+                if (not defined $field_type) {
+                    next POD;
+                }
                 my $field_occurrence = $self->get_field_occurrence($field_type->get_key_name);
                 my $max_occur = $field_type->get_max_occurrence;
                 if (defined $field_type && $field_ord{$kn} && $max_occur && $field_occurrence > $max_occur) {
@@ -2636,12 +2642,6 @@ sub _deserialize_pod {
                     $line_num++;
                     last DEF_FIELD if $line =~ /^\s*$/;
                     ($content .= "$line\n") =~ s/^$indent//mg;
-                }
-
-                # we weren't expecting this default field *here*,
-                # so just ignore it
-                if (not defined $field_type) {
-                    next POD;
                 }
             }
 

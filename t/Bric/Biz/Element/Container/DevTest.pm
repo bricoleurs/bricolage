@@ -596,7 +596,7 @@ sub test_list : Test(160) {
 
 ##############################################################################
 # Test pod.
-sub test_pod : Test(227) {
+sub test_pod : Test(229) {
     my $self       = shift->create_element_types;
     my $story_type = $self->{story_type};
     my $para       = $self->{para};
@@ -746,6 +746,12 @@ sub test_pod : Test(227) {
         'Check pull quote paragraph';
     is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
     is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
+
+    my $orig_pod = $self->pod_output;
+    (my $mod_pod = $orig_pod) =~ s/(=begin _pull_quote_)/$1\n/g;
+    ok $elem->update_from_pod($mod_pod),
+        "Update from POD with extra newlines after a =begin without a default";
+    is $self->pod_output, $orig_pod, 'Resulting POD should be the same';
 
     # Try deserializeing with a default field.
     (my $stripped_pod = $self->pod_output) =~ s/(?:    )?=para\n\n//g;
