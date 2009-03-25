@@ -20,8 +20,8 @@ if ( FULL_SEARCH ) {
         site_id => $site_id || $story->get_site_id,
     });
 } else {
-    ( my $parent_cat ) = Bric::Biz::Category->list({ 
-	uri => $parent_cat_uri });
+    ( my $parent_cat ) = Bric::Biz::Category->list({
+        uri => $parent_cat_uri,
         site_id => $site_id || $story->get_site_id,
     });
     @categories = Bric::Biz::Category->list({
