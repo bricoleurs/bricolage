@@ -747,9 +747,10 @@ sub test_pod : Test(229) {
     is $pq->get_value('by'), 'John F. Kennedy', 'Check pull quote by';
     is $pq->get_value('date'), '1961-01-20 00:00:00', 'Check pull quote date';
 
+    # Try updating the POD without a default.
     my $orig_pod = $self->pod_output;
-    (my $mod_pod = $orig_pod) =~ s/(=begin _pull_quote_)/$1\n/g;
-    ok $elem->update_from_pod($mod_pod),
+    (my $modded_pod = $orig_pod) =~ s/(=begin _pull_quote_)/$1\n/g;
+    ok $elem->update_from_pod($modded_pod),
         "Update from POD with extra newlines after a =begin without a default";
     is $self->pod_output, $orig_pod, 'Resulting POD should be the same';
 
