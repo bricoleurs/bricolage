@@ -47,8 +47,8 @@
             useTable  => 0
         &>
     </div>
-</div>
 % }
+</div>
 
 <%args>
 $widget
