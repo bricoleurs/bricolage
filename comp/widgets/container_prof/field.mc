@@ -75,11 +75,12 @@ my $key =  $widget . '|' . $element->get_id;
 
 
 # Get the value.
-$vals->{value} = $element->get_value(ISO_8601_FORMAT)
-    || $at_obj->get_default_val;
 if ($vals->{props}{type} eq 'checkbox') {
-    $vals->{props}{chk} = $vals->{value};
+    $vals->{props}{chk} = $element->get_value;
     $vals->{value} = 1;
+} else {
+    $vals->{value} = $element->get_value(ISO_8601_FORMAT)
+      || $at_obj->get_default_val;
 }
 
 # Set the array of possible values, if necessary.

@@ -390,6 +390,10 @@ correctly use the site id [Rolf Schaufelberger, Paul Orrock]
 Fixed bug where extra newlines after a C<=begin> without a default would result
 in an error. [Adrian Yee]
 
+=item *
+
+Fix bug 1452, checkboxes were always displaying as checked. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
