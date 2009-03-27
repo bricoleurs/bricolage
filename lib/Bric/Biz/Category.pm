@@ -1615,10 +1615,12 @@ sub _do_list {
 
             # category uri must end with slash
             if ($k eq 'uri') {
+                # note: the regexps here say: if the last character
+                # of the URI isn't % or / then add a /
                 if (ref $v) {    # ANY, NONE
-                    s{/*$}{/} for @$v;
+                    s{(?<=[^%/])$}{/} for @$v;
                 } else {         # just a string
-                    $v =~ s{/*$}{/};
+                    $v =~ s{(?<=[^%/])$}{/};
                 }
             }
 
