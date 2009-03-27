@@ -34,7 +34,8 @@
     &>
     </div>
 % }
-% unless ($element->is_autopopulated) {
+% # Can't copy an element that's required and only allowed once since it won't be pastable anywhere.
+% unless ($element->is_autopopulated or ($at_obj->get_min_occurrence == 1 and $at_obj->get_max_occurrence == 1)) {
     <div class="copy">
         <& '/widgets/profile/button.mc',
             disp      => $lang->maketext("Copy"),
