@@ -396,7 +396,7 @@ Fix bug 1452, checkboxes were always displaying as checked. [Scott]
 
 =item *
 
-Yet another desk tweak. [Michael <michael@zambra.com>]
+Yet another desk tweak. [Michael MartE<iacute>]
 
 =back
 

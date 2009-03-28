@@ -290,6 +290,8 @@ Folks who have submitted patches include:
 
 =item * Kahil Jallad
 
+=item * Michael MartE<iacute>
+
 =back
 
 Friends who have spotted bugs include:
