@@ -4,9 +4,9 @@
         <div class="title<% ($highlight eq 'name' ? ' sorted' : $alias ? $alias : '') %>"><% $uri || $name %></div>
         <div class="location">
 %       if ($user) {
-        <a name="user" style="vertical-align: center; cursor: default; color: black; clear: left; text-align=left; margin-right: 1em;"><% $user %></a>
+        <a name="user" style="vertical-align: center; cursor: default; color: black; clear: left; text-align: left; margin-right: 1em;"><% $user %></a>
 %       } else {
-        <a name="desk_location" style="vertical-align: center; cursor: default; color: black; clear: left; text-align=left; margin-right: 1em;"><% $desk->get_name %> Desk</a>
+        <a name="desk_location" style="vertical-align: center; cursor: default; color: black; clear: left; text-align: left; margin-right: 1em;"><% $desk->get_name %> Desk</a>
 %       }
         </div>
         <& publish_status_span.mc,

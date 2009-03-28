@@ -394,6 +394,10 @@ in an error. [Adrian Yee]
 
 Fix bug 1452, checkboxes were always displaying as checked. [Scott]
 
+=item *
+
+Yet another desk tweak. [Michael <michael@zambra.com>]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
