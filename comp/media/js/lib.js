@@ -44,7 +44,7 @@ Object.extend(Ajax.Autocompleter.prototype, {
 
           // Workaround for a bug in for Safari 2.0.3.  Already fixed in WebKit as of 2006-06-29.
           // This makes the selection go to the end.
-          if(navigator.appVersion.indexOf('AppleWebKit') < 3 ) {
+          if(navigator.appVersion.indexOf('AppleWebKit/4') > -1) {
               var element = Event.element(event);
               element.setSelectionRange(element.value.length, element.value.length);
               return false;
