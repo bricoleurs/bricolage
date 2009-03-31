@@ -382,6 +382,11 @@ max_length. [Adrian Yee]
 
 =item *
 
+Fix for bug #1434, user is properly warned if a story type is not selected on 
+story creation. [Sarah Mercier]
+
+=item *
+
 Fixed bug in L<auto_complete.html> so that lookups of parent categories now
 correctly use the site id [Rolf Schaufelberger, Paul Orrock]
 
@@ -400,6 +405,7 @@ Yet another desk tweak. [Michael MartE<iacute>]
 
 =back
 
+=======
 =head1 VERSION 1.11.1 (2008-10-03)
 
 =head2 Improvements
