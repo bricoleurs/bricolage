@@ -422,7 +422,7 @@ my %formSubs = (
               if $vals->{props}{multiple};
 
             $m->print(qq{<div class="row">\n}) if $useTable;
-            $m->print(qq{    <div class="$label">$name:</div>\n}) if $name;
+            $m->print(qq{    <div class="$label"><label for="$key">$name</label>:</div>\n}) if $name;
             $m->print('<br />') if !$useTable && $name;
             $m->print(qq{        <div class="input">\n}) if $useTable;
 
@@ -449,12 +449,13 @@ my %formSubs = (
                 # Output the select list.
                 $js = $js ? " $js" : '';
                 $m->print(
-                    qq{            <select name="$key" size="},
+                    qq{            <select name="$key" id="$key" size="},
                     $vals->{props}{size} || ($vals->{props}{multiple} ? 5 : 1),
                     '"'
                 );
                 $m->print(' multiple="multiple"') if $vals->{props}{multiple};
                 $m->print(qq{ id="$id"}) if defined $id;
+                $m->print(qq{ class="required"}) if (ref $vals && $vals->{req});
                 $m->print("$js>\n");
 
                 # Iterate through values to create options.
