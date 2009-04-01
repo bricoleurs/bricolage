@@ -1329,10 +1329,6 @@ Bricolage UI, simply download it from L<http://www.xinha.org/>, decompress the
 files, and move them to the F<comp/media/wysiwyg/xinha> directory in your
 Bricolage root.
 
-As of 2005-03-25, there is a bug in Xinha regarding form handling that
-requires a patch.  After installing, apply the patch while in your Bricolage
-root: C<patch -p0 < inst/patches/xinha.diff>
-
 You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
