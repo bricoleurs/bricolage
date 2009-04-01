@@ -403,6 +403,10 @@ Fix bug 1452, checkboxes were always displaying as checked. [Scott]
 
 Yet another desk tweak. [Michael MartE<iacute>]
 
+=item *
+
+Fixed the rendering of the Jump links in the desk header in IE6/7. [Adrian Yee]
+
 =back
 
 =======
