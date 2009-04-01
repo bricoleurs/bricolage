@@ -19,9 +19,9 @@
       xinha_config = xinha_config ? xinha_config : new Xinha.Config();
       xinha_config.toolbar = <% XINHA_TOOLBAR %>;
       
-      editors   = Xinha.makeEditors(editors, xinha_config, xinha_plugins);
+      var xinha_editors = Xinha.makeEditors(editors, xinha_config, xinha_plugins);
 
-      Xinha.startEditors(editors);
+      Xinha.startEditors(xinha_editors);
     }
 
     Event.observe(window, "load", xinha_init);

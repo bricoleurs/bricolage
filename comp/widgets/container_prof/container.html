@@ -1,9 +1,19 @@
+% if (lc WYSIWYG_EDITOR eq 'xinha') {
+<script>
+    editors = new Array();
+</script>
+% }
 <& 'container.mc',
     widget  => $widget,
     element => $element,
     parent  => $parent,
 &>
-
+% if (lc WYSIWYG_EDITOR eq 'xinha') {
+<script>
+    var xinha_editors = Xinha.makeEditors(editors, xinha_config, xinha_plugins);
+    Xinha.startEditors(xinha_editors);
+</script>
+% }
 <%once>
 my $widget = 'container_prof';
 

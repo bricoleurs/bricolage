@@ -1430,17 +1430,24 @@ var Container = {
         }, opts || {});
 
         var element = $('element_' + container_id + '_content');
+        var form    = $('theForm');
 
         //We need to disable the buttons on the page before we serialize the form
         //to prevent callback death. MWR 02-23-09 
-        var buttons = $('theForm').getInputs('image');
+        var buttons = form.getInputs('image');
         buttons.invoke('disable');
-        var params = 'container_id=' + container_id + '&' + Form.serialize($('theForm'));                                               
+
+        // Be sure to call onsubmit() so the wysiwyg fields can be updated.
+        form.onsubmit();
+        submitting = false; // Reset this so we can submit again!
+
+        // Serialize the form.
+        var params = 'container_id=' + container_id + '&' + Form.serialize(form);
         if (options.extraParameters != '') {
             params = params + '&' + options.extraParameters;
         }
 
-        //Now turn the buttons back on.
+        // Now turn the buttons back on.
         buttons.invoke('enable');
 
         // Only update the element content with the requst results if the request is
