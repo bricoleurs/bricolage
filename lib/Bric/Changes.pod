@@ -161,6 +161,10 @@ or bric_queued. This is so that events will now always be properly logged.
 Made the thumbnail format-guesser case-insensitive (e.g. .JPG or .PDF will also
 work now). [Scott]
 
+=item *
+
+Made the popup dialog for related stories/media a bit bigger. [Scott]
+
 =back
 
 =head2 Bug Fixes
