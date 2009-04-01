@@ -1,4 +1,4 @@
-<ul id="fast-add-<% $type %>">
+<ul id="fast-add-<% $type %>" style="line-height: 2em">
 % foreach my $obj (@$objects) {
 <li class="<% $type %>">
     <& '/widgets/profile/hidden.mc',

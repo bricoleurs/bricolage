@@ -425,6 +425,11 @@ IE6/7. [Adrian Yee]
 
 Xinha works again. Reported by John Durkin and Matt Rolf (Bug #1429). [David]
 
+=item *
+
+Make the Add keywords button (on the story and media profiles) not so huge in
+IE. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
