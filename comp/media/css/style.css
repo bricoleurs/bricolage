@@ -305,6 +305,8 @@ div.debug dt:after {
     position: absolute;
     max-width: 240px;
     width: auto;
+/* The top of actions overlaps the title line in IE7 */
+    *margin-top: 1px;
 }
 .desk .item .actions ul { 
     margin: 5px 0; 
@@ -322,8 +324,12 @@ div.debug dt:after {
     line-height: 1em;
     float: left;
     margin: .3em .4em;
+/* Too much space between buttons in IE6/7  */
+    *margin: 0;
     max-width: 4em;
     width: auto;
+/* IE6 doesn't support max-width and doesn't like width set to auto */
+    _width: 4em;
     overflow: visible;
 }
 
@@ -360,6 +366,8 @@ div.debug dt:after {
     margin-left: auto;
     margin-right: auto;
     margin-top: -5px;
+/* Taking things too far up for IE6, cutting off the icons */
+    _margin-top: -2px;
 }
 .desk .item .actions ul li.inactive { color: #999; }
 .desk .item .actions ul.action { text-align: right; }
