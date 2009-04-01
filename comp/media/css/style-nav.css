@@ -60,6 +60,10 @@ ul {
 #nav .selected { font-weight: bold; }
 #nav #admin .selected { color: #CC6633; }
 
+/* IE6 hack to not show extra space */
+#nav #workspace {
+  _height: 1%;
+}
 #nav #workspace .open   { 
   background: #CC9900 url("../images/my_workspace.gif") 4px 3px no-repeat;
   font-weight: bold;
@@ -87,3 +91,6 @@ ul {
 /* Hide or show menus depending on the <li>'s class */
 #nav li.closed > ul { display: none; }
 #nav li.open   > ul { display: inherit; }
+/* Same thing as above, but hacked up for IE6 */
+* html #nav li.closed ul { display: none; }
+* html #nav li.open ul { display: inherit; }

@@ -407,6 +407,11 @@ Yet another desk tweak. [Michael MartE<iacute>]
 
 Fixed the rendering of the Jump links in the desk header in IE6/7. [Adrian Yee]
 
+=item *
+
+Fixed Workspace link spacing and the opening/closing of the navigation in IE6.
+[Adrian Yee]
+
 =back
 
 =======
