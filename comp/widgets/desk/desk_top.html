@@ -1,14 +1,14 @@
 <a name="<% $class %>"></a>
 
-% if ( my @links = $jump_to->($class, $offset, $show_all, $others) ) {
-<div class="jump">
-%     for my $link (@links) {
-  <a href="<% $link->{link} %>"><% $link->{label} %> &raquo;</a>
-%     }
-</div>
-% }
 <div class="desk-top">
   <h1><% $caption %></h1>
+% if ( my @links = $jump_to->($class, $offset, $show_all, $others) ) {
+  <div class="jump">
+%   for my $link (@links) {
+    <a href="<% $link->{link} %>"><% $link->{label} %> &raquo;</a>
+%   }
+  </div>
+% }
   <div class="sort">
     <label for="<% $class %>_sort_by"><% $lang->maketext('Sort By') %>:</label>
     <& '/widgets/profile/select.mc',
