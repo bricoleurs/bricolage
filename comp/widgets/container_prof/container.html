@@ -1,4 +1,4 @@
-% if (lc WYSIWYG_EDITOR eq 'xinha') {
+% if (ENABLE_WYSIWYG && lc WYSIWYG_EDITOR ne 'js-quicktags') {
 <script>
     editors = new Array();
 </script>
@@ -8,10 +8,16 @@
     element => $element,
     parent  => $parent,
 &>
-% if (lc WYSIWYG_EDITOR eq 'xinha') {
+% if (ENABLE_WYSIWYG && lc WYSIWYG_EDITOR ne 'js-quicktags') {
 <script>
+%     if (lc WYSIWYG_EDITOR eq 'xinha') {
     var xinha_editors = Xinha.makeEditors(editors, xinha_config, xinha_plugins);
     Xinha.startEditors(xinha_editors);
+%     } elsif (lc WYSIWYG_EDITOR eq 'fckeditor') {
+    fckCallback();
+%     } elsif (lc WYSIWYG_EDITOR eq 'htmlarea') {
+    inithtmlareas();
+%     }
 </script>
 % }
 <%once>

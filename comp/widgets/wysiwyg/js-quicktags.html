@@ -1,1 +1,13 @@
 <script type="text/javascript" src="/media/wysiwyg/js-quicktags/js_quicktags.js"></script>
+<script type="text/javascript">
+// Function to override document.write(), as it tends to completely replac the
+// window contents when using Ajax call.
+function edToolbarBric (e) {
+    var orig = document.write;
+    var html = '';
+    document.write = function(str) { html += str };
+    edToolbar(e);
+    document.write = orig;
+    Element.insert($(e), { before: html });
+}
+</script>

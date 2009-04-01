@@ -578,6 +578,10 @@ FCKeditor WYSIWYG editor (optional)
 
 =item *
 
+JS-Quicktags WYSIWYG editor (optional)
+
+=item *
+
 GNU Aspell 0.50 or later (optional)
 
 =back
@@ -1386,6 +1390,17 @@ And finally, you might also need to make the F<spellchecker.pl> file
 executable:
 
   chmod +x comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl
+
+=head2 JS-Quicktags (Optional)
+
+To install JS-Quicktags, an optional JavaScript libary that off buttons to
+make adding tags to text eadier in the Bricolage UI, simply download it from
+L<http://alexking.org/projects/js-quicktags/>, decompress the files, and move
+them to the F<comp/media/wysiwyg/js-quicktags> directory in your Bricolage
+root.
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 =head2 GNU Aspell (Optional)
 

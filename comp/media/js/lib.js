@@ -1438,7 +1438,14 @@ var Container = {
         buttons.invoke('disable');
 
         // Be sure to call onsubmit() so the wysiwyg fields can be updated.
-        form.onsubmit();
+        if (form.onsubmit) form.onsubmit();
+
+        // Check for FCK fields to submit, too.
+        // http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Troubleshooting#AjaxSubmit
+        for ( i = 0; i < parent.frames.length; ++i )
+            if ( parent.frames[i].FCK )
+                parent.frames[i].FCK.UpdateLinkedField();
+        
         submitting = false; // Reset this so we can submit again!
 
         // Serialize the form.

@@ -423,7 +423,8 @@ IE6/7. [Adrian Yee]
 
 =item *
 
-Xinha works again. Reported by John Durkin and Matt Rolf (Bug #1429). [David]
+All of the WYSIWYG editors (Xinha, htmlArea, FCKeditor, and JS-Quicktags) work
+again. Reported by John Durkin and Matt Rolf (Bug #1429). [David]
 
 =item *
 

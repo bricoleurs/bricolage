@@ -1,12 +1,13 @@
 <script type="text/javascript" src="/media/wysiwyg/fckeditor/fckeditor.js"></script>
 <script type="text/javascript">
     var editors = new Array();
-    Event.observe(window, 'load', function() {
+    var fckCallback = function () {
         $A(editors).each(function(editor) {
            var oFCKeditor = new FCKeditor(editor);
            oFCKeditor.BasePath = '/media/wysiwyg/fckeditor/';
            oFCKeditor.Config['CustomConfigurationsPath'] = '/widgets/wysiwyg/fckconfig.js';
            oFCKeditor.ReplaceTextarea();
        })
-    });
+    };
+    Event.observe(window, 'load', fckCallback);
 </script>
