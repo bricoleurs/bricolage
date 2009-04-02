@@ -9,5 +9,17 @@
            oFCKeditor.ReplaceTextarea();
        })
     };
+
+    var sub = $('theForm').onsubmit;
+    $('theForm').onsubmit = function () {
+        if ( !arguments.callee.caller) return sub();
+        // Check for FCK fields to submit, too.
+        // http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Troubleshooting#AjaxSubmit
+        for ( i = 0; i < parent.frames.length; ++i ) {
+            if ( parent.frames[i].FCK )
+                parent.frames[i].FCK.UpdateLinkedField();
+        }
+        return sub();
+    };
     Event.observe(window, 'load', fckCallback);
 </script>
