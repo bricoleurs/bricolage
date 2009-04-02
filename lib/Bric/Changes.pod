@@ -431,6 +431,11 @@ again. Reported by John Durkin and Matt Rolf (Bug #1429). [David]
 Make the Add keywords button (on the story and media profiles) not so huge in
 IE. [Adrian Yee]
 
+=item *
+
+Fixed javascript error with IE and the Check In/Move action icons on the
+workspace and desk pages. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

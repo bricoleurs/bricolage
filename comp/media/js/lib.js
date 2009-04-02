@@ -1098,7 +1098,7 @@ var Desk = {
 
     request: function(opts, onSuccess) {
         var options = Object.extend({
-            uri: document.location,
+            uri: window.location.href,
             parameters: ''
         }, opts || {});
         Desk.hideMenu();
