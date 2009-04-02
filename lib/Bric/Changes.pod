@@ -440,6 +440,10 @@ workspace and desk pages. [Adrian Yee]
 
 Fixed popup menu rendering issues in IE and Firefox. [Adrian Yee]
 
+=item *
+
+Fixed popup menu z-index issues on the workspace/desk pages in IE. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

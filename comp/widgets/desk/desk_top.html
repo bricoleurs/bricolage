@@ -1,5 +1,16 @@
 <a name="<% $class %>"></a>
 
+<!--[if IE]>
+<script type="text/javascript">
+// IE hack to fix the z-index so that the popup menu doesn't go under the desk item below it
+  document.observe("dom:loaded", function () {
+    $A($$('.desk .item')).each(function(item, i) {
+      item.style.zIndex = -i;
+    });
+  });
+</script>
+<![endif]-->
+
 <div class="desk-top">
   <h1><% $caption %></h1>
 % if ( my @links = $jump_to->($class, $offset, $show_all, $others) ) {
