@@ -390,36 +390,53 @@ div.debug dt:after {
 .desk .item .movers li ul li { float: none; }
 
 div.popup-menu {
-  position: absolute;
-  width: 10em;
-  background-color: white;
-  border: 1px solid #888;
-  margin: 0px;
-  padding: 0px;
-  padding-bottom: .4em !important;
-  z-index: 1000;
-  display: block;
+    position: absolute;
+    width: 10em;
+    background-color: white;
+    border: 1px solid #888;
+    margin: 0;
+    padding: 0;
+    padding-bottom: .4em !important;
+    z-index: 1000;
+    display: block;
 }
-div.popup-menu ul{
-  list-style-type: none;
-  width: 100%;
-  margin: 0em !important;
-  margin-bottom: .2em;
-  padding: 0em !important;
-  display: block;
+div.popup-menu ul {
+    list-style: none outside;
+    width: 100%;
+    margin: 0 !important;
+    margin-bottom: 0.2em !important;
+    padding: 0 !important;
+    display: block;
 }
 div.popup-menu ul li {
-  list-style-type: none;
-  display: block !important;
-  margin: 0 !important;
-  text-align: left !important;
-  width: auto !important;
-  max-width: none !important;
-  float: none !important;
+    list-style-type: none;
+    display: block !important;
+    margin: 0 !important;
+    text-align: left !important;
+    width: auto !important;
+    max-width: none !important;
+    float: none !important;
+    _height: 1.2em;
 }
-div.popup-menu h4 { display: block; font-size: .9em; padding: 1em, .2em; margin: 0em; background: #EAEAEA;  color: #999; border-bottom: solid #CCC 1px;}
-div.popup-menu a { display: block; text-align: left; color: black; text-decoration: none; }
-div.popup-menu a:hover { background-color: #336FCB; color: white; }
+div.popup-menu h4 {
+    display: block;
+    font-size: .9em;
+    padding: 1em, .2em;
+    margin: 0;
+    background: #EAEAEA;
+    color: #999;
+    border-bottom: solid #CCC 1px;
+}
+div.popup-menu a {
+    display: block !important;
+    text-align: left !important;
+    color: black;
+    text-decoration: none;
+}
+div.popup-menu a:hover {
+    background-color: #336FCB;
+    color: white;
+}
 
 form .row {
     position: relative;

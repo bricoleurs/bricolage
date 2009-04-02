@@ -436,6 +436,10 @@ IE. [Adrian Yee]
 Fixed javascript error with IE and the Check In/Move action icons on the
 workspace and desk pages. [Adrian Yee]
 
+=item *
+
+Fixed popup menu rendering issues in IE and Firefox. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
