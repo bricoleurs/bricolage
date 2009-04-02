@@ -12,14 +12,20 @@
 
     var sub = $('theForm').onsubmit;
     $('theForm').onsubmit = function () {
+
+        // If there is no caller, it's being called by the browser, so just
+        // let FCKeditor do its thing as usual.
         if ( !arguments.callee.caller) return sub();
-        // Check for FCK fields to submit, too.
+
+        // If we get here, it's likely an Ajax submit, so check have FCK
+        // update its fields.
         // http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Troubleshooting#AjaxSubmit
         for ( i = 0; i < parent.frames.length; ++i ) {
-            if ( parent.frames[i].FCK )
-                parent.frames[i].FCK.UpdateLinkedField();
+            if (parent.frames[i].FCK ) parent.frames[i].FCK.UpdateLinkedField();
         }
         return sub();
     };
+
+    // Load 'em up.
     Event.observe(window, 'load', fckCallback);
 </script>
