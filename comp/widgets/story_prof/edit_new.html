@@ -57,7 +57,23 @@ $m->comp(
 </%perl>
 <div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
 <script type="text/javascript">
-new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { onEmpty: function() { Element.show('new_cat_warning'); }, onNotEmpty: function() { Element.hide('new_cat_warning') }, onEnter: function() { catListMan.add('new_category_uri') }, parameters: 'site_id=<% $site_id %>' });
+// add throbber after Primary Category text field
+var throbber = new Element('img', { id: 'category_autocomplete_indicator',
+                                    src: '/media/images/ajax-loader.gif' });
+Element.hide(throbber);
+$('new_category_uri').insert({ after: throbber });
+
+new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices",
+                       "/widgets/story_prof/autocomplete_categories.html",
+                       {
+                         onEmpty:    function() { Element.show('new_cat_warning'); },
+                         onNotEmpty: function() { Element.hide('new_cat_warning') },
+                         onEnter:    function() { catListMan.add('new_category_uri') },
+                         minChars:   2,
+                         indicator: 'category_autocomplete_indicator',
+                         parameters: 'site_id=<% $site_id %>'
+                       }
+);
 </script>
 
 <%perl>;

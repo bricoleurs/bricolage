@@ -165,6 +165,10 @@ work now). [Scott]
 
 Made the popup dialog for related stories/media a bit bigger. [Scott]
 
+=item *
+
+Added a throbber to category completion in New Story. [Scott]
+
 =back
 
 =head2 Bug Fixes
