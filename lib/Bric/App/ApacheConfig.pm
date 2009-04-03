@@ -324,9 +324,9 @@ BEGIN {
                 $fs->dir_name(APACHE_CONF),
                 'vhosts.conf'
             );
-            open CONF, ">$conffile" or die "Cannot open $conffile for output: $!\n";
-            print CONF $names, $config;
-            close CONF;
+            open my $cfh, '>', $conffile or die "Cannot open $conffile for output: $!\n";
+            print $cfh $names, $config;
+            close $cfh;
 
             # Place Include directive in Apache's scope
             package Apache::ReadConfig;
@@ -558,7 +558,7 @@ BEGIN {
                 $fs->dir_name(APACHE_CONF),
                 'vhosts.conf'
             );
-            open my $cfh, ">$conffile"
+            open my $cfh, '>', $conffile
                 or die "Cannot open $conffile for output: $!";
             print $cfh map { $_, $/ } @names, @vhosts;
             close $cfh;

@@ -365,12 +365,13 @@ require Bric; our $VERSION = Bric->VERSION;
         }
 
         if (-e $conf_file) {
-            unless (open CONF, $conf_file) {
+            my $cf;
+            unless (open $cf, '<', $conf_file) {
                 require Carp;
                 Carp::croak( "Cannot open $conf_file: $!\n" );
             }
 
-            while (<CONF>) {
+            while (<$cf>) {
                 # Get each configuration line into $config.
                 chomp;                  # no newline
                 s/#.*//;                # no comments
@@ -392,54 +393,56 @@ require Bric; our $VERSION = Bric->VERSION;
                 # Save the configuration directive.
                 $config->{uc $var} = $val;
             }
-            close CONF;
 
-            # Set the default VHOST_SERVER_NAME.
-            $config->{VHOST_SERVER_NAME} ||= '_default_';
+            close $cf;
+        }
 
-            # Set up the server window name (because Netscape is retarted!).
-            ($config->{SERVER_WINDOW_NAME} =
+        # Set the default VHOST_SERVER_NAME.
+        $config->{VHOST_SERVER_NAME} ||= '_default_';
+
+        # Set up the server window name (because Netscape is retarted!).
+        ($config->{SERVER_WINDOW_NAME} =
              $config->{VHOST_SERVER_NAME} || '_default_') =~ s/\W+/_/g;
 
-            my $wysiwyg = $config->{ENABLE_WYSIWYG} ? lc $config->{ENABLE_WYSIWYG} : '';
-            if ($wysiwyg && ($wysiwyg eq '1' || $wysiwyg eq 'on' || $wysiwyg eq 'yes')) {
-                my $ed = lc ($config->{WYSIWYG_EDITOR} ||= 'xinha');
+        my $wysiwyg = $config->{ENABLE_WYSIWYG} ? lc $config->{ENABLE_WYSIWYG} : '';
+        if ($wysiwyg && ($wysiwyg eq '1' || $wysiwyg eq 'on' || $wysiwyg eq 'yes')) {
+            my $ed = lc ($config->{WYSIWYG_EDITOR} ||= 'xinha');
 
-                if ($ed eq 'xinha') {
-                    # Set default plugins for Xinha
-                    $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
+            if ($ed eq 'xinha') {
+                # Set default plugins for Xinha
+                $config->{XINHA_PLUGINS} ||= "['FullScreen','SpellChecker']";
 
-                    # Set default toolbar for Xinha
-                    $config->{XINHA_TOOLBAR}
-                         ||= q{[['popupeditor','separator'],['bold','italic',}
-                           . q{'underline','strikethrough','separator'],}
-                           . q{['subscript','superscript','separator'],}
-                           . q{(HTMLArea.is_gecko ? [] : ['cut','copy','paste']),}
-                           . q{['space','undo','redo','separator'],['createlink',}
-                           . q{'separator'],['killword','removeformat',}
-                           . q{'separator','htmlmode']]};
+                # Set default toolbar for Xinha
+                $config->{XINHA_TOOLBAR}
+                    ||= q{[['popupeditor','separator'],['bold','italic',}
+                      . q{'underline','strikethrough','separator'],}
+                      . q{['subscript','superscript','separator'],}
+                      . q{(HTMLArea.is_gecko ? [] : ['cut','copy','paste']),}
+                      . q{['space','undo','redo','separator'],['createlink',}
+                      . q{'separator'],['killword','removeformat',}
+                      . q{'separator','htmlmode']]};
 
-                } elsif ($ed eq 'xhmlarea') {
-                    # Set default toolbar for HtmlArea
-                    $config->{HTMLAREA_TOOLBAR}
-                        ||= q{[['bold','italic','underline','strikethrough',}
-                          . q{'separator','subscript','superscript','separator',}
-                          . q{'copy','cut','paste','space','undo','redo',}
-                          . q{'createlink','htmlmode','separator','popupeditor',}
-                          . q{'separator','showhelp','about']]};
+            } elsif ($ed eq 'xhmlarea') {
+                # Set default toolbar for HtmlArea
+                $config->{HTMLAREA_TOOLBAR}
+                    ||= q{[['bold','italic','underline','strikethrough',}
+                      . q{'separator','subscript','superscript','separator',}
+                      . q{'copy','cut','paste','space','undo','redo',}
+                      . q{'createlink','htmlmode','separator','popupeditor',}
+                      . q{'separator','showhelp','about']]};
 
-                } elsif ($ed eq 'fckeditor') {
-                    # Set default toolbar for FCKeditor.
-                    $config->{FCKEDITOR_CONFIG}
-                        ||= q{FCKConfig.ToolbarSets.Default = }
-                          . q{[['Bold','Italic','Underline','StrikeThrough',}
-                          . q{'RemoveFormat','-','Subscript','Superscript'],}
-                          . q{['Cut','Copy','Paste','PasteText','PasteWord','-',}
-                          . q{'Undo','Redo'],['Link','Unlink','Anchor','Source',}
-                          . q{'SpellCheck']];};
-                }
+            } elsif ($ed eq 'fckeditor') {
+                # Set default toolbar for FCKeditor.
+                $config->{FCKEDITOR_CONFIG}
+                    ||= q{FCKConfig.ToolbarSets.Default = }
+                      . q{[['Bold','Italic','Underline','StrikeThrough',}
+                      . q{'RemoveFormat','-','Subscript','Superscript'],}
+                      . q{['Cut','Copy','Paste','PasteText','PasteWord','-',}
+                      . q{'Undo','Redo'],['Link','Unlink','Anchor','Source',}
+                      . q{'SpellCheck']];};
             }
         }
+
         # Process boolean directives here. These default to 1.
         foreach (qw(ENABLE_DIST PREVIEW_LOCAL NO_TOOLBAR
                     ALLOW_SLUGLESS_NONFIXED PUBLISH_RELATED_ASSETS
@@ -503,9 +506,9 @@ require Bric; our $VERSION = Bric->VERSION;
         }
 
         # Get the Apache PID file location from httpd.conf.
-        open HC, $config->{APACHE_CONF}
+        open my $hc, '<', $config->{APACHE_CONF}
           or die "Cannot open $config->{APACHE_CONF}: $!\n";
-        while (<HC>) {
+        while (<$hc>) {
             # Ignore comments.
             chomp;                  # no newline
             s/#.*//;                # no comments
@@ -516,7 +519,7 @@ require Bric; our $VERSION = Bric->VERSION;
             $config->{__PIDFILE__} = $1;
             last;
         }
-        close HC;
+        close $hc;
     }
 
     # Apache Settings.
@@ -529,7 +532,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant APACHE_CONF             => $config->{APACHE_CONF};
 
     use constant PID_FILE                => $config->{__PIDFILE__}
-      || '/usr/local/apache/logs/httpd.pid';
+      || '/usr/local/apache/log/httpd.pid';
 
     use constant LISTEN_PORT             => $config->{LISTEN_PORT} || 80;
     use constant NAME_VHOST              => $config->{NAME_VHOST} || '*';
