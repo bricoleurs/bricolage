@@ -711,18 +711,32 @@ div.addelement { text-align: right;}
   margin-left: 85px;
   padding: 0 20px 0 0;
 }
-#containerprof .content .delete {
-    position: absolute;
-    top: 5px; right: 0;
-}
-#containerprof .content > .delete { top: 0; }
-#containerprof .container > .content > .delete { top: 8px; }
+
+#containerprof .content .delete,
 #containerprof .content .copy {
-    position: absolute;
-    top: 24px; right: 0;
+  position: absolute;
+  right: 0;
 }
-#containerprof .content > .copy { top: 19px; }
-#containerprof .container > .content > .copy { top: 27px; }
+#containerprof .container .delete {
+  top: 8px;
+}
+#containerprof .element .delete {
+  top: 0;
+}
+#containerprof .container .copy {
+  top: 27px;
+}
+#containerprof .element .copy {
+  top: 19px;
+}
+
+/* Fix IE6 bug where the floated h3.name causes the absolute positioned icons
+ * to be shifted over the width of the floated element. */
+#containerprof .element .delete,
+#containerprof .element .copy {
+  _right: 85px;
+}
+
 #containerprof .actions { background: transparent; }
 #containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
 #containerprof div.popup-menu ul li { white-space: normal; }
