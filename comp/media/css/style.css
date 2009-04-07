@@ -699,7 +699,8 @@ div.addelement { text-align: right;}
 #containerprof ul.elements li.element {
   margin: 0 0 10px 0;
   position: relative;
-/* Clearing for IE6 */
+/* .clearboth was causing problems in IE6, so it was removed, but clearing is
+ * needed here. */
   _zoom: 1;
 }
 #containerprof ul.elements li.element h3.name {
@@ -944,7 +945,9 @@ form .row,
 .viewmeta {
     *height: 1%;
 }
-/* Turn off clearboth for IE6 */
+/* .clearboth was causing rendering issues with the New Story, Story Profile,
+ * and other pages in IE6.  The easy (and hacky) solution was to disable
+ * .clearboth for IE6 and just clear where it's now broken. */
 .clearboth {
     _height: auto;
 }
