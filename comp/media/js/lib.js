@@ -1480,6 +1480,22 @@ var Container = {
         });
 
         $('container_prof_' + list.id).value = Sortable.sequence(list);
+
+// Sortable changes the z-index on drag and restores it after a drag.  However,
+// the call to onUpdate happens before the z-index has been updated, so hack
+// around this by updating the z-index after 500ms.
+        setTimeout(Container.updatezIndex, 500);
+    },
+
+// Update the z-index of containers to keep the popup menu from the previous
+// containers from going under the next one.
+// Always needed for IE due to its messed up z-index handling, and needed for
+// Firefox/etc after elements have been re-ordered.
+    updatezIndex: function() {
+        var elements = $('containerprof').select('li.container');
+        $A(elements).each(function(element, i) {
+            element.style.zIndex = elements.length - i;
+        });
     },
 
     confirmDelete: function() {

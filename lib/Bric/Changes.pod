@@ -448,6 +448,11 @@ Fixed popup menu rendering issues in IE and Firefox. [Adrian Yee]
 
 Fixed popup menu z-index issues on the workspace/desk pages in IE. [Adrian Yee]
 
+=item *
+
+Added a javascript fix for popup menu z-index issues that happened after
+re-ordering elements. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
