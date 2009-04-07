@@ -53,7 +53,7 @@ $attrs .= qq{ class="$class"};
 <a name="section<% $number %>"></a>
 % }
 <div class="<% $section %>Box clearboth">
-  <div class="<% $headerClass %>">
+  <div class="<% $headerClass %>" style="*z-index: -1">
     <div class="number"><% ($number) ? $number : "&nbsp;" %></div>
     <div class="caption"><% $caption %></div>
     <div class="rightText"><% $rightText %></div>

@@ -470,7 +470,12 @@ table td.order { width: 30px; text-align: center; white-space: nowrap; }
 
 #bulkedit { width: 100%; }
 
-.listManager { width: 100%; border-style: hidden; }
+.listManager {
+    width: 100%;
+    border-style: hidden;
+/* IE hack to make sure the popup menu goes on top of the table */
+    *z-index: -1;
+}
 .listManager th { background: #999966; color: black; padding: 5px;
                   text-align: left; vertical-align: bottom;
                   border: solid #cccc99 1px; font-size: .9em; }
