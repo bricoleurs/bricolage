@@ -747,7 +747,7 @@ So, after a minor release, all you have to do is:
   /usr/local/bin/pod_browser \
   --app-root . \
   --app-name Bricolage \
-  --doc-root /var/home/bricolage/bricolage.cc/www/docs/1.10/api
+  --doc-root /var/home/bricolage/bricolage.cc/www/docs/1.10/api \
   --base-uri /docs/1.10/api \
   --version-in Bric.pm
 
