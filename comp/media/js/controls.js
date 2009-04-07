@@ -107,8 +107,9 @@ Autocompleter.Base = Class.create({
 
   fixIEOverlapping: function() {
     Position.clone(this.update, this.iefix, {setTop:(!this.update.style.height)});
-    this.iefix.style.zIndex = 1;
-    this.update.style.zIndex = 2;
+    var zIndex = this.update.getStyle('zIndex');
+    if (zIndex < 2) this.update.style.zIndex = 2;
+    this.iefix.style.zIndex = zIndex >= 2 ? zIndex - 1 : 1;
     Element.show(this.iefix);
   },
 
