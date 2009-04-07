@@ -699,8 +699,10 @@ div.addelement { text-align: right;}
 #containerprof ul.elements li.element {
   margin: 0 0 10px 0;
   position: relative;
+/* Clearing for IE6 */
+  _zoom: 1;
 }
-#containerprof ul.elements li.element h3.name { 
+#containerprof ul.elements li.element h3.name {
   margin: 0; clear: both;
   float: left; width: 75px;
   text-align: right;
@@ -933,27 +935,13 @@ form .row:after,
 .desk_item .head,
 form .row,
 .paginate,
-.viewmeta { display: inline-block;}
-/* Hides from IE-mac \*/
-* html .clearboth,
-* html .desk-top,
-* html .desk .item,
-* html .desk .item .head,
-* html .desk .item .actions,
-* html .desk_item .head,
-* html form .row,
-* html .paginate,
-* html .viewmeta {height: 1%;}
-.clearboth,
-.desk-top,
-.desk .item,
-.desk .item .head,
-.desk .item .actions,
-.desk_item .head,
-form .row,
-.paginate,
-.viewmeta {display: block;}
-/* End hide from IE-mac */
+.viewmeta {
+    *height: 1%;
+}
+/* Turn off clearboth for IE6 */
+.clearboth {
+    _height: auto;
+}
 
 /* double list manager. */
 table.dlman select { width: 40em; } /* IE-specific setting */
