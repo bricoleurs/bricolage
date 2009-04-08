@@ -457,6 +457,11 @@ re-ordering elements. [Adrian Yee]
 
 Fixed the category autocomplete z-index issue in IE. [Adrian Yee]
 
+=item *
+
+Fixed bug 1458, where related media that failed to be thumbnailed caused the
+Story Profile to error. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

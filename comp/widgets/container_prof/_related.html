@@ -43,7 +43,8 @@ if ($rel) {
 
     my $thumb = '';
     if (USE_THUMBNAILS && $type ne 'story') {
-        if ($thumb =  $rel->thumbnail_uri) {
+        $thumb = eval { $rel->thumbnail_uri };
+        if (! $@ && $thumb) {
             $thumb = $m->comp(
                 '/widgets/profile/preview_link.mc',
                 doc   => $rel,
