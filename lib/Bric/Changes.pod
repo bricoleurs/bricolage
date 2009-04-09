@@ -464,9 +464,10 @@ Story Profile to error. Similarly fixed bug 1461 for Find Media. [Scott]
 
 =item *
 
-Fixed part of bug 1460, the auto-completion was jumping around. See
+Fixed part of bug 1460, the auto-completion was jumping around. Slightly
+modified from code by Jason Gill and Janos Novak at
 L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
-for details. [Scott]
+[Scott]
 
 =back
 
