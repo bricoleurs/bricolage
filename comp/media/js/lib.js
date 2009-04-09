@@ -35,6 +35,34 @@ Ajax.Autocompleter.prototype._onComplete =
 Ajax.Autocompleter.prototype._onKeyPress =
   Ajax.Autocompleter.prototype.onKeyPress;
 Object.extend(Ajax.Autocompleter.prototype, {
+  initialize: function(element, update, url, options) {
+    this.baseInitialize(element, update, options);
+    this.options.asynchronous = true;
+    this.options.onComplete = this.onComplete.bind(this);
+    this.options.defaultParams = this.options.parameters || null;
+    this.url = url;
+    this.cache = {};
+  },
+
+  getUpdatedChoices: function() {
+    this.startIndicator();
+
+    var t = this.getToken();
+    if (this.cache[t]) {
+      this.updateChoices(this.cache[t]);
+    } else {
+      entry = encodeURIComponent(this.options.paramName) + '=' + encodeURIComponent(t);
+
+      this.options.parameters = this.options.callback ?
+        this.options.callback(this.element, entry) : entry;
+
+      if(this.options.defaultParams)
+        this.options.parameters += '&' + this.options.defaultParams;
+
+      new Ajax.Request(this.url, this.options);
+    }
+  },
+
   onKeyPress: function(event) {
       var originallyActive = this.active;
       this._onKeyPress(event);
@@ -72,7 +100,71 @@ Object.extend(Ajax.Autocompleter.prototype, {
     } else if (this.options.onNotEmpty) {
       this.options.onNotEmpty(this.element);
     }
-  }
+
+    // for caching
+    this.updateChoices(this.cache[this.getToken()] = request.responseText);
+  },
+
+    // Page jump fix
+    markPrevious: function() {
+      if (this.index > 0) {
+        this.index--;
+      } else {
+        this.index = this.entryCount-1;
+        this.update.scrollTop = this.update.scrollHeight;
+      }
+
+      selection = this.getEntry(this.index);
+      selection_top = selection.offsetTop;
+
+      if (selection_top < this.update.scrollTop) {
+        this.update.scrollTop = this.update.scrollTop - selection.offsetHeight;
+      }
+    },
+
+    markNext: function() {
+      if (this.index < this.entryCount-1) {
+        this.index++;
+      } else {
+        this.index = 0;
+        this.update.scrollTop = 0;
+      }
+      selection = this.getEntry(this.index);
+      selection_bottom = selection.offsetTop+selection.offsetHeight;
+      if (selection_bottom > this.update.scrollTop + this.update.offsetHeight) {
+        this.update.scrollTop = this.update.scrollTop+selection.offsetHeight;
+      }
+    },
+
+    updateChoices: function(choices) {
+      if (!this.changed && this.hasFocus) {
+        this.update.innerHTML = choices;
+        Element.cleanWhitespace(this.update);
+        Element.cleanWhitespace(this.update.down());
+
+        if (this.update.firstChild && this.update.down().childNodes) {
+          this.entryCount = this.update.down().childNodes.length;
+          for (var i = 0; i < this.entryCount; i++) {
+            var entry = this.getEntry(i);
+            entry.autocompleteIndex = i;
+            this.addObservers(entry);
+          }
+        } else {
+          this.entryCount = 0;
+        }
+
+        this.stopIndicator();
+        this.update.scrollTop = 0;
+        this.index = 0;
+
+        if (this.entryCount==1 && this.options.autoSelect) {
+          this.selectEntry();
+          this.hide();
+        } else {
+          this.render();
+        }
+      }
+    }
 });
 
 // set up global to track names of double list managers

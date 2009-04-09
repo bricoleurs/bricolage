@@ -462,6 +462,12 @@ Fixed the category autocomplete z-index issue in IE. [Adrian Yee]
 Fixed bug 1458, where related media that failed to be thumbnailed caused the
 Story Profile to error. Similarly fixed bug 1461 for Find Media. [Scott]
 
+=item *
+
+Fixed part of bug 1460, the auto-completion was jumping around. See
+L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
+for details. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
