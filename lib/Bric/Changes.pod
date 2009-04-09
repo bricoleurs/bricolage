@@ -460,7 +460,7 @@ Fixed the category autocomplete z-index issue in IE. [Adrian Yee]
 =item *
 
 Fixed bug 1458, where related media that failed to be thumbnailed caused the
-Story Profile to error. [Scott]
+Story Profile to error. Similarly fixed bug 1461 for Find Media. [Scott]
 
 =back
 
