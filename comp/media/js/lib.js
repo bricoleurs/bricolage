@@ -1706,7 +1706,7 @@ var Container = {
             displayed.value = '1';
         } else {
             // Hide it.
-            anchor.innerHTML = '&#x25ba;';
+            anchor.innerHTML = '&#x25b6;';
             displayed.value = '0';
         }
         return false;
