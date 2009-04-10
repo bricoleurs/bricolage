@@ -474,6 +474,11 @@ L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-us
 Fixed IE6 rendering on the story profile where the textarea/inputs disappear
 when the page isn't wide enough. [Adrian Yee]
 
+=item *
+
+Fixed bug where expanding containers on the story profile page causes IE6 to
+hide the contents of the container after it's done expanding. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

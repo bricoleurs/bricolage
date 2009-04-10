@@ -694,7 +694,14 @@ div.addelement { text-align: right;}
 #containerprof h3,
 #containerprof fieldset legend { background: transparent; font-weight: bold; font-size: 1em; }
 
-#containerprof ul.elements { position: relative; margin: 0; padding: 10px; }
+#containerprof ul.elements {
+  position: relative;
+  margin: 0;
+  padding: 10px;
+/* Expanding elements causes IE6 to hide the contents of the container after
+ * it's done expanding.  This fixes that bug. */
+  _height: 1%;
+}
 #containerprof ul.elements li.container,
 #containerprof ul.elements li.element {
   margin: 0 0 10px 0;
