@@ -718,6 +718,14 @@ div.addelement { text-align: right;}
   position: relative;
   margin-left: 85px;
   padding: 0 20px 0 0;
+
+/* The floated h3.name combined with position: relative .content results in the
+ * content dissappearing when the window isn't wide enough.  Putting IE6 into
+ * hasLayout mode for .content fixes this problem, but then triggers another -
+ * .content doesn't go under the float.  Fix this by removing the left margin.
+ */
+  _margin-left: 0;
+  _zoom: 1;
 }
 
 #containerprof .content .delete,
@@ -736,13 +744,6 @@ div.addelement { text-align: right;}
 }
 #containerprof .element .copy {
   top: 19px;
-}
-
-/* Fix IE6 bug where the floated h3.name causes the absolute positioned icons
- * to be shifted over the width of the floated element. */
-#containerprof .element .delete,
-#containerprof .element .copy {
-  _right: 85px;
 }
 
 #containerprof .actions { background: transparent; }

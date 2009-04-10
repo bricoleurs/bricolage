@@ -469,6 +469,11 @@ modified from code by Jason Gill and Janos Novak at
 L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
 [Scott]
 
+=item *
+
+Fixed IE6 rendering on the story profile where the textarea/inputs disappear
+when the page isn't wide enough. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
