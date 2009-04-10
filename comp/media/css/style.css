@@ -698,9 +698,9 @@ div.addelement { text-align: right;}
   position: relative;
   margin: 0;
   padding: 10px;
-/* Expanding elements causes IE6 to hide the contents of the container after
- * it's done expanding.  This fixes that bug. */
-  _height: 1%;
+/* Expanding elements causes IE to hide the contents of the container after
+ * it's done expanding.  Fix it by turning on hasLayout. */
+  *zoom: 1;
 }
 #containerprof ul.elements li.container,
 #containerprof ul.elements li.element {

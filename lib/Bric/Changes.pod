@@ -476,7 +476,7 @@ when the page isn't wide enough. [Adrian Yee]
 
 =item *
 
-Fixed bug where expanding containers on the story profile page causes IE6 to
+Fixed bug where expanding containers on the story profile page causes IE to
 hide the contents of the container after it's done expanding. [Adrian Yee]
 
 =back
