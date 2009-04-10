@@ -700,7 +700,7 @@ div.addelement { text-align: right;}
   padding: 10px;
 /* Expanding elements causes IE to hide the contents of the container after
  * it's done expanding.  Fix it by turning on hasLayout. */
-  *zoom: 1;
+  *height: 1%;
 }
 #containerprof ul.elements li.container,
 #containerprof ul.elements li.element {
