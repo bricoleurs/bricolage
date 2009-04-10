@@ -257,6 +257,9 @@ div.debug dt:after {
     position: absolute;
     font-style: italic;
     font-weight: normal;
+/* Absolute positioning of italicized text causes IE7 to create a horizontal
+ * scrollbar. Setting overflow fixes this. */
+    *overflow: auto;
 }
 .desk .item .head .pubstatus {
     /* float: right; */

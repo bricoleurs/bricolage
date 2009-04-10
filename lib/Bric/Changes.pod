@@ -484,6 +484,11 @@ hide the contents of the container after it's done expanding. [Adrian Yee]
 Fixed bug with IE6 where elements could not be re-ordered using drag and drop.
 [Adrian Yee]
 
+=item *
+
+Fixed the horizontal scroll that was showing up in IE7 on the desk/workspace
+pages. [Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
