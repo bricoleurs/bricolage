@@ -479,6 +479,11 @@ when the page isn't wide enough. [Adrian Yee]
 Fixed bug where expanding containers on the story profile page causes IE to
 hide the contents of the container after it's done expanding. [Adrian Yee]
 
+=item *
+
+Fixed bug with IE6 where elements could not be re-ordered using drag and drop.
+[Adrian Yee]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
