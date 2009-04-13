@@ -10,11 +10,9 @@
 </li>
 % }
 </ul>
-<div style="position: relative">
 <input type="text" class="textInput" name="add_<% $type %>" id="add_<% $type %>" />
 <div id="add_<% $type %>_autocomplete" class="autocomplete"></div>
 <button onclick="fastadd<% $type %>.add('add_<% $type %>'); return false">Add</button>
-</div>
 
 <script type="text/javascript">
 var fastadd<% $type %> = new FastAdd('<% $type %>', {}, { onEnter: function(element) { fastadd<% $type %>.add(element) }});

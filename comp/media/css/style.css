@@ -529,7 +529,14 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .paginate .pages { float: left; width: 70%; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
-.associations { width: 100%; border-style: hidden; }
+.associations {
+    width: 100%;
+    border-style: hidden;
+/* Turn off position: relative on this table so that the popup menu can go over
+ * top of it in IE.  This also fixes the keyword autocomplete positioning
+ * issues with Firefox. */
+    position: static;
+}
 .associations th { 
     width: 125px; 
     text-align: right; 
