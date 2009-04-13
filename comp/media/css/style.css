@@ -775,7 +775,7 @@ div.autocomplete {
   _margin-left: -8px;
 }
 /* Fix the position of the IE6 iframe */
-#category_autocomplete_choices_iefix {
+#category_autocomplete_choices_iefix, #add_keyword_autocomplete_iefix {
   _margin-left: -8px;
 }
 div.autocomplete ul {
