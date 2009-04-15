@@ -68,7 +68,23 @@ new Effect.Highlight('category-<% $new_category_id %>');
 &>
 <input type="text" id="new_category_uri" name="new_category_autocomplete" size="40" /><div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
 <script type="text/javascript">
-new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices", "/widgets/story_prof/autocomplete_categories.html", { onEmpty: function() { Element.show('new_cat_warning'); }, onNotEmpty: function() { Element.hide('new_cat_warning') }, onEnter: function() { catListMan.add('new_category_uri') } });
+// add throbber after Add Category text field
+var throbber = new Element('img', { id: 'category_autocomplete_indicator',
+                                    src: '/media/images/busy_indicator.gif' });
+Element.hide(throbber);
+$('new_category_uri').insert({ after: throbber });
+
+new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices",
+                       "/widgets/story_prof/autocomplete_categories.html",
+                       {
+                         onEmpty:    function() { Element.show('new_cat_warning'); },
+                         onNotEmpty: function() { Element.hide('new_cat_warning') },
+                         onEnter:    function() { catListMan.add('new_category_uri') },
+                         minChars:   2,
+                         indicator:  'category_autocomplete_indicator',
+                         parameters: 'site_id=<% $story->get_site_id %>'
+                       }
+);
 </script>
 </div>
 % }

@@ -167,7 +167,7 @@ Made the popup dialog for related stories/media a bit bigger. [Scott]
 
 =item *
 
-Added a throbber to category completion in New Story. [Scott]
+Added a throbber to category completion in New Story and Story Profile. [Scott]
 
 =back
 
