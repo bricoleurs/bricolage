@@ -317,6 +317,36 @@ sub return : Callback(priority => 6) {
     pop_page();
 }
 
+sub cancel_return : Callback(priority => 6) {
+    my $self = shift;
+    my $widget = $self->class_key;
+
+    my $state        = get_state_name($widget);
+    my $version_view = get_state_data($widget, 'version_view');
+    my $fa = get_state_data($widget, 'template');
+
+    my $url;
+    my $return = get_state_data($widget, 'return') || '';
+    my $wid = $fa->get_workflow_id;
+    if ($return eq 'search') {
+        $wid = get_state_data('workflow', 'work_id') || $wid;
+        $url = $SEARCH_URL . $wid . '/';
+    } elsif ($return eq 'active') {
+        $url = $ACTIVE_URL . $wid;
+    } elsif ($return =~ /\d+/) {
+        $url = $DESK_URL . $wid . '/' . $return . '/';
+    } else {
+        $url = '/';
+    }
+
+    # Clear the state and send 'em home.
+    clear_state($widget);
+    $self->set_redirect($url);
+
+    # Remove this page from the stack.
+    pop_page();
+}
+
 # Pull a template back from the dead and on to the workflow.
 sub recall : Callback {
     my $self = shift;

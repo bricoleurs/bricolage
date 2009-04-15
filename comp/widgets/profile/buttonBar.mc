@@ -142,7 +142,7 @@ if ($version) {
     <& "/widgets/buttons/submit.mc",
         disp      => 'Return',
         widget    => $widget,
-        cb        => 'return_cb',
+        cb        => 'cancel_return_cb',
         button    => 'cancel_lgreen',
         useTable  => 0
     &>

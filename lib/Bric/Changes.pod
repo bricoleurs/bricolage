@@ -489,6 +489,11 @@ Fixed bug with IE6 where elements could not be re-ordered using drag and drop.
 Fixed the horizontal scroll that was showing up in IE7 on the desk/workspace
 pages. [Adrian Yee]
 
+=item *
+
+Fixed bug 1455: the Cancel button in Profiles wasn't working because of the fix
+for bug 1343. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
