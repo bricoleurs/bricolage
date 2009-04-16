@@ -64,7 +64,7 @@ my $field_values = sub {
         # If we get a thumbnail URI, we have an image. Otherwise, simply return
         # a space to fill the column properly because we aren't an image object
         # but USE_THUMBNAILS is on.
-        my $thumb_uri = $o->thumbnail_uri or return '&nbsp;';
+        my $thumb_uri = eval { $o->thumbnail_uri } or return '&nbsp;';
         return qq{ <img src="$thumb_uri" />};
 
     } elsif ($field eq 'action') {
