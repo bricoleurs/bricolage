@@ -494,6 +494,10 @@ pages. [Adrian Yee]
 Fixed bug 1455: the Cancel button in Profiles wasn't working because of the fix
 for bug 1343. [Scott]
 
+=item *
+
+Fixed bug 1464: URLs weren't wrapping properly in IE. [Adrian]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)
