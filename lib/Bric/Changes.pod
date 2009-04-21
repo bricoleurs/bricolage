@@ -498,6 +498,10 @@ for bug 1343. [Scott]
 
 Fixed bug 1464: URLs weren't wrapping properly in IE. [Adrian]
 
+=item *
+
+Fixed bug 1466: the Checkout icon wasn't working on desks in IE. [Scott]
+
 =back
 
 =head1 VERSION 1.11.1 (2008-10-03)

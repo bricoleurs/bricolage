@@ -65,7 +65,8 @@
             </li>
 % } elsif (!$user && $action eq 'checkout_cb') {
             <li>
-<a name="check_out"><input name="<% ${widget} %>|checkout_cb" type="image" src="/media/images/checkout.gif" title="Check out" value="<% ${class} %>_<% $id %>"/><button type="submit" name="<% ${widget} %>|checkout_cb" class="<% ${widget} %>_checkout_cb" title="Check out" value="<% ${class} %>_<% $id %>">Check Out</button></a>
+% my $checkout_uri = $r->uri . '?' . "$widget|checkout_cb=$class\_$id";
+<a href="<% $checkout_uri %>" name="check_out"><img src="/media/images/checkout.gif" title="Check out" />Check out</a>
  </li>
 % }
 
