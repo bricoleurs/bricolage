@@ -1061,7 +1061,7 @@ the associated dictionaries from L<http://aspell.net/>.
 If you're upgrading an installation of Bricolage that was previously installed
 via C<make install>, then simply upgrade using C<make upgrade>. If, however,
 you're upgrading an older installation of Bricolage that didn't have a build
-system, or it was simply used as-is from Subversion, you'll need to follow the
+system, or it was simply used as-is from Git, you'll need to follow the
 directions below.
 
 To upgrade a manual installation of Bricolage, first set the BRICOLAGE_ROOT

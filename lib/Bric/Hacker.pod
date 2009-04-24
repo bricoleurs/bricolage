@@ -79,14 +79,14 @@ Archives: L<http://marc.theaimsgroup.com/?l=bricolage-bugs>
 You can often find folks hanging out and occasionally discussing development
 issues on the #bricolage channel on the MagNet IRC network.
 
-=head1 SUBVERSION
+=head1 GIT
 
 If you're developing Bricolage then you should be working with the latest code
-from the Bricolage Subversion repository. You can browse the Subversion
-repository at L<http://viewsvn.bricolage.cc/>.
+from the Bricolage Git repository. You can browse the repository at
+L<http://github.com/bricoleurs/bricolage/>. The best way to 
 
-Information on connecting to the repository to checkout a working copy is at
-L<http://www.bricolage.cc/dev/subversion/>.
+Information on forking the repository and checking out a working copy is at
+L<http://www.bricolage.cc/dev/vcs/>.
 
 =head1 BUG TRACKING
 
@@ -109,31 +109,13 @@ Pod::Perldoc from CPAN to generate HTML files:
 
 =head1 SUBMITTING PATCHES
 
-Patches should be generated using the C<svn diff> command on each of the
-files modified, from the root directory. For example, if you made changes to
-F<lib/Bric/Changes.pod> and F<comp/foo.mc>, you would generate a diff by
-running this command from the root of your Subversion checkout:
-
-  svn diff lib/Bric/Changes.pod comp/foo.mc > patch.txt
-
-If you created one or more new files in your changes then you'll have to add
-them to the patch separately using normal C<diff> against C</dev/null>. For
-example, if you created the file C<inst/upgrade/1.9.1/solve_fermat.pl> then
-you would add this to patch.txt with:
-
-  diff -u /dev/null inst/upgrade/1.9.1/solve_fermat.pl >> patch.txt
-
-Always create patches using an up-to-date Subversion checkout if possible.
-Send your patches to the devel list mentioned above.
-
-=head1 APPLYING PATCHES
-
-Patches created using the method above can be applied using C<patch> with the
-C<-p0> option from the root of your Subversion checkout:
-
-  patch -p0 < patch.txt
-
-Make sure you check the results with C<svn diff> before committing.
+Patches should be submitted as Pull Requests on GitHub. Simply commit your
+changes to your forked copy of the repository, then click the "Pull Request"
+link on your repository page. Make sure that you select "bricoleurs" as a
+recipient of the pull request. See L<http://www.bricolage.cc/dev/vcs/> for
+details on using GitHub to contribute to Bricolage. See
+L<http://github.com/guides/home> for GitHub's guides to using Git, GitHub,
+sending Pull Requests, etc.
 
 =head1 CODING STANDARDS
 
@@ -498,31 +480,42 @@ Say you need to distribute files via a protocol that Bricolage doesn't currently
 support -- say, an new variant of FTP called "FooTP." You'll need to create a
 new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 
+=head1 WORKING WITH BRANCHES
+
+  git checkout --track -b rev_1_10 origin/rev_1_10
+  # make changes
+  git commit -a
+  git push 
+
 =head1 MERGING CHANGES BETWEEN BRANCHES
 
-If you're a Bricolage developer with permission to commit to the Subversion
-repository, you may occasionally have to merge changes from one branch to
-another.
+If you're a Bricolage developer with permission to commit to the Canonical Git
+repository, just use the GitHub Fork Queue,
+L<http://github.com/bricoleurs/bricolage/forkqueue>, to merge in
+contributions. Sometimes, though, you'll also have to merge changes from one
+branch to another.
+
+XXX Need to update this as I learn more.
 
 By far, the most common merge will be from a release branch (e.g. rev_1_10) to
-trunk. For this reason, the documentation below will assume that you are
-merging from a branch to trunk; however, there is still occasion to merge
+master. For this reason, the documentation below will assume that you are
+merging from a branch to master; however, there is still occasion to merge
 between branches, e.g. rev_1_6 to rev_1_10. In these cases, use "rev_1_X"
-instead of "trunk".
+instead of "master".
 
 =over 4
 
 =item 1
 
-Make sure that both the branch you are merging from and the trunk are updated
+Make sure that both the branch you are merging from and the master are updated
 and have no uncommitted changes. You can check for these differences by using
 the Subversion C<status> and C<update> commands. Running C<svn status> will tell
 you if there have been any uncommitted changes to the local copy of the branch
-or trunk. Running C<svn update> will merge in any updates from the copy on the
+or master. Running C<svn update> will merge in any updates from the copy on the
 Subversion server. So we recommend running both of these commands in both the
-branch and the trunk and committing any necessary changes before continuing.
+branch and the master and committing any necessary changes before continuing.
 
-  % cd bricolage-trunk
+  % cd bricolage-master
   % svn status
   % svn update
   At revision 6123.
@@ -534,11 +527,11 @@ branch and the trunk and committing any necessary changes before continuing.
 
 =item 2
 
-To merge the changes from the branch into the trunk, you need to tell the
+To merge the changes from the branch into the master, you need to tell the
 Subversion C<merge> command to use the difference between two revisions in the
-I<branch> to update the trunk. The two revisions to compare are, on the one
+I<branch> to update the master. The two revisions to compare are, on the one
 hand, either the revision when the branch was created, or the revision when
-the branch was last merged into the trunk; and on the other hand, the current
+the branch was last merged into the master; and on the other hand, the current
 revision in the branch.
 
 For the latter number, you can simply use the C<HEAD> keyword, which
@@ -553,25 +546,25 @@ convention is that no one should ever commit changes to a tag after it has
 been created.
 
 Tags are stored in subdirectories of F<tags> based on the branch you are
-merging I<from>.  For example, if you are merging from rev_1_10 to Ftrunk,
+merging I<from>.  For example, if you are merging from rev_1_10 to Fmaster,
 the tag belongs in F<tags/rev_1_10/>.
 
 Tags are then named for the branch you are merging I<to> and the revision
-number of the merge itself. For example, if a merge was committed to the trunk
+number of the merge itself. For example, if a merge was committed to the master
 from the rev_1_10 branch in revision 5694, the branch would be located at
-F<tags/rev_1_10/trunk-5694>.
+F<tags/rev_1_10/master-5694>.
 
 So to get the revision number of the last merge, look in the Bricolage ViewCVS
 interface for the last merge tag created for the branch. Or use the Subversion
 C<list> command to find it:
 
-  % svn list https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10 | grep trunk
-  trunk-5694/
-  trunk-5825/
-  trunk-5902/
-  trunk-5995/
+  % svn list https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10 | grep master
+  master-5694/
+  master-5825/
+  master-5902/
+  master-5995/
 
-If the branch has never been merged into the trunk you can get the revision
+If the branch has never been merged into the master you can get the revision
 number at the time the branch was created using C<svn log> command:
 
   % svn log --verbose --stop-on-copy \
@@ -579,19 +572,19 @@ number at the time the branch was created using C<svn log> command:
   ------------------------------------------------------------------------
   r5525 | theory | 2004-05-10 19:16:48 -0700 (Mon, 10 May 2004) | 1 line
   Changed paths:
-     A /bricolage/branches/rev_1_10 (from /bricolage/trunk:5524)
+     A /bricolage/branches/rev_1_10 (from /bricolage/master:5524)
 
-So now we know that we want to update the trunk with all of the changes
+So now we know that we want to update the master with all of the changes
 between revision 5995 and C<HEAD>. If no merge tag exists, then use C<svn log>
 to find out revision number at which the branch was created and use that
 number.
 
 =item 3
 
-Now simply switch to the trunk checkout and perform the merge. Using the above
+Now simply switch to the master checkout and perform the merge. Using the above
 examples, the merge would look like this:
 
-  % cd bricolage-trunk
+  % cd bricolage-master
   % svn merge -r 5995:HEAD https://svn.bricolage.cc/bricolage/branches/rev_1_10
   U  lib/Bric/App/ApacheConfig.pm
   C  lib/Bric/Hacker.pod
@@ -622,21 +615,21 @@ If there are any test failures, you'll need to fix those, too.
 
 =item 6
 
-Commit the changes to the trunk. Be sure to specify what revisions were merged
+Commit the changes to the master. Be sure to specify what revisions were merged
 in, and the name of the new tag you'll create for the branch. The final
 revision number (represented by HEAD) happened to have been printed out when
 we ran C<svn update> in step one, so it's easy to find and use:
 
-  % svn commit -m 'Merged rev_1_10 changes 5995-6123. Will tag rev_1_10/trunk-6123.'
+  % svn commit -m 'Merged rev_1_10 changes 5995-6123. Will tag rev_1_10/master-6123.'
 
 =item 7
 
 Tag the branch with the last revision, so that future merges can find it and
 know to merge only from that revision on.
 
-  % svn cp -m 'Tag for merge to trunk revision 6123.' \
+  % svn cp -m 'Tag for merge to master revision 6123.' \
     https://svn.bricolage.cc/bricolage/branches/rev_1_10 \
-    https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10/trunk-6123
+    https://svn.bricolage.cc/bricolage/tags/merges/rev_1_10/master-6123
 
 =back
 
