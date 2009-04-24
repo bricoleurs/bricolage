@@ -483,9 +483,10 @@ new mover. Consult L<Bric::Dist::Action::Mover> for details on how to do that.
 =head1 WORKING WITH BRANCHES
 
   git checkout --track -b rev_1_10 origin/rev_1_10
+  git pull
   # make changes
   git commit -a
-  git push 
+  git push origin 
 
 =head1 MERGING CHANGES BETWEEN BRANCHES
 
