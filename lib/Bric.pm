@@ -1,7 +1,5 @@
 package Bric;
 
-# $Id$
-
 =head1 NAME
 
 Bric - The Bricolage base class.
