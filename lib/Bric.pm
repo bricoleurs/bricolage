@@ -8,10 +8,6 @@ Bric - The Bricolage base class.
 
 =over 4
 
-=item Version
-
-$LastChangedRevision$
-
 =item Release Version
 
 1.10.8
@@ -22,16 +18,6 @@ $LastChangedRevision$
 BEGIN {
     our $VERSION = '1.10.8';
 }
-
-=item Date
-
-$LastChangedDate$
-
-=item Subversion ID
-
-$Id$
-
-=back
 
 =head1 SYNOPSIS
 
