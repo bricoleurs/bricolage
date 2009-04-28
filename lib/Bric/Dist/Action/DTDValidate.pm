@@ -44,10 +44,7 @@ use strict;
 # Programmatic Dependences
 use Bric::Util::Fault qw(throw_dp isa_exception);
 use Bric::App::Util qw(:browser);
-
-BEGIN {
-    use constant HAVE_LIB_XML => eval { require XML::LibXML };
-}
+use constant HAVE_LIB_XML => eval { require XML::LibXML };
 
 ################################################################################
 # Inheritance

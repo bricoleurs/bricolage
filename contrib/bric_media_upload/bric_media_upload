@@ -391,6 +391,17 @@ sub create_or_update_media {
     my $media_data = encode_base64($buf, '');
     close(RH);
 
+    # xxx: here I just declare that if we're updating
+    # then it's already been published before;
+    # I don't know how else to do it with our crappy soap interface
+    my $publish_crap = $operation eq 'create'
+      ? '  <publish_status>0</publish_status>'
+      : <<EOPC;
+  <publish_status>1</publish_status>
+  <first_publish_date>$media_cover_date</first_publish_date>
+  <publish_date>$media_cover_date</publish_date>
+EOPC
+
     my $infoelements = ($media_info) ? get_media_info($media_file) : '';
     # put vars into xml skeleton
     my $media_xml = <<"EOS";
@@ -406,6 +417,7 @@ sub create_or_update_media {
   <active>1</active>
   <source>$content_source</source>
   <cover_date>$media_cover_date</cover_date>
+$publish_crap
   <category>$media_category</category>
   <contributors></contributors>
   <elements>$infoelements</elements>

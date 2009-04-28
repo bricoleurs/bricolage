@@ -878,7 +878,22 @@ to install files in their proper locations. [Brian Smith and David]
 
 =back
 
-=head1 VERSION 1.10.7 (2008-??-??)
+=head1 VERSION 1.10.8 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item
+
+Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
+C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
+thread-saftey reasons." This change backward-compatible with older versions of
+XML::LibXML. [David]
+
+=back
+
+=head1 VERSION 1.10.7 (2009-03-12)
 
 =head2 Improvements
 
@@ -893,13 +908,21 @@ buttons. [Matt Rolf]
 =item *
 
 Improved documentation of the C<FTP_UNLINK_BEFORE_MOVE> F<bricolage.conf>
-directive with speficic reference to SFTP versions. [Alex Krohn]
+directive with specific reference to SFTP versions. [Alex Krohn]
 
 =item *
 
 Events are now logged using wallclock time rather than transaction start time,
 so that multiple events logged in a single transaction can be displayed in the
 order they were created, rather than in an arbitrary order. [David]
+
+=item *
+
+C<< Bric::Util::Burner->publish_another >> will now throw an exception if the
+document you pass to it is checked out. This is because publishing a story
+that's checked out can cause no end of havoc. The solution, as mentioned in
+the error message, is to pass C<< published_version => 1 >> when looking for
+documents to publish from within templates. [David]
 
 =back
 
@@ -963,7 +986,7 @@ Reported by Phillip Smith (Bug # 1372). [David]
 
 Fixed resource (file name) lookups whe publishing and/or previewing documents
 so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
-for example, L</foo/bar> with L</foo_bar>. Reported by Scott (Bug # 1368).
+for example, C</foo/bar> with C</foo_bar>. Reported by Scott (Bug # 1368).
 [David]
 
 =item *
@@ -975,6 +998,51 @@ cause an error. Reported by Scott (Bug # 1409). [David]
 
 Fixed a bug in the SOAP server where attempting to check in an asset results
 in an error. Reported by Ashlee Caul. [David]
+
+=item *
+
+Republishing a story will no longer delete files from that story on preview
+servers. Similarly, publishing a media document with a new file but with the same
+name as a previously-published version will no longer cause that file to be
+deleted from production destinations. This bug has been fixed and refixed
+numerous times, but this time tests have been added to make sure that it
+I<stays> fixed. Reported by Matt Rolf, Ashlee Caul, and others (Bug # 1368).
+[David]
+
+=item *
+
+Fixed a bug in the virtual FTP server so that, when a template is deployed by
+uploading it with F<.deploy> appended to its name, it is properly removed from
+that deploy desk. Reported by Phillip Smith (Bug #1372). [David]
+
+=item *
+
+The "Logged in as" link at the top of every screen now properly uses SSL when
+appropriate. [David]
+
+=item *
+
+Fixed an inconsistency in how the case of file names in media documents was
+not always properly set according to the rules for the output channel. This
+means that if your media document's output channel requires lowercase URIs,
+the URI for the media document will always be lowercase, including the file
+name. The file name is also now always consistently URI escaped (Bug #1419).
+[David]
+
+=item *
+
+Eliminated a SQL injection vulnerability in the querying for stories, media,
+and templates. [David]
+
+=item *
+
+Fixed an issue where a document gets renamed so that a single character is
+replaced with an underscore: The old file was not getting removed upon
+publish. Reported by Ashlee Caul (Bug #1446). [David]
+
+=item *
+
+The C<bric_media_upload> app works again. [David]
 
 =back
 

@@ -11,10 +11,13 @@ use Bric::Util::Trans::FS;
 use Bric::Util::Time qw(strfdate);
 use Bric::Biz::Category;
 use Bric::Biz::Asset::Template::DevTest;
+use Bric::Biz::Asset::Business::Story::DevTest;
+use Bric::Biz::Asset::Business::Media::DevTest;
 use Bric::Config qw(:temp :prev);
 use Bric::Biz::OutputChannel;
 use File::Basename;
 use Test::MockModule;
+use Test::File;
 use Test::File::Contents;
 use Data::UUID;
 
@@ -693,7 +696,7 @@ sub subclass_burn_test {
 
     # Set up the component root for the preview.
     $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
-      Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
+    Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
 
     # Make sure that the files don't already exist.
     $file = $fs->cat_dir(
@@ -838,6 +841,246 @@ sub test_modes : Test(10) {
     ok !$burner->publishing, 'Burner should not be publishing';
     ok !$burner->previewing, 'It should not be previewing';
     ok $burner->compiling, 'It should be compiling';
+}
+
+##############################################################################
+sub test_story_publish : Test(27) {
+    my $self = shift;
+
+    # Where we at?
+    my $stage_dir   = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, 'stage');
+    my $preview_dir = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, 'preview');
+    my $dest_root   = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, 'prod');
+    my $prev_root   = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, 'previewed');
+
+    # Create a story.
+    ok my $story = Bric::Biz::Asset::Business::Story::DevTest->construct(
+        name => 'Flubber',
+        slug => 'hugo',
+    ), 'Create a story';
+    ok $story->checkin, 'Check in the story';
+    ok $story->save, 'Save the story';
+    $self->add_del_ids($story->get_id, 'story');
+    my $oc = $story->get_primary_oc;
+
+    # We need to know where files will end up.
+    my $stage_path = $fs->cat_file(
+        $stage_dir,
+        'oc_' . $oc->get_id,
+        $story->get_uri,
+        $oc->get_filename . '.' . $oc->get_file_ext
+    );
+    my $preview_path = $fs->cat_file(
+        $preview_dir,
+        'oc_' . $oc->get_id,
+        $story->get_uri,
+        $oc->get_filename . '.' . $oc->get_file_ext
+    );
+
+    # Set up a destination and a server.
+    $self->make_dest($dest_root, $oc, $prev_root);
+
+    # Set up the component root for the preview.
+    $self->{comp_root} = Bric::Util::Burner::MASON_COMP_ROOT->[0][1];
+    Bric::Util::Burner::MASON_COMP_ROOT->[0][1] = TEMP_DIR;
+
+    # We'll need a burner.
+    ok my $burner = Bric::Util::Burner->new({
+        out_dir   => $preview_dir,
+        comp_dir  => $fs->cat_dir(TEMP_DIR, 'comp'),
+        base_path => $fs->cat_dir(TEMP_DIR, 'base'),
+        _output_preview_msgs => 0,
+    }), "Create burner";
+
+    # Find the template for the story.
+    ok my $tmpl = Bric::Biz::Asset::Template->lookup({
+        id => 512, # Story template ID.
+    }), 'Find the story template';
+
+    ok $burner->deploy($tmpl), 'Deploy it';
+
+    # First, preview the story.
+    ok $burner->preview( $story, 'story', $self->user_id ), 'Preview the story';
+
+    # Now, find the resource that was distributed.
+    ok my $res = Bric::Dist::Resource->lookup({ path => $preview_path }),
+        'Look up the previewed resource';
+    $self->add_del_ids($res->get_id, 'resource');
+    my $prev_file = $fs->cat_dir($prev_root, $res->get_uri);
+
+    # Make sure the file was distributed!
+    file_exists_ok $prev_file, 'The preview should have been distributed';
+
+    # Now publish the story.
+    $burner->set_out_dir( $stage_dir );
+    ok $burner->publish( $story, 'story', $self->user_id), 'Publish the story';
+
+    # Now, find the resource that was distributed.
+    ok my $res2 = Bric::Dist::Resource->lookup({ path => $stage_path }),
+        'Look up the published resource';
+    $self->add_del_ids($res2->get_id, 'resource');
+    my $pub_file = $fs->cat_dir($dest_root, $res2->get_uri);
+
+    # Make sure the file was distributed!
+    file_exists_ok $pub_file, 'The publish should have been distributed';
+    file_exists_ok $prev_file, 'The preview file should still exist';
+}
+
+##############################################################################
+sub test_media_publish : Test(44) {
+    my $self = shift;
+
+    # Where we at?
+    my $media_root = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, '_media');
+    my $dest_root  = $fs->cat_dir($ENV{BRIC_TEMP_DIR}, 'prod');
+
+    # Create a media object.
+    ok my $media = Bric::Biz::Asset::Business::Media::DevTest->construct(
+        name      => 'Flubberman',
+        file_name => 'fun.foo',
+    ), 'Create a new media object';
+
+    # Upload a file before saving the media.
+    ok open my $fh, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
+    ok $media->upload_file($fh, 'foo.png'), 'Upload a media file';
+
+    # Now checkin and save the media and grab the path info.
+    ok $media->checkin, 'Check in the media document';
+    ok $media->save, 'Save the media document';
+    $self->add_del_ids($media->get_id, 'media');
+    ok my $path = $media->get_path, 'Grab the path';
+    ok my $uri  = $media->get_uri;
+
+    # Set up a destination and a server.
+    $self->make_dest($dest_root, $media->get_primary_oc);
+
+    ok my $burner = Bric::Util::Burner->new({
+        comp_dir => $fs->cat_dir(TEMP_DIR, 'comp')
+    }), 'Create a burner';
+
+    ok $burner->publish($media, 'media', $self->user_id),
+        'Publish the media document';
+
+    # Now, find the resource that was distributed.
+    ok my $res = Bric::Dist::Resource->lookup({ path => $path }),
+        'Look up the distributed resource';
+    $self->add_del_ids($res->get_id, 'resource');
+    my $file = $fs->cat_dir($dest_root, $res->get_uri);
+
+    # Make sure the file was distributed!
+    file_exists_ok $file, 'The file should have been distributed';
+
+    # Now create a new version of the media document, with a new file.
+    ok $media->checkout({ user__id => $self->user_id }), 'Check out the media';
+    ok $media->checkin, 'Check it in';
+    ok $media->checkout({ user__id => $self->user_id }), 'Check it out again';
+
+    ok open $fh, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
+    # Must use the same file name here.
+    ok $media->upload_file($fh, 'foo.png'), 'Upload the media file again';
+    ok $media->checkin, 'Check it in yet again';
+    ok $media->save, 'Save the media document again';
+    isnt $media->get_path, $path, 'It should have a new path';
+    is $media->get_uri, $uri, 'But its URI should be the same';
+
+    ok $burner->publish($media, 'media', $self->user_id),
+        'Publish the media document again';
+
+    # Find the new resource.
+    ok my $res2 = Bric::Dist::Resource->lookup({ path => $media->get_path }),
+        'Look up the newly distributed resource';
+    $self->add_del_ids($res2->get_id, 'resource');
+    isnt $res2->get_id, $res->get_id, 'It should be a different resource';
+
+    file_exists_ok $file, 'The distributed file should still exist';
+
+    # Okay, now we'll try uploading a file with a new file name.
+    ok $media->checkout({ user__id => $self->user_id }), 'Check it out again';
+    ok open $fh, '<', __FILE__ or die 'Cannot open ' . __FILE__ . ": $!";
+    # Must use the same file name here.
+    ok $media->upload_file($fh, 'bar.png'), 'Upload with a new file name';
+    ok $media->checkin, 'Check it in one last time';
+    ok $media->save, 'Save the media document again';
+    isnt $media->get_path, $path, 'It should have a new path';
+    isnt $media->get_uri, $uri, 'And its URI should be different';
+
+    ok $burner->publish($media, 'media', $self->user_id),
+        'Publish the media document one last time';
+
+    # Find the new resource.
+    ok my $res3 = Bric::Dist::Resource->lookup({ path => $media->get_path }),
+        'Look up the last distributed resource';
+    $self->add_del_ids($res3->get_id, 'resource');
+    isnt $res3->get_id, $res->get_id, 'It should be different than the first res';
+    isnt $res3->get_id, $res2->get_id, 'And from the previoius res';
+
+    file_not_exists_ok $file, 'And the original file should be expired!';
+    $file = $fs->cat_dir($dest_root, $res3->get_uri);
+    file_exists_ok $file, 'But the new file should be distributed';
+}
+
+##############################################################################
+# Creates a destination to test publishing. Used by test_story_publish() and
+# test_media_publish().
+sub make_dest {
+    my ($self, $dest_root, $oc, $preview_root) = @_;
+    # Set up a destination and a server.
+    ok my $dest = Bric::Dist::ServerType->new({
+        name        => 'Prod',
+        site_id     => 100,
+        move_method => 'File System',
+        publish     => 1,
+    }), 'Create a destination';
+
+    # Associate the output channel and save it.
+    ok $dest->add_output_channels($oc), 'Add OC';
+    ok $dest->save, 'Save the destination';
+    $self->add_del_ids($dest->get_id, 'server_type');
+
+    # Add a move action.
+    ok $dest->new_action({ type => 'Move' }), 'Create new action';
+    ok $dest->save, 'Save new action';
+
+    # Create a server for the destination.
+    ok my $server = Bric::Dist::Server->new({
+        host_name      => 'www.example.org',
+        os             => 'Unix',
+        doc_root       => $dest_root,
+        server_type_id => $dest->get_id,
+    }), 'Create a new server';
+    ok $server->save, 'Save the server';
+    $self->add_del_ids($server->get_id, 'server');
+
+    return $self unless $preview_root;
+
+    ok $dest = Bric::Dist::ServerType->new({
+        name        => 'Preview',
+        site_id     => 100,
+        move_method => 'File System',
+    }), 'Create a preview destination';
+
+    $dest->on_preview(1);
+    $dest->no_publish(0);
+    # Associate the output channel and save it.
+    ok $dest->add_output_channels($oc), 'Add OC';
+    ok $dest->save, 'Save the preview destination';
+    $self->add_del_ids($dest->get_id, 'server_type');
+
+    # Add a move action.
+    ok $dest->new_action({ type => 'Move' }), 'Create preview action';
+    ok $dest->save, 'Save preview action';
+
+    # Create a server for the destination.
+    ok $server = Bric::Dist::Server->new({
+        host_name      => 'www.example.org',
+        os             => 'Unix',
+        doc_root       => $preview_root,
+        server_type_id => $dest->get_id,
+    }), 'Create a new preview server';
+    ok $server->save, 'Save the preview server';
+    $self->add_del_ids($server->get_id, 'server');
+
+    return $self;
 }
 
 ##############################################################################

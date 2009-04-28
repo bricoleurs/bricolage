@@ -395,6 +395,8 @@ START MODULE LIST
 
 =item Test::File::Contents 0.02
 
+=item Test::File
+
 =item Text::Balanced
 
 =item XML::Parser 2.34
@@ -1414,7 +1416,7 @@ the associated dictionaries from L<http://aspell.net/>.
 If you're upgrading an installation of Bricolage that was previously installed
 via C<make install>, then simply upgrade using C<make upgrade>. If, however,
 you're upgrading an older installation of Bricolage that didn't have a build
-system, or it was simply used as-is from Subversion, you'll need to follow the
+system, or it was simply used as-is from Git, you'll need to follow the
 directions below.
 
 To upgrade a manual installation of Bricolage, first set the
