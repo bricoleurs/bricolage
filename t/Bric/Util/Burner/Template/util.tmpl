@@ -1,0 +1,12 @@
+<tmpl_loop element_loop>
+<tmpl_if is_para>
+<p><tmpl_var para></p>
+</tmpl_if>
+<tmpl_if is_header>
+<h3><tmpl_var header></h3>
+</tmpl_if>
+<tmpl_if is__pull_quote_>
+<tmpl_var _pull_quote_>
+</tmpl_if>
+</tmpl_loop>
+
