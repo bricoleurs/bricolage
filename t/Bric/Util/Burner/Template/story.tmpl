@@ -1,0 +1,9 @@
+<tmpl_if _page__loop>
+<tmpl_loop _page__loop>
+<tmpl_include name="testing/sub/util.tmpl">
+<tmpl_var _page_>
+<tmpl_var page_break>
+</tmpl_loop>
+<tmpl_else>
+<tmpl_include name="testing/sub/util.tmpl">
+</tmpl_if>

@@ -1,0 +1,3 @@
+<h1><?= $story->get_title() ?></h1>
+<h2><?= $story->get_cover_date('%Y.%m.%d') ?></h1>
+<?= $content ?>

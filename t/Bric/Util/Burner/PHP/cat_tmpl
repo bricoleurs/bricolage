@@ -1,0 +1,10 @@
+<html><head>
+<title><?php $story->get_title() ?></title>
+</head><body>
+<?= $content ?>
+<?php
+   include_once("testing/sub/util.php");
+   footer('BSD');
+?>
+</body></html>
+<?php if ( $burner->get_page() ) $burner-set_burn_again(1) ?>
