@@ -16,7 +16,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   useGlobalImage => 1,
 );
 
-$m->comp("/widgets/wrappers/sharky/table_top.mc",
+$m->comp("/widgets/wrappers/table_top.mc",
   caption   => "Information",
   number    => 1,
   rightText => $rightText
@@ -71,10 +71,10 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 	key => 'expire_date',
 &>
 
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
 
-<& /widgets/wrappers/sharky/table_top.mc,
+<& /widgets/wrappers/table_top.mc,
    caption => 'Template Code',
    number  => 2
 &>
@@ -108,9 +108,9 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
 <div class="codearea">
 <textarea name="<% $widget %>|code" id="<% $widget %>|code" rows="20" cols="60" wrap="off"><% escape_html($fa->get_data) %></textarea>
 </div>
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 
-<& /widgets/wrappers/sharky/table_top.mc,
+<& /widgets/wrappers/table_top.mc,
    caption => 'Upload Template File',
    number  => 3
 &>
@@ -121,7 +121,7 @@ $m->comp("/widgets/wrappers/sharky/table_top.mc",
   <dt><% $lang->maketext('Upload') %>:</dt>
   <dd><input type="file" name="<% $widget %>|upload_file" size="30" /></dd>
 </dl>
-<& /widgets/wrappers/sharky/table_bottom.mc &>
+<& /widgets/wrappers/table_bottom.mc &>
 
 <%perl>
 $m->comp("/widgets/profile/buttonBar.mc",
@@ -176,11 +176,16 @@ my $show_element_flags = sub {
 };
 
 my $show_data_flags = sub {
-    my ($d) = @_;
+    my ($dt) = @_;
     my @flags;
 
-    push @flags, 'required'   if $d->get_required;
-    push @flags, 'repeatable' if $d->get_quantifier;
+    if (my $min = $dt->get_min_occurrence) {
+          push @flags, "Minimum: $min";
+    }
+
+    if(my $max = $dt->get_max_occurrence) {
+          push @flags, "Maximum: $max";
+    }
 
     return unless @flags;
     return '&nbsp;<span class="orangeLink">('.join(', ', @flags).')</span>';

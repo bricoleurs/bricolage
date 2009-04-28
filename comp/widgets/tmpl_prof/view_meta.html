@@ -17,7 +17,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
 );
 
 </%perl>
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
     caption     => "Information",
     number      => 1,
     rightText   => $rightText &>
@@ -44,15 +44,15 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
   <dd><% $cat_name %></dd>
 </dl>
 
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
     caption => $caption,
     number  => 2 &>
 <pre><% $code %></pre>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 % if ($curr_ver > 1) {
-<& '/widgets/wrappers/sharky/table_top.mc',
+<& '/widgets/wrappers/table_top.mc',
     caption => 'Select Diff Version',
     number  => 3 &>
 <& '/widgets/profile/select.mc',
@@ -73,7 +73,7 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
     useTable => 1,
     value    => 1,
 &>
-<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+<& '/widgets/wrappers/table_bottom.mc' &>
 % }
 <& '/widgets/profile/button.mc',
     disp   => 'Return',

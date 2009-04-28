@@ -4,14 +4,6 @@
 
 tmpl_prof - Handle adding and updating templates.
 
-=head1 VERSION
-
-$LastChangedRevision$
-
-=head1 DATE
-
-$LastChangedDate: 2008-07-18 06:43:01 -0700 (Fri, 18 Jul 2008) $
-
 =head1 SYNOPSIS
 
 <& '/widgets/tmpl_prof/tmpl_prof.mc' &>
