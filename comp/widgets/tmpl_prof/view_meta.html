@@ -1,0 +1,127 @@
+<%perl>
+my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal",
+  alt      => 'Trail',
+  value    => "view"
+) . '&nbsp;';
+
+$rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|notes_cb",
+  value    => 'view',
+  image    => $fa->has_notes ? 'note_fill' : "note",
+  alt      => 'Notes',
+  useGlobalImage => 1,
+);
+
+</%perl>
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption     => "Information",
+    number      => 1,
+    rightText   => $rightText &>
+
+<dl class="viewmeta">
+  <dt><% $lang->maketext('Template Type') %>:</dt>
+  <dd><% $fa->get_tplate_type_string %></dd>
+  
+% if ($fa->get_tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
+  <dt><% $lang->maketext('Element') %>:</dt>
+  <dd><% $fa->get_element_name %></dd>
+% } else {
+  <dt><% $lang->maketext('Name') %>:</dt>
+  <dd><% $fa->get_name %></dd>
+% }
+
+  <dt><% $lang->maketext('Description') %>:</dt>
+  <dd><% $fa->get_description %></dd>
+  
+  <dt><% $lang->maketext('Output Channel') %>:</dt>
+  <dd><% $oc_name %></dd>
+  
+  <dt><% $lang->maketext('Category') %>:</dt>
+  <dd><% $cat_name %></dd>
+</dl>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => $caption,
+    number  => 2 &>
+<pre><% $code %></pre>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+% if ($curr_ver > 1) {
+<& '/widgets/wrappers/sharky/table_top.mc',
+    caption => 'Select Diff Version',
+    number  => 3 &>
+<& '/widgets/profile/select.mc',
+    name    => 'from_version',
+    disp    => 'From Version',
+    options => $versions,
+    value   => $param->{from_version},
+&>
+<& '/widgets/profile/select.mc',
+    name    => 'to_version',
+    disp    => 'To Version',
+    options => $versions,
+    value   => $param->{to_version},
+&>
+<& '/widgets/profile/button.mc',
+    name     => 'diff',
+    button   => 'view_diff',
+    useTable => 1,
+    value    => 1,
+&>
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+% }
+<& '/widgets/profile/button.mc',
+    disp   => 'Return',
+    widget  => $widget,
+    cb      => 'return_cb',
+    button  => 'return_dgreen',
+    value   => $param->{diff} ? 'diff' : undef,
+    useTable => 0 &>
+<%args>
+$widget
+$param
+</%args>
+<%init>
+my $fa       = get_state_data($widget, 'template');
+my $cat_name = $fa->get_category_name;
+my $oc_name  = $fa->get_output_channel_name;
+my $curr_ver = $fa->get_current_version;
+my $versions = [ map { [ $_ => $_] } reverse 1 .. $curr_ver ];
+my ($code, $caption);
+
+# Generate the diff.
+if ($param->{diff}) {
+    my $version  = $fa->get_version;
+    my $from     = $param->{from};
+    my $to       = $param->{to};
+    my $from_ver = $param->{from_version};
+    my $to_ver   = $param->{to_version};
+
+    $code = '<div id="diff">' . Text::Diff::diff(
+        \$from->get_data, \$to->get_data, {
+            STYLE      => 'Text::Diff::HTML',
+            FILENAME_A => $from->get_file_name  . " v.$from_ver",
+            FILENAME_B => $to->get_file_name . " v.$to_ver",
+            MTIME_A    => $param->{from_time},
+            MTIME_B    => $param->{to_time},
+        }
+    ) . '</div>';
+    $caption = $lang->maketext(
+        'Diff between versions [_1] and [_2]',
+        $from_ver, $to_ver
+    );
+}
+
+# Set up the code display.
+else {
+    $caption               = $lang->maketext('Template Code');
+    $code                  = escape_html($fa->get_data);
+    $param->{from_version} = ($curr_ver - 1);
+    $param->{to_version}   = $param->{last_version};
+}
+</%init>

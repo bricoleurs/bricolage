@@ -1,0 +1,188 @@
+<%perl>
+my $rightText = $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|trail_cb",
+  image    => "view_trail_teal",
+  alt      => 'Trail',
+  value    => "edit"
+) . '&nbsp;';
+
+$rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
+  formName => "theForm",
+  callback => $widget . "|notes_cb",
+  value    => 'edit',
+  image    => $fa->has_notes ? 'note_fill' : "note",
+  alt      => 'Notes',
+  useGlobalImage => 1,
+);
+
+$m->comp("/widgets/wrappers/sharky/table_top.mc",
+  caption   => "Information",
+  number    => 1,
+  rightText => $rightText
+);
+</%perl>
+
+<dl class="viewmeta">
+  <dt><% $lang->maketext('Template Type') %>:</dt>
+  <dd><% $fa->get_tplate_type_string %></dd>
+  
+% if ($fa->get_tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
+  <dt><% $lang->maketext('Element') %>:</dt>
+  <dd><% $fa->get_element_name %></dd>
+% } else {
+  <dt><% $lang->maketext('Name') %>:</dt>
+  <dd><% $fa->get_name %></dd>
+% }
+
+  <dt><% $lang->maketext('Output Channel') %>:</dt>
+  <dd><% $fa->get_output_channel_name %></dd>
+  
+  <dt><% $lang->maketext('URI') %>:</dt>
+  <dd><% $fa->get_uri %></dd>
+% if (@$sites > 1) {
+  <dt><% $lang->maketext('Site') %>:</dt>
+  <dd><% Bric::Biz::Site->lookup({id => $fa->get_site_id})->get_name() %></dt>
+% }
+</dl>
+
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $fa,
+   key => 'priority',
+&>
+
+<& '/widgets/select_object/select_object.mc',
+    object => 'category',
+    constrain => { site_id => $fa->get_site_id },
+    field => 'uri',
+    sort_field => 'uri',
+    name => 'category_id',
+    disp => 'Category',
+    selected => $fa->get_category_id
+&>
+
+<& '/widgets/profile/displayFormElement.mc',
+   objref => $fa,
+   key => 'description',
+&>
+
+<& '/widgets/profile/displayFormElement.mc',
+	objref => $fa,
+	key => 'expire_date',
+&>
+
+<& '/widgets/wrappers/sharky/table_bottom.mc' &>
+
+
+<& /widgets/wrappers/sharky/table_top.mc,
+   caption => 'Template Code',
+   number  => 2
+&>
+<dl class="viewmeta">
+% if ($at) {
+    <dt><% $lang->maketext('Key Name') %>:</dt>
+    <dd><% $at->get_key_name  . $show_element_flags->($at) %></dd>
+%   if (@{$at->get_field_types}) {
+    <dt><% $lang->maketext('Field Elements') %>:</dt>
+    <dd>
+%       $m->print(join ', ', map { $_->get_key_name . $show_data_flags->($_) } $at->get_field_types);
+    </dd>
+%   }
+
+%   if (@{$at->get_containers}) {
+    <dt><% $lang->maketext('Container Elements') %>:</dt>
+    <dd>
+%       $m->print(join ', ', map { $_->get_key_name } $at->get_containers);
+        <% $search_button %>
+    </dd>
+%   }
+% } else {
+  <dt>&nbsp;</dt>
+  <dd><% $search_button %></dd>
+% }
+</dl>
+<& /widgets/dialog_box/find.mc,
+    field_id  => "$widget|code",
+    dialog_id => 'finddialog',
+&>
+<div class="codearea">
+<textarea name="<% $widget %>|code" id="<% $widget %>|code" rows="20" cols="60" wrap="off"><% escape_html($fa->get_data) %></textarea>
+</div>
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+
+<& /widgets/wrappers/sharky/table_top.mc,
+   caption => 'Upload Template File',
+   number  => 3
+&>
+<dl class="viewmeta">
+% my $uri = 
+  <dt><% $lang->maketext('Download') %>:</dt>
+  <dd><a id="downloadlink" href="<% $r->uri . "?$widget|download_file_cb=" . $fa->get_id %>" title="<% $lang->maketext('Download this template') %>"><% $fa->get_file_name %></a></dd>
+  <dt><% $lang->maketext('Upload') %>:</dt>
+  <dd><input type="file" name="<% $widget %>|upload_file" size="30" /></dd>
+</dl>
+<& /widgets/wrappers/sharky/table_bottom.mc &>
+
+<%perl>
+$m->comp("/widgets/profile/buttonBar.mc",
+         widget      => $widget,
+         desks       => $desks,
+         cd          => $cd,
+         obj         => $fa,
+);
+</%perl>
+
+
+<%args>
+$widget
+</%args>
+
+<%init>
+my $fa = get_state_data($widget, 'template');
+my $at = $fa->get_element_type;
+
+# Use the same reset key for this widget in all the widgets we call.
+my $rk    = get_state_data($widget, 'reset_key');
+
+# Get the workflow ID.
+my $wf_id = get_state_data($widget, 'work_id') || $fa->get_workflow_id();
+
+# Lookup the workflow and get its allowed desks.
+my $wf    = Bric::Biz::Workflow->lookup({id => $wf_id});
+my $desks = $wf->allowed_desks();
+
+# Get the current desk, or if this hasn't been put on a desk yet, the start desk
+my $cd    = $fa->get_current_desk() || $wf->get_start_desk();
+
+my $search_button = '<button title="' . $lang->maketext('Open the search and replace dialog box') . ' ' . $lang->maketext('(Access Key: [_1])', 'f') . q{" accesskey="f"onclick="return openFindDialog(document.getElementById('finddialog'), event);">Search</button>};
+
+my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
+</%init>
+
+<%once>
+my $show_element_flags = sub {
+    my ($at) = @_;
+    my @flags;
+
+    push @flags, 'paginated'     if $at->is_paginated;
+    push @flags, 'top level'     if $at->is_top_level;
+    push @flags, 'fixed url'     if $at->is_fixed_uri;
+    push @flags, 'media'         if $at->is_media;
+    push @flags, 'related media' if $at->is_related_media;
+    push @flags, 'related story' if $at->is_related_story;
+
+    return unless @flags;
+    return '&nbsp;<span class="orangeLink">('.join(', ', @flags).')</span>';
+};
+
+my $show_data_flags = sub {
+    my ($d) = @_;
+    my @flags;
+
+    push @flags, 'required'   if $d->get_required;
+    push @flags, 'repeatable' if $d->get_quantifier;
+
+    return unless @flags;
+    return '&nbsp;<span class="orangeLink">('.join(', ', @flags).')</span>';
+};
+</%once>

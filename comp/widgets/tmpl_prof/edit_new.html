@@ -1,0 +1,155 @@
+<%perl>;
+my $wf = Bric::Biz::Workflow->lookup
+  ({ id => get_state_data($widget, 'work_id')});
+my $site_id = $wf->get_site_id;
+
+$m->comp('/widgets/wrappers/sharky/table_top.mc',
+         'caption' => 'Properties',
+         'number'  => 1);
+
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => 'site',
+         readOnly => 1,
+         objref => $wf
+        );
+
+if ($param->{tplate_type}) {
+    # Output a hidden field for the template type.
+    $m->comp('/widgets/profile/hidden.mc',
+             name => 'tplate_type',
+             value => $param->{tplate_type});
+
+    if ($param->{tplate_type} ==
+        Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
+        # It's an element template. Offer them a list of elements to
+        # choose from. Get the top-level elements for this site, and then
+        # all of the subelements.
+
+        $m->comp('/widgets/select_object/select_object.mc',
+                 object    => 'element_type',
+                 name      => $widget.'|at_id',
+                 field     => 'key_name',
+                 reset_key => $rk,
+                 exclude   => $excl_media_sub,
+                 objs      => $get_elems->($site_id),
+                 disp      => 'Element Type');
+    } elsif ($param->{tplate_type} ==
+             Bric::Biz::Asset::Template::UTILITY_TEMPLATE) {
+        # It's a utiltiy template. Offer a name field.
+        $m->comp('/widgets/profile/text.mc',
+                 disp => 'Name',
+                 req => 1,
+                 name => "$widget|name");
+    } else {
+        # Do nothing for a category template. This should never happen.
+    }
+} else {
+    # Let them decide what type of template they want.
+    $m->comp('/widgets/profile/displayFormElement.mc',
+             vals => Bric::Biz::Asset::Template->my_meths->{tplate_type},
+             key => 'tplate_type'
+            );
+}
+
+if (my $oc_id = $param->{"$widget|oc_id"}) {
+    # Let's figure out what their file type options are.
+    my $oc = Bric::Biz::OutputChannel->lookup({ id => $oc_id });
+    my $file_types = Bric::Util::Burner->list_file_types($oc->get_burner);
+    # If there is more than one (e.g., 'pl' and 'tmpl'), let them choose.
+    if (@$file_types > 1) {
+        $m->comp(
+            '/widgets/profile/displayFormElement.mc',
+            key => 'file_type',
+            vals => {
+                disp  => 'File Type',
+                value => $file_types->[0][0],
+                props => {
+                    type => 'select',
+                    vals => $file_types,
+                }
+            }
+        );
+    }
+}
+
+$m->comp('/widgets/select_object/select_object.mc',
+         'object'    => 'output_channel',
+         'name'      => $widget.'|oc_id',
+         'field'     => 'name',
+         'reset_key' => $rk,
+         selected    => $param->{"$widget|oc_id"},
+         constrain   => { active => 1 , site_id => $site_id},
+         req         => 1,
+         'disp'      => 'Output Channel');
+
+$m->comp('/widgets/select_object/select_object.mc',
+         'object'    => 'category',
+         'name'      => $widget.'|cat_id',
+         selected    => $param->{"$widget|cat_id"},
+         'reset_key' => $rk,
+         'field'     => 'uri',
+         sort_field  => 'uri',
+         constrain   => { site_id => $site_id },
+         exclude     => $excl_sub,
+         req         => 1,
+         'disp'      => 'Category');
+
+$m->comp('/widgets/profile/displayFormElement.mc',
+         key => "priority",
+         vals => $pmeth);
+
+$m->comp('/widgets/wrappers/sharky/table_bottom.mc');
+
+$m->comp('/widgets/profile/button.mc',
+         disp   => $lang->maketext($disp),
+         widget => $widget,
+         cb     => $cb,
+         button => $button,
+         useTable => 0);
+</%perl>
+<%args>
+$widget
+$param
+</%args>
+<%init>;
+my $rk = get_state_data($widget, 'reset_key');
+
+my ($button, $disp, $cb);
+($button, $disp, $cb, $pmeth->{value}) = $param->{tplate_type} ?
+  ('create_red', 'Create', 'create_cb', $param->{priority}) :
+  ('next_dkgreen', 'Next', 'create_next_cb', 3);
+$pmeth->{value} = $param->{priority} || 3;
+</%init>
+
+<%once>;
+my $pmeth = { %{ Bric::Biz::Asset::Template->my_meths->{priority} } };
+$pmeth->{value} = 3;
+my $excl_sub = sub { ! chk_authz($_[0], READ, 1) };
+my $excl_media_sub = sub { $_[0]->is_media || ! chk_authz($_[0], READ, 1) };
+my $get_subs;
+$get_subs = sub {
+    my ($elem, $seen) = @_;
+    my @objs;
+    for my $e ($elem->get_containers) {
+        push @objs, ($e, $get_subs->($e, $seen)) unless $seen->{$e->get_id}++;
+    }
+    return @objs;
+};
+my $get_elems = sub {
+    my $site_id = shift;
+    my ($seen, @tops, @objs) = ({});
+    for my $e (Bric::Biz::ElementType->list({
+        site_id   => $site_id,
+        top_level => 1,
+    })) {
+        push @tops, $e;
+        push @objs, $get_subs->($e, $seen);
+    }
+    # Return case-insensitively sorted.
+    return [
+        map  { $_->[0] }
+        sort { $a->[1] cmp $b->[1] }
+        map  { [ $_ => $_->get_key_name] } @objs, @tops
+    ];
+};
+</%once>
