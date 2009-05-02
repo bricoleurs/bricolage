@@ -1,0 +1,196 @@
+#!/usr/bin/perl -w
+
+eval 'exec /opt/local/bin/perl -w -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
+
+# $Id $
+
+=head1 NAME
+
+bric_events_rss - Bricolage events feed generator
+
+=head1 SYNOPSIS
+
+  bric_events_rss [options]
+
+=head1 DESCRIPTION
+
+F<bric_events_rss> generates a list of events in RSS 2.0 format. Optional
+parameters can be set to control the number/type of events, sorting, etc.
+
+=head1 OPTIONS
+
+=head2 --order <field>
+
+The field to sort the results by. Default value is "timestamp". Other useful
+fields may be user_id, class, key_name.
+
+=head2 --orderdirection <ASC | DESC>
+
+The order directions; either "ASC" (ascending sort) or DESC (descending).
+Default value is "DESC".
+
+=head2 --limit <number>
+
+Maximum number of events to display.
+
+=head2 --rss-title "<title string>"
+
+Value of the RSS <title> field. Defaults to "Bricolage events feed".
+
+=head2 --rss-description "<description string>"
+
+Value of the RSS <description> field. Defaults to "Bricolage events feed".
+
+=head2 --rss-link "<link url>"
+
+Value of the RSS <link> field. Defaults to "http://www.bricolage.cc".
+
+=head1 DEPENDENCIES
+
+=head2 C<$BRICOLAGE_ROOT>
+
+Set this environment variable as usual to indicate where to find the Bricolage
+libraries.
+
+=head2 Perl Modules
+
+=over 2
+
+=item Getopt::Long
+
+=item File::Spec::Functions
+
+=back
+
+=head1 NOTES
+
+Much of the heavy lifting is done by Bric::Util::Event. Refer to that class
+and its documentation for more details.
+
+=cut
+
+use warnings;
+use strict;
+use Getopt::Long;
+use File::Spec::Functions qw(catdir);
+
+GetOptions(
+    "order=s"           => \my $order,
+    "orderdirection=s"  => \my $orderdirection,
+    "limit=n"           => \my $limit,
+    "rss-title=s"       => \my $rss_title,
+    "rss-link=s"        => \my $rss_link,
+    "rss-description=s" => \my $rss_description,
+);
+
+BEGIN {
+    $ENV{BRIC_QUEUED} = 1;
+    # $BRICOLAGE_ROOT defaults to /usr/local/bricolage
+    $ENV{BRICOLAGE_ROOT} ||= "/usr/local/bricolage";
+    # use $BRICOLAGE_ROOT/lib if exists
+    my $lib = catdir($ENV{BRICOLAGE_ROOT}, "lib");
+    if (-e $lib) {
+        $ENV{PERL5LIB} = defined $ENV{PERL5LIB} ?
+          "$ENV{PERL5LIB}:$lib" : $lib;
+        unshift @INC, $lib;
+    }
+    # make sure Bric is found. Use Bric::Config to prevent warnings.
+    eval { require Bric::Config };
+    die <<"END" if $@;
+######################################################################
+
+   Cannot load Bricolage libraries. Please set the environment
+   variable BRICOLAGE_ROOT to the location of your Bricolage
+   installation or set the environment variable PERL5LIB to the
+   directory where Bricolage's libraries are installed.
+
+   The specific error encountered was as follows:
+
+   $@
+
+######################################################################
+END
+}
+
+use Bric::App::Event;
+use Bric::Biz::Person::User;
+use Bric::Dist::Resource;
+use Bric::Util::Job;
+use Bric::Biz::Asset::Business::Story;
+use Bric::Util::Event;
+use Bric::Util::Grp;
+use Bric::Util::Time qw(:all);
+use Bric::Util::DBI qw(:all);
+
+my %params = (
+    Order => $order || 'timestamp',
+    OrderDirection => $orderdirection || 'DESC',
+    Limit => $limit || '20'
+);
+$rss_title = $rss_title || "Bricolage events feed";
+$rss_link = $rss_link || "http://www.bricolage.cc";
+$rss_description = $rss_description || "Bricolage events feed";
+
+my $events = Bric::Util::Event->list(\%params);
+my $date = strfdate(undef, '%a, %d %b %Y %T GMT', 1);
+
+print <<EOT;
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>$rss_title</title>
+    <link>$rss_link</link>
+    <description>$rss_description</description>
+    <pubDate>$date</pubDate>
+    <lastBuildDate>$date</lastBuildDate>
+    <ttl>15</ttl>
+
+EOT
+
+foreach my $e (@$events) {
+    my $attr = $e->get_attr;
+    my $description = "User: ".$e->get_user->format_name('%f% m% l');
+    my $dt = db_datetime($e->_get('timestamp'));
+
+    my @parts = split(/::/, $e->get_class);
+    if ($e->get_class eq 'Bric::Biz::Asset::Business::Story') {
+        $description .= '<br/>'.$parts[-1].': '.$e->get_obj->get_title;
+    } elsif ($e->get_class eq 'Bric::Biz::Asset::Business::Media') {
+        $description .= '<br/>'.$parts[-1].': '.$e->get_obj->get_title;
+    } elsif ($e->get_class eq 'Bric::Biz::Person' || $e->get_class eq 'Bric::Biz::Person::User') {
+        $description .= '<br/>'.$parts[-1].': '.$e->get_obj->format_name('%f% m% l');
+    } elsif ($e->get_class eq 'Bric::Dist::Resource') {
+        $description .= '<br/>'.$parts[-1].': '.$e->get_obj->get_uri;
+    } elsif ($e->get_class eq 'Bric::Util::Grp') {
+        $description .= '<br/>Object: '.$e->get_obj->get_name;
+    } elsif ($e->get_class eq 'Bric::Util::Job') {
+        $description .= '<br/>'.$parts[-1].': '.$e->get_obj->get_name;
+    } else {
+        $description .= '<br/>Class object is '.$e->get_class;
+    }
+
+    while (my ($key, $value) = each(%$attr)) {
+        $description .= "<br/>$key: $value";
+    }
+
+    print "\t<item>\n";
+    print "\t\t<title>".$e->get_description."</title>\n";
+    print "\t\t<pubDate>".$dt->strftime('%a, %d %b %Y %T GMT')."</pubDate>\n";
+    print "\t\t<description><![CDATA[$description]]></description>\n";
+    print "\t</item>\n\n";
+}
+
+print <<EOT;
+
+  </channel>
+</rss>
+EOT
+
+
+1;
+__END__
+
+=head1 AUTHOR
+
+Greg Heo <greg@node79.com>
