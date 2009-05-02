@@ -1,0 +1,49 @@
+NAME
+    bric_events_rss - Bricolage events feed generator
+
+SYNOPSIS
+      bric_events_rss [options]
+
+DESCRIPTION
+    bric_events_rss generates a list of events in RSS 2.0 format. Optional
+    parameters can be set to control the number/type of events, sorting,
+    etc.
+
+OPTIONS
+  --order <field>
+    The field to sort the results by. Default value is "timestamp". Other
+    useful fields may be user_id, class, key_name.
+
+  --orderdirection <ASC | DESC>
+    The order directions; either "ASC" (ascending sort) or DESC
+    (descending). Default value is "DESC".
+
+  --limit <number>
+    Maximum number of events to display.
+
+  --rss-title "<title string>"
+    Value of the RSS <title> field. Defaults to "Bricolage events feed".
+
+  --rss-description "<description string>"
+    Value of the RSS <description> field. Defaults to "Bricolage events
+    feed".
+
+  --rss-link "<link url>"
+    Value of the RSS <link> field. Defaults to "http://www.bricolage.cc".
+
+DEPENDENCIES
+  $BRICOLAGE_ROOT
+    Set this environment variable as usual to indicate where to find the
+    Bricolage libraries.
+
+  Perl Modules
+    Getopt::Long
+    File::Spec::Functions
+
+NOTES
+    Much of the heavy lifting is done by Bric::Util::Event. Refer to that
+    class and its documentation for more details.
+
+AUTHOR
+    Greg Heo <greg@node79.com>
+
