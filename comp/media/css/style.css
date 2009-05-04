@@ -196,6 +196,9 @@ div.debug dt:after {
     position: relative;
     font-size: 11px;
     line-height: 11px;
+/* Trigger hasLayout to fix IE6 pop menu z-index issues on the Workspace page
+ * where there can be more than one desk on the page */
+    _zoom: 1;
 }
 
 .jump { float: right; padding-top: 3px; }

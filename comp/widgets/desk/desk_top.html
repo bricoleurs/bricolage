@@ -2,9 +2,10 @@
 
 <!--[if IE]>
 <script type="text/javascript">
-// IE hack to fix the z-index so that the popup menu doesn't go under the desk item below it
+// IE hack to fix the z-index so that the popup menu doesn't go under the desk
+// or desk item below it
   document.observe("dom:loaded", function () {
-    $A($$('.desk .item')).each(function(item, i) {
+    $A($$('.desk', '.desk .item')).each(function(item, i) {
       item.style.zIndex = -i;
     });
   });
