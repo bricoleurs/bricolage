@@ -18,12 +18,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =over
 
-=item
+=item *
 
 Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
 C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
 thread-saftey reasons." This change backward-compatible with older versions of
 XML::LibXML. [David]
+
+=item *
+
+Fixed a bug where a story published but with no resources (files) could cause
+an error. Reported by Paul Hyland. [David]
 
 =back
 
