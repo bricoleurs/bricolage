@@ -1366,7 +1366,7 @@ sub publish {
     # Expire stale resources, if necessary.
     if (@job_ids and my @stale = Bric::Dist::Resource->list({
         "$key\_id" => $baid,
-        not_uri    => ANY(keys %uris),
+        (%uris ? ( not_uri => ANY(keys %uris) ) : ()),
         not_job_id => ANY(@job_ids),
     })) {
         # Yep, there are old resources to expire. Map them to destinations.
