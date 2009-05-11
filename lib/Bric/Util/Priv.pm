@@ -1,7 +1,5 @@
 package Bric::Util::Priv;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Priv - Individual Privileges

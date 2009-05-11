@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Dest;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Dest - Interface to Bric::Dist::ServerType Groups

@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Pref;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Pref - Interface to Bric::Util::Pref Groups

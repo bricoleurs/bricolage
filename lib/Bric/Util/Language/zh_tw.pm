@@ -1,7 +1,5 @@
 package Bric::Util::Language::zh_tw;
 
-# $Id$
-
 =encoding utf8
 
 =head1 NAME

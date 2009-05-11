@@ -1,7 +1,5 @@
 package Bric::Util::Time;
 
-# $Id$
-
 =pod
 
 =head1 NAME

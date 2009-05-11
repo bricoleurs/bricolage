@@ -1,6 +1,5 @@
 package Bric::Biz::ElementType::Parts::FieldType;
 
-# $Id$
 ###############################################################################
 
 =head1 NAME

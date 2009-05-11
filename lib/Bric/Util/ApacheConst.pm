@@ -1,7 +1,5 @@
 package Bric::Util::ApacheConst;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::ApacheConst - Common Apache and HTTP status code constants

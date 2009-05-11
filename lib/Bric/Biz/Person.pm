@@ -1,7 +1,5 @@
 package Bric::Biz::Person;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Biz::Person - Interface to Bricolage Person Objects

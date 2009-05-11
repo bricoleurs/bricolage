@@ -1,7 +1,5 @@
 package Bric::Util::Coll;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Coll - Interface for managing collections of objects.

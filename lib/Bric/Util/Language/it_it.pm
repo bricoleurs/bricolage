@@ -1,7 +1,5 @@
 package Bric::Util::Language::it_it;
 
-# $Id$
-
 =encoding utf8
 
 =head1 NAME

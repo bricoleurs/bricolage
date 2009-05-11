@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Source.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO source (id, org__id, name, description, expire, active)

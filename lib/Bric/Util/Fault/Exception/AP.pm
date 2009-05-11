@@ -1,6 +1,5 @@
 package Bric::Util::Fault::Exception::AP;
 
-# $Id$
 use Bric::Util::Fault;
 
 1;

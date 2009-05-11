@@ -1,7 +1,5 @@
 package Bric::App::CleanupHandler;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::CleanupHandler - Cleans up at the end of a request.

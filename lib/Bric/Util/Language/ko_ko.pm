@@ -1,7 +1,5 @@
 package Bric::Util::Language::ko_ko;
 
-# $Id$
-
 =encoding utf8
 
 =head1 NAME

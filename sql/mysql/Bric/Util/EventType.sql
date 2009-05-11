@@ -2,7 +2,6 @@
 -- ER/Studio 4.0 SQL Code Generation
 -- Project:      Bricolage Business API
 --
--- $Id$
 -- Target DBMS : Oracle 8
 -- Author: David Wheeler <david@justatheory.com>
 

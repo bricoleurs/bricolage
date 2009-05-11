@@ -1,7 +1,5 @@
 package Bric::App::PreviewHandler;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::PreviewHandler - Special Apache handlers used for local previewing.

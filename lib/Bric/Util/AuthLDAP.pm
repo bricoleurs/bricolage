@@ -1,7 +1,5 @@
 package Bric::Util::AuthLDAP;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::AuthLDAP - Bricolage LDAP authentication

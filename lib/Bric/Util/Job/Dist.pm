@@ -1,7 +1,5 @@
 package Bric::Util::Job::Dist;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Job::Dist - Manages Bricolage distribution jobs.

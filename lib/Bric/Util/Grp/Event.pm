@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Event;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Event - Interface to Bric::Util::Event Groups

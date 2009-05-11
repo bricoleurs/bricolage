@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Media;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Media - Interface to Bric::Biz::Asset::Business::Media Groups.

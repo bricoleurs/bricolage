@@ -1,7 +1,5 @@
 package Bric::App::Callback;
 
-# $Id$
-
 use strict;
 use base qw(Params::Callback);
 __PACKAGE__->register_subclass;

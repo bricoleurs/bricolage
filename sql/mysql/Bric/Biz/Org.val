@@ -2,7 +2,6 @@
 -- Project:      Bricolage Business API
 -- File:    Org.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO org (id, name)

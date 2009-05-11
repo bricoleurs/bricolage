@@ -1,7 +1,5 @@
 package Bric::Util::MediaType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::MediaType - Interface to Media Types.

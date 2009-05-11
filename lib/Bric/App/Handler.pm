@@ -1,7 +1,5 @@
 package Bric::App::Handler;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::Handler - The center of the application, as far as Apache is concerned.

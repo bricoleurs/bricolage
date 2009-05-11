@@ -1,7 +1,5 @@
 package Bric::Util::Pref;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Pref - Interface to Bricolage preferences.

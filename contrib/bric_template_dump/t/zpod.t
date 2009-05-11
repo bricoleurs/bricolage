@@ -1,7 +1,5 @@
 #!perl -w
 
-# $Id$
-
 use strict;
 use Test::More;
 use File::Spec::Functions 'curdir';

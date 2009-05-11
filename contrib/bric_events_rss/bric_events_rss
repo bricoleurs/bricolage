@@ -3,8 +3,6 @@
 eval 'exec /opt/local/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
-# $Id $
-
 =head1 NAME
 
 bric_events_rss - Bricolage events feed generator

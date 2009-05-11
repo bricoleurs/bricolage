@@ -1,7 +1,5 @@
 package Bric::Biz::Person::User;
 
-# $Id$
-
 =pod
 
 =head1 NAME

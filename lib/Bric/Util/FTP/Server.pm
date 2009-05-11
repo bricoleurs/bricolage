@@ -1,7 +1,5 @@
 package Bric::Util::FTP::Server;
 
-# $Id$
-
 =pod
 
 =head1 NAME

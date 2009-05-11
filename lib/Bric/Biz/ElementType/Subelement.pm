@@ -1,6 +1,5 @@
 package Bric::Biz::ElementType::Subelement;
 
-# $Id$
 #############################################################################
 
 =head1 NAME

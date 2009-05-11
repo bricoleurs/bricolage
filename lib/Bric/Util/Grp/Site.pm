@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Site;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Site - Interface to Bric::Biz::Site Groups

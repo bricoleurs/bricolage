@@ -1,7 +1,5 @@
 package Bric::Util::Alert;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Alert - Interface to Bricolage Alerts

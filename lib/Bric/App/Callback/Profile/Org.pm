@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::Org;
 
-# $Id$
-
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'org';

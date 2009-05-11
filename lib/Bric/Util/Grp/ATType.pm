@@ -1,7 +1,5 @@
 package Bric::Util::Grp::ATType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::ATType - Interface to Bric::Biz::ATType Groups

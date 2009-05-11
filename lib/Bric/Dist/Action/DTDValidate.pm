@@ -1,7 +1,5 @@
 package Bric::Dist::Action::DTDValidate;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Dist::Action::DTDValidate - Validates XML against a DTD

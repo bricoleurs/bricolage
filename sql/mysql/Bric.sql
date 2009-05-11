@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 --
 

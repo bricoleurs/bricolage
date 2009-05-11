@@ -1,7 +1,5 @@
 package Bric::Biz::Keyword;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Biz::Keyword - Interface to Bricolage Keyword Objects

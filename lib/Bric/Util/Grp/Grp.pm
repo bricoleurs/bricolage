@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Grp;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups

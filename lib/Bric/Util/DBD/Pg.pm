@@ -1,7 +1,5 @@
 package Bric::Util::DBD::Pg;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::DBD::Pg - Bricolage PostgreSQL database adaptor

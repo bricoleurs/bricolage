@@ -1,7 +1,5 @@
 package Bric::Util::Attribute::Grp;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Attribute::Grp - Interface to Attributes of Bric::Util::Grp objects
