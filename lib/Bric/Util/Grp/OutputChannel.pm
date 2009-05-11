@@ -1,7 +1,5 @@
 package Bric::Util::Grp::OutputChannel;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::OutputChannel - Interface to Bric::Biz::OutputChannel Groups

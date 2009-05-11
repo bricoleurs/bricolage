@@ -1,7 +1,5 @@
 package Bric::Biz::Org::Source;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Biz::Org::Source - Manages content sources.

@@ -1,7 +1,5 @@
 package Bric::App::MediaFunc;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::MediaFunc - Location for functions that query uploaded media files.

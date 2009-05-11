@@ -1,7 +1,5 @@
 package Bric::Util::Cookie;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Cookie - Wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Cookie

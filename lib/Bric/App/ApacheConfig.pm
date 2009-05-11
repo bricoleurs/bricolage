@@ -1,7 +1,5 @@
 package Bric::App::ApacheConfig;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::ApacheConfig - Bricolage httpd.conf configuration

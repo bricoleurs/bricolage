@@ -1,7 +1,5 @@
 package Bric::Util::Language::zh_cn;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Language::zh_cn - Bricolage 简体中文翻译

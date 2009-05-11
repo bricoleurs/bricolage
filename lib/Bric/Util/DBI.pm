@@ -1,7 +1,5 @@
 package Bric::Util::DBI;
 
-# $Id$
-
 =pod
 
 =head1 NAME

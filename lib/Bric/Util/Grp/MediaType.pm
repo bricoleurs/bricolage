@@ -1,7 +1,5 @@
 package Bric::Util::Grp::MediaType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::MediaType - Interface to Bric::Util::MediaType Groups

@@ -1,7 +1,5 @@
 package Bric::Util::Trans::FTP;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Trans::FTP - FTP Client interface for distributing resources.

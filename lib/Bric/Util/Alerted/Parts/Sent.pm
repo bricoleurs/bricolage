@@ -1,7 +1,5 @@
 package Bric::Util::Alerted::Parts::Sent;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Alerted::Parts::Sent - Interface to objects describing how and when

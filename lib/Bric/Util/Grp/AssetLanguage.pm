@@ -1,7 +1,5 @@
 package Bric::Util::Grp::AssetLanguage;
 
-# $Id$
-
 use Bric::Util::Grp;
 sub get_secret { Bric::Util::Grp::SECRET_GRP };
 

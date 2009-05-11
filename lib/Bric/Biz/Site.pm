@@ -1,7 +1,5 @@
 package Bric::Biz::Site;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Biz::Site - Interface to Bricolage Site Objects

@@ -1,7 +1,5 @@
 package Bric::Dist::Action::Email;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Dist::Action::Email - Class to email distribution resources

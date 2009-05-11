@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Resource.sql
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 --
 

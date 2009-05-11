@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::ElementType;
 
-# $Id$
-
 use base qw(Bric::App::Callback);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'element_type';

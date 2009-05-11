@@ -1,6 +1,5 @@
 package Bric::Util::Burner::TemplateToolkit;
 
-# $Id$
 ###############################################################################
 
 =head1 NAME

@@ -1,7 +1,5 @@
 package Bric::Util::EventType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::EventType - Interface to Types of Events

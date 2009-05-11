@@ -1,7 +1,5 @@
 package Bric::Util::ApacheReq;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::ApacheReq - Wrapper around Apache 1 and 2 Request classes

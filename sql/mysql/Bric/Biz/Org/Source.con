@@ -1,7 +1,6 @@
 --
 -- Project: Bricolage Business API
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 

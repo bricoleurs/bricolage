@@ -1,7 +1,5 @@
 package Bric::App::Callback::Util::OutputChannel;
 
-# $Id$
-
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref);

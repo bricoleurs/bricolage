@@ -1,8 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
 --
--- $Id$
-
 INSERT INTO grp (id, parent_id, class__id, name, description, secret, permanent)
 VALUES ('0', NULL, '6', 'Root Group', 'The mother of all groups.', '1', '1');
 

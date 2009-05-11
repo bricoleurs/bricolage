@@ -1,7 +1,5 @@
 package Bric::Util::AlertType::Parts::Rule;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::AlertType::Parts::Rule - Interface to AlertType Rules.

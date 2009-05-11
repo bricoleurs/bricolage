@@ -1,7 +1,5 @@
 package Bric::Util::DBD::Oracle;
 
-# $Id$
-
 =pod
 
 =head1 NAME

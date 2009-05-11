@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Story;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Story - Interface to Bric::Biz::Asset::Business::Story Groups.

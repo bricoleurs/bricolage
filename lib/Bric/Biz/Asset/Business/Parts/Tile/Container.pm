@@ -1,6 +1,5 @@
 package Bric::Biz::Asset::Business::Parts::Tile::Container;
 
-# $Id$
 ###############################################################################
 
 =head1 NAME

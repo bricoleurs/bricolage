@@ -2,7 +2,6 @@
 -- Project:      Bricolage Business API
 -- File:    User.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 -- Administrator. Password: 'change me now!'.

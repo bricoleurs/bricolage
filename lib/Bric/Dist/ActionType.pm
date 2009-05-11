@@ -1,7 +1,5 @@
 package Bric::Dist::ActionType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Dist::ActionType - Interface to types of actions supported by Bricolage distribution.

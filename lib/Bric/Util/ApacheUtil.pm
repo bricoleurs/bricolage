@@ -1,7 +1,5 @@
 package Bric::Util::ApacheUtil;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::ApacheUtil - Wrapper around Apache::Util and Apache2::Util classes

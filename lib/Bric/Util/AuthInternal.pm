@@ -1,7 +1,5 @@
 package Bric::Util::AuthInternal;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::AuthInternal - Default, internal Bricolage authentication engine

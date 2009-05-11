@@ -1,7 +1,5 @@
 package Bric::Util::Grp::ContribType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::ContribType - Interface to Bric::Util::Grp::Person Groups

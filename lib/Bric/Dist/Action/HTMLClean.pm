@@ -1,7 +1,5 @@
 package Bric::Dist::Action::HTMLClean;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.

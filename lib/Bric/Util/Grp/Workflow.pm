@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Workflow;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Workflow - Interface to Bric::Biz::Workflow Groups

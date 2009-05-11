@@ -1,7 +1,5 @@
 package Bric::Util::AlertType;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::AlertType - Interface for Managing Types of Alerts

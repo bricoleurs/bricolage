@@ -1,7 +1,5 @@
 package Bric::Util::Grp::User;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::User - Interface to Bric::Biz::Person::User Groups

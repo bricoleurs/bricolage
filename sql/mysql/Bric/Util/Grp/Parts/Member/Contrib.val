@@ -1,8 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Grp.val
 --
--- $Id$
-
 -- Create the 'Bio' attribute.
 INSERT INTO attr_grp (id, subsys, name, sql_type, active)
 VALUES ('1', '_MEMBER_SUBSYS', 'Bio', 'blob', '1');

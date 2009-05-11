@@ -1,7 +1,5 @@
 package Bric::Util::Grp::Keyword;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Grp::Keyword - Interface to Bric::Biz::Keyword Groups

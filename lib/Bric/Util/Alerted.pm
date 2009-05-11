@@ -1,7 +1,5 @@
 package Bric::Util::Alerted;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.

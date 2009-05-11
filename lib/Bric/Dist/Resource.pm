@@ -1,7 +1,5 @@
 package Bric::Dist::Resource;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Dist::Resource - Interface to distribution files and directories.

@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::Callback::Profile - The Bricolage profile callback base class

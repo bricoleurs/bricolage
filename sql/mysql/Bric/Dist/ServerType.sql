@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.sql
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 --
 

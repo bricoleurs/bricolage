@@ -1,7 +1,5 @@
 package Bric::App::Event;
 
-# $Id$
-
 =head1 NAME
 
 Bric::App::Event - Exports simple functions for managing events.

@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    ServerType.val
 --
--- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- No default values for ServerType.

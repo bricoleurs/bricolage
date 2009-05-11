@@ -1,7 +1,5 @@
 package Bric::Util::DBD::mysql;
 
-# $Id$
-
 =head1 NAME
 
 Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
