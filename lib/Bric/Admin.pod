@@ -1109,11 +1109,12 @@ The Apacher server name, set by the 'ServerName' directive in F<conf/httpd.conf>
 
 =item Do you want to use SSL?
 
-If the installation program found either F<mod_ssl> or F<mod_apache_ssl>,
-it will ask this question. If you use one of these modules, your Bricolage
-will be served over a secure connection. See the L<INSTALLATION|INSTALLATION>,
-L<Apache Configuration|Apache Configuration>, and L<INSTALLATION ISSUES|INSTALLATION ISSUES>
-sections of this document for more information on SSL support.
+If the installation program found either F<mod_ssl> or F<mod_apache_ssl>, it
+will ask this question. If you use one of these modules, your Bricolage will
+be served over a secure connection. See the L<INSTALLATION|/"INSTALLATION">,
+L<Apache Configuration|/"Apache Configuration">, and L<INSTALLATION
+ISSUES|/"INSTALLATION ISSUES"> sections of this document for more information
+on SSL support.
 
 =item Postgres Root Username
 
