@@ -63,13 +63,13 @@ use constant DEBUG => 0;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 type =>  Bric::FIELD_READ,
-			 value => Bric::FIELD_READ,
-			 sent_time => Bric::FIELD_READ
+             # Public Fields
+             type =>  Bric::FIELD_READ,
+             value => Bric::FIELD_READ,
+             sent_time => Bric::FIELD_READ
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################

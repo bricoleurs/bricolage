@@ -87,12 +87,12 @@ use base qw( Bric::Biz::Asset::Business::Media );
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
@@ -167,11 +167,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -195,7 +195,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -216,8 +216,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -259,7 +259,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 

@@ -15,7 +15,7 @@
 --              
 
 CREATE TABLE language (
-    id           INTEGER      	NOT NULL AUTO_INCREMENT,
+    id           INTEGER          NOT NULL AUTO_INCREMENT,
     name         VARCHAR(64),
     description  VARCHAR(256),
     active       BOOLEAN        NOT NULL DEFAULT TRUE,

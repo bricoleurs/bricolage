@@ -175,7 +175,7 @@ sub save {
 
     # Save the existing objects.
     foreach my $sube (values %$objs) {
-	$sube->save;
+    $sube->save;
     }
 
     # Save the new objects.

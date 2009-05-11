@@ -1414,92 +1414,92 @@ http://particletree.com/features/lightbox-gone-wild/
 */
 var Lightbox = Class.create();
 Lightbox.prototype = {
-	yPos : 0,
-	xPos : 0,
+    yPos : 0,
+    xPos : 0,
     browser : new Browser(),
 
-	initialize: function(elem) {
+    initialize: function(elem) {
         this.content = elem;
-	},
+    },
 
-	// Turn everything on - mainly the IE fixes
-	activate: function(){
+    // Turn everything on - mainly the IE fixes
+    activate: function(){
         if (this.browser.is_ie) {
-			this.getScroll();
-			this.prepareIE('100%', 'hidden');
-			this.setScroll(0,0);
-			this.hideSelects('hidden');
-		}
-		this.display('block');
-	},
+            this.getScroll();
+            this.prepareIE('100%', 'hidden');
+            this.setScroll(0,0);
+            this.hideSelects('hidden');
+        }
+        this.display('block');
+    },
 
-	// Ie requires height to 100% and overflow hidden or else you can scroll
-	// down past the lightbox
-	prepareIE: function(height, overflow){
-		bod = document.getElementsByTagName('body')[0];
-		bod.style.height = height;
-		bod.style.overflow = overflow;
+    // Ie requires height to 100% and overflow hidden or else you can scroll
+    // down past the lightbox
+    prepareIE: function(height, overflow){
+        bod = document.getElementsByTagName('body')[0];
+        bod.style.height = height;
+        bod.style.overflow = overflow;
 
-		htm = document.getElementsByTagName('html')[0];
-		htm.style.height = height;
-		htm.style.overflow = overflow;
-	},
+        htm = document.getElementsByTagName('html')[0];
+        htm.style.height = height;
+        htm.style.overflow = overflow;
+    },
 
-	// In IE, select elements hover on top of the lightbox
-	hideSelects: function(visibility){
-		selects = document.getElementsByTagName('select');
-		for(i = 0; i < selects.length; i++) {
-			selects[i].style.visibility = visibility;
-		}
-	},
+    // In IE, select elements hover on top of the lightbox
+    hideSelects: function(visibility){
+        selects = document.getElementsByTagName('select');
+        for(i = 0; i < selects.length; i++) {
+            selects[i].style.visibility = visibility;
+        }
+    },
 
-	// Taken from lightbox implementation found at
-	// http://www.huddletogether.com/projects/lightbox/
-	getScroll: function(){
-		if (self.pageYOffset) {
-			this.yPos = self.pageYOffset;
-		} else if (document.documentElement && document.documentElement.scrollTop){
-			this.yPos = document.documentElement.scrollTop;
-		} else if (document.body) {
-			this.yPos = document.body.scrollTop;
-		}
-	},
+    // Taken from lightbox implementation found at
+    // http://www.huddletogether.com/projects/lightbox/
+    getScroll: function(){
+        if (self.pageYOffset) {
+            this.yPos = self.pageYOffset;
+        } else if (document.documentElement && document.documentElement.scrollTop){
+            this.yPos = document.documentElement.scrollTop;
+        } else if (document.body) {
+            this.yPos = document.body.scrollTop;
+        }
+    },
 
-	setScroll: function(x, y){
-		window.scrollTo(x, y);
-	},
+    setScroll: function(x, y){
+        window.scrollTo(x, y);
+    },
 
-	display: function(display){
+    display: function(display){
         this.overlay().style.display = display;
-		this.content.style.display = display;
+        this.content.style.display = display;
         this.content.style.top = window.scrollY + 100 + 'px';
-		if (display != 'none') this.actions();
-	},
+        if (display != 'none') this.actions();
+    },
 
-	// Search through new links within the lightbox, and attach click event
-	actions: function(){
-		lbActions = document.getElementsByClassName('lbAction');
+    // Search through new links within the lightbox, and attach click event
+    actions: function(){
+        lbActions = document.getElementsByClassName('lbAction');
 
-		for(i = 0; i < lbActions.length; i++) {
-			Event.observe(
+        for(i = 0; i < lbActions.length; i++) {
+            Event.observe(
                 lbActions[i],
                 'click',
                 this[lbActions[i].rel].bindAsEventListener(this),
                 false
             );
-			lbActions[i].onclick = function() { return false };
-		}
+            lbActions[i].onclick = function() { return false };
+        }
         return this;
-	},
+    },
 
-	// Example of creating your own functionality once lightbox is initiated
-	deactivate: function() {
-		if (this.browser.is_ie){
-			this.setScroll(0,this.yPos);
-			this.prepareIE('auto', 'auto');
-			this.hideSelects('visible');
-		}
-		this.display('none');
+    // Example of creating your own functionality once lightbox is initiated
+    deactivate: function() {
+        if (this.browser.is_ie){
+            this.setScroll(0,this.yPos);
+            this.prepareIE('auto', 'auto');
+            this.hideSelects('visible');
+        }
+        this.display('none');
     },
 
     overlay: function () {

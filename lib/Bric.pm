@@ -481,13 +481,13 @@ sub AUTOLOAD {
     # A read permission check
     elsif ($op eq 'readable') {
         my $val = $perm & FIELD_READ;
-	*{$AUTOLOAD} = sub () { $val };
+    *{$AUTOLOAD} = sub () { $val };
     }
 
     # A write permission check
     elsif ($op eq 'writable') {
         my $val = $perm & FIELD_WRITE;
-	*{$AUTOLOAD} = sub () { $val };
+    *{$AUTOLOAD} = sub () { $val };
     }
 
     # otherwise, fail

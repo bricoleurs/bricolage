@@ -30,13 +30,13 @@ BEGIN { plan tests => 5 }
 
 eval {
     if (@ARGV) {
-	print "Creating a new event.\n";
-	my $p = Bric::BC::Person->lookup({ id => 1 });
-	my $trig = Bric::BC::Person::User->lookup({ id => 4 });
-	set_def('User', $trig);
-	log_event('Last Name Changed', $p, { new_lname => 'Dickerson' });
-	commit_events();
-	exit;
+    print "Creating a new event.\n";
+    my $p = Bric::BC::Person->lookup({ id => 1 });
+    my $trig = Bric::BC::Person::User->lookup({ id => 4 });
+    set_def('User', $trig);
+    log_event('Last Name Changed', $p, { new_lname => 'Dickerson' });
+    commit_events();
+    exit;
     }
 
     # Do the Test::Harness stuff here.

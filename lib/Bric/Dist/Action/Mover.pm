@@ -73,10 +73,10 @@ use constant DEBUG => 0;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################

@@ -859,16 +859,16 @@ sub send {
         }
 
         # Package it up and send it out!
-	my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
-	  or throw_gen(error => "Unable to create Net::SMTP object for '$smtp'");
-	$smtp->mail($fromre);
+    my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
+      or throw_gen(error => "Unable to create Net::SMTP object for '$smtp'");
+    $smtp->mail($fromre);
         # Send it to everyone.
-	$smtp->to( map { $_ ? @$_ : () }
+    $smtp->to( map { $_ ? @$_ : () }
                    $self->_get(qw(_to_recip _cc_recip _bcc_recip)) );
-	$smtp->data;
+    $smtp->data;
         # Let MIME::Entity do the fun stuff.
         $smtp->datasend($top->as_string);
-	$smtp->quit;
+    $smtp->quit;
     };
 
     # Return or die.

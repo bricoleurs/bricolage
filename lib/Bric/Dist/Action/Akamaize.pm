@@ -282,71 +282,71 @@ sub my_meths {
     my $ret = Bric::Dist::Action::Akamaize->SUPER::my_meths;
 
     foreach my $meth (Bric::Dist::Action::Akamaize->SUPER::my_meths(1)) {
-	$meths->{$meth->{name}} = $meth;
-	push @ord, $meth->{name};
+    $meths->{$meth->{name}} = $meth;
+    push @ord, $meth->{name};
     }
 
     push @ord, qw(dns_name cp_code seed_a seed_b), pop @ord;
     $meths->{dns_name} = {
-			  get_meth => sub { shift->get_dns_name(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_dns_name(@_) },
-			  set_args => [],
-			  name     => 'dns_name',
-			  disp     => 'DNS Name',
-			  len      => 256,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type      => 'text',
-					  length    => 32,
-					  maxlength => 256
-				      }
-			 };
+              get_meth => sub { shift->get_dns_name(@_) },
+              get_args => [],
+              set_meth => sub { shift->set_dns_name(@_) },
+              set_args => [],
+              name     => 'dns_name',
+              disp     => 'DNS Name',
+              len      => 256,
+              req      => 1,
+              type     => 'short',
+              props    => {   type      => 'text',
+                      length    => 32,
+                      maxlength => 256
+                      }
+             };
     $meths->{cp_code}  = {
-			  get_meth => sub { shift->get_cp_code(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_cp_code(@_) },
-			  set_args => [],
-			  name     => 'cp_code',
-			  disp     => 'CP code',
-			  len      => 256,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type      => 'text',
-					  length    => 32,
-					  maxlength => 256
-				      }
-			 };
+              get_meth => sub { shift->get_cp_code(@_) },
+              get_args => [],
+              set_meth => sub { shift->set_cp_code(@_) },
+              set_args => [],
+              name     => 'cp_code',
+              disp     => 'CP code',
+              len      => 256,
+              req      => 1,
+              type     => 'short',
+              props    => {   type      => 'text',
+                      length    => 32,
+                      maxlength => 256
+                      }
+             };
     $meths->{seed_a} = {
-			  get_meth => sub { shift->get_seed_a(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_seed_a(@_) },
-			  set_args => [],
-			  name     => 'seed_a',
-			  disp     => 'Seed A',
-			  len      => 256,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type      => 'text',
-					  length    => 32,
-					  maxlength => 256
-				      }
-			 };
+              get_meth => sub { shift->get_seed_a(@_) },
+              get_args => [],
+              set_meth => sub { shift->set_seed_a(@_) },
+              set_args => [],
+              name     => 'seed_a',
+              disp     => 'Seed A',
+              len      => 256,
+              req      => 1,
+              type     => 'short',
+              props    => {   type      => 'text',
+                      length    => 32,
+                      maxlength => 256
+                      }
+             };
     $meths->{seed_b} = {
-			  get_meth => sub { shift->get_seed_b(@_) },
-			  get_args => [],
-			  set_meth => sub { shift->set_seed_b(@_) },
-			  set_args => [],
-			  name     => 'seed_b',
-			  disp     => 'Seed B',
-			  len      => 256,
-			  req      => 1,
-			  type     => 'short',
-			  props    => {   type      => 'text',
-					  length    => 32,
-					  maxlength => 256
-				      }
-			 };
+              get_meth => sub { shift->get_seed_b(@_) },
+              get_args => [],
+              set_meth => sub { shift->set_seed_b(@_) },
+              set_args => [],
+              name     => 'seed_b',
+              disp     => 'Seed B',
+              len      => 256,
+              req      => 1,
+              type     => 'short',
+              props    => {   type      => 'text',
+                      length    => 32,
+                      maxlength => 256
+                      }
+             };
 
     return !$ord ? $meths : wantarray ? @{$meths}{@ord} : [@{$meths}{@ord}];
 }
@@ -1077,9 +1077,9 @@ sub do_it {
     my ($self, $resources) = @_;
     my $types = $self->get_media_href;
     foreach my $res (@$resources) {
-	next unless $types->{$res->get_media_type};
-	my $path = $res->get_tmp_path || $res->get_path;
-	print STDERR "Akamaize $path here.\n";
+    next unless $types->{$res->get_media_type};
+    my $path = $res->get_tmp_path || $res->get_path;
+    print STDERR "Akamaize $path here.\n";
     }
     print STDERR "\n";
 }
@@ -1243,10 +1243,10 @@ $get_attr = sub {
     my ($key, $self, $value, $set) = @_;
     my $attr = $self->_get_attr;
     if ($set) {
-	$attr->set_attr({ name => $key, subsys => 'Akamaize',
-			  sql_type => 'short', value => $value });
+    $attr->set_attr({ name => $key, subsys => 'Akamaize',
+              sql_type => 'short', value => $value });
     } else {
-	$attr->get_attr({ name => $key, subsys => 'Akamaize' });
+    $attr->get_attr({ name => $key, subsys => 'Akamaize' });
     }
 };
 

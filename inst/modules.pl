@@ -109,11 +109,11 @@ sub check_module {
     }
 
     if (defined $req_version) {
-	print "Checking that $name version is >= $req_version... ";
+    print "Checking that $name version is >= $req_version... ";
         local $^W = 0;
-	eval { $name->VERSION($req_version) };
-	return soft_fail("not ok.") if $@;
-	print "ok.\n";
+    eval { $name->VERSION($req_version) };
+    return soft_fail("not ok.") if $@;
+    print "ok.\n";
     }
 
     return 1;

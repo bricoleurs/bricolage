@@ -49,7 +49,7 @@ sub save : Callback {
         } elsif (@wfs == 1 && !defined $wf_id) {
             $used = 1;
         } elsif (@wfs == 1 && defined $wf_id
-	   && $wfs[0] != $wf_id) {
+       && $wfs[0] != $wf_id) {
             $used = 1;
         }
         $self->add_message(

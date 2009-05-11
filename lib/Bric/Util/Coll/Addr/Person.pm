@@ -181,9 +181,9 @@ sub save {
 
     foreach my $a (values %$objs) { $a->save }
     foreach my $a (@$new_objs) {
-	$a->save;
-	my $id = $a->get_id;
-	execute($ins, $oid, $id);
+    $a->save;
+    my $id = $a->get_id;
+    execute($ins, $oid, $id);
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();

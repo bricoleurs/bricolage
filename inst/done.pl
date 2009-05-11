@@ -51,7 +51,7 @@ print <<END;
 =========================================================================
 =========================================================================
 
-		   Bricolage Installation Complete
+           Bricolage Installation Complete
 
 You may now start your Bricolage server with the command (as root):
 

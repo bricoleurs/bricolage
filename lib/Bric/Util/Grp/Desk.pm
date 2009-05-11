@@ -80,11 +80,11 @@ use constant OBJECT_CLASS_ID => 45;
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
-			 
-			});
+             # Private Fields
+             
+            });
 }
 
 #==============================================================================#

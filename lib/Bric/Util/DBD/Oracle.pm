@@ -107,7 +107,7 @@ our $TRANSACTIONAL = 1;
 ################################################################################
 use base qw(Exporter);
 our @EXPORT_OK = qw($DBD $DSN $DB_DATE_FORMAT last_key_sql next_key_sql
-		    db_date_parts $BLOB_TYPE $TRANSACTIONAL);
+            db_date_parts $BLOB_TYPE $TRANSACTIONAL);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 ################################################################################

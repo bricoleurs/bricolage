@@ -1535,13 +1535,13 @@ sub get_secondary_categories {
         $self->_set({ '_categories' => $cats });
         $self->_set__dirty($dirty);
     }
-	if (($sort) && ($sort eq 'uri')) {
-	    @seconds =
-	      map  { $_->[1]                  }
-		  sort { $a->[0] cmp $b->[0]      }
-	      map  { [ lc $_->get_uri => $_ ] }
-		  @seconds; 
-	};
+    if (($sort) && ($sort eq 'uri')) {
+        @seconds =
+          map  { $_->[1]                  }
+          sort { $a->[0] cmp $b->[0]      }
+          map  { [ lc $_->get_uri => $_ ] }
+          @seconds; 
+    };
     return wantarray ? @seconds : \@seconds;
 }
 

@@ -165,12 +165,12 @@ sub save {
     my $self = shift;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     foreach my $a (values %$del_objs) {
-	$a->deactivate;
-	$a->save;
+    $a->deactivate;
+    $a->save;
     }
     %$del_objs = ();
     foreach my $a (values %$objs, @$new_objs) {
-	$a->save;
+    $a->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();

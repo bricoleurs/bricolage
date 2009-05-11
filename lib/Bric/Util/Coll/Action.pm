@@ -208,7 +208,7 @@ B<Notes:> NONE.
 sub _sort_objs {
     my ($pkg, $objs) = @_;
     return ( map { $objs->{$_} }
-	       sort { $objs->{$a}{ord} <=> $objs->{$b}{ord} } keys %$objs);
+           sort { $objs->{$a}{ord} <=> $objs->{$b}{ord} } keys %$objs);
 }
 
 =back

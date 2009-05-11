@@ -24,7 +24,7 @@ use strict;
 use Bric::BC::Asset::Template;
 
 my $fa = Bric::BC::Asset::Template->new( { 
-	output_channel_id => 1024, element_id => 1024 } );
+    output_channel_id => 1024, element_id => 1024 } );
 
 $fa->set_description( 'ploop');
 $fa->set_data( '<B> I   A M   T H E   K I N G ! ! ! </B>');

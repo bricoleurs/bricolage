@@ -169,31 +169,31 @@ sub save {
 
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+    my $del = prepare_c(qq{
             DELETE FROM person__contact_value
             WHERE person__id = ?
                   AND contact_value__id = ?
         }, undef);
-	foreach my $con (values %$del_objs) {
-	    $con->deactivate;
-	    $con->save;
-	    execute($del, $pid, $con->get_id);
-	}
-	%$del_objs = ();
+    foreach my $con (values %$del_objs) {
+        $con->deactivate;
+        $con->save;
+        execute($del, $pid, $con->get_id);
+    }
+    %$del_objs = ();
     }
 
     foreach my $con (values %$objs) { $con->save }
     if (@$new_objs) {
-	my $ins = prepare_c(qq{
+    my $ins = prepare_c(qq{
             INSERT INTO person__contact_value (person__id, contact_value__id)
             VALUES (?, ?)
         }, undef);
-	foreach my $con (@$new_objs) {
-	    $con->save;
-	    execute($ins, $pid, $con->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    foreach my $con (@$new_objs) {
+        $con->save;
+        execute($ins, $pid, $con->get_id);
+    }
+    $self->add_objs(@$new_objs);
+    @$new_objs = ();
     }
     return $self;
 }

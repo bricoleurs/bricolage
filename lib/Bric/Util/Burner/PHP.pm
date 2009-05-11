@@ -411,11 +411,11 @@ sub find_template {
     my @cats = $fs->split_uri($uri);
     my $root = $self->_get('_comp_root');
     do {
-	# if the file exists, return it
-	foreach my $troot (@$root) {
-	    my $path = $fs->cat_dir($troot, @cats, $name);
-	    return $path if -e $path;
-	}
+    # if the file exists, return it
+    foreach my $troot (@$root) {
+        my $path = $fs->cat_dir($troot, @cats, $name);
+        return $path if -e $path;
+    }
     } while(pop(@cats));
     return;
 }

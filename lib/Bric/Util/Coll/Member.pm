@@ -280,7 +280,7 @@ sub save {
 
     # Save the existing and new objects.
     foreach my $mem (values %$objs, @$new_objs) {
-	$mem->save;
+    $mem->save;
     }
 
     # Add the new objects to the main list of objects.

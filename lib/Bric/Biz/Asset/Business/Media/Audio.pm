@@ -87,12 +87,12 @@ use base qw( Bric::Biz::Asset::Business::Media );
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
@@ -167,11 +167,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -195,7 +195,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -216,8 +216,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -259,7 +259,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 
@@ -284,11 +284,11 @@ NONE
 =cut
 
 sub get_class_id {
-	return 49;
+    return 49;
 }
 
 =item ($fields || @fields) = 
-	Bric::Biz::Asset::Business::Media::Audio::autopopulated_fields()
+    Bric::Biz::Asset::Business::Media::Audio::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as 
 being autopopulatable
@@ -308,16 +308,16 @@ NONE
 =cut
 
 sub autopopulated_fields {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $fields = $self->_get_auto_fields();
+    my $fields = $self->_get_auto_fields();
 
-	my @auto;
-	foreach (keys %$fields ) {
-		push @auto, $_;
-	}
+    my @auto;
+    foreach (keys %$fields ) {
+        push @auto, $_;
+    }
 
-	return wantarray ? @auto : \@auto;
+    return wantarray ? @auto : \@auto;
 }
 
 ################################################################################

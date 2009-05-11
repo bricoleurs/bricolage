@@ -66,13 +66,13 @@ use constant DEBUG => 0;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 to =>  Bric::FIELD_RDWR,
-			 subject =>  Bric::FIELD_RDWR,
-			 message =>  Bric::FIELD_RDWR,
+             # Public Fields
+             to =>  Bric::FIELD_RDWR,
+             subject =>  Bric::FIELD_RDWR,
+             message =>  Bric::FIELD_RDWR,
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################
@@ -374,7 +374,7 @@ sub send {
     my $self = shift;
     my ($to, $sub, $msg) = $self->_get(qw(to subject message));
     eval {
-	# Do Jabber stuff in here.
+    # Do Jabber stuff in here.
     };
     return $self unless $@;
     throw_dp(error => "Unable to send instant message: $@");

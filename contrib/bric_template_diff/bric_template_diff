@@ -129,37 +129,37 @@ BEGIN {
     our $template_name;
     our $diff_options         = '-ur';
     GetOptions("help"                   => \$help,
-	       "man"                    => \$man,
-	       "verbose+"               => \$VERBOSE,
-	       "from-username=s"        => \$from_username,
-	       "from-password=s"        => \$from_password,
-	       "from-oc=s"              => \$from_oc,
-	       "from-site=s"            => \$from_site,
-	       "to-username=s"          => \$to_username,
-	       "to-password=s"          => \$to_password,
-	       "to-oc=s"                => \$to_oc,
-	       "to-site=s"              => \$to_site,
+           "man"                    => \$man,
+           "verbose+"               => \$VERBOSE,
+           "from-username=s"        => \$from_username,
+           "from-password=s"        => \$from_password,
+           "from-oc=s"              => \$from_oc,
+           "from-site=s"            => \$from_site,
+           "to-username=s"          => \$to_username,
+           "to-password=s"          => \$to_password,
+           "to-oc=s"                => \$to_oc,
+           "to-site=s"              => \$to_site,
                "timeout=s"              => \$timeout,
                "template=s"             => \$template_name,
                "diff-options=s"         => \$diff_options,
-	      ) or  pod2usage(2);
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
 
     # check required options
     pod2usage("Missing required --from-username option ".
-	      "and BRICOLAGE_USERNAME environment variable unset.")
-	unless defined $from_username;
+          "and BRICOLAGE_USERNAME environment variable unset.")
+    unless defined $from_username;
     pod2usage("Missing required --from-password option ".
-	      "and BRICOLAGE_PASSWORD environment variable unset.")
-	unless defined $from_password;
+          "and BRICOLAGE_PASSWORD environment variable unset.")
+    unless defined $from_password;
     pod2usage("Missing required --to-username option ".
-	      "and BRICOLAGE_USERNAME environment variable unset.")
-	unless defined $to_username;
+          "and BRICOLAGE_USERNAME environment variable unset.")
+    unless defined $to_username;
     pod2usage("Missing required --to-password option ".
-	      "and BRICOLAGE_PASSWORD environment variable unset.")
-	unless defined $to_password;
+          "and BRICOLAGE_PASSWORD environment variable unset.")
+    unless defined $to_password;
 
     # get from and tos
     $from_url = shift @ARGV;
@@ -167,7 +167,7 @@ BEGIN {
       unless defined $from_url;
     $to_url = shift @ARGV;
     pod2usage("Missing required to_url parameter")
-	unless $to_url;
+    unless $to_url;
 };
 
 our $VERBOSE;
@@ -302,17 +302,17 @@ sub soap_connect_to {
 
     # setup soap object to login with
     my $soap = new SOAP::Lite
-	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
         readable => $VERBOSE >= 2 ? 1 : 0;
     $soap->proxy($url . '/soap',
-		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
-		 timeout => $timeout,
-		);
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+         timeout => $timeout,
+        );
 
     # login
     print STDERR "Logging in to $url as $username...\n" if $VERBOSE;
     my $response = $soap->login(name(username => $username), 
-				name(password => $password));
+                name(password => $password));
     die "Login to $url as $username failed.\n" if $response->fault;
     print STDERR "Login to $url success.\n" if $VERBOSE;
 
@@ -323,12 +323,12 @@ sub soap_connect_to {
 sub _print_fault {
     my $r = shift;
     if ($r->faultstring eq 'Application error' and
-	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
-	# this is a bric exception, the interesting stuff is in detail
-	die "Call to Bric::SOAP failed : \n" .
-	    join("\n", values %{$r->faultdetail});
+    ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+    # this is a bric exception, the interesting stuff is in detail
+    die "Call to Bric::SOAP failed : \n" .
+        join("\n", values %{$r->faultdetail});
     } else {
-	die "Call to Bric::SOAP failed : \n" .
-	    $r->faultstring;
+    die "Call to Bric::SOAP failed : \n" .
+        $r->faultstring;
     }
 }

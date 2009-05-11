@@ -64,8 +64,8 @@ $number
 </%args>
 <%init>;
 my $notes      = get_state_data($widget => 'notes');
-my @notes 	= map { { id => $_, note => $notes->{$_} } }
-            	  sort { $b <=> $a } keys %$notes;
+my @notes     = map { { id => $_, note => $notes->{$_} } }
+                  sort { $b <=> $a } keys %$notes;
 my $version    = get_state_data($widget => 'version');
 my $return_url = get_state_data($widget => 'return_url');
 my $obj        = get_state_data($widget => 'obj');

@@ -94,12 +94,12 @@ use Imager;
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
@@ -148,13 +148,13 @@ NONE
 =cut
 
 #sub new {
-#	my ($self, $init) = @_;
+#    my ($self, $init) = @_;
 #
-#	$self = bless {}, $self unless ref $self;
+#    $self = bless {}, $self unless ref $self;
 
-#	$self->SUPER::new($init);
+#    $self->SUPER::new($init);
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -178,11 +178,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -206,7 +206,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -227,8 +227,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -270,7 +270,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 
@@ -295,7 +295,7 @@ NONE
 =cut
 
 sub get_class_id {
-	return 50;
+    return 50;
 }
 
 ################################################################################

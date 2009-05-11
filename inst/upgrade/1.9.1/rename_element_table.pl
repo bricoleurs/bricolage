@@ -154,7 +154,7 @@ do_sql
     # Restore FK dropped above.
     q{ALTER TABLE element_type__output_channel ADD
       CONSTRAINT fk_element_type__et_oc FOREIGN KEY (element_type__id)
-	  REFERENCES element_type(id) ON DELETE CASCADE},
+      REFERENCES element_type(id) ON DELETE CASCADE},
 
     # Rename element_member
     q{ALTER TABLE element_member RENAME TO element_type_member},

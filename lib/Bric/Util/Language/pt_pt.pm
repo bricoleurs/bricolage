@@ -737,14 +737,14 @@ To translate:
    'Shelve'
    'and Shelve'
    'and'
-	'EXISTING NOTES' => 'NOTAS EXISTENTES',
-	'Primary URI' => 'Endereço URI',
-	'Story Trail' => 'Histórico do Artigo',
-	'Triggered ' => 'Activado por',
-	'Attributes' => 'Atributos',
-	'Logged in as' => 'Ligado como',
-	'Clone' => 'Clonar',
-	'Last Published' => 'Última Publicação',
+    'EXISTING NOTES' => 'NOTAS EXISTENTES',
+    'Primary URI' => 'Endereço URI',
+    'Story Trail' => 'Histórico do Artigo',
+    'Triggered ' => 'Activado por',
+    'Attributes' => 'Atributos',
+    'Logged in as' => 'Ligado como',
+    'Clone' => 'Clonar',
+    'Last Published' => 'Última Publicação',
   '[quant,_1,Day]' => '[quant,_1,Day,Days,None]',
   'Field "[_1]" cannot be added. There are already [quant,_2,field,fields] of this type, with a max of [_3].' => 'Field “[_1]” cannot be added. There are already [quant,_2,field,fields] of this type, with a max of [_3].',
   'Element "[_1]" cannot be added. There are already [quant,_2,element,elements] of this type, with a max of [_3].' => 'Element “[_1]” cannot be added. There are already [quant,_2,element,elements] of this type, with a max of [_3].',

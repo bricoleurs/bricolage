@@ -27,19 +27,19 @@ BEGIN { plan tests => 10 }
 eval {
 
     if (@ARGV) {
-	# Do verbose testing here.
-	print "Getting a list of contributors.\n";
-	foreach my $c (Bric::Util::Grp::Parts::Member::Contrib->list) {
-	    print "ID:     ", $c->get_id || '', "\n";
-	    print "PID:    ", $c->get_obj_id || '', "\n";
-	    print "GID:    ", $c->get_grp_id || '', "\n\n";
-	}
+    # Do verbose testing here.
+    print "Getting a list of contributors.\n";
+    foreach my $c (Bric::Util::Grp::Parts::Member::Contrib->list) {
+        print "ID:     ", $c->get_id || '', "\n";
+        print "PID:    ", $c->get_obj_id || '', "\n";
+        print "GID:    ", $c->get_grp_id || '', "\n\n";
+    }
 
-	print "Testing my_meths().\n";
-	foreach my $meth (Bric::Util::Grp::Parts::Member::Contrib->my_meths(1)) {
-	    print "$meth->{disp}\n";
-	}
-	exit;
+    print "Testing my_meths().\n";
+    foreach my $meth (Bric::Util::Grp::Parts::Member::Contrib->my_meths(1)) {
+        print "$meth->{disp}\n";
+    }
+    exit;
     }
 
     # Do Test::Harness testing here.
@@ -50,9 +50,9 @@ eval {
 
 if (my $err = $@) {
     if (ref $err) {
-	print "Error: ", $err->get_msg, ": ", $err->get_payload, "\n";
+    print "Error: ", $err->get_msg, ": ", $err->get_payload, "\n";
     } else {
-	print "Error: $err\n";
+    print "Error: $err\n";
     }
 }
 

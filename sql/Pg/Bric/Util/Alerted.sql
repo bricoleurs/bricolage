@@ -29,7 +29,7 @@ CREATE TABLE alerted(
 --
 
 CREATE TABLE alerted__contact_value(
-    alerted__id	            INTEGER         NOT NULL,
+    alerted__id                INTEGER         NOT NULL,
     contact__id             INTEGER         NOT NULL,
     contact_value__value    VARCHAR(256)    NOT NULL,
     sent_time               TIMESTAMP,

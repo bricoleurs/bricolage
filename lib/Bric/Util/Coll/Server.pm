@@ -169,13 +169,13 @@ sub save {
     my ($self, $st_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     foreach my $s (values %$del_objs) {
-	$s->del;
-	$s->save;
+    $s->del;
+    $s->save;
     }
     %$del_objs = ();
     foreach my $s (values %$objs, @$new_objs) {
-	$s->set_server_type_id($st_id) if defined $st_id;
-	$s->save;
+    $s->set_server_type_id($st_id) if defined $st_id;
+    $s->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();

@@ -53,43 +53,43 @@ doc: ${HTML_TARGETS} man-targets
 # * is determined by the first prerequisite.
 # ****************************************************************
 html: 
-	$(MKDIR) -p html
+    $(MKDIR) -p html
 $(HTML_TARGETS): BASE = $(basename $(notdir $@))
 $(HTML_TARGETS): ORIG = $(filter %/${BASE}.pod,${SRCFILES})
 $(HTML_TARGETS): html
 ifdef PERL2HTML
-	${PERL2HTML} --bgcolor '#ffffff' --verbosity 1 ${BRIC} html
+    ${PERL2HTML} --bgcolor '#ffffff' --verbosity 1 ${BRIC} html
 else
-	$(POD2HTML) --podpath=Bric --podroot=../${LIB} --verbose \
-	--flush --htmldir=html --recurse --index --infile=$(ORIG) \
-	--outfile=$@ --libpods=$(shell echo ${SRCFILES} | tr ' ' ':')
+    $(POD2HTML) --podpath=Bric --podroot=../${LIB} --verbose \
+    --flush --htmldir=html --recurse --index --infile=$(ORIG) \
+    --outfile=$@ --libpods=$(shell echo ${SRCFILES} | tr ' ' ':')
 endif
-	chmod a+r $@
-	${RM} pod2htm*
+    chmod a+r $@
+    ${RM} pod2htm*
 
 man-targets: man man/bricolage.8.gz man/bricolage-dba.8.gz \
-	 man/bricolage-security.8.gz man/bricolage-templates.3.gz \
-	 man/bricolage-advTemplages.3.gz man/bricolage-assetEditing.1.gz \
-	 man/bricolage-elementAdmin.1.gz man/bricolage-htmlTemplate.3.gz
+     man/bricolage-security.8.gz man/bricolage-templates.3.gz \
+     man/bricolage-advTemplages.3.gz man/bricolage-assetEditing.1.gz \
+     man/bricolage-elementAdmin.1.gz man/bricolage-htmlTemplate.3.gz
 man:
-	$(MKDIR) -p man
+    $(MKDIR) -p man
 man/bricolage.8.gz: ${BRIC}/Admin.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-dba.8.gz: ${BRIC}/DBA.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-security.8.gz: ${BRIC}/Security.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-templates.3.gz: ${BRIC}/Templates.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-advTemplages.3.gz: ${BRIC}/AdvTemplates.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-assetEditing.1.gz: ${BRIC}/AssetEditing.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-elementAdmin.1.gz: ${BRIC}/ElementAdmin.pod
-	${generate-manpage}
+    ${generate-manpage}
 man/bricolage-htmlTemplate.3.gz: ${BRIC}/HTMLTemplate.pod
-	${generate-manpage}
+    ${generate-manpage}
 
 clean: 
-	$(RM) -r man html
+    $(RM) -r man html
 

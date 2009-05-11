@@ -165,13 +165,13 @@ sub save {
     my ($self, $usr_grp_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     foreach my $p (values %$del_objs) {
-	$p->del;
-	$p->save;
+    $p->del;
+    $p->save;
     }
     %$del_objs = ();
     foreach my $p (values %$objs, @$new_objs) {
-	$p->set_usr_grp_id($usr_grp_id) if defined $usr_grp_id;
-	$p->save;
+    $p->set_usr_grp_id($usr_grp_id) if defined $usr_grp_id;
+    $p->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();

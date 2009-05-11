@@ -18,7 +18,7 @@ CREATE TABLE person_org(
     active        BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_person_org__id PRIMARY KEY (id)
 )
-    ENGINE 	  InnoDB
+    ENGINE       InnoDB
     AUTO_INCREMENT 1024;
 
 

@@ -109,7 +109,7 @@ sub test_new : Test(9) {
 # This is just a snippet of code for testing (outputs the field types)
 
 #for my $foo_field (@fields) {
-#	is scalar 2, 2, 'Element: ' . $foo_field->get_element_name;
+#    is scalar 2, 2, 'Element: ' . $foo_field->get_element_name;
 #}
 
 
