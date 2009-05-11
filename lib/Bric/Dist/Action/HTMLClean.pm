@@ -128,9 +128,9 @@ sub do_it {
     my ($self, $resources) = @_;
     my $types = $self->get_media_href;
     foreach my $res (@$resources) {
-	next unless $types->{$res->get_media_type};
-	my $path = $res->get_tmp_path || $res->get_path;
-	print STDERR "HTMLCleaning $path here.\n";
+    next unless $types->{$res->get_media_type};
+    my $path = $res->get_tmp_path || $res->get_path;
+    print STDERR "HTMLCleaning $path here.\n";
     }
     print STDERR "\n";
 }

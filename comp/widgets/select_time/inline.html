@@ -17,35 +17,35 @@ $m->comp('/widgets/profile/hidden.mc',
 #-- Month Select
 if ($mon) {
     $mk_time_field->({'base'    => $base_name.'_mon',
-		      'default' => $s->{'mon'},
-		      'label'   => 'Month',
-		      'vals'    => \@month,
-		      'width'   => $cellWidth,
-		      'compact' => $compact});
+              'default' => $s->{'mon'},
+              'label'   => 'Month',
+              'vals'    => \@month,
+              'width'   => $cellWidth,
+              'compact' => $compact});
     $cellsDisplayed++;
 }
 
 #-- Day Select
 if ($day) {
     $mk_time_field->({'base'    => $base_name.'_day',
-		      'default' => $s->{'day'},
-		      'label'   => 'Day',
-		      'localize'=> 0,
-		      'vals'    => $day,
-		      'width'   => $cellWidth,
-		      'compact' => $compact});
+              'default' => $s->{'day'},
+              'label'   => 'Day',
+              'localize'=> 0,
+              'vals'    => $day,
+              'width'   => $cellWidth,
+              'compact' => $compact});
     $cellsDisplayed++;
 }
 
 #-- Year Select
 if ($year) {
     $mk_time_field->({'base'    => $base_name.'_year',
-		      'default' => $s->{'year'},
-		      'label'   => 'Year',
-		      'vals'    => $year,
-		      'localize'=> 0,
-		      'width'   => $cellWidth,
-		      'compact' => $compact});
+              'default' => $s->{'year'},
+              'label'   => 'Year',
+              'vals'    => $year,
+              'localize'=> 0,
+              'width'   => $cellWidth,
+              'compact' => $compact});
     $cellsDisplayed++;
 }
 
@@ -53,12 +53,12 @@ if ($year) {
 if ($hour) {
     $m->out("  ");
     $mk_time_field->({'base'    => $base_name.'_hour',
-		      'default' => $s->{'hour'},
-		      'label'   => 'Hour',
-		      'localize'=> 0,
-		      'vals'    => $hour,
-		      'width'   => $cellWidth,
-		      'compact' => $compact});
+              'default' => $s->{'hour'},
+              'label'   => 'Hour',
+              'localize'=> 0,
+              'vals'    => $hour,
+              'width'   => $cellWidth,
+              'compact' => $compact});
     $cellsDisplayed++;
 }
 
@@ -66,12 +66,12 @@ if ($hour) {
 if ($min) {
     $m->out(":");
     $mk_time_field->({'base'    => $base_name.'_min',
-		      'default' => $s->{'min'},
-		      'label'   => 'Minute',
+              'default' => $s->{'min'},
+              'label'   => 'Minute',
                       'localize' => 0,
-		      'vals'    => $min,
-		      'width'   => $cellWidth,
-		      'compact' => $compact});
+              'vals'    => $min,
+              'width'   => $cellWidth,
+              'compact' => $compact});
     $cellsDisplayed++;
 }
 
@@ -79,12 +79,12 @@ if ($min) {
 if ($sec) {
     $m->out(":");
     $mk_time_field->({base     => "$base_name\_sec",
-		      default  => $s->{sec},
-		      label    => 'Second',
+              default  => $s->{sec},
+              label    => 'Second',
                       localize => 0,
-		      vals     => $sec,
-		      width    => $cellWidth,
-		      compact  => $compact});
+              vals     => $sec,
+              width    => $cellWidth,
+              compact  => $compact});
     $cellsDisplayed++;
 }
 

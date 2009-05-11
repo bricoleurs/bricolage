@@ -189,17 +189,17 @@ sub generic : Callback {
 
     my $i = $#{$fields};
     while ($i >= 0) {
-	# Remove any criteria from the list who's value is the null string or
-	# the string '_all'.
-	if (($crit->[$i] eq '_all') or ($crit->[$i] eq '')) {
-	    splice @$fields, $i, 1;
-	    splice @$crit,   $i, 1;
+    # Remove any criteria from the list who's value is the null string or
+    # the string '_all'.
+    if (($crit->[$i] eq '_all') or ($crit->[$i] eq '')) {
+        splice @$fields, $i, 1;
+        splice @$crit,   $i, 1;
         }
 
-	# Check for searches that should be substring searches.
-	if ($sub{$fields->[$i]}) {
-	    $crit->[$i] = '%'.$crit->[$i].'%';
-	}
+    # Check for searches that should be substring searches.
+    if ($sub{$fields->[$i]}) {
+        $crit->[$i] = '%'.$crit->[$i].'%';
+    }
         $i--;
     }
 

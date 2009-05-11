@@ -103,12 +103,12 @@ use constant DB_DATE_FORMAT => Bric::Config::ISO_8601_FORMAT;
 
 # Package constant variables. This one is for the DB connection attributes.
 my $ATTR =  { RaiseError         => 1,
-	      PrintError         => 0,
-	      AutoCommit         => 0,
-	      ChopBlanks         => 1,
-	      ShowErrorStatement => 1,
-	      LongReadLen        => 32768,
-	      LongTruncOk        => 0,
+          PrintError         => 0,
+          AutoCommit         => 0,
+          ChopBlanks         => 1,
+          ShowErrorStatement => 1,
+          LongReadLen        => 32768,
+          LongTruncOk        => 0,
               DBH_ATTR,
 };
 my $AutoCommit = 1;
@@ -121,11 +121,11 @@ use base qw(Exporter);
 # You can explicitly import any of the functions in this class. The last two
 # should only ever be imported by Bric::Util::Time, however.
 our @EXPORT_OK = qw(prepare prepare_c prepare_ca execute fetch row_aref
-		    col_aref last_key next_key db_date_parts db_datetime
-		    DB_DATE_FORMAT clean_params bind_columns bind_col
-		    bind_param begin commit rollback finish is_num row_array
-		    all_aref fetch_objects order_by group_by build_query
-		    build_simple_query where_clause tables ANY NONE any_where
+            col_aref last_key next_key db_date_parts db_datetime
+            DB_DATE_FORMAT clean_params bind_columns bind_col
+            bind_param begin commit rollback finish is_num row_array
+            all_aref fetch_objects order_by group_by build_query
+            build_simple_query where_clause tables ANY NONE any_where
                     DBD_TYPE group_concat_sql LIMIT_DEFAULT);
 
 # But you'll generally just want to import a few standard ones or all of them
@@ -134,9 +134,9 @@ our %EXPORT_TAGS = (standard => [qw(prepare_c row_aref fetch fetch_objects
                                     execute next_key last_key bind_columns
                                     finish any_where DBD_TYPE
                                     group_concat_sql)],
-		    trans => [qw(begin commit rollback)],
+            trans => [qw(begin commit rollback)],
                     junction => [qw(ANY NONE)],
-		    all => \@EXPORT_OK);
+            all => \@EXPORT_OK);
 
 # Disconnect! Will be ignored by Apache::DBI.
 END { _disconnect(); }
@@ -1437,48 +1437,48 @@ sub fetch_em {
     $select->execute(@$args);
     my @ret;
     if ($join) {
-	# This is a joined query, so we'll be grabbing two sets of data - the
-	# primary properties of an object, and attributes of that object.
-	my (@d, @a, %obj, $last);
-	# By binding @d and @a, we automatically have nice arrays of the two
-	# categories of data we need to load - basic properties and
+    # This is a joined query, so we'll be grabbing two sets of data - the
+    # primary properties of an object, and attributes of that object.
+    my (@d, @a, %obj, $last);
+    # By binding @d and @a, we automatically have nice arrays of the two
+    # categories of data we need to load - basic properties and
         # attributes.
-	$select->bind_columns(\@d[0..$#$props], \@a[0..$#{$join->{props}}]);
-	while ($select->fetch) {
-	    if ( $last != $obj{ $join->{id} } ) {
-		# It's a new object. Save the last one.
-		push @ret, $class->new(\%obj);
-		# Grab the new object's ID.
-		$last = $obj{ $join->{id} };
-		# Now grab the new object.
-		@obj{@$props} = @d;
-	    }
-	    # Grab any attributes. These will vary from row to row.
-	    if ($a[0]) {
-		my $data;
-		# Get the data into a  hashref.
-		@{$data}{ @{ $join->{props} } } = @a;
-		# Bless that data into its own class, if necessary.
-		$data = $join->{class}->_new($data) if $join->{class};
-		# Now, either add it to a hashref or to an arrayref.
-		$join->{key} ? $obj{ $join->{obj_key} }->{$join->{key}} = $data
-		  : push @{ $obj{ $join->{obj_key} } }, $data;
-	    }
-	}
-	# Grab the last object.
-	push @ret, $class->new(\%obj);
+    $select->bind_columns(\@d[0..$#$props], \@a[0..$#{$join->{props}}]);
+    while ($select->fetch) {
+        if ( $last != $obj{ $join->{id} } ) {
+        # It's a new object. Save the last one.
+        push @ret, $class->new(\%obj);
+        # Grab the new object's ID.
+        $last = $obj{ $join->{id} };
+        # Now grab the new object.
+        @obj{@$props} = @d;
+        }
+        # Grab any attributes. These will vary from row to row.
+        if ($a[0]) {
+        my $data;
+        # Get the data into a  hashref.
+        @{$data}{ @{ $join->{props} } } = @a;
+        # Bless that data into its own class, if necessary.
+        $data = $join->{class}->_new($data) if $join->{class};
+        # Now, either add it to a hashref or to an arrayref.
+        $join->{key} ? $obj{ $join->{obj_key} }->{$join->{key}} = $data
+          : push @{ $obj{ $join->{obj_key} } }, $data;
+        }
+    }
+    # Grab the last object.
+    push @ret, $class->new(\%obj);
     } else {
-	# This is a much simpler query with no joins.
-	my @d;
-	$select->bind_columns(\@d[0..$#$props]);
-	while ($select->fetch) {
-	    # Instantiate a new object.
-	    my $obj = $class->new;
-	    # Set the object's properties.
-	    $obj->_set($props, \@d);
-	    # Save the object for returning.
-	    push @ret, $obj;
-	}
+    # This is a much simpler query with no joins.
+    my @d;
+    $select->bind_columns(\@d[0..$#$props]);
+    while ($select->fetch) {
+        # Instantiate a new object.
+        my $obj = $class->new;
+        # Set the object's properties.
+        $obj->_set($props, \@d);
+        # Save the object for returning.
+        push @ret, $obj;
+    }
     }
     # Return either the first object or all the objects.
     return wantarray ? @ret : $ret[0];
@@ -1847,7 +1847,7 @@ sub _debug_prepare {
     my $sql_ref = shift;
     my $sig = _statement_signature($sql_ref);
     print STDERR "############# Prepare Query [$sig]:\n$$sql_ref\n",
-	         "#############\n\n";
+             "#############\n\n";
     _print_call_trace() if CALL_TRACE;
 }
 
@@ -1865,8 +1865,8 @@ sub _debug_execute {
     my $sig = _statement_signature(\$sth);
     print STDERR "+++++++++++++ Execute Query [$sig]\n";
     print STDERR "+++++++++++++ ARGS: ", 
-	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
-	    "\n\n";
+    join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
+        "\n\n";
     _print_call_trace() if CALL_TRACE;
 }
 
@@ -1886,15 +1886,15 @@ sub _debug_prepare_and_execute {
     my ($args, $ref) = @_;
     my $sig = _statement_signature($ref);
     unless (ref $$ref) {
-	# new prepare
-	print STDERR "############# Prepare Query [$sig]:\n$$ref\n",
+    # new prepare
+    print STDERR "############# Prepare Query [$sig]:\n$$ref\n",
                      "#############\n\n";
-	_print_call_trace() if CALL_TRACE;
+    _print_call_trace() if CALL_TRACE;
     }
     print STDERR "+++++++++++++ Execute Query [$sig]:\n";
     print STDERR "+++++++++++++ ARGS: ",
-	join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
-	     "\n\n\n";
+    join(', ', map { defined $_ ? $_ : 'NULL' } @$args),
+         "\n\n\n";
 }
 
 ##############################################################################
@@ -1946,7 +1946,7 @@ execution when DBI_PROFILE is true.
 {
     my $PROF_TIMER;
     sub _profile_start {
-	$PROF_TIMER = gettimeofday();
+    $PROF_TIMER = gettimeofday();
     }
 
 ##############################################################################
@@ -1959,8 +1959,8 @@ called immediately after query execution when DBI_PROFILE is true.
 =cut
 
     sub _profile_stop {
-	printf STDERR "************* Time: %0.6f seconds\n\n\n\n",
-	    gettimeofday() - $PROF_TIMER;
+    printf STDERR "************* Time: %0.6f seconds\n\n\n\n",
+        gettimeofday() - $PROF_TIMER;
     }
 }
 

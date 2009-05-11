@@ -15,15 +15,15 @@ sub update_contacts {
         map { mk_aref($param->{$_}) } qw(contact_id value type);
     my %cids_seen = {};
     for (my $i = 0; $i < scalar @$values; $i++) {
-    	if (my $id = $cids->[$i]) {
-    	    my ($c) = $obj->get_contacts($id);
-    	    $c->set_value($values->[$i]);
-    	    $c->set_type($types->[$i]);
-    	    $cids_seen{$c} = 1;
-    	} else {
-    	    next unless $values->[$i];
-    	    my $c = $obj->new_contact($types->[$i], $values->[$i]);
-    	}
+        if (my $id = $cids->[$i]) {
+            my ($c) = $obj->get_contacts($id);
+            $c->set_value($values->[$i]);
+            $c->set_type($types->[$i]);
+            $cids_seen{$c} = 1;
+        } else {
+            next unless $values->[$i];
+            my $c = $obj->new_contact($types->[$i], $values->[$i]);
+        }
     }
 
     my @del;

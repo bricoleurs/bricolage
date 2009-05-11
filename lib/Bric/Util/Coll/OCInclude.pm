@@ -170,29 +170,29 @@ sub save {
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+    my $del = prepare_c(qq{
             DELETE FROM output_channel_include
             WHERE  output_channel__id = ?
                    AND include_oc_id = ?
         }, undef);
-	execute($del, $oc_id, $_->get_id) for values %$del_objs;
-	%$del_objs = ();
+    execute($del, $oc_id, $_->get_id) for values %$del_objs;
+    %$del_objs = ();
     }
 
     if (@$new_objs) {
-	my $next = next_key('output_channel_include');
+    my $next = next_key('output_channel_include');
         my $ins = prepare_c(qq{
             INSERT INTO output_channel_include (id, output_channel__id,
                                                 include_oc_id)
             VALUES($next, ?, ?)
         }, undef);
 
-	foreach my $new (@$new_objs) {
-	    execute($ins, $oc_id, $new->get_id);
-	    $new->_set(['_include_id'], [last_key('output_channel_include')]);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    foreach my $new (@$new_objs) {
+        execute($ins, $oc_id, $new->get_id);
+        $new->_set(['_include_id'], [last_key('output_channel_include')]);
+    }
+    $self->add_objs(@$new_objs);
+    @$new_objs = ();
     }
     return $self;
 }
@@ -222,8 +222,8 @@ B<Notes:> NONE.
 sub _sort_objs {
     my ($pkg, $objs) = @_;
     return ( map { $objs->{$_} }
-	       sort { $objs->{$a}{_include_id} <=> $objs->{$b}{_include_id} }
-	     keys %$objs);
+           sort { $objs->{$a}{_include_id} <=> $objs->{$b}{_include_id} }
+         keys %$objs);
 }
 
 =back

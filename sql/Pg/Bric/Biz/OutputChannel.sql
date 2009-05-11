@@ -4,7 +4,7 @@
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 -- Description: The table that holds the registered Output Channels.
---				This maps to the Bric::OutputChannel Class.
+--                This maps to the Bric::OutputChannel Class.
 --
 --
 
@@ -20,12 +20,12 @@ CREATE SEQUENCE seq_output_channel_member START 1024;
 -- Table output_channel
 --
 -- Description: Holds info on the various output channels and is referenced
--- 				by templates and elements
+--                 by templates and elements
 --
 --
 
 CREATE TABLE output_channel (
-    id	         INTEGER            NOT NULL
+    id             INTEGER            NOT NULL
                                     DEFAULT NEXTVAL('seq_output_channel'),
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),

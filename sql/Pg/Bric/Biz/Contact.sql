@@ -21,7 +21,7 @@ CREATE TABLE contact (
     id           INTEGER           NOT NULL
                                    DEFAULT NEXTVAL('seq_contact'),
     type         VARCHAR(64)       NOT NULL,
-    description	 VARCHAR(256),
+    description     VARCHAR(256),
     active       BOOLEAN           NOT NULL DEFAULT TRUE,
     alertable    BOOLEAN           NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_contact__id PRIMARY KEY (id)
@@ -35,7 +35,7 @@ CREATE TABLE contact_value (
     id           INTEGER           NOT NULL
                                    DEFAULT NEXTVAL('seq_contact_value'),
     contact__id  INTEGER           NOT NULL,
-    value	     VARCHAR(256)	   NOT NULL,
+    value         VARCHAR(256)       NOT NULL,
     active       BOOLEAN           NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_contact_value__id PRIMARY KEY (id)
 );

@@ -32,7 +32,7 @@ CREATE TABLE workflow (
                                   DEFAULT 1
                                   CONSTRAINT ck_workflow__type
                                     CHECK (type IN (1,2,3)),
-    active           BOOLEAN  	  NOT NULL DEFAULT TRUE,
+    active           BOOLEAN        NOT NULL DEFAULT TRUE,
     site__id         INTEGER      NOT NULL,
     CONSTRAINT pk_workflow__id PRIMARY KEY (id)
 );

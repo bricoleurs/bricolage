@@ -1357,11 +1357,11 @@ Bricolage. First in
 F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/spellChecker.js>,
 change this line:
 
-  	this.spellCheckScript = 'server-scripts/spellchecker.php';
+      this.spellCheckScript = 'server-scripts/spellchecker.php';
 
 To this:
 
-  	this.spellCheckScript = 'server-scripts/spellchecker.pl';
+      this.spellCheckScript = 'server-scripts/spellchecker.pl';
 
 And second, in
 F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl>, you will likely need to change this line:

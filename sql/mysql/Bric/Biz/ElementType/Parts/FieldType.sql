@@ -11,9 +11,9 @@
 -- Table: field_type
 --
 -- Description: This is the table that contains the name and rules for fields
--- 		types. It contains references to the element_type table. The place
--- 		column represents the order that this is to be represented with in
--- 		its container.
+--         types. It contains references to the element_type table. The place
+--         column represents the order that this is to be represented with in
+--         its container.
 --
 
 

@@ -29,12 +29,12 @@ BEGIN { plan tests => 4 }
 
 eval {
     if (@ARGV) {
-	print "Instantiating a user object.\n";
-	my $u = Bric::BC::Person::User->lookup({ id => 1 });
+    print "Instantiating a user object.\n";
+    my $u = Bric::BC::Person::User->lookup({ id => 1 });
 
-	my $obj = Bric::BC::Person::User->lookup({ id => 2 });
-	print "I do ", can_i($obj, READ) ? '' : 'not ', "have the permission\n";
-	exit;
+    my $obj = Bric::BC::Person::User->lookup({ id => 2 });
+    print "I do ", can_i($obj, READ) ? '' : 'not ', "have the permission\n";
+    exit;
     }
 
     # Do the Test::Harness stuff here.

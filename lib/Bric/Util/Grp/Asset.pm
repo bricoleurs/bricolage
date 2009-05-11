@@ -112,11 +112,11 @@ my ($class, $mem_class);
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
+             # Private Fields
 
-			});
+            });
 }
 
 #==============================================================================#
@@ -275,12 +275,12 @@ NONE
 
 sub get_supported_classes {
     return { &STORY_PKG  => 'story',
-	     &MEDIA_PKG  => 'media',
-	     &FORMAT_PKG => 'template',
-	     &AUDIO_PKG  => 'media',
-	     &IMAGE_PKG  => 'media',
-	     &VIDEO_PKG  => 'media'
-	   }
+         &MEDIA_PKG  => 'media',
+         &FORMAT_PKG => 'template',
+         &AUDIO_PKG  => 'media',
+         &IMAGE_PKG  => 'media',
+         &VIDEO_PKG  => 'media'
+       }
 }
 
 ##############################################################################

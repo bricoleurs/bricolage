@@ -125,7 +125,7 @@ B<Notes:> NONE.
 =cut
 
 sub get_supported_classes { { 'Bric::Biz::Person' => 'person',
-			      'Bric::Biz::Person::User' => 'person' } }
+                  'Bric::Biz::Person::User' => 'person' } }
 
 ##############################################################################
 

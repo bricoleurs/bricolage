@@ -61,11 +61,11 @@ my ($class, $mem_class);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
-			 _privs => Bric::FIELD_NONE
-			});
+             # Private Fields
+             _privs => Bric::FIELD_NONE
+            });
 }
 
 ################################################################################

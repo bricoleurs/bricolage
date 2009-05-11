@@ -59,9 +59,9 @@ use constant DEBUG => 0;
 
 BEGIN {
     Bric::register_fields({
-        _path	     => Bric::FIELD_NONE,
+        _path         => Bric::FIELD_NONE,
         _file_handle => Bric::FIELD_NONE,
-        _image_info	 => Bric::FIELD_NONE
+        _image_info     => Bric::FIELD_NONE
     });
 }
 

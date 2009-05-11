@@ -17,7 +17,7 @@ CREATE TABLE server(
                                         DEFAULT NEXTVAL('seq_server'),
     server_type__id    INTEGER          NOT NULL,
     host_name          VARCHAR(128)     NOT NULL,
-    os		           CHAR(5)		    NOT NULL,
+    os                   CHAR(5)            NOT NULL,
     doc_root           VARCHAR(128)     NOT NULL,
     login              VARCHAR(64),
     password           VARCHAR(64),

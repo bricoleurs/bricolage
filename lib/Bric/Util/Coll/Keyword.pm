@@ -212,7 +212,7 @@ sub save {
 
     # Save the existing and new objects.
     foreach my $keyword (values %$objs) {
-	$keyword->save;
+    $keyword->save;
     }
 
     # Add the new objects to the main list of objects.

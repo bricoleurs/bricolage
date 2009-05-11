@@ -1,17 +1,17 @@
 <%perl>;
 $m->comp('/widgets/wrappers/header.mc',
-	 title => 'ALERT LIST EXAMPLE');
+     title => 'ALERT LIST EXAMPLE');
 
 $m->out("<br />\n");
 $m->comp('/widgets/alertList/alertList.mc',
          mode => 'alert',
          event_id => 1031,
-	 recip_url => '/admin/alerts/recip'
+     recip_url => '/admin/alerts/recip'
         );
 
 $m->out("<br />\n");
 $m->comp('/widgets/alertList/alertList.mc',
-	 mode => 'recip',
+     mode => 'recip',
          alert_id => 1024);
 
 $m->comp('/widgets/wrappers/footer.mc');

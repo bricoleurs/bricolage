@@ -82,13 +82,13 @@ BEGIN {
     our $verbose;
     our ($help, $man);
     GetOptions("help"                   => \$help,
-	       "man"                    => \$man,
-	       "verbose+"               => \$verbose,
+           "man"                    => \$man,
+           "verbose+"               => \$verbose,
                "timeout=s"              => \$timeout,
-	       "username=s"             => \$username,
-	       "password=s"             => \$password,
-	       "server=s"               => \$server,
-	      ) or  pod2usage(2);
+           "username=s"             => \$username,
+           "password=s"             => \$password,
+           "server=s"               => \$server,
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
@@ -227,10 +227,10 @@ sub _print_ids {
     # print out ids with types
     my ($count, $data);
     for($count = 1; 
-	$data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
-	$count++) {
-	my $name = $data->name;
-	$name =~ s/_id$//;
-	print $name, "_", $data->value, "\n";
+    $data = $response->dataof("/Envelope/Body/[1]/[1]/[$count]");
+    $count++) {
+    my $name = $data->name;
+    $name =~ s/_id$//;
+    print $name, "_", $data->value, "\n";
     }
 }

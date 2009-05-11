@@ -92,15 +92,15 @@ if (CHECK_PROCESS_SIZE) {
     no strict 'refs';
 
     # apache child processes larger than this size will be killed
-    ${"${apsizepkg}::MAX_PROCESS_SIZE"}	= MAX_PROCESS_SIZE;
+    ${"${apsizepkg}::MAX_PROCESS_SIZE"}    = MAX_PROCESS_SIZE;
 
     # requests handled per size check
-    ${"${apsizepkg}::CHECK_EVERY_N_REQUESTS"}	= CHECK_FREQUENCY;
+    ${"${apsizepkg}::CHECK_EVERY_N_REQUESTS"}    = CHECK_FREQUENCY;
 
-    ${"${apsizepkg}::MIN_SHARE_SIZE"}		= MIN_SHARE_SIZE
+    ${"${apsizepkg}::MIN_SHARE_SIZE"}        = MIN_SHARE_SIZE
         if MIN_SHARE_SIZE > 0;
 
-    ${"${apsizepkg}::MAX_UNSHARED_SIZE"}	= MAX_UNSHARED_SIZE
+    ${"${apsizepkg}::MAX_UNSHARED_SIZE"}    = MAX_UNSHARED_SIZE
         if MAX_UNSHARED_SIZE > 0;
 }
 

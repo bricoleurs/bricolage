@@ -28,7 +28,7 @@ use Bric::Util::Attribute::Person;
 $Bric::Cust = 'sharky';
 
 my $attr_obj = new Bric::Util::Attribute::Person({'subsys' => 'test',
-						'id'     => 1024});
+                        'id'     => 1024});
 
 
 
@@ -80,11 +80,11 @@ print "Attribute 'eye color' NOW has value '$value'\n";
 
  # Add a new metadata point.
  $attr_obj->add_meta({'name'  => 'age', 
-		      'field' => 'required', 
-		      'value' => 'yes'});
+              'field' => 'required', 
+              'value' => 'yes'});
 
  $value = $attr_obj->get_meta({'name'  => 'age', 
-			       'field' => 'required'});
+                   'field' => 'required'});
 
 print "Metadata value 'required' for attribute 'age' is '$value'\n";
 
@@ -95,8 +95,8 @@ print "Metadata value 'required' for attribute 'age' is '$value'\n";
 print "Success after save = '$success'\n";
 
 #my $obj = $a->get_attr_obj({'new' => 1, 
-#			    'name' => 'cheese_puffs',
-#			    'sql_type' => 'short'});
+#                'name' => 'cheese_puffs',
+#                'sql_type' => 'short'});
 
 #my $val;
 
@@ -105,18 +105,18 @@ print "Success after save = '$success'\n";
 #print "Got val '$val'\n";
 
 #$val = $a->get_attr({'name'    => 'weight',
-#		     'sql_type' => 'short'});
+#             'sql_type' => 'short'});
 
 #$val = $a->get_meta({'name'  => 'weight',
-#		     'field' => 'description'});
+#             'field' => 'description'});
 
 #$a->add_meta({'name'  => 'weight',
-#	      'field' => 'description',
-#	      'value' => 'moo cow how?'});
+#          'field' => 'description',
+#          'value' => 'moo cow how?'});
 
 #$a->add_meta({'name'  => 'weight',
-#	      'field' => 'blue moon',
-#	      'value' => 'I saw you standing alone'});
+#          'field' => 'blue moon',
+#          'value' => 'I saw you standing alone'});
 
 #$a->save();
 

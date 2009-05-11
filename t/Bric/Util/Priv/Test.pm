@@ -74,19 +74,19 @@ if (@ARGV) {
 
     print "Getting all Privs for User Group #21.\n";
     foreach my $p ( Bric::Util::Priv->list({ usr_grp_id => 21 }) ) {
-	print "ID:         ", $p->get_id, "\n";
-	print "Usr Grp ID: ", $p->get_usr_grp_id, "\n";
-	print "Obj Grp ID: ", $p->get_obj_grp_id, "\n";
-	print "Value:      ", $p->get_value, "\n\n";
+    print "ID:         ", $p->get_id, "\n";
+    print "Usr Grp ID: ", $p->get_usr_grp_id, "\n";
+    print "Obj Grp ID: ", $p->get_obj_grp_id, "\n";
+    print "Value:      ", $p->get_value, "\n\n";
     }
 
     print "Getting all Privs for User Group #19 via href().\n";
     my $href = Bric::Util::Priv->href({ usr_grp_id => 19 });
     while (my ($id, $p) = each %$href) {
-	print "ID:         ", $id, "\n";
-	print "Usr Grp ID: ", $p->get_usr_grp_id, "\n";
-	print "Obj Grp ID: ", $p->get_obj_grp_id, "\n";
-	print "Value:      ", $p->get_value, "\n\n";
+    print "ID:         ", $id, "\n";
+    print "Usr Grp ID: ", $p->get_usr_grp_id, "\n";
+    print "Obj Grp ID: ", $p->get_obj_grp_id, "\n";
+    print "Value:      ", $p->get_value, "\n\n";
     }
 
     print "Getting MTime for User 1.\n";
@@ -95,7 +95,7 @@ if (@ARGV) {
     print "Getting privileges for User 1.\n";
     my $acl = Bric::Util::Priv->get_acl(1);
     while (my ($gid, $priv) = each %$acl) {
-	print "\t$gid => $priv\n";
+    print "\t$gid => $priv\n";
     }
 
     exit;

@@ -113,8 +113,8 @@ B<Notes:> NONE.
 =cut
 
 sub get_supported_classes { { 'Bric::Biz::Org' => 'org',
-			      'Bric::Biz::Org::Source' => 'org',
-			      'Bric::Biz::Org::Person', => 'org' } }
+                  'Bric::Biz::Org::Source' => 'org',
+                  'Bric::Biz::Org::Person', => 'org' } }
 
 ##############################################################################
 

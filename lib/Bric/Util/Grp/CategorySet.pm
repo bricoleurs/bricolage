@@ -74,11 +74,11 @@ my ($class, $mem_class);
 
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
+             # Private Fields
 
-			});
+            });
 }
 
 #==============================================================================#

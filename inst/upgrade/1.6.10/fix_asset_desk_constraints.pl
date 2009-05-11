@@ -14,7 +14,7 @@ for my $table (qw(story media formatting)) {
     push @sql,
       qq{ALTER TABLE $table
          ADD CONSTRAINT fk_desk__$table FOREIGN KEY (desk__id)
-	 REFERENCES desk(id) ON DELETE SET NULL};
+     REFERENCES desk(id) ON DELETE SET NULL};
 }
 
 # Make it so.

@@ -29,7 +29,7 @@ CREATE TABLE desk (
     post_chk_rules  INTEGER,
     asset_grp       INTEGER,
     publish         BOOLEAN       NOT NULL DEFAULT FALSE,
-    active          BOOLEAN  	  NOT NULL DEFAULT TRUE,
+    active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_desk__id PRIMARY KEY (id)
 );
 

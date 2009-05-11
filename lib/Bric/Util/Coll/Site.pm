@@ -209,7 +209,7 @@ sub save {
 
     # Save the existing and new objects.
     foreach my $site (values %$objs, @$new_objs) {
-#	$site->save;
+#    $site->save;
     }
 
     # Add the new objects to the main list of objects.

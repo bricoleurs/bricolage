@@ -42,8 +42,8 @@ die qq{The developer install is not supportd in "single" installation mode.\n},
 
 # Delete bin/, comp/ and lib/ so we can replace them with SVN versions
 rmtree([$CONFIG->{BIN_DIR},
-		$CONFIG->{MASON_COMP_ROOT},
-		$CONFIG->{MODULE_DIR}]);
+        $CONFIG->{MASON_COMP_ROOT},
+        $CONFIG->{MODULE_DIR}]);
 
 symlink(catdir(cwd, '/bin'), $CONFIG->{BIN_DIR});
 symlink(catdir(cwd, '/comp'), $CONFIG->{MASON_COMP_ROOT});
