@@ -2,7 +2,7 @@ package Bric::Util::Language::pt_pt;
 
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
@@ -10,13 +10,13 @@ Bric::Util::Language::pt_pt - Bricolage Portuguese translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = pt_pt
 
-=head1 DESCRIPTION
+=head1 Description
 
 Translation to Portuguese using Lang::Maketext.
 
@@ -783,13 +783,13 @@ To translate:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 ClE<aacute>udio Valente <cvalente@co.sapo.pt>,
 Joao Pedro Goncalves <joaop@co.sapo.pt>
 Pedro Custódio <pecus@co.sapo.pt>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

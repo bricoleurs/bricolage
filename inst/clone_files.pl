@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 clone.pl - installation script to copy files for clone distributions
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make clone" to copy files from the target
 installation into the dist/ directory for cloning.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

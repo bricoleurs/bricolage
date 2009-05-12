@@ -6,11 +6,11 @@ sub get_secret { Bric::Util::Grp::SECRET_GRP };
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::AssetLanguage - Legacy Group Class
 
-=head1 DESCRIPTION
+=head1 Description
 
 
 This is a dummy class to keep upgraded installations from breaking when

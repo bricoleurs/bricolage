@@ -2,7 +2,7 @@ package Bric::Util::Burner;
 
 ##############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Burner - Publishes stories and deploys templates
 
@@ -10,7 +10,7 @@ Bric::Util::Burner - Publishes stories and deploys templates
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Burner qw(:modes);
 
@@ -38,7 +38,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # retrieve page numbering start
  $page_numb_start = burner->get_page_numb_start;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module accomplishes two tasks:
 
@@ -59,7 +59,7 @@ and L<Bric::Util::Burner::Template> for details.
 
 =back
 
-=head1 ADDING A NEW BURNER
+=head1 Adding a New Burner
 
 We anticipate that new Burner subclasses will be added to the system. Here's
 a brief guide to adding a new Burner to Bricolage:
@@ -287,7 +287,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 In addition to the class and object methods documented below,
 Bric::Util::Burner can export a number of constants. These constants are used
@@ -2328,11 +2328,11 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
@@ -2342,7 +2342,7 @@ Matt Vella <mvella@about-inc.com>
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Util::Burner::Mason>, L<Bric::Util::Burner::Template>.
 

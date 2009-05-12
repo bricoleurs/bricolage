@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 files.pl - installation script to create directories and copy files
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make install" to create Bricolage's
 directories, copy files and setup permissions.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

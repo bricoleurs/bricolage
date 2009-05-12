@@ -2,7 +2,7 @@ package bric_upgrade;
 
 =pod
 
-=head1 NAME
+=head1 Name
 
 bric_upgrade - Library with functions to assist upgrading a Bricolage installation.
 
@@ -11,7 +11,7 @@ bric_upgrade - Library with functions to assist upgrading a Bricolage installati
 # Grab the Version Number.
 use Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   #!/usr/bin/perl -w
 
@@ -33,7 +33,7 @@ use Bric; our $VERSION = Bric->VERSION;
   );
   do_sql(@sql);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module exports functions that are useful for upgrading a Bricolage
 database. The idea is that all changes to the Bricolage database that are
@@ -59,7 +59,7 @@ For those scripts that do not wish to run as the database user, such as to
 delete files from the existing Bricolage installation, just don't load this
 module and you'll be good to go.
 
-=head1 OPTIONS
+=head1 Options
 
 =over
 
@@ -192,7 +192,7 @@ END {
 
 ##############################################################################
 
-=head1 EXPORTED FUNCTIONS
+=head1 Exported Functions
 
 =head2 prompt
 
@@ -321,15 +321,15 @@ sub do_sql {
     }
 }
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric:Util::DBI|Bric::Util::DBI>

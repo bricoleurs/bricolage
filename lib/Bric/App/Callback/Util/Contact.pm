@@ -35,21 +35,21 @@ sub update_contacts {
 
 1;
 
-=head1 NAME
+=head1 Name
 
 Bric::App::Callback::Util::Contact - Contact utility functions for callbacks
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Callback::Util::Contact qw(:all);
   update_contacts($params, $person);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides utility functions for managing contacts in callback
 classes that manage Bric::Biz::Person objects.
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Functions
 
@@ -62,11 +62,11 @@ C<$params>. See
 L<Bric::App::Callback::Profile::User|Bric::App::Callback::Profile::User> for a
 sample usage.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -80,7 +80,7 @@ This is the base class for all callback classes.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
 L<Bric::License|Bric::License> for complete license terms and conditions.

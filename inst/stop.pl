@@ -1,20 +1,20 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 stop.pl - upgrade script to stop running Bricolage servers
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make upgrade" to stop running servers.  Also
 cleans out the Bricolage temp space since this has to be done after
 the servers are stopped.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

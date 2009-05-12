@@ -2,7 +2,7 @@ package Bric::Biz::Asset::Business::Media::Video;
 
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Media::Video - the media class that represents static
 videos
@@ -11,11 +11,11 @@ videos
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Data$
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of new Video objects
  $video = Bric::Biz::Asset::Business::Media::Video->new( $init )
@@ -25,7 +25,7 @@ $Data$
  # list of ids
  ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Video->list_ids($param)
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Subclass of Media that pretains to Videos 
 
@@ -99,7 +99,7 @@ BEGIN {
 # Interface Methods             #
 #===============================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructrs
 
@@ -333,7 +333,7 @@ NONE
 
 NONE
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -351,15 +351,15 @@ NONE
 __END__
 
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Michael Soderstrom" <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>

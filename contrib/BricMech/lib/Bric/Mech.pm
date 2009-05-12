@@ -9,11 +9,11 @@ use warnings;
 use Carp;
 # (can also require HTML::TokeParser::Simple)
 
-=head1 NAME
+=head1 Name
 
 Bric::Mech - browse Bricolage using WWW::Mechanize
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Mech;
 
@@ -31,12 +31,12 @@ Bric::Mech - browse Bricolage using WWW::Mechanize
 
   $mech->logout();
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class subclasses L<WWW::Mechanize|WWW::Mechanize> to provide
 convenience methods for navigating the Bricolage browser interface.
 
-=head1 CLASS METHODS
+=head1 Class Methods
 
 =head2 new
 
@@ -100,7 +100,7 @@ sub new {
 }
 
 
-=head1 OBJECT METHODS
+=head1 Object Methods
 
 Something to keep in mind with these methods is that the
 Bricolage UI is divided into two parts: the left nav and
@@ -137,7 +137,7 @@ but you probably shouldn't rely on that since it might change.
 
 ### LOGIN METHODS ################################################
 
-=head1 LOGIN METHODS
+=head1 Login Methods
 
 =head2 login
 
@@ -249,7 +249,7 @@ sub logout {
 
 ### LEFT NAV METHODS #############################################
 
-=head1 LEFT NAV METHODS
+=head1 Left Nav Methods
 
 =head2 my_workspace
 
@@ -829,7 +829,7 @@ sub follow_admin_link {
 
 ### MANAGER METHODS ##############################################
 
-=head1 MANAGER METHODS
+=head1 Manager Methods
 
 =head2 search
 
@@ -852,7 +852,7 @@ XXX: Yet to be implemented.
 
 ### PROFILE METHODS ##############################################
 
-=head1 PROFILE METHODS
+=head1 Profile Methods
 
 =head2 add_to_list
 
@@ -987,7 +987,7 @@ sub site_context {
 
 ### ATTRIBUTE METHODS ############################################
 
-=head1 ATTRIBUTE METHODS
+=head1 Attribute Methods
 
 These are mostly read-only attributes. C<server>, C<username>,
 and C<password> are set through the L</login> method.
@@ -1264,12 +1264,12 @@ sub _croak {
 1;
 __END__
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<WWW::Mechanize|WWW::Mechanize>,
 http://bricolage.cc/
 
-=head1 COPYRIGHT
+=head1 Copyright and License
 
 Copyright 2005 Scott Lanning. This library is free software; you can
 redistribute it and/or modify it under the same terms as Perl itself.
@@ -1278,7 +1278,7 @@ This program is distributed in the hope that it will be useful,
 but without any warranty; without even the implied warranty
 of merchantability or fitness for a particular purpose.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 

@@ -1,23 +1,23 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 uninstall.pl - installation script to uninstall Bricolage
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make uninstall" to uninstall Bricolage.
 It removes all installed modules, binaries, components, and the
 database. It gathers configuration information from the user and
 install.db if available. This is mostly copied from upgrade.pl.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

@@ -2,7 +2,7 @@ package Bric::Util::Grp::Desk;
 
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::Desk - A class to impliment desk groups
 
@@ -10,7 +10,7 @@ Bric::Util::Grp::Desk - A class to impliment desk groups
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Grp::Desk;
 
@@ -20,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # Add a description for this synonym group.
  $desc    = $desk_grp->get_description($desc);
 
-=head1 DESCRIPTION
+=head1 Description
 
 Impliments groups of desks.
 
@@ -89,7 +89,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -283,15 +283,15 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Workflow::Parts::Desk>
 

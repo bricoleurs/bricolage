@@ -2,7 +2,7 @@ package Bric::Biz::ElementType::Subelement;
 
 #############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::ElementType::Subelement - Maps a subelement ElementType
 to its parent's Element Types with occurrence relations and place.
@@ -11,7 +11,7 @@ to its parent's Element Types with occurrence relations and place.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Biz::ElementType::Subelement;
 
@@ -34,7 +34,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $subelem->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Biz::ElementType manages the relationship between
 parent ElementTypes and subelement ElementTypes. It contains information
@@ -108,7 +108,7 @@ BEGIN {
 # Class Methods
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 This class inherits the majority of its interface from
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>. Only additional methods
@@ -574,15 +574,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <christian.muise@gmail.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>,
 

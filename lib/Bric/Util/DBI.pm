@@ -2,7 +2,7 @@ package Bric::Util::DBI;
 
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::DBI - The Bricolage Database Layer
 
@@ -13,7 +13,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::DBI qw(:standard);
 
@@ -27,7 +27,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $self->_set(\@cols, row_aref($select, $id));
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module exports a number of database functions for use by Bricolage object
 classes. These functions have been designed to maximize database independence
@@ -147,7 +147,7 @@ END { _disconnect(); }
 
 =pod
 
-=head1 INTERFACE
+=head1 Interface
 
 There are several ways to C<use Bric::Util::DBI>. Some options include:
 
@@ -1765,7 +1765,7 @@ sub last_key {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 NONE.
 
@@ -1972,15 +1972,15 @@ called immediately after query execution when DBI_PROFILE is true.
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David E. Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<DBI|DBI>,
 L<Bric|Bric>,

@@ -3,11 +3,11 @@
 eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
-=head1 NAME
+=head1 Name
 
 bric_xfer_grps - command-line client for importing and exporting Grps
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ bric_xfer_grps --export [options] --type 'Category' > outfile
   $ bric_xfer_grps --import [options] --type 'Category' < infile
@@ -27,7 +27,7 @@ bric_xfer_grps - command-line client for importing and exporting Grps
   $ sudo ./bric_xfer_grps --import --type 'User' < grp.usr
   $ sudo ./bric_xfer_grps --import --type 'Category' < grp.cat
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script imports and exports Groups. Importing assumes that the
 "members" (e.g. Category, User, Workflow) have already been imported.
@@ -90,7 +90,7 @@ when exporting; otherwise, it will use a compact format.
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 WARNING: Use this script at your own risk. No guarantees.
 Before running this script, back up your bricolage SQL.
@@ -106,11 +106,11 @@ members of the group.
 
 This script doesn't export or import "permanent" or "deactivated" Groups.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
   L<Bric::Util::Grp|Bric::Util::Grp>
 

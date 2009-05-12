@@ -4,11 +4,11 @@ eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 use strict;
 
-=head1 NAME
+=head1 Name
 
 bric_media_upload - uploads of media from directory, .zip or .tar through SOAP
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 bric_media_upload [options] src target_url [target_url, ...]
 
@@ -67,7 +67,7 @@ Options:
 
   --skip-existing   - don't try to update media assets that already exist.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script allows you to import media objects when passed ether a
 path to a directory structure to recurse, or a tar or zip file
@@ -80,7 +80,7 @@ category.  Using the --make-categories option, however, categories
 will be created in bric for any directory that does not correspond
 with existing category.
 
-=head1 EXAMPLES
+=head1 Examples
 
 Upload media from a directory structure to localhost:
 
@@ -97,13 +97,13 @@ categories as needed, and saving media as type 'Illustration'.
   bric_media_upload --make-categories --media-type='Illustration' pics.tar \
                     http://bricky http://bricolat
 
-=head1 AUTHORS
+=head1 Authors
 
 Matt Vella <mvella@about-inc.com>
 
 With improvements and bug fixes by Dave Rolsky and Simon Wilcox.
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>
 

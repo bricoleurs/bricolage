@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 database.pl - Probes for the selected database server
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during C<make> to probe for the selected databse server
 by executing the appropriate script, one of:
@@ -20,11 +20,11 @@ by executing the appropriate script, one of:
 This script is dependent on the existence of F<required.db> to know which
 database has been selected.
 
-=head1 AUTHOR
+=head1 Author
 
 Andrei Arsu <acidburn@asynet.ro>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

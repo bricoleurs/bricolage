@@ -1,6 +1,6 @@
 package Bric::Inst;
 
-=head1 NAME
+=head1 Name
 
 Bric::Inst - support library for installation system scripts
 
@@ -9,7 +9,7 @@ Bric::Inst - support library for installation system scripts
 # XXX: using Bric doesn't work before Bric is installed
 # use Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   #!/usr/bin/perl -w
 
@@ -18,11 +18,11 @@ Bric::Inst - support library for installation system scripts
   use lib "$FindBin::Bin/../lib";
   use Bric::Inst qw(:all);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module exports function used by the installation system scripts.
 
-=head1 EXPORTED FUNCTIONS
+=head1 Exported Functions
 
 =over 4
 
@@ -303,15 +303,15 @@ sub get_default {
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

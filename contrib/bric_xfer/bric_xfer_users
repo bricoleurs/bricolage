@@ -3,11 +3,11 @@
 eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
-=head1 NAME
+=head1 Name
 
 bric_xfer_users - command-line client for importing and exporting Users
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ bric_xfer_users --export [options] > outfile
   $ bric_xfer_users --import [options] < infile
@@ -27,7 +27,7 @@ bric_xfer_users - command-line client for importing and exporting Users
   $ sudo ./bric_xfer_grps --import --type 'User' < grp.usr
   $ sudo ./bric_xfer_grps --import --type 'Category' < grp.cat
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script imports and exports Users. It doesn't take care
 of their Grp associations, though. For that, run bric_xfer_grps.
@@ -75,7 +75,7 @@ when exporting; otherwise, it will use a compact format.
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 WARNING: Use this script at your own risk. No guarantees.
 Before running this script, back up your bricolage SQL.
@@ -92,11 +92,11 @@ User or root.
 
 This script doesn't import or export "deactivated" Users.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
   L<Bric::Biz::Person::User|Bric::Biz::Person::User>
 

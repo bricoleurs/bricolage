@@ -2,7 +2,7 @@ package Bric::Util::DBD::Oracle;
 
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::DBD::Oracle - The Bricolage Oracle Driver
 
@@ -13,13 +13,13 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In Bric::Util::DBI(1), just
 
   use Bric::Util::DBD::Oracle ':all';
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module exports into Bric::Util::DBI's name space a number of
 database-dependent functions and variables such that Bric::Util::DBI can interface
@@ -30,7 +30,7 @@ any other Bric::DBD::* driver.
 The architecture of this module must be adapted to use Bric with other databases.
 Use Bric::Util::DBD::Oracle as a template.
 
-=head1 INTERFACE
+=head1 Interface
 
 NONE.
 
@@ -50,7 +50,7 @@ NONE.
 
 NONE.
 
-=head1 PRIVATE
+=head1 Private
 
 NONE.
 
@@ -158,15 +158,15 @@ sub db_date_parts {
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David E. Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::DBI|Bric::Util::DBI>
 
