@@ -2,7 +2,7 @@ package Bric::Biz::Asset::Business::Media::Image;
 
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Media::Image - the media class that represents static
 images
@@ -11,11 +11,11 @@ images
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Data$
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of new Image objects
  $image = Bric::Biz::Asset::Business::Media::Image->new( $init )
@@ -25,7 +25,7 @@ $Data$
  # list of ids
  ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Image->list_ids($param)
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Subclass of Media that pretains to Images
 
@@ -106,7 +106,7 @@ BEGIN {
 # Interface Methods             #
 #===============================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -767,7 +767,7 @@ sub upload_file {
 
 ##############################################################################
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -879,15 +879,15 @@ sub _modify_image {
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Michael Soderstrom" <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>

@@ -5,11 +5,11 @@ use File::Spec::Functions qw(catdir catfile);
 
 =pod
 
-=head1 NAME
+=head1 Name
 
 copy_gnome_icons
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 For icons files starting with "gnome-":
 
@@ -19,7 +19,7 @@ For icons files starting with "gnome-mime-":
 
   copy_gnome_icons --strip gnome-mime- *.png
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is designed to convert a collection of GNOME MIME type icons to
 the Bricoalge root and to the naming convention used by Bricolage. The icons
@@ -43,7 +43,7 @@ distributions downloadable from L<http://art.gnome.org/themes/icon/>
 (the "NoiaWarm" theme's 48 x 48 MIME type icons look pretty nice with the
 Bricolage UI color scheme). Updates happily accepted.
 
-=head1 OPTIONS
+=head1 Options
 
 =head2 C<--strip>
 
@@ -59,7 +59,7 @@ the "gnome-" and leave "appplication-msword.png". In the latter example
 specify "gnome-mime-" for the C<--strip> option. Note that the C<--strip>
 option can be a regular expression.
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -78,11 +78,11 @@ GNOME icon themes page, where several different collections of icon themes
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2004 Kineticode, Inc. See L<Bric::License|Bric::License> for
 complete license terms and conditions. GNOME icons files are distributed

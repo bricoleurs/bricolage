@@ -1,23 +1,23 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 dbprobe_mysql.pl - installation script to probe MySQL configuration
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make" to probe the MySQL
 configuration.  It accomplishes this by parsing the output from
 mysql_config and asking the user questions.  Output collected in
 "database.db".
 
-=head1 AUTHOR
+=head1 Author
 
 Andrei Arsu <acidburn@asynet.ro>
 
 derived from code by Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

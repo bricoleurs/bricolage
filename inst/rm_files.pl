@@ -1,20 +1,20 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 rm_files.pl - installation script to remove directories and files
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during C<make uninstall> to remove all
 of Bricolage's files. This should be last so that the *.db
 files exist for the other scripts executed during C<make uninstall>.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

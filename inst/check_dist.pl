@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 check_dist.pl - checks to make sure we're ready for "make dist"
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make dist" to check that everything is as it
 should be.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

@@ -1,6 +1,6 @@
 package Bric::Util::Priv::Parts::Const;
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Priv::Parts::Const - Exports Bricolage Privilege Constants
 
@@ -9,11 +9,11 @@ Bric::Util::Priv::Parts::Const - Exports Bricolage Privilege Constants
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Priv::Parts::Const qw(:all);
 
-=head1 DESCRIPTION
+=head1 Description
 
 Exports Privilege constants. Those constants are:
 
@@ -99,7 +99,7 @@ use constant DENY => 255;
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -117,7 +117,7 @@ NONE.
 
 NONE.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -136,15 +136,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Priv|Bric::Util::Priv>

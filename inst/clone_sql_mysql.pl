@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 clone_sql_mysql.pl - installation script to clone an existing mysql database 
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make clone" to clone the Bricolage
 database.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

@@ -2,7 +2,7 @@ package Bric::Util::Class;
 
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Class - A module to provide access to the class table
 
@@ -10,13 +10,13 @@ Bric::Util::Class - A module to provide access to the class table
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Class;
 
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 Provides access to the class table that maps package names to a display name and
 description.
@@ -90,7 +90,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -640,7 +640,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE METHODS
+=head1 Private METHODS
 
 =head2 Private Class Methods
 
@@ -712,15 +712,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>
 

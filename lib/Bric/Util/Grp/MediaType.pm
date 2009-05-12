@@ -1,6 +1,6 @@
 package Bric::Util::Grp::MediaType;
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::MediaType - Interface to Bric::Util::MediaType Groups
 
@@ -9,11 +9,11 @@ Bric::Util::Grp::MediaType - Interface to Bric::Util::MediaType Groups
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Grp
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Grp.
 
@@ -65,7 +65,7 @@ BEGIN { Bric::register_fields() }
 # Class Methods
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -188,11 +188,11 @@ Inherited from Bric::Util::Grp.
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 

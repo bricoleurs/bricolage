@@ -1,10 +1,10 @@
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::HTMLTemplate - Writing HTML::Template scripts and templates
 
-=head1 INTRODUCTION
+=head1 Introduction
 
 This document describes how to use Bricolage's HTML::Template templating
 system. To get the most out of this document you'll need to have some
@@ -15,7 +15,7 @@ overlap between the those documents and this one to a minimum. It also helps
 to have an idea of how HTML::Template works outside of Bricolage -- for that
 you can refer to HTML::Template's documentation.
 
-=head1 TEMPLATES IN BRICOLAGE
+=head1 Templates in Bricolage
 
 Bricolage uses templates to produce output for stories when they are previewed
 and published. Most likely you'll be creating templates to format your stories
@@ -33,7 +33,7 @@ single element (e.g., Article, Page, Pull Quote, etc.). Category templates are
 assigned to the category. Utility templates must be placed into a category,
 but otherwise have no relationship to elements or categories.
 
-=head1 SCRIPTS AND TEMPLATES
+=head1 Scripts and Templates
 
 HTML::Template works by separating Perl code from HTML design. In Bricolage
 this results in two types of template files -- F<.pl> script files and F<.tmpl>
@@ -52,7 +52,7 @@ used by the existing scripts in the root category. Of course, the same is true
 of script files, but it is much more common to tweak the design by category
 than the code.
 
-=head1 CHOOSING A BURNER
+=head1 Choosing a Burner
 
 Bricolage decides which burner module to use -- Mason, HTML::Template,
 Template Toolkit, or PHP -- by looking at the burner setting for the top-level
@@ -65,7 +65,7 @@ This determines whether you're creating a Mason F<story.mc>, an HTML::Template
 F<story.pl> script, an HTML::Template F<story.tmpl> or some other templating
 architecture template.
 
-=head1 AN EXAMPLE STORY TYPE
+=head1 An Example Story Type
 
 We'll examine a simple example story type called "Story". Here's the element
 tree for "Story":
@@ -84,7 +84,7 @@ If this doesn't immediately make sense then you should probably go check out
 L<Bric::ElementAdmin|Bric::ElementAdmin> before continuing -- it's hard to
 write templates if you don't understand elements!
 
-=head1 CHOOSING A STRATEGY
+=head1 Choosing a Strategy
 
 Bricolage is an exceedingly flexible system and the HTML::Template burner is
 no exception; there are a number of different ways you can write scripts and
@@ -92,14 +92,14 @@ templates for the Story element tree. I'll start with what I think is the
 easiest to understand and proceed to more complicated approaches pointing out
 the advantages and drawbacks along the way.
 
-=head1 STRATEGY 1: ONE SCRIPT, ONE TEMPLATE
+=head1 Strategy 1: One Script, One Template
 
 For a simple element tree you can often get away with just a single pair of
 files -- a script and a template for the top-level element. Here's an example
 script file that could be used to setup variables and loops for the example
 story above.
 
-=head2 THE SCRIPT: F<story.pl>
+=head2 The Script: F<story.pl>
 
     # get our template
     my $template = $burner->new_template(autofill => 0);
@@ -265,7 +265,7 @@ structure that HTML::Template expects for nested loops.
 Finally, we send the @page_loop data to the template and return the results of
 running the template.
 
-=head2 THE TEMPLATE: F<story.tmpl>
+=head2 The Template: F<story.tmpl>
 
 The template for our script matches the variables and loops setup in the
 script. It adds a very small amount of HTML formatting just so you can see
@@ -369,7 +369,7 @@ Bricolage to insert a page break. Also, Bricolage is smart enough not to
 output a trailing blank page so you don't have to worry about the spacing
 after C<page_break> in the loop.
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 This first example has shown how a simple story type can be formatted using a
 single script and a single template. The script is responsible for setting up
@@ -419,13 +419,13 @@ wants to use Page elements then the same work will need to be duplicated.
 
 =back
 
-=head1 STRATEGY 2: NO SCRIPT, ONE TEMPLATE
+=head1 Strategy 2: No Script, One Template
 
 As I hinted at above, C<new_template()>'s C<autofill> parameter can do a lot
 of work for you. Combined with the default script creation you can often get
 away with creating no scripts at all.
 
-=head2 THE DEFAULT SCRIPT
+=head2 The Default Script
 
 The default script is used if Bricolage needs to publish an element for which
 no script file (F<.pl>) exists but for which there is a template file
@@ -485,7 +485,7 @@ C<< $burner->page_break >>.
 
 =back
 
-=head2 THE TEMPLATE: F<story.tmpl>
+=head2 The Template: F<story.tmpl>
 
 The template for use with this strategy is almost exactly the same as for
 strategy 1 (sneaky, huh?). The only change is that the autofill code provides
@@ -533,7 +533,7 @@ the sole contents "0" wouldn't have been printed! The horror!
 
     </tmpl_loop>
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 This example demonstrates the real power of Bricolage's HTML::Template system.
 Here's a breakdown of this strategy:
@@ -575,7 +575,7 @@ The template is still pretty complicated.
 
 =back
 
-=head1 STRATEGY THREE: NO SCRIPTS, MANY TEMPLATES
+=head1 Strategy 3: No Scripts, Many Templates
 
 Sometimes a little extra work can go a long way. If you're building an element
 that will be used as a sub-element in a number of trees, then it pays to split
@@ -587,7 +587,7 @@ This strategy will deal with just templates, relying on autofill to setup
 variables and loops. The next strategy will deal with customizing the scripts
 for multiple elements.
 
-=head2 TEMPLATE: F<story.tmpl>
+=head2 Template: F<story.tmpl>
 
 Here's a revised F<story.tmpl> to makes a call to the page element
 script/template:
@@ -630,7 +630,7 @@ doesn't exist then the default script is used:
 
     return $burner->new_template->output;
 
-=head2 TEMPLATE: page.tmpl
+=head2 Template: page.tmpl
 
 Here's the page template that outputs the body of the page:
 
@@ -655,7 +655,7 @@ C<__last__> variables are only valid inside the loop in F<story.tmpl>, they
 can't be used in C<page.tmpl>. This might be addressed in the future but until
 then see the next strategy for a solution.
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 This strategy is a good one when you have elements that will be shared between
 template trees. Here's a breakdown:
@@ -698,7 +698,7 @@ Strategy 2)
 
 =back
 
-=head1 STRATEGY 4: SCRIPTS AND TEMPLATES
+=head1 Strategy 4: Scripts and Templates
 
 The Bricolage system is all about flexibility. In Strategy 1 you got an
 up-close look at a script that handles the entire template setup process.
@@ -707,7 +707,7 @@ enhancement. For an example, let's fix the problem I mentioned at the end of
 Strategy 3 -- the header and footer for the Page element were stuck in
 F<story.tmpl> by their reliance on C<__first__> and C<__last__>.
 
-=head2 TEMPLATE: F<story.tmpl>
+=head2 Template: F<story.tmpl>
 
 Here's the desired F<story.tmpl>:
 
@@ -729,7 +729,7 @@ Here's the desired F<story.tmpl>:
 
     </tmpl_loop>
 
-=head2 TEMPLATE: F<page.tmpl>
+=head2 Template: F<page.tmpl>
 
 And the new Page template:
 
@@ -763,7 +763,7 @@ expressions are the same except that C<__first__> and C<__last__> are now just
 plain C<first> and C<last>. This was done to emphasize that we're not using
 HTML::Template's automatic loop variables here.
 
-=head2 SCRIPT: F<story.pl>
+=head2 Script: F<story.pl>
 
 The problem here is simple -- we've got some variables in the Story that need
 to be made available to the Page. Also, we'd like to do this without having to
@@ -798,7 +798,7 @@ with just the element parameter it also supplies two arguments, the object
 order, which corresponds to a page count, and the total number of pages
 (computed from @pages).
 
-=head2 SCRIPT: F<page.pl>
+=head2 Script: F<page.pl>
 
 Now that we've setup F<story.pl> to pass parameters to the Page element, we'll
 need a script that does something with them.
@@ -818,7 +818,7 @@ As you can see, arguments are passed to scripts just as they are to Perl
 subroutines -- through @_. The script uses these parameters to setup the
 template params it needs.
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 This Strategy uses the full set of Bricolage HTML::Template tools we've seen
 so far -- scripts, templates, autofill, and run_script().
@@ -863,7 +863,7 @@ the variables and loops are somewhat different from the normal autofill setup.
 
 =back
 
-=head1 STRATEGY 5: RELATED MEDIA
+=head1 Strategy 5: Related Media
 
 So far things have been kept pretty simple; our example story type contains
 only text. Now let's add the possibility of including images in our story. The
@@ -882,7 +882,7 @@ field called "Caption". Since it's a related media element it also has the
 ability to point to a media document. In this case the template will assume
 that referenced media document is an image.
 
-=head2 TEMPLATE: story.tmpl
+=head2 Template: story.tmpl
 
 To keep things simple, we'll start with the template used to format the story
 in Strategy 2 with a small addition:
@@ -938,7 +938,7 @@ The addition is another conditional inside the page's element_loop:
 
 This will make a call out to the Image element's script when output.
 
-=head2 SCRIPT: F<image.tmpl>
+=head2 Script: F<image.tmpl>
 
 For the script we'll use the autogenerated autofill script. Here's the
 template to format the image:
@@ -966,14 +966,14 @@ media document, only the related media document was available. The C<link>
 variable is still available in Bricolage 1.10.0 and later for backwards
 compatibility purposes.
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 This strategy enables the use of key Bricolage features -- related media and
 related stories. Given that users tend to like multimedia and hyperlinks
 between stories, I'll omit an Advantages and Disadvantages section -- you'll
 probably have to use this Strategy whether you like it or not!
 
-=head1 STRATEGY 6: CATEGORY SCRIPTS AND TEMPLATES
+=head1 Strategy 6: Category Scripts and Templates
 
 Just as elements can have scripts and templates, each category may have one
 script and one template associated with it called F<category.pl> and
@@ -990,7 +990,7 @@ For an example, let's imagine that we want to put a blue box around every page
 in our output. Instead of putting this HTML into our templates we'll do it in
 a category template.
 
-=head2 THE TEMPLATE: category.tmpl
+=head2 The Template: category.tmpl
 
   <html>
   <head><tmpl_var title></head>
@@ -1009,7 +1009,7 @@ that the only new feature is the "content" variable. Every C<category.tmpl>
 must include the content variable to indicate where the content will be
 inserted for each page.
 
-=head2 THE SCRIPT: category.pl
+=head2 The Script: category.pl
 
 As you probably can predict, autofill will fill in all the variables in the
 above template, including all the fields and subelements of the story element,
@@ -1017,7 +1017,7 @@ just like in the story template itself. So we don't really need a
 F<category.pl> script; the default script generated by Bricolage will do the
 trick.
 
-=head2 CONCLUSION
+=head2 Conclusion
 
 =over 4
 
@@ -1055,7 +1055,7 @@ of category templates.
 
 =back
 
-=head1 THE END
+=head1 The End
 
 Certainly there are many more ways to use HTML::Template in Bricolage than
 I've covered in this document. Your main tools -- scripts, templates, the
@@ -1063,12 +1063,12 @@ Bric::Util::Burner::Template API, and the various objects available in
 Bricolage -- are now yours for the taking. Go forth and bend Bricolage
 whimpering to your task!
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <sam@tregar.com>. Updated for Bricolage 1.10 and later by David
 Wheeler <david@kineticode.com>.
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 

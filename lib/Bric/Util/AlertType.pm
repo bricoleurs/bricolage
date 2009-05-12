@@ -1,6 +1,6 @@
 package Bric::Util::AlertType;
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::AlertType - Interface for Managing Types of Alerts
 
@@ -9,7 +9,7 @@ Bric::Util::AlertType - Interface for Managing Types of Alerts
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::AlertType;
 
@@ -66,7 +66,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $at = $at->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bric::Util::AlertType provides an interface for creating, editing, and deleting
 types of alerts. All alerts are based on types of events. These are defined as
@@ -188,7 +188,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -2502,7 +2502,7 @@ sub send_alerts {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2866,15 +2866,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Alert|Bric::Util::Alert>,

@@ -2,7 +2,7 @@ package Bric::Util::Burner::PHP;
 
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Burner::PHP - Publish stories using PHP templates
 
@@ -10,7 +10,7 @@ Bric::Util::Burner::PHP - Publish stories using PHP templates
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Burner::PHP;
 
@@ -20,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # Burn an asset, get back a list of resources
   my $resources = $php_burner->burn_one($ba, $oc, $cat);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles burning business story resources (files) PHP templates.
 
@@ -118,7 +118,7 @@ __PACKAGE__->_register_burner(
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -563,7 +563,7 @@ B<Notes:> NONE.
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -718,11 +718,11 @@ None.
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
@@ -730,7 +730,7 @@ Sam Tregar <stregar@about-inc.com>
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Util::Burner>
 

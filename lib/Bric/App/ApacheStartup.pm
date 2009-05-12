@@ -1,6 +1,6 @@
 package Bric::App::ApacheStartup;
 
-=head1 NAME
+=head1 Name
 
 Bric::App::ApacheStartup - Bricolage httpd startup configuration
 
@@ -9,7 +9,7 @@ Bric::App::ApacheStartup - Bricolage httpd startup configuration
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
       use File::Spec::Functions qw(catdir);
@@ -20,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
   </Perl>
   PerlModule Bric::App::ApacheStartup
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module takes care of all of Apache startup configuration necessary to get
 Bricolage working. Putting it all in this module makes it easier for you to
@@ -114,15 +114,15 @@ if (PREVIEW_LOCAL) {
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

@@ -20,16 +20,16 @@ __END__
 
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 Media.pl - a test script for Bric::SOAP::Media
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ ./Media.pl
   ok 1 ...
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a Test::More test script for the Bric::SOAP::Media module.  It
 requires a mix of media in the running Bricolage instance to work
@@ -61,7 +61,7 @@ DOMCount into your path.
 You can still run the tests without Xerces C++ installed but the
 schema validation tests will be skipped.
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -87,7 +87,7 @@ the GUI after the test.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 

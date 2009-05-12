@@ -2,7 +2,7 @@ package Bric::SOAP::Handler;
 
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
@@ -10,7 +10,7 @@ Bric::SOAP::Handler - Apache/mod_perl handler for SOAP interfaces
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Location /soap>
     SetHandler perl-script
@@ -19,13 +19,13 @@ require Bric; our $VERSION = Bric->VERSION;
     PerlAccessHandler Apache::HTTP_OK
   </Location>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides an Apache/mod_perl PerlHandler for the Bricolage
 SOAP interface.  This handler dispatches calls to the various
 Bric::SOAP modules.
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -36,7 +36,7 @@ calls to these classes.
 
 =back
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -55,11 +55,11 @@ Notes: NONE
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>
 

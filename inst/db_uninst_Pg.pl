@@ -1,21 +1,21 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 db_uninst_Pg.pl - installation script to uninstall PostgeSQL database
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during C<make uninstall> to uninstall the
 PostgreSQL Bricolage database.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

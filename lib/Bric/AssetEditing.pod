@@ -1,11 +1,11 @@
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::AssetEditing - The creation of elements and putting them together into 
 assets
 
-=head1 BACKGROUND
+=head1 Background
 
 This document describes the creation of elements and their uses in the 
 creation of Business Data.

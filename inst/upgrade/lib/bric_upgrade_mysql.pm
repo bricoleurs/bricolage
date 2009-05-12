@@ -2,11 +2,11 @@ package bric_upgrade;
 
 =pod
 
-=head1 NAME
+=head1 Name
 
 bric_upgrade_mysql - Library with functions to assist upgrading a Bricolage MySQL database.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See L<bric_upgrade> for details.
 
@@ -20,7 +20,7 @@ my $db = Bric::Config::DB_NAME();
 
 ##############################################################################
 
-=head1 EXPORTED FUNCTIONS
+=head1 Exported Functions
 
 =head2 test_table
 
@@ -292,15 +292,15 @@ sub db_version() {
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric:Util::DBI|Bric::Util::DBI>

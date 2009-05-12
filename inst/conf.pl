@@ -1,22 +1,22 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 conf.pl - installation script to write configuration files in conf/
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make install" to write out configuration
 files based on information gathered by "make".  Rather than using
 template files, conf.pl uses the sample configuration files directly.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 changes for Apache 2:  Scott Lanning <slanning@cpan.org>, Chris Heiland
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

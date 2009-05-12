@@ -2,7 +2,7 @@ package Bric::Biz::Element;
 
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Element - Bricolage Document Element base class
 
@@ -10,7 +10,7 @@ Bric::Biz::Element - Bricolage Document Element base class
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  my @elements = Bric::Biz::Element->list($params)
 
@@ -20,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
  my $active = $element->is_active;
  $element = $element->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class defins the common structure of elements, the building blocks of
 Bricolage story and media documents. There are two types of elements:
@@ -127,7 +127,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -719,7 +719,7 @@ sub is_active {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -736,15 +736,15 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 michael soderstrom <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset::Business::Story>,
 L<Bric::Biz::Asset::Business::Media>, L<Bric::Biz::ElementType>,

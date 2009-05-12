@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 runtests.pl - Runs Bricolage's Tests
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # In Makefile:
   TEST_VERBOSE=0
@@ -34,7 +34,7 @@ runtests.pl - Runs Bricolage's Tests
   perl inst/runtests.pl -d
   perl inst/runtests.pl -dV
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make test" and "make devtest" to run the
 Bricolage test suite. Passing in the "-d" argument is what causes the script
@@ -51,11 +51,11 @@ All tests are executed in the Bricolage distribution root directory. If you're
 writing tests that need to output test files or something, please use
 C<< File::Spec->tmpdir >> and clean up after yourself!
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Test::Class|Test::Class>, L<Test::More|Test::More>.
 

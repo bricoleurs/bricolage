@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 db_upgrade.pl - installation script to run db upgrade scripts
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make upgrade" to run the database upgrade
 scripts.  Uses upgrade.db to determine which ones to run.
@@ -12,11 +12,11 @@ scripts.  Uses upgrade.db to determine which ones to run.
 When multiple scripts are run, they are run in sorted ASCII-betical
 order (via perl's C<sort()> function).
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

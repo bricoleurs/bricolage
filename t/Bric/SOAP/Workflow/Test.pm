@@ -20,16 +20,16 @@ __END__
 
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 Workflow.pl - a test script for Bric::SOAP::Story
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ ./Workflow.pl
   ok 1 ...
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a Test::More test script for the Bric::SOAP::Workflow module.
 
@@ -54,7 +54,7 @@ Two template desks named "Development" and "Deploy".
 
 =back
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -73,7 +73,7 @@ Set this to the password for the USER account.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 

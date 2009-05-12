@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 dev.pl - installs bricolage to run out of a Subversion checkout
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make dev" to modify a standard install to
 point some files back at the Subversion checkout it's being installed from.
 
-=head1 AUTHOR
+=head1 Author
 
 Marshall Roch <marshall@exclupen.com>
 

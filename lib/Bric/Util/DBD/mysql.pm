@@ -1,6 +1,6 @@
 package Bric::Util::DBD::mysql;
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
 
@@ -9,13 +9,13 @@ Bric::Util::DBD::mysql - Bricolage MySQL database adaptor
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   DBD_TYPE = mysql
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module exports into Bric::Util::DBI's namespace a number of
 database-dependent functions and variables such that Bric::Util::DBI can
@@ -124,11 +124,11 @@ sub db_date_parts {
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -143,7 +143,7 @@ other adaptors are based.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003 Kineticode, Inc. See L<Bric::License|Bric::License> for
 complete license terms and conditions.

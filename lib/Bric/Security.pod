@@ -1,8 +1,8 @@
-=head1 NAME
+=head1 Name
 
 Bric::Security - Bricolage Security Guide
 
-=head1 DESCRIPTION
+=head1 Description
 
 This guide describes the security features of Bricolage. These features
 comprise three parts: B<authentication>, B<encryption>, and B<authorization>.
@@ -11,7 +11,7 @@ Authorization is the process that checks permissions on individual objects
 before allowing users to access them. And encryption allows users to securely
 connect to Bricolage.
 
-=head1 AUTHENTICATION
+=head1 Authentication
 
 Bricolage's authentication procedure is designed to be simple yet flexible. To
 login to Bricolage, simply hit any URL on the server. If you have not already
@@ -84,7 +84,7 @@ C<AUTH_SECRET>, that precaution would be compromised. We therefore recommend
 that you change this value periodically -- say every couple of days or once a
 week.
 
-=head1 ENCRYPTION
+=head1 Encryption
 
 Bricolage can use the industry-standard Secure Socket Layer (SSL) for
 connection encryption. See L<Bric::Admin> for information about enabling SSL
@@ -132,7 +132,7 @@ Bricolage. This directive forces Bricolage to always use SSL throughout the
 entire applications, and thus ensures that all communications (including with
 the distribution and SOAP servers) are always encrypted.
 
-=head1 AUTHORIZATION
+=head1 AuthorIZATION
 
 The authorization features of Bricolage comprise two parts: authorization
 itself and permissions management. The Bricolage authorization system is
@@ -567,11 +567,11 @@ up a configuration to maintain that policy.
 
 Have fun, and stay safe!
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 
