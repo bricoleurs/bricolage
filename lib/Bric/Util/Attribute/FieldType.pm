@@ -1,9 +1,8 @@
 package Bric::Util::Attribute::FieldType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Attribute::FieldType - Groups of Bric::Biz::ElementType::Parts::FieldType objects.
 
@@ -11,11 +10,11 @@ Bric::Util::Attribute::FieldType - Groups of Bric::Biz::ElementType::Parts::Fiel
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 This module is used internally only;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The implimentations of asset type data attributes.
 
@@ -66,7 +65,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -104,7 +103,7 @@ NONE
 
 #==============================================================================#
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -137,15 +136,15 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::ElementType>
 

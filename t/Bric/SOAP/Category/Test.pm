@@ -20,16 +20,16 @@ __END__
 
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 Category.pl - a test script for Bric::SOAP::Category
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ ./Category.pl
   ok 1 ...
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a Test::More test script for the Bric::SOAP::Category module.  It
 requires a mix of categories in the running Bricolage instance to work
@@ -57,7 +57,7 @@ DOMCount into your path.
 You can still run the tests without Xerces C++ installed but the
 schema validation tests will be skipped.
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -83,7 +83,7 @@ the GUI after the test.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
@@ -120,14 +120,14 @@ my $soap = new SOAP::Lite
     uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => DEBUG;
 $soap->proxy('http://localhost/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 isa_ok($soap, 'SOAP::Lite');
 
 my ($response, $category_ids);
 
 # login
 $response = $soap->login(name(username => USER), 
-			 name(password => PASSWORD));
+             name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
 exit 1 if $response->fault;
 
@@ -163,46 +163,46 @@ ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 foreach my $category_id (@$category_ids) {
     $response = $soap->export(name(category_id => $category_id));
     if ($response->fault) {
- 	fail('SOAP export() response fault check');
- 	exit 1;
+     fail('SOAP export() response fault check');
+     exit 1;
     } else {
- 	pass('SOAP export() response fault check');  
-	
- 	my $document = $response->result;
- 	ok($document, "recieved document for category $category_id");
- 	check_doc($document, $xsd, "category $category_id");	
+     pass('SOAP export() response fault check');  
+    
+     my $document = $response->result;
+     ok($document, "recieved document for category $category_id");
+     check_doc($document, $xsd, "category $category_id");    
 
-  	# add (/copy$time) to path and try to create copy
- 	my $time = time();
-  	$document =~ s!<path>(.*?)</path>!
-	    "<path>" . ($1 eq '/' ? "/copy$time" : "$1/copy$time") . "</path>"!e;
-	#print STDERR $document;
-  	$response = $soap->create(name(document => $document)->type('base64'));
-  	ok(!$response->fault, 'SOAP create() result is not a fault');
-  	exit 1 if $response->fault;
-  	my $ids = $response->result;
-  	isa_ok($ids, 'ARRAY');
+      # add (/copy$time) to path and try to create copy
+     my $time = time();
+      $document =~ s!<path>(.*?)</path>!
+        "<path>" . ($1 eq '/' ? "/copy$time" : "$1/copy$time") . "</path>"!e;
+    #print STDERR $document;
+      $response = $soap->create(name(document => $document)->type('base64'));
+      ok(!$response->fault, 'SOAP create() result is not a fault');
+      exit 1 if $response->fault;
+      my $ids = $response->result;
+      isa_ok($ids, 'ARRAY');
 
-  	# modify copy with update to add to description of first item
-  	$document =~ s!<description>(.*?)</description>!<description>$1 (description updated)</description>!;
-  	$document =~ s!id=".*?"!id="$ids->[0]"!;
-  	$response = $soap->update(name(document => $document)->type('base64'),
-  				  name(update_ids => [ name(category_id => 
-  							    $ids->[0]) ]));
-  	ok(!$response->fault, 'SOAP update() result is not a fault');
-  	exit 1 if $response->fault;
-  	my $updated_ids = $response->result;
-  	isa_ok($ids, 'ARRAY');
-  	is($updated_ids->[0], $ids->[0], "update() worked in place");
+      # modify copy with update to add to description of first item
+      $document =~ s!<description>(.*?)</description>!<description>$1 (description updated)</description>!;
+      $document =~ s!id=".*?"!id="$ids->[0]"!;
+      $response = $soap->update(name(document => $document)->type('base64'),
+                    name(update_ids => [ name(category_id => 
+                                  $ids->[0]) ]));
+      ok(!$response->fault, 'SOAP update() result is not a fault');
+      exit 1 if $response->fault;
+      my $updated_ids = $response->result;
+      isa_ok($ids, 'ARRAY');
+      is($updated_ids->[0], $ids->[0], "update() worked in place");
 
-  	# delete copies unless debugging 
- 	if (DELETE_TEST_CATEGORIES) {		
-  	    my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
-  	    $response = $soap->delete(name(category_ids => [ map { name(category_id => $_) } keys %to_delete ]));
-  	    ok(!$response->fault, 'SOAP delete() result is not a fault');
-  	    exit 1 if $response->fault;
-  	    ok($response->result, "SOAP delete() result check");
-  	}
+      # delete copies unless debugging 
+     if (DELETE_TEST_CATEGORIES) {        
+          my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+          $response = $soap->delete(name(category_ids => [ map { name(category_id => $_) } keys %to_delete ]));
+          ok(!$response->fault, 'SOAP delete() result is not a fault');
+          exit 1 if $response->fault;
+          ok($response->result, "SOAP delete() result check");
+      }
     }
 }
 
@@ -218,24 +218,24 @@ sub check_doc {
     print "$name :\n$doc\n" if DEBUG;
     
  SKIP: {
-	skip "need Xerces C++ for schema validation", 1 unless $has_xerces;
-	
-	# hocus pocus!  The document needs some extra attributes on the root
-	# element to get validation to happen right.
-	$doc =~ s!<assets!<assets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://bricolage.sourceforge.net/assets.xsd $xsd" !;
-	
-	# output into a tempfile
-	my ($fh, $filename) = tempfile("doc_XXXX", SUFFIX => '.xml');
-	print $fh $doc;
-	close $fh;
-	
-	# call DOMCount and look for error lines
-	my $results = `DOMCount -n -s -f -v=always $filename 2>&1`;
-	print "Schema Validation Results: $results\n" if DEBUG;
-	ok($results !~ /Error/, "$name schema validation");
-	
-	unlink $filename;
-	exit if $results =~ /Error/;
+    skip "need Xerces C++ for schema validation", 1 unless $has_xerces;
+    
+    # hocus pocus!  The document needs some extra attributes on the root
+    # element to get validation to happen right.
+    $doc =~ s!<assets!<assets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://bricolage.sourceforge.net/assets.xsd $xsd" !;
+    
+    # output into a tempfile
+    my ($fh, $filename) = tempfile("doc_XXXX", SUFFIX => '.xml');
+    print $fh $doc;
+    close $fh;
+    
+    # call DOMCount and look for error lines
+    my $results = `DOMCount -n -s -f -v=always $filename 2>&1`;
+    print "Schema Validation Results: $results\n" if DEBUG;
+    ok($results !~ /Error/, "$name schema validation");
+    
+    unlink $filename;
+    exit if $results =~ /Error/;
     };
 }
 
@@ -246,16 +246,16 @@ sub extract_schema {
     
     # suck in spec
     open SPEC, "$bric_root/lib/Bric/SOAP.pm" 
- 	or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
+     or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
     my $text = join('', <SPEC>);
     close(SPEC);
     
     # find the xsd
     my ($xsd) = $text =~ m!(<\?xml\sversion="1\.0"\sencoding="UTF-8"\?>
-			   .*?
-			   <xs:schema
-			   .*?
-			   </xs:schema>)!xs;
+               .*?
+               <xs:schema
+               .*?
+               </xs:schema>)!xs;
     die "Unable to extract XSD" unless $xsd;
     
     # output xsd into a tempfile and return name

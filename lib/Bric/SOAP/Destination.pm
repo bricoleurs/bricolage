@@ -1,6 +1,5 @@
 package Bric::SOAP::Destination;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -28,7 +27,7 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Destination - SOAP interface to Bricolage destinations
 
@@ -36,7 +35,7 @@ Bric::SOAP::Destination - SOAP interface to Bricolage destinations
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -57,13 +56,13 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of all destination IDs
   my $ids = $soap->list_ids()->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage destinations.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -644,11 +643,11 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>
 

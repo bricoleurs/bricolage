@@ -20,16 +20,16 @@ __END__
 
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 Workflow.pl - a test script for Bric::SOAP::Story
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ ./Workflow.pl
   ok 1 ...
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a Test::More test script for the Bric::SOAP::Workflow module.
 
@@ -54,7 +54,7 @@ Two template desks named "Development" and "Deploy".
 
 =back
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -73,7 +73,7 @@ Set this to the password for the USER account.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
@@ -96,11 +96,11 @@ my $soap = new SOAP::Lite
     uri => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => DEBUG;
 $soap->proxy('http://localhost/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 
 # login
 my $response = $soap->login(name(username => USER), 
-			 name(password => PASSWORD));
+             name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
 
 # gets ids for testing
@@ -136,7 +136,7 @@ foreach my $story_id (@$story_ids) {
 # try publishing every story individually, with related media
 foreach my $story_id (@$story_ids) {
     $response = $soap->publish(name(story_id => $story_id),
-			       name(publish_related_media => 1));
+                   name(publish_related_media => 1));
     ok(!$response->fault,  'fault check');
     exit 1 if $response->fault;
     my $publish_ids = $response->result;
@@ -147,7 +147,7 @@ foreach my $story_id (@$story_ids) {
 # try publishing every story individually, with related stories
 foreach my $story_id (@$story_ids) {
     $response = $soap->publish(name(story_id => $story_id),
-			       name(publish_related_stories => 1));
+                   name(publish_related_stories => 1));
     ok(!$response->fault,  'fault check');
     exit 1 if $response->fault;
     my $publish_ids = $response->result;
@@ -164,10 +164,10 @@ foreach my $media_id (@$media_ids) {
 
 # try publishing them all in a single call
 $response = $soap->publish(name(publish_ids => 
-				[
-				 ( map { name(story_id => $_) } @$story_ids ),
-				 ( map { name(media_id => $_) } @$media_ids ),
-				]));
+                [
+                 ( map { name(story_id => $_) } @$story_ids ),
+                 ( map { name(media_id => $_) } @$media_ids ),
+                ]));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "published stories (" . join(', ', @$story_ids) . ") and media (" . join(', ', @$media_ids) . ")");
@@ -182,49 +182,49 @@ foreach my $template_id (@$template_ids) {
 
 # try deploying them all in a single call
 $response = $soap->deploy(name(deploy_ids => 
-			  [ map { name(template_id => $_) } @$template_ids ]));
+              [ map { name(template_id => $_) } @$template_ids ]));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "deployed templates (" . join(', ', @$template_ids));
 
 # check everything out
 $response = $soap->checkout(name(checkout_ids => 
-				[
-				 ( map { name(story_id => $_) } @$story_ids ),
-				 ( map { name(media_id => $_) } @$media_ids ),
-				 ( map { name(template_id => $_) } @$template_ids ),
-				]));
+                [
+                 ( map { name(story_id => $_) } @$story_ids ),
+                 ( map { name(media_id => $_) } @$media_ids ),
+                 ( map { name(template_id => $_) } @$template_ids ),
+                ]));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "checked out every object.");
 
 # check everything in
 $response = $soap->checkin(name(checkin_ids => 
-				[
-				 ( map { name(story_id => $_) } @$story_ids ),
-				 ( map { name(media_id => $_) } @$media_ids ),
-				 ( map { name(template_id => $_) } @$template_ids ),
-				]));
+                [
+                 ( map { name(story_id => $_) } @$story_ids ),
+                 ( map { name(media_id => $_) } @$media_ids ),
+                 ( map { name(template_id => $_) } @$template_ids ),
+                ]));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "checked in every object.");
 
 # move all templates to the development desk
 $response = $soap->move(name(move_ids => 
-			     [
-			      ( map { name(template_id => $_) } @$template_ids ),
-			     ]),
-			name(desk => "Development"));
+                 [
+                  ( map { name(template_id => $_) } @$template_ids ),
+                 ]),
+            name(desk => "Development"));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "moved all templates to development");
 
 # move all templates to the deploy desk
 $response = $soap->move(name(move_ids => 
-			     [
-			      ( map { name(template_id => $_) } @$template_ids ),
-			     ]),
-			name(desk => "Deploy"));
+                 [
+                  ( map { name(template_id => $_) } @$template_ids ),
+                 ]),
+            name(desk => "Deploy"));
 ok(!$response->fault,  'fault check');
 exit 1 if $response->fault;
 ok($response->result, "moved all templates to deploy");

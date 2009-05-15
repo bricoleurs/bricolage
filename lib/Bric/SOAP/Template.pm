@@ -1,6 +1,5 @@
 package Bric::SOAP::Template;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -42,7 +41,7 @@ require Data::Dumper if DEBUG;
 # without damaging the system.
 use constant ALLOW_DUPLICATE_TEMPLATES => 0;
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
@@ -50,7 +49,7 @@ Bric::SOAP::Template - SOAP interface to Bricolage templates.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -71,13 +70,13 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of template_ids in the root category
   my $template_ids = $soap->list_ids(name(category => '/'))->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage templates.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -878,11 +877,11 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>
 

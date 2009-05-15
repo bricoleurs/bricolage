@@ -1,10 +1,8 @@
 package Bric::Util::FTP::Server;
 
-# $Id$
-
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::FTP::Server - Virtual FTP Server
 
@@ -14,12 +12,12 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::FTP::Server;
   Bric::Util::FTP::Server->run;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides an FTP interface to Bricolage templates.  The
 directory tree is the category tree created in Bricolage.  The first
@@ -31,7 +29,7 @@ checked-in and deployed.
 
 For installation and configuration instructions see L<Bric::Admin>.
 
-=head1 LIMITATIONS
+=head1 Limitations
 
 Only GET, PUT and DELETE are implemented for templates.  No
 modification of categories is supported.
@@ -40,12 +38,12 @@ The system doesn't deal with the possibility of having more than one
 active template for a given filename.  This probably won't be fixed
 here - rather, Bricolage will soon prevent this situation.
 
-=head1 INTERFACE
+=head1 Interface
 
 This module inherits from Net::FTPServer and doesn't override any
 public methods.  See L<Net::FTPServer> for details.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Instance Methods
 
@@ -239,11 +237,11 @@ __END__
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Net::FTPServer|Net::FTPServer>
 

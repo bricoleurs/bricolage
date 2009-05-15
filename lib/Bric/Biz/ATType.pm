@@ -1,9 +1,8 @@
 package Bric::Biz::ATType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::ATType - A class to represent ElementType types.
 
@@ -11,11 +10,11 @@ Bric::Biz::ATType - A class to represent ElementType types.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Biz::ATType;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class sets up properties that are common to all elements
 (Bric::Biz::ElementType) objects of a type.
@@ -104,7 +103,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1207,17 +1206,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
 Refactored by David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::ElementType>
 

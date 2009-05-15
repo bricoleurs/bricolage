@@ -1,9 +1,8 @@
 package Bric::Util::Coll::OCInclude;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
@@ -11,11 +10,11 @@ Bric::Util::Coll::OCInclude - Interface for managing Output Channels includes.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN { }
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -171,36 +170,36 @@ sub save {
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+    my $del = prepare_c(qq{
             DELETE FROM output_channel_include
             WHERE  output_channel__id = ?
                    AND include_oc_id = ?
         }, undef);
-	execute($del, $oc_id, $_->get_id) for values %$del_objs;
-	%$del_objs = ();
+    execute($del, $oc_id, $_->get_id) for values %$del_objs;
+    %$del_objs = ();
     }
 
     if (@$new_objs) {
-	my $next = next_key('output_channel_include');
+    my $next = next_key('output_channel_include');
         my $ins = prepare_c(qq{
             INSERT INTO output_channel_include (id, output_channel__id,
                                                 include_oc_id)
             VALUES($next, ?, ?)
         }, undef);
 
-	foreach my $new (@$new_objs) {
-	    execute($ins, $oc_id, $new->get_id);
-	    $new->_set(['_include_id'], [last_key('output_channel_include')]);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    foreach my $new (@$new_objs) {
+        execute($ins, $oc_id, $new->get_id);
+        $new->_set(['_include_id'], [last_key('output_channel_include')]);
+    }
+    $self->add_objs(@$new_objs);
+    @$new_objs = ();
     }
     return $self;
 }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -223,8 +222,8 @@ B<Notes:> NONE.
 sub _sort_objs {
     my ($pkg, $objs) = @_;
     return ( map { $objs->{$_} }
-	       sort { $objs->{$a}{_include_id} <=> $objs->{$b}{_include_id} }
-	     keys %$objs);
+           sort { $objs->{$a}{_include_id} <=> $objs->{$b}{_include_id} }
+         keys %$objs);
 }
 
 =back
@@ -242,15 +241,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,

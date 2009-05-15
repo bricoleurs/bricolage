@@ -1,9 +1,8 @@
 package Bric::Util::Coll::ServerType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::ServerType - Interface for managing collections of servers
 types.
@@ -12,11 +11,11 @@ types.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -66,7 +65,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -173,34 +172,34 @@ sub save {
     my ($new_objs, $del_objs) = $self->_get(qw(new_obj del_obj));
 
     if (@$new_objs) {
-	my $ins = prepare_c(qq{
+    my $ins = prepare_c(qq{
             INSERT INTO job__server_type (job__id, server_type__id)
             VALUES (?, ?)
         }, undef);
 
-	foreach my $st (@$new_objs) {
-	    $st->save;
-	    execute($ins, $job_id, $st->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    foreach my $st (@$new_objs) {
+        $st->save;
+        execute($ins, $job_id, $st->get_id);
+    }
+    $self->add_objs(@$new_objs);
+    @$new_objs = ();
     }
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+    my $del = prepare_c(qq{
             DELETE FROM job__server_type
             WHERE  job__id = ?
                    AND server_type__id = ?
         }, undef);
-	execute($del, $job_id, $_->get_id) for values %$del_objs;
-	%$del_objs = ();
+    execute($del, $job_id, $_->get_id) for values %$del_objs;
+    %$del_objs = ();
     }
     return $self;
 }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -219,15 +218,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,

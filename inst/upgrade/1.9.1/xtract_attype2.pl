@@ -41,8 +41,8 @@ do_sql
     q{ ALTER TABLE field_type DROP COLUMN publishable },
 
     q{ ALTER TABLE element_type ADD
-	   CONSTRAINT fk_class__element_type FOREIGN KEY (biz_class__id)
-	   REFERENCES class(id) ON DELETE CASCADE;
+       CONSTRAINT fk_class__element_type FOREIGN KEY (biz_class__id)
+       REFERENCES class(id) ON DELETE CASCADE;
     },
 ;
 

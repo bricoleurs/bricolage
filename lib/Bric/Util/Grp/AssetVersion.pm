@@ -1,6 +1,5 @@
 package Bric::Util::Grp::AssetVersion;
 
-# $Id$
 use strict;
 use base qw(Bric::Util::Grp);
 use constant CLASS_ID => 25;
@@ -10,11 +9,11 @@ sub get_class_id { CLASS_ID }
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::AssetVersion - Legacy Group Class
 
-=head1 DESCRIPTION
+=head1 Description
 
 
 This is a dummy class to keep upgraded installations from breaking when

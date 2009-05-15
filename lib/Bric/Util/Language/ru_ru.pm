@@ -1,10 +1,8 @@
 package Bric::Util::Language::ru_ru;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::ru_ru - Bricolage Russian translation
 
@@ -12,13 +10,13 @@ Bric::Util::Language::ru_ru - Bricolage Russian translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LOAD_LANGUAGES = ru_ru
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bricolage Russian Translation.
 
@@ -777,11 +775,11 @@ To Translate:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Sergey Samoilenko <Sergey@Samoilenko.ru>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

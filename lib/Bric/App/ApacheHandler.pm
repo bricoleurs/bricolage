@@ -1,8 +1,6 @@
 package Bric::App::ApacheHandler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 
@@ -11,7 +9,7 @@ Bric::App::ApacheHandler - subclass of HTML::Mason::ApacheHandler
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package is a subclass of HTML::Mason::ApacheHandler. It replaces
 the functionality previously provided by Bric::App::Handler::load_args;
@@ -58,13 +56,13 @@ use base qw(HTML::Mason::ApacheHandler);
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
 Inherited.
 
-=head1 PRIVATE
+=head1 Private
 
 None.
 
@@ -74,15 +72,15 @@ None.
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::App::Handler>, L<HTML::Mason::ApacheHander>
 

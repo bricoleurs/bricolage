@@ -1,11 +1,10 @@
 package Bric::Util::Language;
 
-# $Id$
 ###############################################################################
 
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language - Bricolage Localization
 
@@ -13,11 +12,11 @@ Bric::Util::Language - Bricolage Localization
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 To follow
 
-=head1 DESCRIPTION
+=head1 Description
 
 To follow
 
@@ -67,7 +66,7 @@ sub key {
 1;
 __END__
 
-=head1 ADDING NEW LANGUAGES
+=head1 Adding New Languages
 
 =over
 
@@ -130,9 +129,9 @@ need to is change all instances of "ja" to your new language key.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 ClE<aacute>udio Valente <cvalente@co.sapo.pt>
 
-=head1 SEE ALSO
+=head1 See Also
 

@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Alerted.val
 --
--- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- No initial values for alerteds.

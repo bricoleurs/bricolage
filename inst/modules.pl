@@ -1,20 +1,20 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 modules.pl - installation script to probe for required Perl modules
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make" to probe for required Perl
 modules.  Output collected in "modules.db" for use by cpan.pl during
 "make install".
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -109,11 +109,11 @@ sub check_module {
     }
 
     if (defined $req_version) {
-	print "Checking that $name version is >= $req_version... ";
+    print "Checking that $name version is >= $req_version... ";
         local $^W = 0;
-	eval { $name->VERSION($req_version) };
-	return soft_fail("not ok.") if $@;
-	print "ok.\n";
+    eval { $name->VERSION($req_version) };
+    return soft_fail("not ok.") if $@;
+    print "ok.\n";
     }
 
     return 1;

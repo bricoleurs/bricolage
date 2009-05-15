@@ -1,8 +1,6 @@
 package Bric::Util::Job::Pub;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
 
@@ -11,7 +9,7 @@ Bric::Util::Job::Pub - Manages Bricolage publishing jobs.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Job::Pub;
 
@@ -53,7 +51,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Execute the job.
   $job = $job->execute_me;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class manages publishing jobs. A publishing job designates that a given
 Story or Media object will be published by a Burner at a given time. Publishing
@@ -202,15 +200,15 @@ sub _do_it {
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Mark Jaroski <jaroskim@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Job>

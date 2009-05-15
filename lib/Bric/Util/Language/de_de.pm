@@ -1,10 +1,8 @@
 package Bric::Util::Language::de_de;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::de_de - Bricolage German translation
 
@@ -12,11 +10,11 @@ Bric::Util::Language::de_de - Bricolage German translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use base qw( Bric );
 
-=head1 DESCRIPTION
+=head1 Description
 
 Translation to German using Lang::Maketext.
 
@@ -799,11 +797,11 @@ To Translate:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Thorsten Biel <T.Biel@ITadmin.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

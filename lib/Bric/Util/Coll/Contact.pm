@@ -1,9 +1,8 @@
 package Bric::Util::Coll::Contact;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::Contact - Interface for managing collections of contacts.
 
@@ -11,11 +10,11 @@ Bric::Util::Coll::Contact - Interface for managing collections of contacts.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN {}
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -170,38 +169,38 @@ sub save {
 
 
     if (%$del_objs) {
-	my $del = prepare_c(qq{
+    my $del = prepare_c(qq{
             DELETE FROM person__contact_value
             WHERE person__id = ?
                   AND contact_value__id = ?
         }, undef);
-	foreach my $con (values %$del_objs) {
-	    $con->deactivate;
-	    $con->save;
-	    execute($del, $pid, $con->get_id);
-	}
-	%$del_objs = ();
+    foreach my $con (values %$del_objs) {
+        $con->deactivate;
+        $con->save;
+        execute($del, $pid, $con->get_id);
+    }
+    %$del_objs = ();
     }
 
     foreach my $con (values %$objs) { $con->save }
     if (@$new_objs) {
-	my $ins = prepare_c(qq{
+    my $ins = prepare_c(qq{
             INSERT INTO person__contact_value (person__id, contact_value__id)
             VALUES (?, ?)
         }, undef);
-	foreach my $con (@$new_objs) {
-	    $con->save;
-	    execute($ins, $pid, $con->get_id);
-	}
-	$self->add_objs(@$new_objs);
-	@$new_objs = ();
+    foreach my $con (@$new_objs) {
+        $con->save;
+        execute($ins, $pid, $con->get_id);
+    }
+    $self->add_objs(@$new_objs);
+    @$new_objs = ();
     }
     return $self;
 }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -220,15 +219,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Coll|Bric::Util::Coll>

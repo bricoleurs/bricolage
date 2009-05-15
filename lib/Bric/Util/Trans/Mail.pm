@@ -1,10 +1,8 @@
 package Bric::Util::Trans::Mail;
 
-# $Id$
-
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Trans::Mail - Utility class for sending email.
 
@@ -12,7 +10,7 @@ Bric::Util::Trans::Mail - Utility class for sending email.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Trans::Mail;
   my $m = Bric::Util::Trans::Mail->new(
@@ -24,7 +22,7 @@ require Bric; our $VERSION = Bric->VERSION;
      });
   $m->send;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class provides a thin abstraction to the MIME::Entity and Net::SMTP
 modules. Use it to send email from within Bricolage applications. Or from
@@ -99,7 +97,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -861,16 +859,16 @@ sub send {
         }
 
         # Package it up and send it out!
-	my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
-	  or throw_gen(error => "Unable to create Net::SMTP object for '$smtp'");
-	$smtp->mail($fromre);
+    my $smtp = Net::SMTP->new($smtp, Debug => $debug || DEBUG)
+      or throw_gen(error => "Unable to create Net::SMTP object for '$smtp'");
+    $smtp->mail($fromre);
         # Send it to everyone.
-	$smtp->to( map { $_ ? @$_ : () }
+    $smtp->to( map { $_ ? @$_ : () }
                    $self->_get(qw(_to_recip _cc_recip _bcc_recip)) );
-	$smtp->data;
+    $smtp->data;
         # Let MIME::Entity do the fun stuff.
         $smtp->datasend($top->as_string);
-	$smtp->quit;
+    $smtp->quit;
     };
 
     # Return or die.
@@ -882,7 +880,7 @@ sub send {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -901,15 +899,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Dist::Resource|Bric::Dist::Resource>,

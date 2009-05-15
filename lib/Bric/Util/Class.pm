@@ -1,9 +1,8 @@
 package Bric::Util::Class;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Class - A module to provide access to the class table
 
@@ -11,13 +10,13 @@ Bric::Util::Class - A module to provide access to the class table
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Class;
 
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 Provides access to the class table that maps package names to a display name and
 description.
@@ -54,7 +53,7 @@ use base qw(Bric);
 
 use constant TABLE => 'class';
 use constant COLS  => qw(key_name pkg_name disp_name plural_name description
-			 distributor);
+             distributor);
 
 #==============================================================================#
 # FIELDS                               #
@@ -75,23 +74,23 @@ our (%BY_ID, %BY_KEY, %BY_PKG);
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 'id'             => Bric::FIELD_READ,
-			 'key_name'       => Bric::FIELD_RDWR,
-			 'pkg_name'       => Bric::FIELD_RDWR,
-			 'plural_name'    => Bric::FIELD_RDWR,
-			 'disp_name'      => Bric::FIELD_RDWR,
-			 'description'    => Bric::FIELD_RDWR,
-			 'distributor'    => Bric::FIELD_RDWR,
+             # Public Fields
+             'id'             => Bric::FIELD_READ,
+             'key_name'       => Bric::FIELD_RDWR,
+             'pkg_name'       => Bric::FIELD_RDWR,
+             'plural_name'    => Bric::FIELD_RDWR,
+             'disp_name'      => Bric::FIELD_RDWR,
+             'description'    => Bric::FIELD_RDWR,
+             'distributor'    => Bric::FIELD_RDWR,
 
-			 # Private Fields
+             # Private Fields
 
-			});
+            });
 }
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -242,26 +241,26 @@ sub list {
     @txt = keys %$param;
 
     my $where = join(' AND ', (map { "$_=?" }      @num),
-		              (map { "LOWER($_) LIKE ?" } @txt));
+                      (map { "LOWER($_) LIKE ?" } @txt));
 
     my $ret = _select_class($where, [map {lc $_} @$param{@num,@txt}]);
     my @all;
 
     my $load_cache = !%BY_ID && (!$param || !%$param) ? 1 : 0;
     foreach my $d (@$ret) {
-	# Create the object via fields which returns a blessed object.
-	my $self = bless {}, $class;
+    # Create the object via fields which returns a blessed object.
+    my $self = bless {}, $class;
 
-	# Call the parent's constructor.
-	$self->SUPER::new();
+    # Call the parent's constructor.
+    $self->SUPER::new();
 
-	# Set the columns selected as well as the passed ID.
-	$self->_set(['id', COLS], $d);
+    # Set the columns selected as well as the passed ID.
+    $self->_set(['id', COLS], $d);
 
-	# Cache the object if necessary.
-	$BY_ID{$d->[0]} = $BY_KEY{lc $d->[1]} = $BY_PKG{lc $d->[2]} = $self
-	  if $load_cache;
-	push @all, $self;
+    # Cache the object if necessary.
+    $BY_ID{$d->[0]} = $BY_KEY{lc $d->[1]} = $BY_PKG{lc $d->[2]} = $self
+      if $load_cache;
+    push @all, $self;
     }
     return wantarray ? @all : \@all;
 }
@@ -524,76 +523,76 @@ sub my_meths {
     # Load field members.
     return $METH if $METH;
     $METH = {'key_name'    => {'get_meth' => sub {shift->get_key_name(@_)},
-			       'get_args' => [], 
-			       'set_meth' => sub {shift->set_key_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Key Name',
-			       'search'   => 1,
-			       'len'      => 128,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 64}
-			      },
-	     'pkg_name'    => {'get_meth' => sub {shift->get_pkg_name(@_)},
-			       'get_args' => [], 
-			       'set_meth' => sub {shift->set_pkg_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Package',
-			       'search'   => 1,
-			       'len'      => 128,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 128}
-			      },
-	     'disp_name'   => {'get_meth' => sub {shift->get_disp_name(@_)}, 
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_disp_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Short Name',
-			       'search'   => 0,
-			       'len'      => 128,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 128}
-			      },
-	     'plural_name' => {'get_meth' => sub {shift->get_plural_name(@_)}, 
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_plural_name(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Plural Name',
-			       'search'   => 0,
-			       'len'      => 128,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 64,
-					      'max_length' => 128}
-			      },
-	     'description' => {'get_meth' => sub {shift->get_description(@_)},
-			       'get_args' => [], 
-			       'set_meth' => sub {shift->set_description(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Description',
-			       'search'   => 0,
-			       'len'      => 256,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'text',
-					      'length'     => 96,
-					      'max_length' => 256}
-			      },
-	     'distributor' => {'get_meth' => sub {shift->get_distributor(@_)},
-			       'get_args' => [],
-			       'set_meth' => sub {shift->set_distributor(@_)},
-			       'set_args' => [],
-			       'disp'     => 'Distributor',
-			       'search'   => 0,
-			       'len'      => 1,
-			       'type'     => 'short',
-			       'props'    => {'type'       => 'checkbox'}
-			      },
-	    };
+                   'get_args' => [], 
+                   'set_meth' => sub {shift->set_key_name(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Key Name',
+                   'search'   => 1,
+                   'len'      => 128,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'text',
+                          'length'     => 64,
+                          'max_length' => 64}
+                  },
+         'pkg_name'    => {'get_meth' => sub {shift->get_pkg_name(@_)},
+                   'get_args' => [], 
+                   'set_meth' => sub {shift->set_pkg_name(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Package',
+                   'search'   => 1,
+                   'len'      => 128,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'text',
+                          'length'     => 64,
+                          'max_length' => 128}
+                  },
+         'disp_name'   => {'get_meth' => sub {shift->get_disp_name(@_)}, 
+                   'get_args' => [],
+                   'set_meth' => sub {shift->set_disp_name(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Short Name',
+                   'search'   => 0,
+                   'len'      => 128,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'text',
+                          'length'     => 64,
+                          'max_length' => 128}
+                  },
+         'plural_name' => {'get_meth' => sub {shift->get_plural_name(@_)}, 
+                   'get_args' => [],
+                   'set_meth' => sub {shift->set_plural_name(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Plural Name',
+                   'search'   => 0,
+                   'len'      => 128,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'text',
+                          'length'     => 64,
+                          'max_length' => 128}
+                  },
+         'description' => {'get_meth' => sub {shift->get_description(@_)},
+                   'get_args' => [], 
+                   'set_meth' => sub {shift->set_description(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Description',
+                   'search'   => 0,
+                   'len'      => 256,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'text',
+                          'length'     => 96,
+                          'max_length' => 256}
+                  },
+         'distributor' => {'get_meth' => sub {shift->get_distributor(@_)},
+                   'get_args' => [],
+                   'set_meth' => sub {shift->set_distributor(@_)},
+                   'set_args' => [],
+                   'disp'     => 'Distributor',
+                   'search'   => 0,
+                   'len'      => 1,
+                   'type'     => 'short',
+                   'props'    => {'type'       => 'checkbox'}
+                  },
+        };
 
     # Load attributes.
     # NONE
@@ -631,9 +630,9 @@ sub save {
     my $id = $self->get_id;
 
     if ($id) {
-	$self->_update_class();
+    $self->_update_class();
     } else {
-	$self->_insert_class();
+    $self->_insert_class();
     }
 }
 
@@ -641,7 +640,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE METHODS
+=head1 Private METHODS
 
 =head2 Private Class Methods
 
@@ -713,15 +712,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>
 

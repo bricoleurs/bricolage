@@ -23,7 +23,7 @@ CREATE SEQUENCE seq_language START 1024;
 --              
 
 CREATE TABLE language (
-    id           INTEGER      	NOT NULL
+    id           INTEGER          NOT NULL
                                 DEFAULT NEXTVAL('seq_language'),
     name         VARCHAR(64),
     description  VARCHAR(256),

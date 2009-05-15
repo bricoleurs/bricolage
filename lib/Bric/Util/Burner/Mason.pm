@@ -1,9 +1,8 @@
 package Bric::Util::Burner::Mason;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Burner::Mason - Publish sturies using Mason templates
 
@@ -11,7 +10,7 @@ Bric::Util::Burner::Mason - Publish sturies using Mason templates
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Burner::Mason;
 
@@ -21,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # burn an asset, get back a list of resources
   my $resources = $mason_burner->burn_one($ba, $oc, $cat, $at);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles burning business assets using Mason templates.
 
@@ -109,7 +108,7 @@ __PACKAGE__->_register_burner(
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -601,7 +600,7 @@ sub end_page {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -871,11 +870,11 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb L<gt>garth@perijove.comL<lt>
 
@@ -883,7 +882,7 @@ Sam Tregar L<gt>stregar@about-inc.comL<lt>
 
 David Wheeler L<gt>david@justatheory.comL<lt>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Util::Burner>
 

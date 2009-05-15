@@ -1,9 +1,8 @@
 package Bric::App::Util;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::App::Util - A class to house general application functions.
 
@@ -11,11 +10,11 @@ Bric::App::Util - A class to house general application functions.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Util;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Utility functions.
 
@@ -155,7 +154,7 @@ my $login_marker = LOGIN_MARKER .'='. LOGIN_MARKER;
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -965,16 +964,16 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>
 

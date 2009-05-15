@@ -1,9 +1,8 @@
 package Bric::Util::Attribute;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Attribute - A module to manage attributes for various objects.
 
@@ -11,7 +10,7 @@ Bric::Util::Attribute - A module to manage attributes for various objects.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Object creation methods
  $attr_obj = new($init);
@@ -62,7 +61,7 @@ require Bric; our $VERSION = Bric->VERSION;
  ##-- Other methods --##
  $success  = $attr_obj->save();
 
-=head1 DESCRIPTION
+=head1 Description
 
 The attribute module allows key/value pairs to be associated with an
 object. Attributes apply to a specific object of a specific type. Attributes
@@ -248,7 +247,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Methods
 
@@ -1876,15 +1875,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Util::Group>
 

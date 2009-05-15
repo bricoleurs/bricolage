@@ -1,9 +1,8 @@
 package Bric::Biz::Asset;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset - A base class of behaviours that all assets must exhibit. An
 asset is anything that goes through workflow
@@ -12,7 +11,7 @@ asset is anything that goes through workflow
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Class Methods
  $key_name = Bric::Biz::Asset->key_name()
@@ -75,7 +74,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # returns all the groups this is a member of
  ($grps || @grps) = $asset->get_grp_ids()
 
-=head1 DESCRIPTION
+=head1 Description
 
 Asset is the Parent Class for everything that will go through Workflow. It
 contains data and actions that are common to all of these objects. Asset holds
@@ -197,7 +196,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1782,7 +1781,7 @@ sub checkin {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 
 =head2 Private Class Methods
@@ -1803,7 +1802,7 @@ NONE
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 =over
 
@@ -1815,7 +1814,7 @@ __END__
 
 =back
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric.pm>,L<Bric::Util::Group::AssetVersion>
 

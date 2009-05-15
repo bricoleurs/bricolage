@@ -1,10 +1,8 @@
 package Bric::Util::Grp::Parts::Member;
 
-# $Id$
-
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::Parts::Member - A Class for associating Members of a
 Group with attribute with in the group
@@ -13,7 +11,7 @@ Group with attribute with in the group
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Constructors.
   my $member = Bric::Util::Grp::Parts::Member->new( $initial_state );
@@ -36,7 +34,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Retrieve the underlying Bric object.
   $object = $member->get_object;
 
-=head1 DESCRIPTION
+=head1 Description
 
 A Member is a container for an object and any properties that it may have with
 in the group it is associated with that it would not have by its self.
@@ -160,7 +158,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1188,7 +1186,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2146,15 +2144,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 michael soderstrom ( miraso@pacbell.net )
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Util::Grp>, L<Bric::Util::Attribute>
 

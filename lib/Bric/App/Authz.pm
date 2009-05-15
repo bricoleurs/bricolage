@@ -1,8 +1,6 @@
 package Bric::App::Authz;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Authz - Exports functions for checking user authorization.
 
@@ -11,7 +9,7 @@ Bric::App::Authz - Exports functions for checking user authorization.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Authz qw(:all);
 
@@ -24,7 +22,7 @@ require Bric; our $VERSION = Bric->VERSION;
   chk_authz($obj, CREATE);
   # If we get here, we can create $obj.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package exports the function chk_authz(), which will return true if the
 current user has permission to perform a given activity to $obj, and redirect to
@@ -85,7 +83,7 @@ use constant DEBUG => 0;
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -207,7 +205,7 @@ sub clear_authz_cache {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -226,15 +224,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>

@@ -196,6 +196,9 @@ div.debug dt:after {
     position: relative;
     font-size: 11px;
     line-height: 11px;
+/* Trigger hasLayout to fix IE6 pop menu z-index issues on the Workspace page
+ * where there can be more than one desk on the page */
+    _zoom: 1;
 }
 
 .jump { float: right; padding-top: 3px; }
@@ -978,40 +981,40 @@ table.dlman tr.dlbtns { height: 30px; }
 
 /* lightbox */
 #overlay{
-	display:none;
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	z-index:1000;
-	background-color:#333;
-	-moz-opacity: 0.8;
-	opacity:.80;
-	filter: alpha(opacity=80);
+    display:none;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    background-color:#333;
+    -moz-opacity: 0.8;
+    opacity:.80;
+    filter: alpha(opacity=80);
 }
 
 .lightbox, .lightboxerror, .lightboxconflict, .lightboxforbidden {
-	color: #333;
-	display: none;
-	position: absolute;
-	top: 25%;
-	left: 8%;
-	width: 80%;
-	height: 50%;
-	padding: 1em;
-	background-color: white;
-	text-align: left;
-	z-index:1001;
-	overflow: auto;	
+    color: #333;
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 8%;
+    width: 80%;
+    height: 50%;
+    padding: 1em;
+    background-color: white;
+    text-align: left;
+    z-index:1001;
+    overflow: auto;    
 }
 
 .lightbox .errorMsg { padding-top: 0; margin-top: 0; }
 
 .lightboxconflict, .lightboxforbidden {
-	width: 40%;
+    width: 40%;
     left: 30%;
-	height: 25%;
+    height: 25%;
 }
 
 .lightboxerror     { border: 1em solid #cc0000; }

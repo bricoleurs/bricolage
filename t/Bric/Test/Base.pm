@@ -1,6 +1,6 @@
 package Bric::Test::Base;
 
-=head1 NAME
+=head1 Name
 
 Bric::Test::Base - Bricolage Testing Base Class
 
@@ -9,7 +9,7 @@ Bric::Test::Base - Bricolage Testing Base Class
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   package Bric::Biz::Person::Test;
 
@@ -27,13 +27,13 @@ require Bric; our $VERSION = Bric->VERSION;
       isa_ok($self, 'Bric::Test::Base');
   }
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class is the base class for all of the Bricolage testing classes. It uses
 the L<Test::Class|Test::Class> module as I<its> base class, and thus all of
 its subclasses get all of its benefits.
 
-=head1 INTERFACE
+=head1 Interface
 
 Bric::Test::Base inherits from L<Test::Class|Test::Class>, and therefore the
 entire interface of that class is available to Bric::Test::Base and its
@@ -91,7 +91,7 @@ open REALIN, ">&STDIN"  or die "Can't dup STDIN: $!";
 my $stdin = tie *STDIN, 'Bric::Test::TieOut', \*REALIN
   or die "Cannot tie STDIN: $!\n";
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Class Methods
 
@@ -180,11 +180,11 @@ sub print_stdin {
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Test::DevBase|Bric::Test::DevBase>, L<Test::Class|Test::Class>,
 L<Test::More|Test::More>, L<Test::Simple|Test::Simple>.

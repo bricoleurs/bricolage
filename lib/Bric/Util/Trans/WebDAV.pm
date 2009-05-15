@@ -1,8 +1,6 @@
 package Bric::Util::Trans::WebDAV;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
 
@@ -11,11 +9,11 @@ Bric::Util::Trans::WebDAV - WebDAV Client interface for distributing resources.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Trans::WebDAV
 
-=head1 DESCRIPTION
+=head1 Description
 
 The distribution API uses this class to distribute resources to other servers
 via WebDAV
@@ -67,7 +65,7 @@ BEGIN { Bric::register_fields() }
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -311,7 +309,7 @@ sub del_res {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -330,15 +328,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Joao Pedro Goncalves E<lt>joaop@co.sapo.pt<gt>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Dist::Action|Bric::Dist::Action>,

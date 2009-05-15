@@ -1,9 +1,8 @@
 package Bric::Util::Coll::Keyword;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::Keyword - Interface for managing collections of
 Bric::Biz::Keyword objects.
@@ -12,11 +11,11 @@ Bric::Biz::Keyword objects.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN { }
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -213,7 +212,7 @@ sub save {
 
     # Save the existing and new objects.
     foreach my $keyword (values %$objs) {
-	$keyword->save;
+    $keyword->save;
     }
 
     # Add the new objects to the main list of objects.
@@ -226,7 +225,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -266,15 +265,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Arthur Bergman <sky@nanisky.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,

@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business::Media::Audio;
 
-# $Id$
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Media::Audio - the media class that represents static
 audios
@@ -12,11 +11,11 @@ audios
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Data$
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of new Audio objects
  $audio = Bric::Biz::Asset::Business::Media::Audio->new( $init )
@@ -26,7 +25,7 @@ $Data$
  # list of ids
  ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Audio->list_ids($param)
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Subclass of Media that pretains to Audios 
 
@@ -88,19 +87,19 @@ use base qw( Bric::Biz::Asset::Business::Media );
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
 # Interface Methods             #
 #===============================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructrs
 
@@ -168,11 +167,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -196,7 +195,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -217,8 +216,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -260,7 +259,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 
@@ -285,11 +284,11 @@ NONE
 =cut
 
 sub get_class_id {
-	return 49;
+    return 49;
 }
 
 =item ($fields || @fields) = 
-	Bric::Biz::Asset::Business::Media::Audio::autopopulated_fields()
+    Bric::Biz::Asset::Business::Media::Audio::autopopulated_fields()
 
 Returns a list of the names of fields that are registered in the database as 
 being autopopulatable
@@ -309,16 +308,16 @@ NONE
 =cut
 
 sub autopopulated_fields {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $fields = $self->_get_auto_fields();
+    my $fields = $self->_get_auto_fields();
 
-	my @auto;
-	foreach (keys %$fields ) {
-		push @auto, $_;
-	}
+    my @auto;
+    foreach (keys %$fields ) {
+        push @auto, $_;
+    }
 
-	return wantarray ? @auto : \@auto;
+    return wantarray ? @auto : \@auto;
 }
 
 ################################################################################
@@ -365,7 +364,7 @@ NONE
 
 NONE
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -383,15 +382,15 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Michael Soderstrom" <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>

@@ -1,11 +1,10 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
 -- Description: The table that holds the registered Output Channels.
---				This maps to the Bric::OutputChannel Class.
+--                This maps to the Bric::OutputChannel Class.
 --
 --
 
@@ -13,12 +12,12 @@
 -- Table output_channel
 --
 -- Description: Holds info on the various output channels and is referenced
--- 				by templates and elements
+--                 by templates and elements
 --
 --
 
 CREATE TABLE output_channel (
-    id	         INTEGER            NOT NULL AUTO_INCREMENT,
+    id             INTEGER            NOT NULL AUTO_INCREMENT,
     name             VARCHAR(64)    NOT NULL,
     description      VARCHAR(256),
     site__id         INTEGER        NOT NULL,

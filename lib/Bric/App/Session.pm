@@ -1,9 +1,8 @@
 package Bric::App::Session;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::App::Session - A class to handle user sessions
 
@@ -11,7 +10,7 @@ Bric::App::Session - A class to handle user sessions
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Session;
 
@@ -31,7 +30,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   [$state_name, $state_data] = state($widget, $state_name, $state_data);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides all the necessary functions for maintaining state within
 widgets. This includes setting a global state variable $session as well as
@@ -156,7 +155,7 @@ my $secret = 'd0 a3rQ#R9JR34$(#ffE*38fhj3#$98jfeER9\'a35T(fgn[*;|ife=ef*R#,{%@';
 
 #------------------------------------------------------------------------------#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -712,15 +711,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Apache::Session::File>
 

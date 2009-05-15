@@ -1,8 +1,6 @@
 package Bric::App::CleanupHandler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::CleanupHandler - Cleans up at the end of a request.
 
@@ -11,7 +9,7 @@ Bric::App::CleanupHandler - Cleans up at the end of a request.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
@@ -32,7 +30,7 @@ require Bric; our $VERSION = Bric->VERSION;
       PerlCleanupHandler Bric::App::CleanupHandler
   </Directory>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles the cleanup phase of an Apache request. It logs all events
 to the database (which in turn send any alerts), syncs the session data, and
@@ -82,7 +80,7 @@ use Bric::Util::DBI qw(:trans);
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -152,7 +150,7 @@ sub handler {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -171,15 +169,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

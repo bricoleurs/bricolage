@@ -1,8 +1,6 @@
 package Bric::Biz::Org::Source;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Org::Source - Manages content sources.
 
@@ -11,7 +9,7 @@ Bric::Biz::Org::Source - Manages content sources.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Biz::Org::Source;
 
@@ -41,7 +39,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $src = $src->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class manages asset sources. A source is an organization that provides
 content, such as a wire service or a syndicate. Thus, each source object is a
@@ -135,7 +133,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1137,7 +1135,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1276,15 +1274,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

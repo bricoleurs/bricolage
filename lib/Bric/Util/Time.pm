@@ -1,10 +1,8 @@
 package Bric::Util::Time;
 
-# $Id$
-
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Time - Bricolage Time & Date Functions
 
@@ -15,7 +13,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Time ':all';
   my $formatted_date = strfdate($epoch_time, $format, $utc);
@@ -23,7 +21,7 @@ require Bric; our $VERSION = Bric->VERSION;
   my $db_date = db_date($iso_local_date);
   my $dt = datetime($iso_format_date, $tz);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package provides time and date formatting functions that may be imported
 into other Bricolage packages and classes.
@@ -85,7 +83,7 @@ for my $tz (split ' ', LOAD_TIME_ZONES) {
 # Exportable Functions
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 To use any of the functons in Bric::Util::Time, you must explicitly import
 them into your module's namespace. This can be done in one of two ways: All of
@@ -388,7 +386,7 @@ __END__
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 NONE.
 
@@ -404,17 +402,17 @@ NONE.
 
 NONE.
 
-=head1 NOTES
+=head1 Notes
 
 ISO 8601 date support is incomplete. Currently, time-zone information in the
 date string is ignored. Also, date and time parts (CCYY, MM, DD, hh, mm and
 ss) must be separated by a single character.
 
-=head1 AUTHOR
+=head1 Author
 
 David E. Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::DBI|Bric::Util::DBI>

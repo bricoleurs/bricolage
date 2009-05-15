@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 dev.pl - installs bricolage to run out of a Subversion checkout
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make dev" to modify a standard install to
 point some files back at the Subversion checkout it's being installed from.
 
-=head1 AUTHOR
+=head1 Author
 
 Marshall Roch <marshall@exclupen.com>
 
@@ -42,8 +42,8 @@ die qq{The developer install is not supportd in "single" installation mode.\n},
 
 # Delete bin/, comp/ and lib/ so we can replace them with SVN versions
 rmtree([$CONFIG->{BIN_DIR},
-		$CONFIG->{MASON_COMP_ROOT},
-		$CONFIG->{MODULE_DIR}]);
+        $CONFIG->{MASON_COMP_ROOT},
+        $CONFIG->{MODULE_DIR}]);
 
 symlink(catdir(cwd, '/bin'), $CONFIG->{BIN_DIR});
 symlink(catdir(cwd, '/comp'), $CONFIG->{MASON_COMP_ROOT});

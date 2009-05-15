@@ -1,8 +1,6 @@
 package Bric::Util::Attribute::Action;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Attribute::Action - Interface to Attributes of Bric::Util::Action
 objects
@@ -12,11 +10,11 @@ objects
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Attribute
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Attribute.
 
@@ -66,7 +64,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -121,7 +119,7 @@ sub short_object_type { 'action' }
 
 Inherited from Bric::Util::Attribute.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Constructors
 
@@ -144,15 +142,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Dist::Action|Bric::Dist::Action>, 

@@ -1,13 +1,13 @@
-=head1 NAME
+=head1 Name
 
 Bric::DBA - Bricolage Database Administration Guide.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This guide is intended for the database administrator in charge of maintaining
 the Bricolage PostgreSQL database.
 
-=head1 SECURITY
+=head1 Security
 
 By default, PostgreSQL has pretty lax authentication settings, at least locally.
 Client authentication is controlled by the file pg_hba.conf in the $PGDATA
@@ -69,7 +69,7 @@ settings for ensuring the security and integrity of your data. Refer to the
 PostgreSQL documentation at L<http://www.postgresql.org/> for
 more details, including other levels of encryption.
 
-=head1 BACKUP AND RESTORE
+=head1 Backup and Restore
 
 PostgreSQL supports backups and restores via its pg_dump, pg_dumpall, and psql
 utilities. File system backups are also a good idea. We recommend that you use
@@ -133,7 +133,7 @@ database cluster.
 For more detail on PostgreSQL backup and restore, please consult the PostgreSQL
 documentation at L<http://www.postgresql.org/>.
 
-=head1 WRITE-AHEAD LOGGING (WAL)
+=head1 Write-Ahead Logging (WAL)
 
 Write Ahead Logging (WAL) is a standard approach to transaction logging. It is
 automatically enabled in the PostgreSQL server. WAL ensures that the log is
@@ -144,7 +144,7 @@ using the log.
 Please consult the PostgreSQL documentation for more information on configuring
 WAL and recovering databases with WAL.
 
-=head1 VACUUM
+=head1 Vacuum
 
 VACUUM is a PostgreSQL SQL command that cleans and analyzes a PostgreSQL
 database. Its purpose is to reclaim storage and to collect information for the
@@ -222,7 +222,7 @@ Read the rest of the C<pg_autovacuum> F<README> for installation and
 configuration instructions. When you start it up, we recommend using these
 options: C<-D -v 300 -V 0.5> for optimal vacuum maintenance.
 
-=head1 TUNING
+=head1 Tuning
 
 PostgreSQL requires a certain amount of tuning to operate at optimum
 efficiency. The default settings for a new PostgreSQL installation are very
@@ -468,7 +468,7 @@ Subscribe to the pgsql-performance list.
 
 =back
 
-=head1 MORE PERFORMANCE TIPS
+=head1 More Performance Tips
 
 Note: B<Do this at your own risk!!!>
 
@@ -510,7 +510,7 @@ course it also saves disk space.
 Of course if you have some reason to generate reports on complete jobs you
 won't be able to do this.
 
-=head1 AUTHORS
+=head1 Authors
 
 David Wheeler <david@justatheory.com>
 
@@ -518,7 +518,7 @@ Mark Jaroski <jaroskim@who.int>
 
 With input and suggestions from Josh Berkus.
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>
 

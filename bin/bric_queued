@@ -1,16 +1,14 @@
 #!/usr/bin/perl -w
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 bric_queued - Bricolage jobs queue daemon
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   bric_queud [options]
 
-=head1 DESCRIPTION
+=head1 Description
 
 F<bric_queued> runs as a daemon that polls a Bricolage jobs queue and executes
 any unexecuted jobs with current or past scheduled times. Normally, (see
@@ -29,7 +27,7 @@ that makes no HTTP requests to the Bricolage Apache/mod_perl server. This
 allows it to to publish and distribute resources in its own process without
 bogging down the Apache/mod_perl server and therefore its UI.
 
-=head1 OPTIONS
+=head1 Options
 
 =head2 --username
 
@@ -66,7 +64,7 @@ in its database in much greater detail.
 
 Print usage information and exit.
 
-=head1 DEPENDENCIES
+=head1 Dependencies
 
 =head2 C<$BRICOLAGE_ROOT>
 
@@ -216,7 +214,7 @@ if ($SingleJobMode) {
 
 =begin comment
 
-=head1 SUBROUTINES
+=head1 Subroutines
 
 =head2 run_as_daemon
 
@@ -489,6 +487,6 @@ __END__
 
 =end comment
 
-=head1 AUTHOR
+=head1 Author
 
 Mark Jaroski <jaroskim@who.int>

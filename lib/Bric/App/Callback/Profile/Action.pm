@@ -1,16 +1,14 @@
 package Bric::App::Callback::Profile::Action;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Callback::Profile::Action - Action callback class.
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Callback::Profile::Action;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class contains the callbacks for the distribution action profile in the
 Bricolage UI.
@@ -99,11 +97,11 @@ sub delete : Callback {
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -119,7 +117,7 @@ inherits.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
 L<Bric::License|Bric::License> for complete license terms and conditions.

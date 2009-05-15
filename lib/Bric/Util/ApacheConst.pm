@@ -1,8 +1,6 @@
 package Bric::Util::ApacheConst;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::ApacheConst - Common Apache and HTTP status code constants
 
@@ -10,18 +8,18 @@ Bric::Util::ApacheConst - Common Apache and HTTP status code constants
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::ApacheConst qw(:common);
   use Bric::Util::ApacheConst;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package implements common constants used by mod_perl handlers for return
 values and HTTP status codes so that Bricolage doesn't have to care about
 which version of Apache is running.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 

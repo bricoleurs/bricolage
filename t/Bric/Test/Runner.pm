@@ -1,6 +1,6 @@
 package Bric::Test::Runner;
 
-=head1 NAME
+=head1 Name
 
 Bric::Test::Base - Bricolage Development Testing Base Class
 
@@ -9,22 +9,22 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Test::Harness qw(runtests);
   runtests(File::Spec->catfile(qw(t Bric Test Runner.pm)));
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class functions as the sole test script for Bricolage. It locates all of
 the Bricolage test classes and executes them. See F<inst/runtests.pl> for
 its complete usage.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Test::Base|Bric::Test::Base>, F<inst/runtests.pl>.
 

@@ -1,8 +1,6 @@
 package Bric::Dist::Client;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Client - LWP Client for telling Bric::Dist::Handler to execute
 distribution jobs.
@@ -12,7 +10,7 @@ distribution jobs.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Client;
 
@@ -25,7 +23,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $dist->send;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class functions as a client to the distribution server. It sends a tickle
 request to the Bricolage distribution server, which is running
@@ -93,7 +91,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -446,7 +444,7 @@ sub send {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -463,15 +461,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

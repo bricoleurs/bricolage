@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business - An object that houses the business Assets
 
@@ -11,7 +10,7 @@ Bric::Biz::Asset::Business - An object that houses the business Assets
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Constructor
  $biz = Bric::Biz::Asset::Business->new($param);
@@ -88,7 +87,7 @@ require Bric; our $VERSION = Bric->VERSION;
  ($grps || @grps) = $asset->get_grp_ids()
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is the parent class for all the documents, including
 L<stories|Bric::Biz::Asset::Business::Story> and L<media
@@ -210,7 +209,7 @@ BEGIN {
 
 #=============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -2256,7 +2255,7 @@ sub _check_uri_table {
 
 =back
 
-=head2 PRIVATE
+=head2 Private
 
 =cut
 
@@ -2865,15 +2864,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 michael soderstrom <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Biz::Asset>
 

@@ -1,8 +1,6 @@
 package Bric::Dist::Handler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 
@@ -11,14 +9,14 @@ Bric::Dist::Handler - Apache/mod_perl handler for executing distribution jobs.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Location /dist>
       SetHandler perl-script
       PerlHandler Bric::Dist::Handler
   </Location>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module is a simple Apache/mod_perl handler for executing Bricolage
 distribution jobs. It responds to a request with the headers "execute" and/or
@@ -74,7 +72,7 @@ use constant DEBUG => 0;
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -110,7 +108,7 @@ NONE.
 
 NONE.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -212,15 +210,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Job|Bric::Util::Job>

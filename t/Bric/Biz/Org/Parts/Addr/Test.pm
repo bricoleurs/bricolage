@@ -23,12 +23,12 @@ use Bric::BC::Org;
 
 # Create a new address. Will generally be called from Bric::BC::Org.
 my $addr2 =  Bric::BC::Org::Parts::Addr->new({type => 'Shipping',
-					     org_id => 7,
-					     city => 'Sacramento',
-					     state => 'CA',
-					     code => '95821',
-					     country => 'U.S.A.',
-					     lines => '4171 17th Street'
+                         org_id => 7,
+                         city => 'Sacramento',
+                         state => 'CA',
+                         code => '95821',
+                         country => 'U.S.A.',
+                         lines => '4171 17th Street'
 });
 
 print "ID:      ", $addr2->get_id || '', "\n";

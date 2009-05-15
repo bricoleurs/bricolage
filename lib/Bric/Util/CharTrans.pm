@@ -1,8 +1,6 @@
 package Bric::Util::CharTrans;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
@@ -12,7 +10,7 @@ Bric::Util::CharTrans - Interface to Bricolage UTF-8 Character Translations
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Constructors.
   my $chartrans = Bric::Util::CharTrans->new('iso-8859-1');
@@ -26,7 +24,7 @@ require Bric; our $VERSION = Bric->VERSION;
   $chartrans->from_utf8(\$some_data);
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bric::Util::CharTrans provides an object-oriented interface to conversion of
 characters from a target character set to Unicode UTF-8 and from Unicode UTF-8
@@ -72,7 +70,7 @@ define_alias 'X-SJIS'      => 'SJIS';
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -266,15 +264,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 None.
 
-=head1 AUTHORS
+=head1 Authors
 
 Paul Lindner <lindner@inuus.com>, David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Encode|Encode>

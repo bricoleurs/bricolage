@@ -1,16 +1,15 @@
 package Bric::Util::Fault::Exception::AP;
 
-# $Id$
 use Bric::Util::Fault;
 
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Fault::Exception::AP - Legacy Exception Class
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a dummy class to keep Bricolage from breaking when various classes and
 libraries C<use Bric::Util::Fault::Exception::AP>. Eventually all such use

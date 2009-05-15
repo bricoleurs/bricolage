@@ -1,9 +1,8 @@
 package Bric::Util::Grp::Asset;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::Category - A module to group assets into categories.
 
@@ -11,7 +10,7 @@ Bric::Util::Grp::Category - A module to group assets into categories.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Grp::Asset;
 
@@ -47,7 +46,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # Remove this category from the database.
  $success = $bag->remove();
 
-=head1 DESCRIPTION
+=head1 Description
 
 Allows assets to be grouped into categories.  In addition to assets a category 
 can contain other categories, allowing a hierarchical layout of categories and
@@ -113,16 +112,16 @@ my ($class, $mem_class);
 # This method of Bricolage will call 'use fields' for you and set some permissions.
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
+             # Private Fields
 
-			});
+            });
 }
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -276,12 +275,12 @@ NONE
 
 sub get_supported_classes {
     return { &STORY_PKG  => 'story',
-	     &MEDIA_PKG  => 'media',
-	     &FORMAT_PKG => 'template',
-	     &AUDIO_PKG  => 'media',
-	     &IMAGE_PKG  => 'media',
-	     &VIDEO_PKG  => 'media'
-	   }
+         &MEDIA_PKG  => 'media',
+         &FORMAT_PKG => 'template',
+         &AUDIO_PKG  => 'media',
+         &IMAGE_PKG  => 'media',
+         &VIDEO_PKG  => 'media'
+       }
 }
 
 ##############################################################################
@@ -540,16 +539,16 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Garth Webb" <garth@perijove.com>
 Bricolage Engineering
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Util::Grp>
 

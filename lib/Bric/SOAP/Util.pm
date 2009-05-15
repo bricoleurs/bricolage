@@ -1,6 +1,5 @@
 package Bric::SOAP::Util;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -41,7 +40,7 @@ our @EXPORT_OK = qw(
 # set to 1 to see debugging output on STDERR
 use constant DEBUG => 0;
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
@@ -49,20 +48,20 @@ Bric::SOAP::Util - utility class for the Bric::SOAP classes
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::SOAP::Util qw(category_path_to_script)
 
   my $category_id = category_path_to_id($path);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides various utility methods of use throughout the
 Bric::SOAP classes.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Exportable Functions
 
@@ -768,11 +767,11 @@ sub resolve_relations {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>
 

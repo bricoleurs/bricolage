@@ -1,7 +1,5 @@
 package Bric::App::Callback::Util::OutputChannel;
 
-# $Id$
-
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:aref);
@@ -69,21 +67,21 @@ sub update_output_channels {
 
 1;
 
-=head1 NAME
+=head1 Name
 
 Bric::App::Callback::Util::OutputChannel - Utility function for adding/removing OCs
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Callback::Util::OutputChannel qw(:all);
   update_output_channels($element, $widget, $params);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides utility functions for updating Output Channel associations
 based on form input provided by Story and Media profile pages.
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Functions
 
@@ -96,11 +94,11 @@ C<$params>. See
 L<Bric::App::Callback::Profile::Story|Bric::App::Callback::Profile::Story> for a
 sample usage.
 
-=head1 AUTHOR
+=head1 Author
 
 Marshall Roch <marshall@exclupen.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -110,7 +108,7 @@ Marshall Roch <marshall@exclupen.com>
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2006 Marshall Roch. See L<Bric::License|Bric::License> for
 complete license terms and conditions.

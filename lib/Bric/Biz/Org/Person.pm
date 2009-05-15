@@ -1,9 +1,8 @@
 package Bric::Biz::Org::Person;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
@@ -11,7 +10,7 @@ Bric::Biz::Org::Person - Manages Organizations Related to Persons
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # How to create brand new Bric::Biz::Org::Person object.
   my $org = Bric::Biz::Org->lookup({ id => $org_id });
@@ -51,7 +50,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
   $porg = $porg->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class manages the association between a Bric::Biz::Person object and a
 Bric::Biz::Org object. There may be numerous adddresses associated with a given
@@ -153,7 +152,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1405,7 +1404,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1595,15 +1594,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 This is an early draft of this class, and therefore subject to change.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Biz::Org|Bric::Biz::Org>,

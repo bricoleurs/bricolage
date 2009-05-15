@@ -1,9 +1,8 @@
 package Bric::Util::Burner::Template;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Burner::Template - Publish stories using HTML::Template templates
 
@@ -11,7 +10,7 @@ Bric::Util::Burner::Template - Publish stories using HTML::Template templates
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Burner::Template;
 
@@ -21,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # burn an asset, get back a list of resources
   my $resources = $template_burner->burn_one($ba, $oc, $cat, $at);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles burning business assets using HTML::Template templates.
 
@@ -96,7 +95,7 @@ __PACKAGE__->_register_burner( Bric::Biz::OutputChannel::BURNER_TEMPLATE,
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1075,16 +1074,16 @@ sub _compile {
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 Bric::Util::Burner::Template does not support the PERL_LOADER or
 XML_WRITER options described in L<Bric::Admin>.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar L<gt>stregar@about-inc.comL<lt>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Burner>
 

@@ -1,8 +1,6 @@
 package Bric::Util::Cookie;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Cookie - Wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Cookie
 
@@ -10,13 +8,13 @@ Bric::Util::Cookie - Wrapper around Apache::Cookie, Apache2::Cookie, and CGI::Co
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Cookie;
   my $cookie = Bric::Util::Cookie->new($r);
   $cookie->bake;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package subclasses the C<Apache::Cookie>, C<Apache2::Cookie>, or
 C<CGI::Cookie> class so that Bricolage doesn't have to care about which
@@ -43,7 +41,7 @@ BEGIN {
     }
 }
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructor
 
@@ -111,7 +109,7 @@ sub bake {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 

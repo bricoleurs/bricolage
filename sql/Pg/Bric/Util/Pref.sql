@@ -25,7 +25,7 @@ CREATE TABLE pref (
     description  VARCHAR(256),
     value        VARCHAR(256),
     def          VARCHAR(256),
-    manual	     BOOLEAN         NOT NULL DEFAULT FALSE,
+    manual         BOOLEAN         NOT NULL DEFAULT FALSE,
     opt_type     VARCHAR(16)     NOT NULL,
     can_be_overridden  BOOLEAN   NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_pref__id PRIMARY KEY (id)

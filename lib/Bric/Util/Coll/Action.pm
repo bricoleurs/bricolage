@@ -1,9 +1,8 @@
 package Bric::Util::Coll::Action;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::Action - Interface for managing collections of distribution actions.
 
@@ -11,11 +10,11 @@ Bric::Util::Coll::Action - Interface for managing collections of distribution ac
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -187,7 +186,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -209,7 +208,7 @@ B<Notes:> NONE.
 sub _sort_objs {
     my ($pkg, $objs) = @_;
     return ( map { $objs->{$_} }
-	       sort { $objs->{$a}{ord} <=> $objs->{$b}{ord} } keys %$objs);
+           sort { $objs->{$a}{ord} <=> $objs->{$b}{ord} } keys %$objs);
 }
 
 =back
@@ -227,15 +226,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Coll|Bric::Util::Coll>, 

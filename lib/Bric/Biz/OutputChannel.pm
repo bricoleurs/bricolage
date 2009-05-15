@@ -1,9 +1,8 @@
 package Bric::Biz::OutputChannel;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::OutputChannel - Bricolage Output Channels.
 
@@ -11,7 +10,7 @@ Bric::Biz::OutputChannel - Bricolage Output Channels.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Biz::OutputChannel;
 
@@ -63,7 +62,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Persistence methods.
   $oc = $oc->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Holds information about the output channels that will be associated with
 templates and elements.
@@ -237,7 +236,7 @@ BEGIN {
 ## Interface Methods                   #
 #======================================#
 
-=head1 PUBLIC INTERFACE
+=head1 Public Interface
 
 =head2 Public Constructors
 
@@ -1707,7 +1706,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2110,17 +2109,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHORS
+=head1 Authors
 
 Michael Soderstrom <miraso@pacbell.net>
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset::Business>, L<Bric::Biz::ElementType>,
 L<Bric::Biz::Asset::Template>.

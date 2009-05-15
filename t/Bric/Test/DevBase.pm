@@ -1,6 +1,6 @@
 package Bric::Test::DevBase;
 
-=head1 NAME
+=head1 Name
 
 Bric::Test::DevBase - Bricolage Development Testing Base Class
 
@@ -9,7 +9,7 @@ Bric::Test::DevBase - Bricolage Development Testing Base Class
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   package Bric::Biz::Person::DevTest;
 
@@ -40,7 +40,7 @@ require Bric; our $VERSION = Bric->VERSION;
       $self->add_del_ids($grp->get_id, 'grp' );
   }
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class is the base class for all of the Bricolage development testing
 classes. It uses the L<Bric::Test::Base|Bric::Test::Base> module as I<its>
@@ -74,7 +74,7 @@ use Bric::Biz::Person::User;
 
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 Bric::Test::DevBase inherits from L<Bric::Test::Base|Bric::Test::Base>, and
 therefore the entire interface of that class is available to
@@ -232,11 +232,11 @@ __END__
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Test::Base|Bric::Test::Base>, L<Test::Class|Test::Class>,
 L<Test::More|Test::More>, L<Test::Simple|Test::Simple>.

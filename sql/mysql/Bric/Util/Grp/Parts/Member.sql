@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -13,16 +12,16 @@
 -- maps the object to its member contains an id an object id and a member id
 --
 -- Thought should be given to:
--- 		Ensuring that an object is not placed with in the same group twice
---		Making sure that an object that is deactivated from a group that is 
---			then put back in again will behave properly
+--         Ensuring that an object is not placed with in the same group twice
+--        Making sure that an object that is deactivated from a group that is 
+--            then put back in again will behave properly
 --
 
 
 -- -----------------------------------------------------------------------------
 -- Table: member
 --
--- Description:	The table that creates a member of a group.   The obj_member 
+-- Description:    The table that creates a member of a group.   The obj_member 
 -- table then links the objects to the member table
 --
 

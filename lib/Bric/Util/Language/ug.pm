@@ -1,10 +1,8 @@
 package Bric::Util::Language::ug;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::ug - Bricolage Uyghur translation
 
@@ -12,13 +10,13 @@ Bric::Util::Language::ug - Bricolage Uyghur translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = ug
 
-=head1 DESCRIPTION
+=head1 Description
 
 Translation to Uyghur using Lang::Maketext.
 
@@ -38,11 +36,11 @@ our %Lexicon = (
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Maybe You? <devel@lists.bricolage.cc>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

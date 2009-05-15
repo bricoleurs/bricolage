@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 cpan.pl - installation script to install CPAN modules
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make install" to install Perl modules
 from CPAN.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -60,7 +60,7 @@ BEGIN {
     shift(@INC);
 
     unless ($found_config) {
-	print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
+    print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
 This installation system uses CPAN.pm to automatically install CPAN
 modules.  I have detected that you have never used CPAN.pm to install
 Perl modules.  Before I can proceed with this installation you must
@@ -80,7 +80,7 @@ questionnaire at this time.  Once you have a working CPAN.pm come back
 here are re-run "make install".
 
 END
-	exit 1;
+    exit 1;
     }
 }
 
@@ -122,14 +122,14 @@ print "\n\n==> Installing Modules From CPAN <==\n\n";
 use constant FORCE  => 1;
 use constant PG_ENV => 2;
 our %flags = (
-	      'Net::Cmd'         => FORCE,
-	      'LWP'              => FORCE,
-	      'XML::Writer'      => FORCE,
-	      'Params::Validate' => FORCE,
-	      'DBD::Pg'          => FORCE|PG_ENV,
-	      'Cache::Cache'     => FORCE,
-	      'HTML::Mason'      => FORCE,
-	     );
+          'Net::Cmd'         => FORCE,
+          'LWP'              => FORCE,
+          'XML::Writer'      => FORCE,
+          'Params::Validate' => FORCE,
+          'DBD::Pg'          => FORCE|PG_ENV,
+          'Cache::Cache'     => FORCE,
+          'HTML::Mason'      => FORCE,
+         );
 
 our $DB;
 do "./database.db" or die "Failed to read database.db : $!";
@@ -196,7 +196,7 @@ END
         if ($flags{$key} and $flags{$key} & PG_ENV) {
             $ENV{POSTGRES_INCLUDE} = $DB->{include_dir};
             $ENV{POSTGRES_LIB}     = $DB->{lib_dir};
-	    }
+        }
 
         # do the install. If prereqs are found they'll get put on the Queue
         # and processed in turn.

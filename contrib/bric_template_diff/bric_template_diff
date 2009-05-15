@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 use strict;
 
-=head1 NAME
+=head1 Name
 
 bric_template_diff - describe differences between template sets
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 Produce a diff of all changes from old_bric to new_bric:
 
@@ -20,7 +20,7 @@ Same thing, ignoring changes in whitespace
   $ bric_template_diff --diff-options -urbB --template /cover.tmpl \
     old_bric new_bric > diff.txt
 
-=head1 OPTIONS
+=head1 Options
 
 bric_template_diff [options] from_url to_url
 
@@ -88,14 +88,14 @@ Options:
   --timeout         - specify the HTTP timeout for SOAP requests in
                       seconds.  Defaults to 60.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This program produces a standard diff file describing the differences
 between the templates on two Bricolage servers.  This file may be used
 with C<bric_template_patch> to effect the changes described in the
 diff.
 
-=head1 CAVEATS
+=head1 Caveats
 
 =over 4
 
@@ -105,7 +105,7 @@ This program requires GNU C<diff> to be installed and in your path.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@thepirtgroup.com>
 
@@ -129,37 +129,37 @@ BEGIN {
     our $template_name;
     our $diff_options         = '-ur';
     GetOptions("help"                   => \$help,
-	       "man"                    => \$man,
-	       "verbose+"               => \$VERBOSE,
-	       "from-username=s"        => \$from_username,
-	       "from-password=s"        => \$from_password,
-	       "from-oc=s"              => \$from_oc,
-	       "from-site=s"            => \$from_site,
-	       "to-username=s"          => \$to_username,
-	       "to-password=s"          => \$to_password,
-	       "to-oc=s"                => \$to_oc,
-	       "to-site=s"              => \$to_site,
+           "man"                    => \$man,
+           "verbose+"               => \$VERBOSE,
+           "from-username=s"        => \$from_username,
+           "from-password=s"        => \$from_password,
+           "from-oc=s"              => \$from_oc,
+           "from-site=s"            => \$from_site,
+           "to-username=s"          => \$to_username,
+           "to-password=s"          => \$to_password,
+           "to-oc=s"                => \$to_oc,
+           "to-site=s"              => \$to_site,
                "timeout=s"              => \$timeout,
                "template=s"             => \$template_name,
                "diff-options=s"         => \$diff_options,
-	      ) or  pod2usage(2);
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
 
     # check required options
     pod2usage("Missing required --from-username option ".
-	      "and BRICOLAGE_USERNAME environment variable unset.")
-	unless defined $from_username;
+          "and BRICOLAGE_USERNAME environment variable unset.")
+    unless defined $from_username;
     pod2usage("Missing required --from-password option ".
-	      "and BRICOLAGE_PASSWORD environment variable unset.")
-	unless defined $from_password;
+          "and BRICOLAGE_PASSWORD environment variable unset.")
+    unless defined $from_password;
     pod2usage("Missing required --to-username option ".
-	      "and BRICOLAGE_USERNAME environment variable unset.")
-	unless defined $to_username;
+          "and BRICOLAGE_USERNAME environment variable unset.")
+    unless defined $to_username;
     pod2usage("Missing required --to-password option ".
-	      "and BRICOLAGE_PASSWORD environment variable unset.")
-	unless defined $to_password;
+          "and BRICOLAGE_PASSWORD environment variable unset.")
+    unless defined $to_password;
 
     # get from and tos
     $from_url = shift @ARGV;
@@ -167,7 +167,7 @@ BEGIN {
       unless defined $from_url;
     $to_url = shift @ARGV;
     pod2usage("Missing required to_url parameter")
-	unless $to_url;
+    unless $to_url;
 };
 
 our $VERBOSE;
@@ -302,17 +302,17 @@ sub soap_connect_to {
 
     # setup soap object to login with
     my $soap = new SOAP::Lite
-	uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
+    uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
         readable => $VERBOSE >= 2 ? 1 : 0;
     $soap->proxy($url . '/soap',
-		 cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
-		 timeout => $timeout,
-		);
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1),
+         timeout => $timeout,
+        );
 
     # login
     print STDERR "Logging in to $url as $username...\n" if $VERBOSE;
     my $response = $soap->login(name(username => $username), 
-				name(password => $password));
+                name(password => $password));
     die "Login to $url as $username failed.\n" if $response->fault;
     print STDERR "Login to $url success.\n" if $VERBOSE;
 
@@ -323,12 +323,12 @@ sub soap_connect_to {
 sub _print_fault {
     my $r = shift;
     if ($r->faultstring eq 'Application error' and
-	ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
-	# this is a bric exception, the interesting stuff is in detail
-	die "Call to Bric::SOAP failed : \n" .
-	    join("\n", values %{$r->faultdetail});
+    ref $r->faultdetail and ref $r->faultdetail eq 'HASH'    ) {
+    # this is a bric exception, the interesting stuff is in detail
+    die "Call to Bric::SOAP failed : \n" .
+        join("\n", values %{$r->faultdetail});
     } else {
-	die "Call to Bric::SOAP failed : \n" .
-	    $r->faultstring;
+    die "Call to Bric::SOAP failed : \n" .
+        $r->faultstring;
     }
 }

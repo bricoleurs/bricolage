@@ -1,8 +1,6 @@
 package Bric::Util::Alerted;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 
@@ -11,7 +9,7 @@ Bric::Util::Alerted - Interface to Alerts as they are sent to individual users.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Alerted;
 
@@ -34,7 +32,7 @@ require Bric; our $VERSION = Bric->VERSION;
   $alerted = $alered->acknowledge;
   my $ack_time = $alerted->get_ack_time($format);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class is the interface to individual user Alerts. While Bric::Util::Alert
 objects are created once for a given event, many different users may receive
@@ -126,7 +124,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1083,7 +1081,7 @@ sub save { $_[0] }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1287,15 +1285,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::AlertType|Bric::Util::AlertType>,

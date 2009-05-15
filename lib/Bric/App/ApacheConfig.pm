@@ -1,12 +1,10 @@
 package Bric::App::ApacheConfig;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::ApacheConfig - Bricolage httpd.conf configuration
 
-=head1 VERSION
+=head1 Version
 
 $Revision$
 
@@ -15,11 +13,11 @@ $Revision$
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Date: 2008-04-24 12:44:19 -0700 (Thu, 24 Apr 2008) $
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
       use File::Spec::Functions qw(catdir);
@@ -30,7 +28,7 @@ $Date: 2008-04-24 12:44:19 -0700 (Thu, 24 Apr 2008) $
   </Perl>
   PerlModule Bric::App::ApacheConfig
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module takes care of all of Apache configuration necessary to get Bricolage
 working. Putting it all in this module makes it easier for you to add it to your
@@ -575,17 +573,17 @@ BEGIN {
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
 apache 2 changes by Scott Lanning <slanning@cpan.org>, Chris Heiland
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

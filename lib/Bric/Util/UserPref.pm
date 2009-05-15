@@ -1,8 +1,6 @@
 package Bric::Util::UserPref;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::UserPref - Interface to Bricolage per-user preferences.
 
@@ -11,7 +9,7 @@ Bric::Util::UserPref - Interface to Bricolage per-user preferences.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::UserPref;
 
@@ -48,7 +46,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save the pref.
   $user_pref = $user_pref->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a class for representing per-user preferences.
 This allows each user to override values for preferences like language
@@ -129,7 +127,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1057,7 +1055,7 @@ sub delete {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1189,17 +1187,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Dave Rolsky <autarch@urth.org>
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

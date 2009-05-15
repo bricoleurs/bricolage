@@ -1,18 +1,16 @@
 package Bric::Util::AuthLDAP;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::AuthLDAP - Bricolage LDAP authentication
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>
 
   AUTH_ENGINES = LDAP
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides an interface for the Bricolage to authenticate users
 against an LDAP server. If one of the authentication engines assigned to the
@@ -51,7 +49,7 @@ require Bric; our $VERSION = Bric->VERSION;
 # Class Methods.
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Class Methods
 
@@ -175,11 +173,11 @@ __END__
 
 ##############################################################################
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -207,7 +205,7 @@ Detailed discussion of Bricolage security, including authentication.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2005 Kineticode, Inc. See L<Bric::License|Bric::License> for
 complete license terms and conditions.

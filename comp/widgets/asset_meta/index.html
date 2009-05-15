@@ -7,10 +7,10 @@
 
 <form>
 <& '/widgets/asset_meta/asset_meta.mc', 
-	id => $id, 
-	type => $type,
-	section => $section,
-	action => $action &>
+    id => $id, 
+    type => $type,
+    section => $section,
+    action => $action &>
 
 </form>
 
@@ -21,10 +21,10 @@
 </html>
 
 <%init>
-	$id = 1027 unless $id;
-	$type = 'story' unless $type;
-	$section = 'notes' unless $section;
-	$action = 'edit' unless $action;
+    $id = 1027 unless $id;
+    $type = 'story' unless $type;
+    $section = 'notes' unless $section;
+    $action = 'edit' unless $action;
 
 </%init>
 

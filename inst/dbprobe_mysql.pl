@@ -1,23 +1,23 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 dbprobe_mysql.pl - installation script to probe MySQL configuration
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make" to probe the MySQL
 configuration.  It accomplishes this by parsing the output from
 mysql_config and asking the user questions.  Output collected in
 "database.db".
 
-=head1 AUTHOR
+=head1 Author
 
 Andrei Arsu <acidburn@asynet.ro>
 
 derived from code by Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -176,7 +176,7 @@ sub get_server_version {
     $z ||= 0;
     return soft_fail("Found old version of MySQL server: $x.$y.$z - ",
                      "5.0.3 or greater required.")
-	unless $x > 5 or ($x == 5 and ( $y >= 1 or $z >= 3));
+    unless $x > 5 or ($x == 5 and ( $y >= 1 or $z >= 3));
     print " Found acceptable version of MySQL server: $x.$y.$z.\n";
     $DB{server_version}="$x.$y.$z";
 }

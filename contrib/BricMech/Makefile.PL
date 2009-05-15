@@ -5,10 +5,10 @@
       
       require ExtUtils::MakeMaker;
       my $yn = ExtUtils::MakeMaker::prompt
-	('  Install Module::Build now from CPAN?', 'y');
+    ('  Install Module::Build now from CPAN?', 'y');
       
       unless ($yn =~ /^y/i) {
-	die " *** Cannot install without Module::Build.  Exiting ...\n";
+    die " *** Cannot install without Module::Build.  Exiting ...\n";
       }
       
       require Cwd;
@@ -20,7 +20,7 @@
       my $makefile = File::Spec->rel2abs($0);
       
       CPAN::Shell->install('Module::Build::Compat')
-	or die " *** Cannot install without Module::Build.  Exiting ...\n";
+    or die " *** Cannot install without Module::Build.  Exiting ...\n";
       
       chdir $cwd or die "Cannot chdir() back to $cwd: $!";
     }

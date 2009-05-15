@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business::Media::Video;
 
-# $Id$
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Media::Video - the media class that represents static
 videos
@@ -12,11 +11,11 @@ videos
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Data$
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of new Video objects
  $video = Bric::Biz::Asset::Business::Media::Video->new( $init )
@@ -26,7 +25,7 @@ $Data$
  # list of ids
  ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Video->list_ids($param)
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Subclass of Media that pretains to Videos 
 
@@ -88,19 +87,19 @@ use base qw( Bric::Biz::Asset::Business::Media );
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
 # Interface Methods             #
 #===============================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructrs
 
@@ -168,11 +167,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -196,7 +195,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -217,8 +216,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -260,7 +259,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 
@@ -334,7 +333,7 @@ NONE
 
 NONE
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -352,15 +351,15 @@ NONE
 __END__
 
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Michael Soderstrom" <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>

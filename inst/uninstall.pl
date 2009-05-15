@@ -1,23 +1,23 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 uninstall.pl - installation script to uninstall Bricolage
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make uninstall" to uninstall Bricolage.
 It removes all installed modules, binaries, components, and the
 database. It gathers configuration information from the user and
 install.db if available. This is mostly copied from upgrade.pl.
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -40,7 +40,7 @@ unless ($> == 0) {
 # (XXX: same variable name (%UPGRADE) as upgrade.pl
 #  so that stop.pl will work as is)
 our %UPGRADE = ( BRICOLAGE_ROOT => $ENV{BRICOLAGE_ROOT} ||
-		                   '/usr/local/bricolage' );
+                           '/usr/local/bricolage' );
 our $INSTALL;
 
 print "\n\n==> Setting-up Bricolage Uninstall Process <==\n\n";
@@ -54,24 +54,24 @@ print "\n\n==> Finished Setting-up Bricolage Uninstall Process <==\n\n";
 # find the bricolage to update
 sub get_bricolage_root {
     ask_confirm("Bricolage Root Directory to Uninstall?",
-		\$UPGRADE{BRICOLAGE_ROOT});
+        \$UPGRADE{BRICOLAGE_ROOT});
 
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $UPGRADE{BRICOLAGE_ROOT}.\n")
-	unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
+    unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "bricolage.conf");
 
     # verify that this Bricolage was installed with "make install"
     hard_fail("The Bricolage Installation found in $UPGRADE{BRICOLAGE_ROOT}\n",
-	      "was installed manually and cannot be automatically uninstalled.")
-	unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
+          "was installed manually and cannot be automatically uninstalled.")
+    unless -e catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
 }
 
 # read the install.db file from the chosen bricolage root
 sub read_install_db {
     my $install_file = catfile($UPGRADE{BRICOLAGE_ROOT}, "conf", "install.db");
     if (-e $install_file) {
-	# read it in if it exists
-	do $install_file or die "Failed to read $install_file : $!";
+    # read it in if it exists
+    do $install_file or die "Failed to read $install_file : $!";
     }
 }
 
@@ -81,7 +81,7 @@ sub output_dbs {
     # fake up the .dbs from %INSTALL
     my %dbs = (
         DB     => 'database.db',
-		CONFIG => 'config.db',
+        CONFIG => 'config.db',
     );
     while ( my ($key, $file) = each %dbs) {
         open(FILE, ">$file") or die "Unable to open $file : $!\n";

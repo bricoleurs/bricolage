@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::Source;
 
-# $Id$
-
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'source';
@@ -42,7 +40,7 @@ sub save : Callback {
         } elsif (@sources == 1 && !defined $source_id) {
             $used = 1;
         } elsif (@sources == 1 && defined $source_id
-	   && $sources[0] != $source_id) {
+       && $sources[0] != $source_id) {
             $used = 1;
         }
         $self->raise_conflict(

@@ -1,13 +1,13 @@
-=head1 NAME
+=head1 Name
 
 Bric::Admin - Bricolage System Administration Guide.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This guide is intended for the system administrator in charge of installing,
 configuring, or tuning a Bricolage system.
 
-=head1 QUICK INSTALLATION INSTRUCTIONS
+=head1 Quick Installation Instructions
 
 For the really impatient you can just download a VMWare image with Bricolage
 already set up for you running under Ubuntu. See 
@@ -310,7 +310,7 @@ Defaults to the value returned by C<File::Spec::Functions::path>.
 
 =back
 
-=head1 PACKAGES
+=head1 Packages
 
 Bricolage requires a lot of other components to be installed; here's a list of
 them:
@@ -588,7 +588,7 @@ GNU Aspell 0.50 or later (optional)
 
 =back
 
-=head1 INSTALLATION
+=head1 Installation
 
 Follow these instructions to prepare your system for Bricolage. If you're
 upgrading from an older version of Bricolage see the L<"UPGRADING"> section
@@ -1109,11 +1109,12 @@ The Apacher server name, set by the 'ServerName' directive in F<conf/httpd.conf>
 
 =item Do you want to use SSL?
 
-If the installation program found either F<mod_ssl> or F<mod_apache_ssl>,
-it will ask this question. If you use one of these modules, your Bricolage
-will be served over a secure connection. See the L<INSTALLATION|INSTALLATION>,
-L<Apache Configuration|Apache Configuration>, and L<INSTALLATION ISSUES|INSTALLATION ISSUES>
-sections of this document for more information on SSL support.
+If the installation program found either F<mod_ssl> or F<mod_apache_ssl>, it
+will ask this question. If you use one of these modules, your Bricolage will
+be served over a secure connection. See the L<INSTALLATION|/"INSTALLATION">,
+L<Apache Configuration|/"Apache Configuration">, and L<INSTALLATION
+ISSUES|/"INSTALLATION ISSUES"> sections of this document for more information
+on SSL support.
 
 =item Postgres Root Username
 
@@ -1356,11 +1357,11 @@ Bricolage. First in
 F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/spellChecker.js>,
 change this line:
 
-  	this.spellCheckScript = 'server-scripts/spellchecker.php';
+      this.spellCheckScript = 'server-scripts/spellchecker.php';
 
 To this:
 
-  	this.spellCheckScript = 'server-scripts/spellchecker.pl';
+      this.spellCheckScript = 'server-scripts/spellchecker.pl';
 
 And second, in
 F<comp/media/wysiwyg/fckeditor/editor/dialog/fck_spellerpages/spellerpages/server-scripts/spellchecker.pl>, you will likely need to change this line:
@@ -1411,7 +1412,7 @@ installed, along with the appropriate distionaries. These must be installed
 before the Text::Aspell module is installed from CPAN. Download GNU Aspell and
 the associated dictionaries from L<http://aspell.net/>.
 
-=head1 UPGRADING
+=head1 Upgrading
 
 If you're upgrading an installation of Bricolage that was previously installed
 via C<make install>, then simply upgrade using C<make upgrade>. If, however,
@@ -1489,7 +1490,7 @@ If you've customized your F<httpd.conf> or F<bricolage.conf> settings, you
 will likely have to edit the new files to sync up with your original settings.
 Once that's done, just start Bricolage and you'll be good to go on Apache 2.
 
-=head1 CONFIGURATION
+=head1 Configuration
 
 Configuration of Bricolage is handled via two interfaces. The first is the user
 interface, where application administrators can set preferences such as Time
@@ -2630,7 +2631,7 @@ Once the server is up and running connect to it with an FTP client and
 start editing templates. For more information see
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.
 
-=head1 DIRECTORY PERMISSIONS
+=head1 Directory Permissions
 
 As noted above, you need to supply the user and group names under which
 Bricolage will run. It's important that this user have permission to write to
@@ -2647,7 +2648,7 @@ directories or to a subdirectory of these directories:
   $BRICOLAGE_ROOT/data
   $BRICOLAGE_ROOT/comp/data
 
-=head1 INSTALLATION ISSUES
+=head1 Installation Issues
 
 The following addresses a number of installation issues you might face.
 
@@ -2715,7 +2716,7 @@ Start Apache again:
 
 =back
 
-=head1 SYSTEM ADMINISTRATION
+=head1 System Administration
 
 Bricolage is a big application, with big system needs. Thus it's a good idea to
 give some thought to system management, including disk partitioning and file
@@ -2790,7 +2791,7 @@ user (often "nobody") like this:
 This will run nightly at 2AM and clean out all files older than 12 hours. See
 L<bric_clean_tmp> for more details.
 
-=head1 CLONING AN INSTALLATION
+=head1 Cloing an Installation
 
 Bricolage includes the ability to clone an existing Bricolage system.
 This is useful if you've developed a working Bricolage and need to
@@ -2844,11 +2845,11 @@ source or installation directory.
 There is also an on-line copy at
 L<http://www.bricolage.cc/docs/Bric/FAQ.html>.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 --
 -- This is the SQL that will create the element_type table.
 -- It is related to the Bric::ElementType class.
@@ -33,7 +32,7 @@ CREATE TABLE element_type  (
     active          BOOLEAN        NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -50,7 +49,7 @@ CREATE TABLE subelement_type  (
     max_occurrence  INTEGER        NOT NULL DEFAULT 0,
     CONSTRAINT pk_subelement_type__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -66,7 +65,7 @@ CREATE TABLE element_type__site (
     primary_oc__id   INTEGER NOT NULL,
     CONSTRAINT pk_element_type__site__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -84,7 +83,7 @@ CREATE TABLE element_type__output_channel (
     active              BOOLEAN    NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_element_type__output_channel__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -99,7 +98,7 @@ CREATE TABLE element_type_member (
     member__id  INTEGER  NOT NULL,
     CONSTRAINT pk_element_type_member__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -116,7 +115,7 @@ CREATE TABLE attr_element_type (
     active     BOOLEAN       NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_element_type__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 
@@ -136,7 +135,7 @@ CREATE TABLE attr_element_type_val (
     active       BOOLEAN      NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_attr_element_type_val__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------
@@ -152,7 +151,7 @@ CREATE TABLE attr_element_type_meta (
     active    BOOLEAN         NOT NULL DEFAULT TRUE,
    CONSTRAINT pk_attr_element_type_meta__id PRIMARY KEY (id)
 )
-    ENGINE	    InnoDB
+    ENGINE        InnoDB
     AUTO_INCREMENT  1024;
 
 -- -----------------------------------------------------------------------------

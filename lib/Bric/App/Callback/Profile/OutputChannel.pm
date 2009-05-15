@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::OutputChannel;
 
-# $Id$
-
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'output_channel';
@@ -58,7 +56,7 @@ $do_callback = sub {
         } elsif (@ocs == 1 && !defined $oc_id) {
             $used = 1;
         } elsif (@ocs == 1 && defined $oc_id
-	   && $ocs[0] != $oc_id) {
+       && $ocs[0] != $oc_id) {
             $used = 1;
         }
 

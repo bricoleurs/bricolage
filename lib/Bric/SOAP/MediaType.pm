@@ -1,6 +1,5 @@
 package Bric::SOAP::MediaType;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -22,7 +21,7 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::MediaType - SOAP interface to Bricolage media types
 
@@ -30,7 +29,7 @@ Bric::SOAP::MediaType - SOAP interface to Bricolage media types
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -51,13 +50,13 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of all media types
   my $mt_ids = $soap->list_ids()->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage media types.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -415,13 +414,13 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <slanning@theworld.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>
 

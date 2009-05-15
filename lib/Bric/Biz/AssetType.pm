@@ -1,9 +1,8 @@
 package Bric::Biz::AssetType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::AssetType - Deprecated; use Bric::Biz::ElementType instead
 
@@ -11,7 +10,7 @@ Bric::Biz::AssetType - Deprecated; use Bric::Biz::ElementType instead
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The functionality of this class has been moved to
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>. Please use that class,

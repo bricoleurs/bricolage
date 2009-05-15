@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -17,7 +16,7 @@ CREATE TABLE keyword (
     name             VARCHAR(256)  NOT NULL,
     screen_name      VARCHAR(256)  NOT NULL,
     sort_name        VARCHAR(256)  NOT NULL,
-    active           BOOLEAN	   NOT NULL DEFAULT TRUE,
+    active           BOOLEAN       NOT NULL DEFAULT TRUE,
     CONSTRAINT pk_keyword__id PRIMARY KEY (id)
 )
     ENGINE           InnoDB

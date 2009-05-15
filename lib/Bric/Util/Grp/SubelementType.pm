@@ -1,9 +1,8 @@
 package Bric::Util::Grp::SubelementType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::SubelementType - A group of ElementTypes.
 
@@ -11,12 +10,12 @@ Bric::Util::Grp::SubelementType - A group of ElementTypes.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Grp::SubelementType;
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is for holding groups of ElementTypes.
 
@@ -75,7 +74,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -316,11 +315,11 @@ NONE
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 "Garth Webb" <garth@perijove.com> Bricolage Engineering
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::ElementType>
 

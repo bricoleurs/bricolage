@@ -1,8 +1,6 @@
 package Bric::App::Event;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Event - Exports simple functions for managing events.
 
@@ -11,13 +9,13 @@ Bric::App::Event - Exports simple functions for managing events.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Event qw(:all);
   log_event($name, $obj, $init);
   commit_events();
 
-=head1 DESCRIPTION
+=head1 Description
 
 
 
@@ -71,7 +69,7 @@ our $events = [];
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -189,7 +187,7 @@ sub clear_events {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -208,15 +206,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Event|Bric::Util::Event>

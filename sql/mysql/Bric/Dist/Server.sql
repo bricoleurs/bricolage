@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@justatheory.com>
 --
@@ -12,7 +11,7 @@ CREATE TABLE server(
     id                 INTEGER          NOT NULL AUTO_INCREMENT,
     server_type__id    INTEGER          NOT NULL,
     host_name          VARCHAR(128)     NOT NULL,
-    os		           CHAR(5)		    NOT NULL,
+    os                   CHAR(5)            NOT NULL,
     doc_root           VARCHAR(128)     NOT NULL,
     login              VARCHAR(64),
     password           VARCHAR(64),

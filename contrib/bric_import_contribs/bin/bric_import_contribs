@@ -135,16 +135,16 @@ while (<>) {
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 bric_import_contribs - Import contributors from a tab-delimited file
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   bric_import_contribs --username admin --password password \
      --contrib-type Writers file.tab
 
-=head1 DESCRIPTION
+=head1 Description
 
 This program creates new contributors in a Bricolage installation from records
 in a tab-delimited file. The file must have a record for one contributor on
@@ -153,7 +153,7 @@ each contributor's name. The file may also optionally contain contact
 information for each user (email address, phone numbers, etc.) and content for
 custom fields.
 
-=head1 OPTIONS
+=head1 Options
 
   bric_import_contribs --username username --password password \
     --contrib-type contrib_type [options] import_file
@@ -239,12 +239,12 @@ Optional.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>. Development sponsored by the RAND
 Corporation E<reg>.
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2004 Kineticode, Inc. All rights reserved.
 

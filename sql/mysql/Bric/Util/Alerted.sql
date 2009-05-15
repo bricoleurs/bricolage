@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: David Wheeler <david@justatheory.com>
 --
@@ -29,7 +28,7 @@ CREATE TABLE alerted (
 --
 
 CREATE TABLE alerted__contact_value(
-    alerted__id	            INTEGER         NOT NULL,
+    alerted__id                INTEGER         NOT NULL,
     contact__id             INTEGER         NOT NULL,
     contact_value__value    VARCHAR(256)    NOT NULL,
     sent_time               TIMESTAMP       NULL DEFAULT NULL,

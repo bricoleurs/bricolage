@@ -1,8 +1,6 @@
 package Bric::Dist::Action::DTDValidate;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Action::DTDValidate - Validates XML against a DTD
 
@@ -11,7 +9,7 @@ Bric::Dist::Action::DTDValidate - Validates XML against a DTD
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Action::DTDValidate;
 
@@ -25,7 +23,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Undo is a no-op.
   $action = $action->undo_it($resources_href);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Dist::Action can be used to validate XML or XHTML
 against a DTD. Note that it requires XML::LibXML, and since it downloads the
@@ -74,7 +72,7 @@ BEGIN {
 # Constructors.
 ##############################################################################
 
-=head1 CLASS INTERFACE
+=head1 Class Interface
 
 =head2 Constructors
 
@@ -100,7 +98,7 @@ sub has_more { return 0 }
 
 ##############################################################################
 
-=head1 INSTANCE INTERFACE
+=head1 Instance Interface
 
 =head2 Other Instance Methods
 
@@ -176,11 +174,11 @@ __END__
 
 =pod
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -207,7 +205,7 @@ each destination for which resources are to be distributed.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003 Kineticode, Inc. See L<Bric::License|Bric::License> for
 complete license terms and conditions.

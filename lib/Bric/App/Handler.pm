@@ -1,8 +1,6 @@
 package Bric::App::Handler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Handler - The center of the application, as far as Apache is concerned.
 
@@ -11,7 +9,7 @@ Bric::App::Handler - The center of the application, as far as Apache is concerne
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
@@ -29,7 +27,7 @@ require Bric; our $VERSION = Bric->VERSION;
       PerlCleanupHandler Bric::App::CleanupHandler
   </Directory>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package is the main package used by Apache for managing the Bricolage
 application. It loads all the necessary Mason and Bricolage libraries and sets
@@ -252,7 +250,7 @@ my $gah = HTML::Mason::ApacheHandler->new(comp_root    => MASON_COMP_ROOT,
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -390,7 +388,7 @@ sub cb_exception_handler {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -409,15 +407,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

@@ -1,8 +1,6 @@
 package Bric::App::AccessHandler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::AccessHandler - Handles Authentication and Session setup during the Apache Access phase.
 
@@ -11,7 +9,7 @@ Bric::App::AccessHandler - Handles Authentication and Session setup during the A
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
   use lib '/usr/local/bricolage/lib';
@@ -33,7 +31,7 @@ require Bric; our $VERSION = Bric->VERSION;
       PerlAccessHandler Bric::App::AccessHandler
   </Directory>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles the Access phase of an Apache request. It authenticates
 users to Bricolage, and sets up Session handling.
@@ -88,7 +86,7 @@ my $ssl_port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -319,7 +317,7 @@ sub handle_err {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -338,15 +336,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

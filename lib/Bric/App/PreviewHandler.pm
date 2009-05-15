@@ -1,8 +1,6 @@
 package Bric::App::PreviewHandler;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 
@@ -11,7 +9,7 @@ Bric::App::PreviewHandler - Special Apache handlers used for local previewing.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Perl>
       if (PREVIEW_LOCAL) {
@@ -22,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
       }
   </Perl>
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package is the main package used by Apache for managing the Bricolage application.
 It loads all the necessary Mason and Bricolage libraries and sets everything up for
@@ -82,7 +80,7 @@ my $prev_qr = do {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -228,7 +226,7 @@ sub handle_err {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -247,15 +245,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

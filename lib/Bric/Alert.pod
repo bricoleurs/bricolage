@@ -1,12 +1,12 @@
-=head1 NAME
+=head1 Name
 
 Bric::Alert - Bricolage Alert Management Guide.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This guide describes the Bricolage alerting system -- how it works and how to use it.
 
-=head1 ARCHITECTURAL OVERVIEW
+=head1 Architectural Overview
 
 The Bricolage alerting systems relies on the triggering of events. Many objects
 in Bricolage have associated events logged for them. You can see these events by
@@ -80,7 +80,7 @@ content. A similar example for a message subject:
   URI $uri, was moved to the $desk desk by $trig_full_name. Its debut is
   scheduled for $cover_date.
 
-=head1 ALERT TYPE MANAGEMENT
+=head1 Alert Type Management
 
 To manage an alert type, navigate to ADMIN -> SYSTEM -> Alert Types. Here you
 will find a list of existing alert types. An alert type specifies a specific
@@ -272,7 +272,7 @@ as the recipients of alerts. Click "Save" when you have finished editing the
 alert recipients and you will be returned to the Alert Type Profile. Click
 "Save" again to save the alert type.
 
-=head1 ALERT MANAGEMENT
+=head1 Alert Mangement
 
 Once alerts have been sent, there are a number of ways of accessing them in the
 Bricolage interface.
@@ -310,11 +310,11 @@ sent, when it was sent, and when it was acknowledged (if it has been
 acknowledged). Thus this interface can be used to check for the responsiveness
 of recipients to the alerts they receive.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::AlertType|Bric::Util::AlertType>, 

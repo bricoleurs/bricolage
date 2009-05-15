@@ -1,8 +1,6 @@
 package Bric::Util::Grp::Grp;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 
@@ -11,11 +9,11 @@ Bric::Util::Grp::Grp - Interface to Bric::Util::Grp Groups
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Grp
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Grp.
 
@@ -66,7 +64,7 @@ BEGIN { Bric::register_fields() }
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -261,7 +259,7 @@ sub member_class {
 
 Inherited from Bric::Util::Grp.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Constructors
 
@@ -284,15 +282,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Grp|Bric::Util::Grp>

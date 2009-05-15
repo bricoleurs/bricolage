@@ -1,8 +1,6 @@
 package Bric::Biz::Keyword;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 
@@ -11,7 +9,7 @@ Bric::Biz::Keyword - Interface to Bricolage Keyword Objects
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Biz::Keyword;
 
@@ -41,7 +39,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save the changes to the database
   $keyword = $keyword->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Keyword module allows assets to be characterized by a set of topical
 keywords. These keywords can be used to group assets or during a search on a
@@ -109,7 +107,7 @@ BEGIN {
 # Constructors.
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -763,7 +761,7 @@ __END__
 
 =end private
 
-=head1 AUTHORS
+=head1 Authors
 
 Garth Webb <garth@perijove.com>
 
@@ -771,7 +769,7 @@ Sam Tregar <stregar@about-inc.com>
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -785,7 +783,7 @@ Categories can be associated with key words.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2001 About.com. Changes Copyright (c) 2002-2003 Kineticode, Inc.
 and others. See L<Bric::License|Bric::License> for complete license terms and

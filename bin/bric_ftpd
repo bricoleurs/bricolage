@@ -1,16 +1,14 @@
 #!/usr/bin/perl -w
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 bric_ftpd - Bricolage virtual FTP server
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   su nobody -c "bric_ftpd -S"
 
-=head1 DESCRIPTION
+=head1 Description
 
 This program controls the Bricolage vitual FTP server, which can be used to
 allow access to Bricolage templates. This may provide a more comfortable
@@ -80,11 +78,11 @@ To kill the FTP server in daemon mode, use the C<-k> option:
 
   su nobody -c bric_ftpd -k"
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin|Bric::Admin>, L<Net::FTPServer|Net::FTPServer>,
 L<Bric::Util::FTP::Server|Bric::Util::FTP::Server>.

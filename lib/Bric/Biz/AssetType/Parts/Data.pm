@@ -1,9 +1,8 @@
 package Bric::Biz::AssetType::Parts::Data;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::AssetType::Parts::Data - Deprecated; use Bric::Biz::ElementType::Parts::FieldType instead
 
@@ -11,7 +10,7 @@ Bric::Biz::AssetType::Parts::Data - Deprecated; use Bric::Biz::ElementType::Part
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The functionality of this class has been moved to
 L<Bric::Biz::ElementType::Parts::FieldType|Bric::Biz::ElementType::Parts::FieldType>.

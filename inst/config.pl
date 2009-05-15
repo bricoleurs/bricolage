@@ -1,19 +1,19 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 config.pl - installation script to probe user configuration
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make" to ask the user questions about
 their desired installation.  Output collected in "config.db".
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

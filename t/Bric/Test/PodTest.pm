@@ -1,6 +1,6 @@
 package Bric::Test::PodTest;
 
-=head1 NAME
+=head1 Name
 
 Bric::Test::Base - Bricolage Development Testing Base Class
 
@@ -9,13 +9,13 @@ Bric::Test::Base - Bricolage Development Testing Base Class
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   make devtest
 
   perl inst/runtests.pl t/Bric/Test/PodTest.pm
 
-=head1 DESCRIPTION
+=head1 Description
 
 This test class uses Pod::Checker to parse the POD in all of the modules in
 the F<lib>, F<bin>, and F<t/Bric/Test> directories to make sure that they
@@ -75,11 +75,11 @@ sub test_pod : Test($num_files) {
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Test::Base|Bric::Test::Base>,L<Bric::Test::Runner|Bric::Test::Runner>,
 L<Pod::Checker|Pod::Checker>

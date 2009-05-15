@@ -1,8 +1,6 @@
 package Bric::Dist::Action::Email;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Action::Email - Class to email distribution resources
 
@@ -11,7 +9,7 @@ Bric::Dist::Action::Email - Class to email distribution resources
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Action::Email;
 
@@ -29,7 +27,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Undo is a no-op.
   $action = $action->undo_it($resources_href);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Dist::Action can be used to email distribution
 resources to one or more email addresses.
@@ -90,7 +88,7 @@ BEGIN {
 # Constructors.
 ##############################################################################
 
-=head1 CLASS INTERFACE
+=head1 Class Interface
 
 =head2 Constructors
 
@@ -307,7 +305,7 @@ Determines how non-text resources are to be handled.
 
 ##############################################################################
 
-=head1 INSTANCE INTERFACE
+=head1 Instance Interface
 
 =head2 Accessors
 
@@ -586,11 +584,11 @@ __END__
 
 =end private
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 

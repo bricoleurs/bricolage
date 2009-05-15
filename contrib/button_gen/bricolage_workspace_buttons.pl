@@ -46,7 +46,7 @@ sub bric_buttons {
 
     # Die if output directory exists, so we won't override anything
     die "Output directory $out_dir exitst!\nPlease remove and start again\n" 
-	if (-d $out_dir);
+    if (-d $out_dir);
     mkpath($out_dir) or die "can't create output directory: $!\n";
 
     # Create a new image
@@ -54,86 +54,86 @@ sub bric_buttons {
 
     foreach (1, 2) {
 
-	my $name = "my_workspace_";
-	if ($_ == 1) {
-	    $name .= "on";
-	} elsif ($_ == 2) {
-	    $name .= "off";
-	}
-	if ($gif == 1) {
-	    $name .= ".gif";
-	} else {
-	    $name .= ".png";
-	}
-	print "generating $name\n";
-	
-	# Create a new layer for the background and add it to the image
-	my $background = gimp_layer_new($img, 150, 20, RGB, "Background", 100,
-					NORMAL_MODE);
-	gimp_image_add_layer($img, $background, 1);
+    my $name = "my_workspace_";
+    if ($_ == 1) {
+        $name .= "on";
+    } elsif ($_ == 2) {
+        $name .= "off";
+    }
+    if ($gif == 1) {
+        $name .= ".gif";
+    } else {
+        $name .= ".png";
+    }
+    print "generating $name\n";
+    
+    # Create a new layer for the background and add it to the image
+    my $background = gimp_layer_new($img, 150, 20, RGB, "Background", 100,
+                    NORMAL_MODE);
+    gimp_image_add_layer($img, $background, 1);
 
-	# Fill the background layer
-	gimp_palette_set_background($webbgcolor);
-	gimp_edit_fill($background, BG_IMAGE_FILL);
-	
-	if ($_ == 1) {
+    # Fill the background layer
+    gimp_palette_set_background($webbgcolor);
+    gimp_edit_fill($background, BG_IMAGE_FILL);
+    
+    if ($_ == 1) {
             # select the shadow and fill it
-	    gimp_rect_select($img, 1, 1, 149, 19, 2, 0, 0);
-	    gimp_palette_set_background($shadow_i);
-	    gimp_edit_fill($background, BG_IMAGE_FILL);
-	    
-	    # select the background and fill it
-	    gimp_rect_select($img, 0, 0, 148, 18, 2, 0, 0);
-	    gimp_palette_set_background($bgcolor_i);
-	    gimp_edit_fill($background, BG_IMAGE_FILL);
-	} elsif ($_ == 2) {
-	    gimp_palette_set_background($bgcolor_ii);
-	    gimp_edit_fill($background, BG_IMAGE_FILL);
+        gimp_rect_select($img, 1, 1, 149, 19, 2, 0, 0);
+        gimp_palette_set_background($shadow_i);
+        gimp_edit_fill($background, BG_IMAGE_FILL);
+        
+        # select the background and fill it
+        gimp_rect_select($img, 0, 0, 148, 18, 2, 0, 0);
+        gimp_palette_set_background($bgcolor_i);
+        gimp_edit_fill($background, BG_IMAGE_FILL);
+    } elsif ($_ == 2) {
+        gimp_palette_set_background($bgcolor_ii);
+        gimp_edit_fill($background, BG_IMAGE_FILL);
 
-	    gimp_rect_select($img, 1, 18, 150, 20, 2, 0, 0);
-	    gimp_rect_select($img, 149, 1, 150, 20, 0, 0, 0);
-	    gimp_palette_set_background($shadow_ii);
-	    gimp_edit_fill($background, BG_IMAGE_FILL);
+        gimp_rect_select($img, 1, 18, 150, 20, 2, 0, 0);
+        gimp_rect_select($img, 149, 1, 150, 20, 0, 0, 0);
+        gimp_palette_set_background($shadow_ii);
+        gimp_edit_fill($background, BG_IMAGE_FILL);
 
-	    # make the star
-	    gimp_free_select($img, 10, 
-			     [10, 3, 12, 6, 16, 7, 13, 10, 14, 13, 10, 12, 6,
-			          13, 7, 10, 4, 7, 8, 6],
-			     2, 1, 0, 0);
-	    gimp_palette_set_background($star_color);
-	    gimp_edit_fill($background, BG_IMAGE_FILL);
-	    
-	}
-	# Choose color of text
-	gimp_palette_set_foreground($fgcolor);
-	
-	# Create the text layer. Using -1 as the drawable creates a new layer. 
-	$text_layer = gimp_text_fontname($img, -1, 20, 6, $text,
-					 0, 1, 10, 0, $font);
-	
-	# merge visible layers
-	my ($activelayer) = gimp_image_merge_visible_layers($img, 0);
-	
-	# save the image
-	if ($gif == 1) {
-	    gimp_convert_indexed($img, 0, 0, 100, 0, 0, 0);
-	    file_gif_save(RUN_NONINTERACTIVE, $img, $activelayer,
-			  "$out_dir/$name", "$out_dir/$name", 
-			  0, 0, 0, 0);
-	    gimp_convert_rgb($img);
-	} else {
-	    file_png_save(RUN_NONINTERACTIVE, $img, $activelayer,
-			  "$out_dir/$name", "$out_dir/$name", 
-			  0, 9, 0, 0, 0, 0, 0);
-	}
+        # make the star
+        gimp_free_select($img, 10, 
+                 [10, 3, 12, 6, 16, 7, 13, 10, 14, 13, 10, 12, 6,
+                      13, 7, 10, 4, 7, 8, 6],
+                 2, 1, 0, 0);
+        gimp_palette_set_background($star_color);
+        gimp_edit_fill($background, BG_IMAGE_FILL);
+        
+    }
+    # Choose color of text
+    gimp_palette_set_foreground($fgcolor);
+    
+    # Create the text layer. Using -1 as the drawable creates a new layer. 
+    $text_layer = gimp_text_fontname($img, -1, 20, 6, $text,
+                     0, 1, 10, 0, $font);
+    
+    # merge visible layers
+    my ($activelayer) = gimp_image_merge_visible_layers($img, 0);
+    
+    # save the image
+    if ($gif == 1) {
+        gimp_convert_indexed($img, 0, 0, 100, 0, 0, 0);
+        file_gif_save(RUN_NONINTERACTIVE, $img, $activelayer,
+              "$out_dir/$name", "$out_dir/$name", 
+              0, 0, 0, 0);
+        gimp_convert_rgb($img);
+    } else {
+        file_png_save(RUN_NONINTERACTIVE, $img, $activelayer,
+              "$out_dir/$name", "$out_dir/$name", 
+              0, 9, 0, 0, 0, 0, 0);
+    }
 
-	# remove the layer from $img
-	gimp_image_remove_layer($img, $activelayer);
+    # remove the layer from $img
+    gimp_image_remove_layer($img, $activelayer);
 
     }
     return;
 }
-	
+    
 
 #############################################################################
 register 
@@ -143,19 +143,19 @@ register
     "Create the workspace button for bricolage", # a help text 
     "Florian Rossol",           # Your name 
     "Florian Rossol (c)",       # Your copyright 
-    "2004-02-05",              	# Date 
-    "<Toolbox>/Xtns/Perl-Fu/Bricolage-Workspace-Buttons",	# menu path 
-    "",                       	# Image types 
+    "2004-02-05",                  # Date 
+    "<Toolbox>/Xtns/Perl-Fu/Bricolage-Workspace-Buttons",    # menu path 
+    "",                           # Image types 
     [ 
      [PF_STRING, "text", "Text", "MY WORKSPACE"],
-     [PF_FONT, "font", "Schrift",	
-	"-microsoft-verdana-bold-r-normal-*-10-*-*-*-*-*-*-*"],
-     [PF_COLOR,	"backgroundcolor_i", "Background Color I", "#d7840f"],
-     [PF_COLOR,	"shadow_i", "Shadow I", "#938654"],
+     [PF_FONT, "font", "Schrift",    
+    "-microsoft-verdana-bold-r-normal-*-10-*-*-*-*-*-*-*"],
+     [PF_COLOR,    "backgroundcolor_i", "Background Color I", "#d7840f"],
+     [PF_COLOR,    "shadow_i", "Shadow I", "#938654"],
       [PF_COLOR, "backgroundcolor_ii", "Background Color II", "#cccc99"],
-     [PF_COLOR,	"shadow_ii", "Shadow II", "#999966"],
-     [PF_COLOR,	"star_color", "Color of the star", "#cc9a03"],
-     [PF_COLOR,	"textcolor", "Text Color", "#000000"],
+     [PF_COLOR,    "shadow_ii", "Shadow II", "#999966"],
+     [PF_COLOR,    "star_color", "Color of the star", "#cc9a03"],
+     [PF_COLOR,    "textcolor", "Text Color", "#000000"],
      [PF_COLOR, "website_backgroundcolor", "Background Color of Website",
       "#FFFFFF"],
      [PF_FILE, "output_directory", "Output Directory"],

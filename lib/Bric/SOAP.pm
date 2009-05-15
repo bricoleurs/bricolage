@@ -1,7 +1,5 @@
 package Bric::SOAP;
 
-# $Id$
-
 require Bric; our $VERSION = Bric->VERSION;
 
 # load em' up
@@ -26,15 +24,15 @@ use Bric::SOAP::Preference;
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP - The Bricolage SOAP interface
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::SOAP;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module serves as a root class for the Bric::SOAP classes. It also
 contains the functional and technical specifications for the Bricolage SOAP
@@ -1614,7 +1612,7 @@ See F<bric_dev_sync> in F<bin/> for a complete implementation.
 
 =back
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP::Handler|Bric::SOAP::Handler>
 
@@ -1658,7 +1656,7 @@ L<bric_dev_sync|bric_dev_sync>
 
 L<bric_republish|bric_republish>
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 

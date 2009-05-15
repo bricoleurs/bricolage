@@ -13,10 +13,10 @@ do_sql
   'DROP AGGREGATE id_list (INTEGER)',
 
   "CREATE AGGREGATE group_concat (
-	SFUNC 	 = append_id,
-	BASETYPE = INTEGER,
-	STYPE    = TEXT,
-	INITCOND = ''
+    SFUNC      = append_id,
+    BASETYPE = INTEGER,
+    STYPE    = TEXT,
+    INITCOND = ''
    )
    ",
 

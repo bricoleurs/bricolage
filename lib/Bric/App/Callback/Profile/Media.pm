@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::Media;
 
-# $Id$
-
 use base qw(Bric::App::Callback);     # not subclassing Profile
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'media_prof';

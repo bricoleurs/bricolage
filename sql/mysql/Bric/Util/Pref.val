@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    Pref.val
 --
--- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)

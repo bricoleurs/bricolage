@@ -1,10 +1,8 @@
 package Bric::Util::FTP::FileHandle;
 
-# $Id$
-
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::FTP::FileHandle - Virtual FTP Server FileHandle
 
@@ -14,12 +12,12 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a file handle object for use by
 Bric::Util::FTP::Server.
 
-=head1 INTERFACE
+=head1 Interface
 
 This module inherits from Net::FTPServer::FileHandle and overrides the
 required methods.  This class is used internally by Bric::Util::FTP::Server.
@@ -443,7 +441,7 @@ sub _deploy {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Classes
 
@@ -564,13 +562,13 @@ __END__
 
 =pod
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Net:FTPServer::FileHandle|Net:FTPServer::FileHandle>
 

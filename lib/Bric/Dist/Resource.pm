@@ -1,8 +1,6 @@
 package Bric::Dist::Resource;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Resource - Interface to distribution files and directories.
 
@@ -11,7 +9,7 @@ Bric::Dist::Resource - Interface to distribution files and directories.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Resource;
 
@@ -68,7 +66,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save it!
   $res = $res->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class manages distribution resources. A resource is a file or directory.
 Directory resources can be associated with file resources (in order to keep
@@ -149,7 +147,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1728,7 +1726,7 @@ sub get_contents {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2279,15 +2277,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Job|Bric::Util::Job>

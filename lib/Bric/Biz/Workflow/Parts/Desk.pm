@@ -1,9 +1,8 @@
 package Bric::Biz::Workflow::Parts::Desk;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 
@@ -12,7 +11,7 @@ Bric::Biz::Workflow::Parts::Desk - Desks in Workflow
 require Bric; our $VERSION = Bric->VERSION;
 
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Biz::Workflow::Parts::Desk;
 
@@ -48,7 +47,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
  $desk    = $desk->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 A desk is something that defines the steps in a workflow. Assets arrive at a
 desk and remain there until they are approved and moved to the next desk in
@@ -141,7 +140,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1156,7 +1155,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1474,15 +1473,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Biz::Workflow>, L<perl>
 

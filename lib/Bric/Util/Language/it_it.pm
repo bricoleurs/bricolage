@@ -1,10 +1,8 @@
 package Bric::Util::Language::it_it;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::it_it - Bricolage Italian translation
 
@@ -12,13 +10,13 @@ Bric::Util::Language::it_it - Bricolage Italian translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = it_it
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bricolage Italian translation.
 
@@ -614,11 +612,11 @@ To translate:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Marco Ghezzi <marcog@metafora.it>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

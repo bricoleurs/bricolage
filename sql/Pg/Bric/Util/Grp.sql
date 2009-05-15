@@ -14,7 +14,7 @@ CREATE SEQUENCE seq_grp START  1024;
 -- Table grp
 -- 
 -- Description: The grp table   Contains the name and description of the
--- 				group and its parent if it has one
+--                 group and its parent if it has one
 --
 
 CREATE TABLE grp (

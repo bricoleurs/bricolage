@@ -1,9 +1,8 @@
 package Bric::Util::Fault;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Fault - Bricolage Exceptions
 
@@ -11,7 +10,7 @@ Bric::Util::Fault - Bricolage Exceptions
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Fault qw(throw_gen);
 
@@ -36,7 +35,7 @@ require Bric; our $VERSION = Bric->VERSION;
       }
   }
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class does Exceptions for Bricolage. It replaces a home-grown
 implementation with one based on Exception::Class (which is what HTML::Mason
@@ -196,7 +195,7 @@ __PACKAGE__->Trace(1);
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -657,7 +656,7 @@ sub rethrow_exception {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -677,17 +676,17 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 This was muchly copied from HTML::Mason::Exceptions. This replaces the
 home-grown exception handling written by matthew d. p. k. strelchun-lanier
 <matt@lanier.org>.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Exception::Class|Exception::Class>,
 L<Devel::StackTrace|Devel::StackTrace>,

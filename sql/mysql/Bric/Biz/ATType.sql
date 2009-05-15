@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -15,14 +14,14 @@
 -- -----------------------------------------------------------------------------
 -- Table: element
 --
--- Description:	The table that holds the information for a given asset type.  
--- 		Holds name and description information and is references by 
---		element_type rows.
+-- Description:    The table that holds the information for a given asset type.  
+--         Holds name and description information and is references by 
+--        element_type rows.
 --
 
 CREATE TABLE at_type (
     id              INTEGER        NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(64)	   NOT NULL,
+    name            VARCHAR(64)       NOT NULL,
     description     VARCHAR(256),
     top_level       BOOLEAN        NOT NULL DEFAULT FALSE,
     paginated       BOOLEAN        NOT NULL DEFAULT FALSE,

@@ -1,8 +1,6 @@
 package Bric::Dist::Action::HTMLClean;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.
 
@@ -11,7 +9,7 @@ Bric::Dist::Action::HTMLClean - Class to Clean up and reformat HTML files.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Action::HTMLClean;
 
@@ -24,7 +22,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Undo the action on a list of resources.
   action = $action->undo_it($resources_href);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Dist::Action can be used to clean up and reformat HTML
 pages. No additional properties are required, though we may choose to add more
@@ -75,7 +73,7 @@ BEGIN { Bric::register_fields(); }
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -130,9 +128,9 @@ sub do_it {
     my ($self, $resources) = @_;
     my $types = $self->get_media_href;
     foreach my $res (@$resources) {
-	next unless $types->{$res->get_media_type};
-	my $path = $res->get_tmp_path || $res->get_path;
-	print STDERR "HTMLCleaning $path here.\n";
+    next unless $types->{$res->get_media_type};
+    my $path = $res->get_tmp_path || $res->get_path;
+    print STDERR "HTMLCleaning $path here.\n";
     }
     print STDERR "\n";
 }
@@ -141,7 +139,7 @@ sub do_it {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -216,15 +214,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Dist::Action|Bric::Dist::Action>

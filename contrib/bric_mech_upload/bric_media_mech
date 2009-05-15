@@ -3,15 +3,15 @@
 eval 'exec /usr/bin/perl -w -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
-=head1 NAME
+=head1 Name
 
 bric_media_mech - command-line client for importing media
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ bric_media_mech [options] --workflow $id --element Illustration $dir_name
 
-=head1 DESCRIPTION
+=head1 Description
 
 Upload media using WWW::Mechanize rather than bric_soap.
 The motivation is that for large media files (e.g. 25MB PDF)
@@ -135,11 +135,11 @@ Show the entire POD.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
   L<WWW::Mechanize|WWW::Mechanize>, L<Bric::SOAP|Bric::SOAP>
 

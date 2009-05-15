@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -13,9 +12,9 @@
 -- maps the object to its member contains an id an object id and a member id
 --
 -- Thought should be given to:
--- 		Ensuring that an object is not placed with in the same group twice
---		Making sure that an object that is deactivated from a group that is 
---			then put back in again will behave properly
+--         Ensuring that an object is not placed with in the same group twice
+--        Making sure that an object that is deactivated from a group that is 
+--            then put back in again will behave properly
 --
 
 
@@ -28,7 +27,7 @@
 CREATE TABLE grp_member (
     id            INTEGER         NOT NULL AUTO_INCREMENT,
     object_id     INTEGER         NOT NULL,
-    member__id    INTEGER      	  NOT NULL,
+    member__id    INTEGER            NOT NULL,
     CONSTRAINT pk_grp_member__id PRIMARY KEY (id)
 )
     ENGINE        InnoDB

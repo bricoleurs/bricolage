@@ -1,7 +1,5 @@
 package Bric::App::Callback;
 
-# $Id$
-
 use strict;
 use base qw(Params::Callback);
 __PACKAGE__->register_subclass;
@@ -56,16 +54,16 @@ sub raise_forbidden { shift->raise_status( HTTP_FORBIDDEN, @_ ) }
 
 1;
 
-=head1 NAME
+=head1 Name
 
 Bric::App::Callback - The Bricolage callback base class
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Callback::Foo;
   use Bric::App::Callback::Bar;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is the base class from which all Bricolage callback classes inherit.
 Callback classes are created by simply subclassing Bric::App::Callback,
@@ -79,7 +77,7 @@ C<Callback> attribute on methods:
 
 See the subclasses for examples.
 
-=head1 CLASS INTERFACE
+=head1 Class Interface
 
 =head2 Class Methods
 
@@ -140,11 +138,11 @@ furst argument.
 A shortcut for calling C<raise_status()> and passing C<HTTP_FORBIDDEN> as the
 furst argument.
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -165,7 +163,7 @@ callback modules.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
 L<Bric::License|Bric::License> for complete license terms and conditions.

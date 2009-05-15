@@ -1,8 +1,6 @@
 package Bric::Util::Alerted::Parts::Sent;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Alerted::Parts::Sent - Interface to objects describing how and when
 alerts were sent.
@@ -12,7 +10,7 @@ alerts were sent.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Alerted::Parts::Sent;
   my $sent = Bric::Util::Alerted::Parts::Sent->new($init);
@@ -21,7 +19,7 @@ require Bric; our $VERSION = Bric->VERSION;
   print "Contact: ", $meth->get_value, "\n";
   print "Time:    ", $meth->get_sent_time("%D %T"), "\n\n";
 
-=head1 DESCRIPTION
+=head1 Description
 
 Used internally by Bric::Util::Alerted. Do not use.
 
@@ -65,20 +63,20 @@ use constant DEBUG => 0;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
-			 type =>  Bric::FIELD_READ,
-			 value => Bric::FIELD_READ,
-			 sent_time => Bric::FIELD_READ
+             # Public Fields
+             type =>  Bric::FIELD_READ,
+             value => Bric::FIELD_READ,
+             sent_time => Bric::FIELD_READ
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -262,7 +260,7 @@ sub get_sent_time { local_date($_[0]->_get('sent_time'), $_[1]) }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -281,15 +279,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Alert|Bric::Util::Alert>, 

@@ -1,14 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Id$
-
 use strict;
 
-=head1 NAME
+=head1 Name
 
 bric_dbprof - Bricolage Log-Analyzing Database-Profiling Machine
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 bric_dbprof [options] logfile
 
@@ -34,7 +32,7 @@ bric_dbprof [options] logfile
                your screen.  Use this option to prevent that.
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 This program reads Bricolage error logs and parses the output of the
 DBI_DEBUG and DBI_PROFILE options.  It uses this data to produce
@@ -71,11 +69,11 @@ greatness.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::DBI>
 
@@ -94,12 +92,12 @@ BEGIN {
     our $nowrap          = 0;
     our ($help, $man);
     GetOptions("help"            => \$help,
-	       "man"             => \$man,
-	       "verbose+"        => \$VERBOSE,	   
-	       "n=s"             => \$n,
-	       "mode=s"          => \$mode,
-	       "nowrap"          => \$nowrap,
-	      ) or  pod2usage(2);
+           "man"             => \$man,
+           "verbose+"        => \$VERBOSE,       
+           "n=s"             => \$n,
+           "mode=s"          => \$mode,
+           "nowrap"          => \$nowrap,
+          ) or  pod2usage(2);
 
     pod2usage(1)             if $help;
     pod2usage(-verbose => 2) if $man;
@@ -115,7 +113,7 @@ sub parse_log {
     # make sure we have a logfile
     my $logfile = shift @ARGV;
     pod2usage("Missing required logfile parameter.")
-	unless defined $logfile;
+    unless defined $logfile;
 
     # open it
     open(FILE, $logfile) or die "Unable to open $logfile : $!";
@@ -123,57 +121,57 @@ sub parse_log {
     # run through log, collecting into %DATA
     my ($sig, $last_exec);
     while(<FILE>) {
-	# prepare line?
-	if (/^############# Prepare Query \[([a-z0-9 ]+)\]/) {
-	    $sig = $1;
-	    print STDERR "Found prepare [$sig] on line $.\n"
-		if $VERBOSE;
-	    next if exists $DATA{$sig};
-	    $DATA{$sig}{sql} = "";
-	    while(<FILE>) {
-		last if /^#############/;
-		next if /^\s*$/;
-		chomp;
-		s/\s+/ /g;
-		$DATA{$sig}{sql} .= $_;
-	    }
-	    $DATA{$sig}{sql} =~ s/^\s+//;
-	}
+    # prepare line?
+    if (/^############# Prepare Query \[([a-z0-9 ]+)\]/) {
+        $sig = $1;
+        print STDERR "Found prepare [$sig] on line $.\n"
+        if $VERBOSE;
+        next if exists $DATA{$sig};
+        $DATA{$sig}{sql} = "";
+        while(<FILE>) {
+        last if /^#############/;
+        next if /^\s*$/;
+        chomp;
+        s/\s+/ /g;
+        $DATA{$sig}{sql} .= $_;
+        }
+        $DATA{$sig}{sql} =~ s/^\s+//;
+    }
 
-	# execute line?
-	if (/^\+\+\+\+\+\+\+\+\+\+\+\+\+ Execute Query \[([a-z0-9 ]+)\]/) {
-	    $sig = $1;
-	    print STDERR "Found execute [$sig] on line $.\n"
-		if $VERBOSE;
-	    die "Log file corrupt: found execute without prepare on line $."
-		unless exists $DATA{$sig};
-	    $DATA{$sig}{count}++;
-	    $last_exec = $sig;
-	}
+    # execute line?
+    if (/^\+\+\+\+\+\+\+\+\+\+\+\+\+ Execute Query \[([a-z0-9 ]+)\]/) {
+        $sig = $1;
+        print STDERR "Found execute [$sig] on line $.\n"
+        if $VERBOSE;
+        die "Log file corrupt: found execute without prepare on line $."
+        unless exists $DATA{$sig};
+        $DATA{$sig}{count}++;
+        $last_exec = $sig;
+    }
 
-	# profile line?
-	if (/^\*\*\*\*\*\*\*\*\*\*\*\*\* Time: ([\d\.]+) seconds/) {
-	    my $time = $1;
-	    print STDERR "Found profile [$last_exec] on line $.\n"
-		if $VERBOSE;
-	    die "Log file corrupt: found profile without execute on line $."
-		unless $last_exec and exists $DATA{$last_exec};
-	    $DATA{$sig}{times}      ||= [];
-	    push @{$DATA{$sig}{times}}, $time;
+    # profile line?
+    if (/^\*\*\*\*\*\*\*\*\*\*\*\*\* Time: ([\d\.]+) seconds/) {
+        my $time = $1;
+        print STDERR "Found profile [$last_exec] on line $.\n"
+        if $VERBOSE;
+        die "Log file corrupt: found profile without execute on line $."
+        unless $last_exec and exists $DATA{$last_exec};
+        $DATA{$sig}{times}      ||= [];
+        push @{$DATA{$sig}{times}}, $time;
 
-	    $DATA{$sig}{total_time} ||= 0;
-	    $DATA{$sig}{total_time}  += $time;
+        $DATA{$sig}{total_time} ||= 0;
+        $DATA{$sig}{total_time}  += $time;
 
-	    $DATA{$sig}{longest}    ||= 0;
-	    $DATA{$sig}{longest}      = $time if $time > $DATA{$sig}{longest};
-	}
+        $DATA{$sig}{longest}    ||= 0;
+        $DATA{$sig}{longest}      = $time if $time > $DATA{$sig}{longest};
+    }
     }
 
     close FILE or die "Cannot close $logfile : $!";
     
     if ($VERBOSE > 1) {
-	require Data::Dumper;
-	print STDERR Data::Dumper->Dump([\%DATA], ['DATA']);
+    require Data::Dumper;
+    print STDERR Data::Dumper->Dump([\%DATA], ['DATA']);
     }
 }
 
@@ -182,46 +180,46 @@ sub output_stats {
     our (%DATA, $mode, $n);
 
     if ($mode eq "total") {
-	# sort by total time 
-	my @data = map  { $DATA{$_} } 
+    # sort by total time 
+    my @data = map  { $DATA{$_} } 
                    sort { $DATA{$b}{total_time} <=> $DATA{$a}{total_time} } 
                    grep { defined $DATA{$_}{total_time} }
-		   keys %DATA;
-	$n = @data unless $n;
+           keys %DATA;
+    $n = @data unless $n;
 
-	print "\n\n===> Top $n Queries By Total Run-Time <==\n\n\n";
+    print "\n\n===> Top $n Queries By Total Run-Time <==\n\n\n";
 
-	for (0 .. $n - 1) {
-	    output_record($_, $data[$_]);
-	}
+    for (0 .. $n - 1) {
+        output_record($_, $data[$_]);
+    }
     } elsif ($mode eq "count") {
-	# sort by count 
-	my @data = map  { $DATA{$_} } 
+    # sort by count 
+    my @data = map  { $DATA{$_} } 
                    sort { $DATA{$b}{count} <=> $DATA{$a}{count} } 
                    grep { defined $DATA{$_}{count} }
-		   keys %DATA;
-	$n = @data unless $n;
+           keys %DATA;
+    $n = @data unless $n;
 
-	print "\n\n===> Top $n Queries By Count <==\n\n\n";
+    print "\n\n===> Top $n Queries By Count <==\n\n\n";
 
-	for (0 .. $n - 1) {
-	    output_record($_, $data[$_]);
-	}
+    for (0 .. $n - 1) {
+        output_record($_, $data[$_]);
+    }
     } elsif ($mode eq "longest") {
-	# sort by longest single run
-	my @data = map  { $DATA{$_} } 
+    # sort by longest single run
+    my @data = map  { $DATA{$_} } 
                    sort { $DATA{$b}{longest} <=> $DATA{$a}{longest} } 
                    grep { defined $DATA{$_}{longest} }
-		   keys %DATA;
-	$n = @data unless $n;
-	
-	print "\n\n===> Top $n Queries By Longest Single Execution <==\n\n\n";
-	
-	for (0 .. $n - 1) {
-	    output_record($_, $data[$_]);
-	}
+           keys %DATA;
+    $n = @data unless $n;
+    
+    print "\n\n===> Top $n Queries By Longest Single Execution <==\n\n\n";
+    
+    for (0 .. $n - 1) {
+        output_record($_, $data[$_]);
+    }
     } else {
-	pod2usage("Unknown --mode setting \"$mode\".");
+    pod2usage("Unknown --mode setting \"$mode\".");
     }
 }
 

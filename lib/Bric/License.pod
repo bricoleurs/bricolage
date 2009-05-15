@@ -1,8 +1,8 @@
-=head1 NAME
+=head1 Name
 
 Bric::License - The Bricolage License.
 
-=head1 LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2001-2002. About.com. Changes Copyright (c) 2002-2009
 Kineticode, Inc. and others.
@@ -86,7 +86,7 @@ L<http://creativecommons.org/licenses/by-sa/2.5/>
 =back
 
 
-=head1 CREDITS
+=head1 Credits
 
 Bricolage is maintained by:
 

@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    ActionType.val
 --
--- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 INSERT INTO action_type ( id, name, description, active)

@@ -1,7 +1,6 @@
 -- Project:      Bricolage Business API
 -- File:    Address.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 -- Default address part types.

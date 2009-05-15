@@ -1,7 +1,6 @@
 -- Project:      Bricolage Business API
 -- File:    Person.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 -- No intitial values for person_org table.

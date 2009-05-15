@@ -1,12 +1,10 @@
 package Bric::Util::Language::zh_cn;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::zh_cn - Bricolage 简体中文翻译
 
-=head1 VERSION
+=head1 Version
 
 $Revision: 1.9 $
 
@@ -14,17 +12,17 @@ $Revision: 1.9 $
 
 our $VERSION = (qw$Revision: 1.9 $ )[-1];
 
-=head1 DATE
+=head1 Date
 
 $Date: 2008-04-24 12:44:19 -0700 (Thu, 24 Apr 2008) $
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = zh_cn
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bricolage 简体中文翻译.
 
@@ -653,11 +651,11 @@ To translate:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Kang-min Liu <gugod@gugod.org>, Gang Luo <lgjut@sohu.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

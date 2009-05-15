@@ -1,6 +1,5 @@
 package Bric::SOAP::Auth;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -18,7 +17,7 @@ our @ISA = qw(SOAP::Server::Parameters);
 
 use constant DEBUG => 0;
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
@@ -26,7 +25,7 @@ Bric::SOAP::Auth - module to handle authentication for the SOAP interface
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # setup soap object
   my $soap = new SOAP::Lite
@@ -44,14 +43,14 @@ require Bric; our $VERSION = Bric->VERSION;
   # switch uri to call methods in other Bric::SOAP classes
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Story');
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP login service for Bricolage.  Clients call
 the login() method before calling Bric::SOAP classes and recieve a
 cookie.  Bric::SOAP::Handler validates this cookie using
 Bric::App::Auth on every request.
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -105,11 +104,11 @@ sub login {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Handler|Bric::SOAP::Handler>
 

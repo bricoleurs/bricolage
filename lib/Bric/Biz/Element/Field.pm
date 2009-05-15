@@ -1,9 +1,8 @@
 package Bric::Biz::Element::Field;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Element::Field - Data (Field) Element
 
@@ -11,7 +10,7 @@ Bric::Biz::Element::Field - Data (Field) Element
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Creation of New Objects
   $data = Bric::Biz::Element::Field->new($params);
@@ -25,7 +24,7 @@ require Bric; our $VERSION = Bric->VERSION;
   $data = $data->set_value( $data_value );
   $data_value = $data->get_value;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class contains the contents of field elements, also known as data
 elements. These are the objects that hold the values of story element fields.
@@ -179,7 +178,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -893,7 +892,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1094,17 +1093,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHORS
+=head1 Authors
 
 Michael Soderstrom <miraso@pacbell.net>
 
 Refactored by David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Element>

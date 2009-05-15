@@ -1,8 +1,6 @@
 package Bric::Dist::Action::Mover;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::Action::Mover - Actions that actually move resources.
 
@@ -11,11 +9,11 @@ Bric::Dist::Action::Mover - Actions that actually move resources.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::Action::Mover;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Dist::Action handles distribution. All ServerTypes must
 have a mover_class selected, and a "Move" action specified. When Bricolage
@@ -75,17 +73,17 @@ use constant DEBUG => 0;
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
-			});
+             # Private Fields
+            });
 }
 
 ################################################################################
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -205,7 +203,7 @@ sub undo_it {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -224,7 +222,7 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 =head2 How to Add New Distribution Movers.
 
@@ -281,11 +279,11 @@ deletes files.
 
 And that's all there is to it! Good luck!
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Dist::Action|Bric::Dist::Action>

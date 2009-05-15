@@ -1,9 +1,8 @@
 package Bric::Biz::Org::Parts::Addr;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
@@ -11,7 +10,7 @@ Bric::Biz::Org::Parts::Addr - Organizational Addresses
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Constructors are private - construct from Bric::Biz::Org objects.
   my $org = Bric::Biz::Org->lookup({ id => $org_id });
@@ -50,7 +49,7 @@ require Bric; our $VERSION = Bric->VERSION;
       }
   }
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class represents organizational addresses as objects. Organizations are
 represented as Bric::Biz::Org or subclassed Bric::Biz::Org objects, and a given
@@ -126,7 +125,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1418,7 +1417,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1946,15 +1945,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Biz::Org|Bric::Biz::Org>,

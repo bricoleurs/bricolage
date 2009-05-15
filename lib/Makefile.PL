@@ -26,7 +26,7 @@ sub MY::manifypods {
     if (exists $CONFIG->{MAN_DIR} && $CONFIG->{MAN_DIR} eq '!') {
         return '
 manifypods:
-	@$(NOOP)
+    @$(NOOP)
 ';
     } else {
         package MY;

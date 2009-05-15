@@ -1,9 +1,8 @@
 package Bric::Util::Grp;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp - A class for associating Bricolage objects
 
@@ -11,7 +10,7 @@ Bric::Util::Grp - A class for associating Bricolage objects
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Constructors.
   my $grp = Bric::Util::Grp->new($init);
@@ -84,7 +83,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save the changes to the database
   $grp = $grp->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Grp is a class that associates Bricolages objects. Attributes can be assigned
 to the group as a whole, or to the members of the group. In the latter case,
@@ -196,7 +195,7 @@ require Bric::Util::Grp::Grp;
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -2111,7 +2110,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2951,17 +2950,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 Need to add parentage info and a possible method to list children and maybe
 their children and so on as well
 
-=head1 AUTHOR
+=head1 Author
 
 Michael Soderstrom <miraso@pacbell.net>. Member management and documentation
 by David Wheeler <david@justatheory.com>.
 
-=head1 SEE ALSO:
+=head1 See Also:
 
 L<Bric.pm>, L<Bric::Util::Grp::Parts::Member>
 

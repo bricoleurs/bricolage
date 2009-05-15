@@ -1,8 +1,6 @@
 package Bric::Util::Attribute::Grp;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Attribute::Grp - Interface to Attributes of Bric::Util::Grp objects
 
@@ -11,11 +9,11 @@ Bric::Util::Attribute::Grp - Interface to Attributes of Bric::Util::Grp objects
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Attribute
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bric::Util::Attribute::Grp currently inherits all methods from
 Bric::Util::Attribute. It may be extended later.
@@ -66,7 +64,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -158,7 +156,7 @@ sub full_object_type { return 'Bric::Util::Grp' }
 
 Inherited from Bric::Util::Attribute.
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Constructors
 
@@ -181,15 +179,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 This is an early draft of this class, and therefore subject to change.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Util::Grp|Bric::Util::Grp>, 

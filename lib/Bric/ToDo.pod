@@ -1,12 +1,12 @@
-=head1 NAME
+=head1 Name
 
 Bric::ToDo - Bricolage To Do List
 
-=head1 DESCRIPTION
+=head1 Description
 
 This document lists the items on Bricolage's To Do list.
 
-=head1 OVERVIEW
+=head1 Overview
 
 Bricolage versions are determined by the types of changes required. Minor
 version numbers require no changes to the database schema (though data in the
@@ -529,11 +529,11 @@ Allow items to move through different workflows and/or desks in parallel.
 
 ##############################################################################
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, L<Bric::Changes|Bric::Changes>.
 

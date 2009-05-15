@@ -10,12 +10,12 @@
 
 % my $count = 0;
 % foreach my $n (@notes) {
-%	if ( $n->{id} && $n->{note} ) {
+%    if ( $n->{id} && $n->{note} ) {
 <tr class="<% (++$count % 2 == 0) ? 'even' : 'odd' %>">
     <td class="name"><% $n->{id} %></td>
     <td><% $n->{note} |h %></td>
 </tr>
-% 	}
+%     }
 % }
 
 % unless ($count) {

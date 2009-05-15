@@ -1,8 +1,6 @@
 package Bric::App::Cache;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Cache - Object for managing Application-wide global data.
 
@@ -11,7 +9,7 @@ Bric::App::Cache - Object for managing Application-wide global data.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::App::Cache;
   my $c = Bric::App::Cache->new;
@@ -24,7 +22,7 @@ require Bric; our $VERSION = Bric->VERSION;
   my $site_id = $c->get_user_cx($user_id);
   $c = $c->set_user_cx($user_id, $site_id);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a cache object to cache data that needs to persist across
 all processes and across all requests, through time and space. The cache is
@@ -34,7 +32,7 @@ L<Bric::Util::DBI|Bric::Util::DBI>.
 A Bric::App::Cache object is available from Mason components in the global
 variable C<$c>.
 
-=head1 IMPLEMENTATION
+=head1 Implementation
 
 This module is implemented as a two-level cache in order to provide the best
 possible performance.
@@ -164,7 +162,7 @@ our $STORE;
 # Class Methods
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -514,7 +512,7 @@ sub set_user_cx {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -590,17 +588,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::App::Session|Bric::App::Session>,

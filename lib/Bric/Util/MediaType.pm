@@ -1,8 +1,6 @@
 package Bric::Util::MediaType;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::MediaType - Interface to Media Types.
 
@@ -11,11 +9,11 @@ Bric::Util::MediaType - Interface to Media Types.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::MediaType;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class may be used for managing media types (a.k.a. "MIME types").
 Bricolage ships with a number of default media types accessible via this
@@ -98,7 +96,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1143,7 +1141,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1396,15 +1394,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Dist::Resource|Bric::Dist::Resource>

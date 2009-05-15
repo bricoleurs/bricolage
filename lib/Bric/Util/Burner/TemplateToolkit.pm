@@ -1,9 +1,8 @@
 package Bric::Util::Burner::TemplateToolkit;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Burner::TemplateToolkit - Publish stories using Template Toolkit templates
 
@@ -11,7 +10,7 @@ Bric::Util::Burner::TemplateToolkit - Publish stories using Template Toolkit tem
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  use Bric::Util::Burner::TemplateToolkit;
 
@@ -21,7 +20,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Burn an asset, get back a list of resources
   my $resources = $tt_burner->burn_one($ba, $oc, $cat, $at);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module handles burning business assets using TemplateToolkit templates.
 
@@ -126,7 +125,7 @@ __PACKAGE__->_register_burner(
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -511,7 +510,7 @@ B<Notes:> NONE.
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -635,17 +634,17 @@ None.
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Arther Bergman <sky@nanisky.com>
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Util::Burner>
 

@@ -1,7 +1,6 @@
 -- Project:      Bricolage Business API
 -- File:    Contact.val
 --
--- $Id$
 -- Author: David Wheeler <david@justatheory.com>
 
 INSERT INTO contact (id, type, description, alertable, active)
@@ -45,5 +44,3 @@ VALUES ('13', 'Jabber ID', 'Jabber Messenger ID', '0', '1');
 
 INSERT INTO contact (id, type, description, alertable, active)
 VALUES ('14', 'WWW', 'WWW URL', '0', '1');
-
-

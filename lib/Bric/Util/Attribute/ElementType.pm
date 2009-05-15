@@ -1,9 +1,8 @@
 package Bric::Util::Attribute::ElementType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Attribute::ElementType - Groups of Bric::Biz::ElementType objects.
 
@@ -11,11 +10,11 @@ Bric::Util::Attribute::ElementType - Groups of Bric::Biz::ElementType objects.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 This module is used internally only;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The implimentations of asset type attributes.
 
@@ -67,7 +66,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -105,7 +104,7 @@ NONE
 
 #==============================================================================#
 
-=head1 PRIVATE
+=head1 Private
 
 NONE
 
@@ -138,15 +137,15 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Util::Attribute>, L<Bric::Biz::ElementType>
 

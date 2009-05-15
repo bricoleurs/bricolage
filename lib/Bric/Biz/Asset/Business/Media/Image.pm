@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business::Media::Image;
 
-# $Id$
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Media::Image - the media class that represents static
 images
@@ -12,11 +11,11 @@ images
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DATE
+=head1 Date
 
 $Data$
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of new Image objects
  $image = Bric::Biz::Asset::Business::Media::Image->new( $init )
@@ -26,7 +25,7 @@ $Data$
  # list of ids
  ($id_list || @ids) = Bric::Biz::Asset::Business::Media::Image->list_ids($param)
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Subclass of Media that pretains to Images
 
@@ -95,19 +94,19 @@ use Imager;
 # This method of Bricolage will call 'use fields for you and set some permissions.
 
 BEGIN {
-	Bric::register_fields( {
-		# Public Fields
+    Bric::register_fields( {
+        # Public Fields
 
-		# Private Fields
+        # Private Fields
 
-	});
+    });
 }
 
 #==============================================================================#
 # Interface Methods             #
 #===============================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -149,13 +148,13 @@ NONE
 =cut
 
 #sub new {
-#	my ($self, $init) = @_;
+#    my ($self, $init) = @_;
 #
-#	$self = bless {}, $self unless ref $self;
+#    $self = bless {}, $self unless ref $self;
 
-#	$self->SUPER::new($init);
+#    $self->SUPER::new($init);
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -179,11 +178,11 @@ NONE
 =cut
 
 #sub lookup {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
-#	my $self;
+#    my $self;
 
-#	return $self;
+#    return $self;
 #}
 
 ################################################################################
@@ -207,7 +206,7 @@ NONE
 =cut
 
 #sub _do_list {
-#	my ($class, $param) = @_;
+#    my ($class, $param) = @_;
 
 #}
 
@@ -228,8 +227,8 @@ dummy method to not wast the time of AUTHLOAD
 =cut
 
 sub DESTROY {
-	# This method should be here even if its empty so that we don't waste time
-	# making Bricolage's autoload method try to find it.
+    # This method should be here even if its empty so that we don't waste time
+    # making Bricolage's autoload method try to find it.
 }
 
 ################################################################################
@@ -271,7 +270,7 @@ NONE
 =cut
 
 #sub list_ids {
-#	my ($class, $params) = @_;
+#    my ($class, $params) = @_;
 
 #}
 
@@ -296,7 +295,7 @@ NONE
 =cut
 
 sub get_class_id {
-	return 50;
+    return 50;
 }
 
 ################################################################################
@@ -768,7 +767,7 @@ sub upload_file {
 
 ##############################################################################
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -880,15 +879,15 @@ sub _modify_image {
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 "Michael Soderstrom" <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl> , L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Asset::Business::Media>

@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business::Parts::Tile::Data;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Parts::Tile::Data - Deprecated; use Bric::Biz::Element::Field instead
 
@@ -11,7 +10,7 @@ Bric::Biz::Asset::Business::Parts::Tile::Data - Deprecated; use Bric::Biz::Eleme
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DESCRIPTION
+=head1 Description
 
 The functionality of this class has been moved to
 L<Bric::Biz::Element::Field|Bric::Biz::Element::Field>. Please use that class,

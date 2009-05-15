@@ -1,20 +1,20 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 dist_sql.pl - script to create init scripts for the database sql files found
 in sql directory depending in directory name
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called during "make dist" to create the database init scripts
 depending on the leading directory within sql (ex: sql/Pg will create inst/Pg.sql)
 
-=head1 AUTHOR
+=head1 Author
 
 Andrei Arsu <acidburn@asynet.ro>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

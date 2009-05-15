@@ -79,16 +79,16 @@ my $r1 = lookup Bric::BC::Workflow::Parts::Desk::Parts::Rule({'id' => 1027});
 my $r2 = lookup Bric::BC::Workflow::Parts::Desk::Parts::Rule({'id' => 1028});
 
 $d1->link_desk({'desk' => $d2,
-		'rule' => $r1});
+        'rule' => $r1});
 $d1->link_desk({'desk' => $d3,
-		'rule' => $r2});
+        'rule' => $r2});
 
 $d1->save;
 
 my @l = Bric::BC::Workflow::Parts::Desk->list({'links' => $d1});
 
 my $d1 = new Bric::BC::Workflow::Parts::Desk({'name'        => 'legal',
-					    'description' => 'The legal desk'});
+                        'description' => 'The legal desk'});
 
 my $a1 = lookup Bric::BC::Asset::Business::Story({'id' => 1});
 my $a2 = lookup Bric::BC::Asset::Business::Story({'id' => 2});
@@ -117,9 +117,9 @@ if ($@) {
 
 
 #my $d2 = new Bric::BC::Workflow::Parts::Desk({'name'        => 'sports',
-#					    'description' => 'The sports desk'});
+#                        'description' => 'The sports desk'});
 #my $d3 = new Bric::BC::Workflow::Parts::Desk({'name'        => 'editorial',
-#					    'description' => 'The editorial desk'});
+#                        'description' => 'The editorial desk'});
 
 #$d2->save;
 #$d3->save;
@@ -128,9 +128,9 @@ if ($@) {
 #my $r2 = lookup Bric::BC::Workflow::Parts::Desk::Parts::Rule({'id' => 1028});
 
 #$d1->link_desk({'desk' => $d2,
-#		'rule' => $r1});
+#        'rule' => $r1});
 #$d1->link_desk({'desk' => $d3,
-#		'rule' => $r2});
+#        'rule' => $r2});
 
 #$d1->save;
 

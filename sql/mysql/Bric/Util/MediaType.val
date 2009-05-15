@@ -1,7 +1,6 @@
 -- Project: Bricolage Business API
 -- File:    MediaType.val
 --
--- $Id$
 -- Author:  David Wheeler <david@justatheory.com>
 
 -- I got these MIME types by using tools/dev/get_mime_types. I called it with

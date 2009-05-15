@@ -1,6 +1,5 @@
 package Bric::SOAP::Workflow;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -49,7 +48,7 @@ my %wf_types = (
     template   => TEMPLATE_WORKFLOW,
 );
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
@@ -57,7 +56,7 @@ Bric::SOAP::Workflow - SOAP interface to Bricolage workflows.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -75,13 +74,13 @@ require Bric; our $VERSION = Bric->VERSION;
   # set uri for Workflow module
   $soap->uri('http://bricolage.sourceforge.net/Bric/SOAP/Workflow');
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage
 workflows.  This include facilities for moving objects onto desks,
 checkin, checkout, publishing and deploying.
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -1496,13 +1495,13 @@ sub _add_desk {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::Biz::Workflow|Bric::Biz::Workflow>
 

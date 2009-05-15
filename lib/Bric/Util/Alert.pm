@@ -1,8 +1,6 @@
 package Bric::Util::Alert;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Alert - Interface to Bricolage Alerts
 
@@ -11,7 +9,7 @@ Bric::Util::Alert - Interface to Bricolage Alerts
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Alert;
 
@@ -34,7 +32,7 @@ require Bric; our $VERSION = Bric->VERSION;
   my $timestamp = $alert->get_timestamp($format);
   my @alerted = $alert->get_alerted;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class offers an interface to alerts created when an event evaluates truly
 the rules defined for a Bric::Util::AlertType object. It provides basic accessors
@@ -127,7 +125,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1140,7 +1138,7 @@ sub save { $_[0] }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1412,15 +1410,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::AlertType|Bric::Util::AlertType>,

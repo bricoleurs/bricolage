@@ -1,9 +1,8 @@
 package Bric::Biz::Workflow;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Workflow - Controls the progress of an asset through a series of desks.
 
@@ -11,7 +10,7 @@ Bric::Biz::Workflow - Controls the progress of an asset through a series of desk
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   my $flow = new Bric::Biz::Workflow($param);
 
@@ -34,7 +33,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Lists the required desks
   @desks = $flow->required_desks();
 
-=head1 DESCRIPTION
+=head1 Description
 
 A workflow is something that guides an asset through a set of desks, where an
 asset is any kind of creative content (a story, an image, a sound file, etc)
@@ -164,7 +163,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1445,15 +1444,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Biz::Workflow::Parts::Desk>, L<perl>
 

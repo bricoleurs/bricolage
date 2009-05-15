@@ -1,8 +1,6 @@
 package Bric::Biz::Site;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Site - Interface to Bricolage Site Objects
 
@@ -11,7 +9,7 @@ Bric::Biz::Site - Interface to Bricolage Site Objects
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Biz::Site;
 
@@ -40,7 +38,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save the changes to the database
   $site = $site->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Sites are first-class Bricolage objects designed to manage different sites from
 within a single Bricolage instance.
@@ -116,7 +114,7 @@ BEGIN {
 # Constructors.
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -910,11 +908,11 @@ __END__
 
 =end private
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -944,7 +942,7 @@ Each destination object is associated with a site.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003 Kineticode, Inc. See L<Bric::License|Bric::License> for
 complete license terms and conditions.

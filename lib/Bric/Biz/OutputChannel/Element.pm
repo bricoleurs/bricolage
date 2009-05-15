@@ -1,9 +1,8 @@
 package Bric::Biz::OutputChannel::Element;
 
-# $Id$
 #############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::OutputChannel::Element - Maps Output Channels to Element Types.
 
@@ -11,7 +10,7 @@ Bric::Biz::OutputChannel::Element - Maps Output Channels to Element Types.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Biz::OutputChannel::Element;
 
@@ -27,7 +26,7 @@ require Bric; our $VERSION = Bric->VERSION;
   if ($oce->is_enabled) { } # do stuff.
   $oce->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This subclass of Bric::Biz::OutputChannel manages the relationship between
 output channels and elements (Bric::Biz::ElementType objects). It does so by
@@ -96,7 +95,7 @@ BEGIN {
 # Class Methods
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 This class inherits the majority of its interface from
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>. Only additional methods
@@ -493,15 +492,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Biz::OutputChannel|Bric::Biz::OutputChannel>,
 L<Bric::Biz::ElementType|Bric::Biz::ElementType>,

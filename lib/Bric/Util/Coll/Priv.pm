@@ -1,9 +1,8 @@
 package Bric::Util::Coll::Priv;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
@@ -11,11 +10,11 @@ Bric::Util::Coll::Priv - Interface for managing collections of privileges.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -166,13 +165,13 @@ sub save {
     my ($self, $usr_grp_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     foreach my $p (values %$del_objs) {
-	$p->del;
-	$p->save;
+    $p->del;
+    $p->save;
     }
     %$del_objs = ();
     foreach my $p (values %$objs, @$new_objs) {
-	$p->set_usr_grp_id($usr_grp_id) if defined $usr_grp_id;
-	$p->save;
+    $p->set_usr_grp_id($usr_grp_id) if defined $usr_grp_id;
+    $p->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();
@@ -181,7 +180,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -200,15 +199,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,

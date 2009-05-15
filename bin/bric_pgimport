@@ -1,22 +1,20 @@
 #!/usr/bin/perl -w
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 bric_pgimport - Builds a Bricolage Database
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   bric_pgimport [options]
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a developer program. Users should C<make> and C<make install> to build
 their Bricolage installations and database. Note that it only works with PostgreSQL
 7.3 and later.
 
-=head1 OPTIONS
+=head1 Options
 
 =over 4
 
@@ -85,13 +83,13 @@ Quiet mode.
 
 =back
 
-=head1 AUTHORS
+=head1 Authors
 
 Garth Web <garth@perijove.com>
 
 David Wheeler <david@kineticode.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -115,11 +113,11 @@ use constant DBD  => 'Pg';
 
 # Any specific DB attributes for connecting.
 use constant ATTR => {'RaiseError'  => 1,
-		      'AutoCommit'  => 1,
-		      'PrintError'  => 0,
-		      'LongReadLen' => 32768,
-		      'LongTruncOk' => 0,
-		     };
+              'AutoCommit'  => 1,
+              'PrintError'  => 0,
+              'LongReadLen' => 32768,
+              'LongTruncOk' => 0,
+             };
 
 #==============================================================================#
 # Global Variables                     #
@@ -180,22 +178,22 @@ sub initialize {
         # Add on the location of the SQL.
         $opt_w = catdir($opt_w, 'sql', DBD);
     } else {
-	$ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
-	$opt_w = catdir($ENV{BRICOLAGE_ROOT}, 'sql', DBD);
+    $ENV{BRICOLAGE_ROOT} ||= '/usr/local/bricolage';
+    $opt_w = catdir($ENV{BRICOLAGE_ROOT}, 'sql', DBD);
     }
 
     # Print a usage message unless all required args are included or if -h has
     # been passed.
     usage() if $opt_h;
     unless ($opt_u && $opt_p && $opt_d && -d $opt_w) {
-	print "\n";
-	print "  -u <database login> or PGUSER environment variable required.\n"
-	  unless $opt_u;
-	print "  -p <database password> or PGPASSWORD environment variable"
-	  . " required.\n" unless $opt_p;
-	print "  -d <database name> required.\n" unless $opt_d;
-	print "  No such directory '$opt_w'\n" unless -d $opt_w;
-	usage();
+    print "\n";
+    print "  -u <database login> or PGUSER environment variable required.\n"
+      unless $opt_u;
+    print "  -p <database password> or PGPASSWORD environment variable"
+      . " required.\n" unless $opt_p;
+    print "  -d <database name> required.\n" unless $opt_d;
+    print "  No such directory '$opt_w'\n" unless -d $opt_w;
+    usage();
     }
 
     # Set up the environment variables for psql.
@@ -209,14 +207,14 @@ sub initialize {
     $STOP = $opt_q ? 0 : 1;
 
     if ($opt_c || $opt_r) {
-	# Drop the current database, if necessary.
+    # Drop the current database, if necessary.
         if ($opt_r) {
             print "\nDropping database '$opt_d'.\n" unless $opt_q;
             exec_sql(qq{DROP DATABASE "$opt_d"}, 0, 'template1');
         }
 
-	# Create a new database.
-	print "\nCreating database '$opt_d'.\n" unless $opt_q;
+    # Create a new database.
+    print "\nCreating database '$opt_d'.\n" unless $opt_q;
         exec_sql(qq{CREATE DATABASE "$opt_d" WITH ENCODING = 'UNICODE'}
                    . " TEMPLATE template0", 0, 'template1');
     }
@@ -264,8 +262,8 @@ Supported Options:
 
 sub insert_file_set {
     foreach my $file (@{$_[0]}) {
-	chomp $file;
-	print "\tImporting '$file'\n" unless $opt_q;
+    chomp $file;
+    print "\tImporting '$file'\n" unless $opt_q;
         exec_sql(0, $file);
     }
 }

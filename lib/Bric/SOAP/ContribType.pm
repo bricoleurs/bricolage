@@ -1,6 +1,5 @@
 package Bric::SOAP::ContribType;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -40,7 +39,7 @@ my %FIELD_MAP = (
     precision => 'precision',
 );
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::ContribType - SOAP interface to Bricolage contributor types
 
@@ -48,7 +47,7 @@ Bric::SOAP::ContribType - SOAP interface to Bricolage contributor types
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -69,14 +68,14 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of all contributor type IDs
   my $ids = $soap->list_ids()->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage contributor
 types.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -576,11 +575,11 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>
 

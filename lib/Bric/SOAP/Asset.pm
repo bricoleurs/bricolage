@@ -1,6 +1,5 @@
 package Bric::SOAP::Asset;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -32,7 +31,7 @@ our @ISA = qw(SOAP::Server::Parameters);
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Asset - base class for SOAP "asset" classes
 
@@ -40,12 +39,12 @@ Bric::SOAP::Asset - base class for SOAP "asset" classes
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module is the base class that for providing a SOAP interface for
 manipulating Bricolage objects.
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -461,13 +460,13 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@theworld.com>
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>
 

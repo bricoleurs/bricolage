@@ -56,15 +56,15 @@ Bric::Util::Burner->flush_another_queue;
 1;
 __END__
 
-=head1 NAME
+=head1 Name
 
 republish_by_uri - Repbulish Bricolage stories by URI
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   republish_by_uri --username  admin --password password /foo/ /bar/
 
-=head1 DESCRIPTION
+=head1 Description
 
 This program republishes Bricolage stories based on URIs. Pass one or more
 URIs and all stories with those URIs will be published. SQL wild cards are
@@ -77,7 +77,7 @@ B<NOTE:> This script uses the Bricoalge API directly, rather than the SOAP
 server. It cannot, therefore, be run anywhere except on the Bricolage server
 itself.
 
-=head1 OPTIONS
+=head1 Options
 
   republish_by_uri --username  admin --password password [options] /foo/ /bar/
 
@@ -126,13 +126,13 @@ Optional.
 
 =back
 
-=head1 AUTHORS
+=head1 Authors
 
 David Wheeler <david@kineticode.com>
 
 Mark Jaroski <jaroskim@who.int>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2005 Kineticode, Inc. All rights reserved.
 

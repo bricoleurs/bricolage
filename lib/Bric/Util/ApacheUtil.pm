@@ -1,8 +1,6 @@
 package Bric::Util::ApacheUtil;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::ApacheUtil - Wrapper around Apache::Util and Apache2::Util classes
 
@@ -10,11 +8,11 @@ Bric::Util::ApacheUtil - Wrapper around Apache::Util and Apache2::Util classes
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::ApacheUtil qw(escape_html escape_uri unescape_url);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package encapsulates the L<Apache::Util|Apache::Util> and
 L<Apache2::Util|Apache2::Util> classes so that Bricolage doesn't have to care
@@ -44,7 +42,7 @@ BEGIN {
     }
 }
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Functions
 
@@ -77,7 +75,7 @@ sub escape_uri {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 

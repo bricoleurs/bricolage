@@ -1,9 +1,8 @@
 package Bric::Util::Coll::Server;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Coll::Server - Interface for managing collections of servers.
 
@@ -11,11 +10,11 @@ Bric::Util::Coll::Server - Interface for managing collections of servers.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Coll.
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Coll.
 
@@ -64,7 +63,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -170,13 +169,13 @@ sub save {
     my ($self, $st_id) = @_;
     my ($objs, $new_objs, $del_objs) = $self->_get(qw(objs new_obj del_obj));
     foreach my $s (values %$del_objs) {
-	$s->del;
-	$s->save;
+    $s->del;
+    $s->save;
     }
     %$del_objs = ();
     foreach my $s (values %$objs, @$new_objs) {
-	$s->set_server_type_id($st_id) if defined $st_id;
-	$s->save;
+    $s->set_server_type_id($st_id) if defined $st_id;
+    $s->save;
     }
     $self->add_objs(@$new_objs);
     @$new_objs = ();
@@ -185,7 +184,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -204,15 +203,15 @@ NONE.
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Coll|Bric::Util::Coll>,

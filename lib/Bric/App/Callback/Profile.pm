@@ -1,16 +1,14 @@
 package Bric::App::Callback::Profile;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::App::Callback::Profile - The Bricolage profile callback base class
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use base 'Bric::App::Callback::Profile';
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is the base class from which all Bricolage profile callback classes
 inherit. It provides a number of base and utility methods that are useful to
@@ -40,7 +38,7 @@ my ($get_class, $chk_grp_perms);
 
 ##############################################################################
 
-=head1 CLASS INTERFACE
+=head1 Class Interface
 
 =head2 Constructors
 
@@ -106,7 +104,7 @@ sub new {
 
 ##############################################################################
 
-=head1 INSTANCE INTERFACE
+=head1 Instance Interface
 
 =head2 Instance Attributes
 
@@ -247,11 +245,11 @@ $get_class = sub {
 
 1;
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 =over 4
 
@@ -267,7 +265,7 @@ Bric::App::Callback::Profile.
 
 =back
 
-=head1 COPYRIGHT AND LICENSE
+=head1 Copyright and License
 
 Copyright (c) 2003-2004 World Health Organization and Kineticode, Inc. See
 L<Bric::License|Bric::License> for complete license terms and conditions.

@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::Desk;
 
-# $Id$
-
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'desk';
@@ -55,7 +53,7 @@ sub save : Callback {
             } elsif (@desks == 1 && !defined $desk_id) {
                 $used = 1;
             } elsif (@desks == 1 && defined $desk_id
-	       && $desks[0] != $desk_id) {
+           && $desks[0] != $desk_id) {
                 $used = 1;
             }
             $self->raise_conflict(

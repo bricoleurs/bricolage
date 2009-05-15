@@ -1,8 +1,6 @@
 package Bric::Util::EventType;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::EventType - Interface to Types of Events
 
@@ -11,7 +9,7 @@ Bric::Util::EventType - Interface to Types of Events
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Constructors
   my $et = Bric::Util::EventType->lookup({name => 'Story Published'});
@@ -33,7 +31,7 @@ require Bric; our $VERSION = Bric->VERSION;
   $et = $ae->is_active;
   my $event = $et->log_event($user, $obj);
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bric::Util::EventType is designed to be the interface to the different types of
 events Bricolage. New events cannot be created; they are defined ahead of time
@@ -109,7 +107,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -978,7 +976,7 @@ sub get_alert_props {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1136,15 +1134,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Event|Bric::Util::Event>,

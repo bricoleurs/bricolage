@@ -1,8 +1,6 @@
 package Bric::Util::ApacheReq;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::ApacheReq - Wrapper around Apache 1 and 2 Request classes
 
@@ -10,12 +8,12 @@ Bric::Util::ApacheReq - Wrapper around Apache 1 and 2 Request classes
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::ApacheReq;
   my $r = Bric::Util::ApacheReq->instance;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This package encapsulates the L<Apache::Request|Apache::Request> and
 L<Apache2::RequestUtil|Apache2::RequestUtil> classes so that Bricolage doesn't
@@ -61,7 +59,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = ();
 our @EXPORT_OK = qw(parse_args);
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -179,7 +177,7 @@ sub parse_args {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <slanning@cpan.org>
 

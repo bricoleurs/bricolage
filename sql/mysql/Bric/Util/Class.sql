@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Garth Webb <garth@perijove.com>
 --
@@ -17,7 +16,7 @@ CREATE TABLE class(
                                     CHECK (LOWER(key_name) = key_name),
     pkg_name        VARCHAR(128)    NOT NULL,
     disp_name       VARCHAR(128)    NOT NULL,
-    plural_name	    VARCHAR(128)    NOT NULL,
+    plural_name        VARCHAR(128)    NOT NULL,
     description     VARCHAR(256),
     distributor     BOOLEAN         NOT NULL DEFAULT FALSE,
     CONSTRAINT pk_class__id PRIMARY KEY (id)

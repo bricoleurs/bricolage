@@ -1,10 +1,8 @@
 package Bric::Util::Language::my;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::my - Bricolage Burmese translation
 
@@ -12,13 +10,13 @@ Bric::Util::Language::my - Bricolage Burmese translation
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = my
 
-=head1 DESCRIPTION
+=head1 Description
 
 Translation to Burmese using Lang::Maketext.
 
@@ -37,11 +35,11 @@ our %Lexicon = (
 1;
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Maybe You? <devel@lists.bricolage.cc>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

@@ -42,19 +42,19 @@ foreach my $oc (Bric::Biz::OutputChannel->list({ site_id => $site_id,
 }
 
 $m->comp("/widgets/wrappers/table_top.mc", number => 2,
-	 caption => "Output Channels");
+     caption => "Output Channels");
 # Load up the double-list manager.
 $m->comp("/widgets/doubleListManager/doubleListManager.mc",
          readOnly     => $no_edit,
          leftOpts     => $left,
          rightOpts    => $right,
          formName     => 'dest_profile',
-	 leftName     => 'rem_oc',
+     leftName     => 'rem_oc',
          rightName    => 'add_oc',
-	 leftCaption  => $no_edit ? undef : "Available Output Channels",
-	 showLeftList => !$no_edit || 0,
-	 rightCaption => 'Current Output Channels'
-	);
+     leftCaption  => $no_edit ? undef : "Available Output Channels",
+     showLeftList => !$no_edit || 0,
+     rightCaption => 'Current Output Channels'
+    );
 $m->comp("/widgets/wrappers/table_bottom.mc");
 
 # Get the group's membership listed
@@ -105,20 +105,20 @@ if (defined $id) {
     $m->comp('/widgets/wrappers/table_bottom.mc');
 
     $m->comp('/widgets/profile/formButtons.mc',
-	     type => $type,
-	     section => $section,
-	     no_del => $no_del,
-	     return => "/admin/manager/dest",
-	     no_save => $no_edit,
+         type => $type,
+         section => $section,
+         no_del => $no_del,
+         return => "/admin/manager/dest",
+         no_save => $no_edit,
              widget => $type);
 } else {
     $m->comp('/widgets/profile/formButtons.mc',
-	     type => $type,
-	     val => 'next_dkgreen',
-	     section => $section,
-	     no_del => $no_del,
-	     return => "/admin/manager/dest",
-	     no_save => $no_edit,
+         type => $type,
+         val => 'next_dkgreen',
+         section => $section,
+         no_del => $no_del,
+         return => "/admin/manager/dest",
+         no_save => $no_edit,
              widget => $type);
 }
 </%perl>
@@ -167,11 +167,11 @@ $dest->set_site_id($ARGS{site_id}) if $ARGS{site_id};
 <%doc>
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 /admin/profile/workflow/dhandler - Interface for managing destination profiles.
 
-=head1 DESCRIPTION
+=head1 Description
 
 This element handles the display for editing destination profiles.
 

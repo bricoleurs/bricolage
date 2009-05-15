@@ -1,10 +1,10 @@
 package Bric;
 
-=head1 NAME
+=head1 Name
 
 Bric - The Bricolage base class.
 
-=head1 VERSION
+=head1 Version
 
 1.11.2 - Development Track for 2.0.0
 
@@ -15,11 +15,11 @@ BEGIN {
     our $VERSION = '1.11.2';
 }
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use base qw(Bric);
 
-=head1 DESCRIPTION
+=head1 Description
 
 The Bric class is an abstract class should never be used directly. Instead new
 classes should be derived from it.
@@ -70,7 +70,7 @@ sub ACCESS {
 # Interface
 ##############################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -481,13 +481,13 @@ sub AUTOLOAD {
     # A read permission check
     elsif ($op eq 'readable') {
         my $val = $perm & FIELD_READ;
-	*{$AUTOLOAD} = sub () { $val };
+    *{$AUTOLOAD} = sub () { $val };
     }
 
     # A write permission check
     elsif ($op eq 'writable') {
         my $val = $perm & FIELD_WRITE;
-	*{$AUTOLOAD} = sub () { $val };
+    *{$AUTOLOAD} = sub () { $val };
     }
 
     # otherwise, fail
@@ -936,13 +936,13 @@ unless (MOD_PERL) {
 
 =end private
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 NONE
 

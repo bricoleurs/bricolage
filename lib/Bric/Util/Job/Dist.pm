@@ -1,8 +1,6 @@
 package Bric::Util::Job::Dist;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Job::Dist - Manages Bricolage distribution jobs.
 
@@ -11,7 +9,7 @@ Bric::Util::Job::Dist - Manages Bricolage distribution jobs.
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Util::Job::Dist;
 
@@ -53,7 +51,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Execute the job.
   $job = $job->execute_me;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class manages distribution jobs. A job is a list of things to be
 transformed by actions and moved out, all at a scheduled time. The idea is that
@@ -240,17 +238,17 @@ sub _do_it {
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@kineticode.com>
 
 Mark Jaroski <jaroskim@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>,
 L<Bric::Util::Job>

@@ -1,20 +1,19 @@
 package Bric::Config;
 
-# $Id$
 ################################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Config - A class to hold configuration settings.
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # import all configuration constants
   use Bric::Config qw(:all);
 
   if (CONFIG_VARIABLE) { ... }
 
-=head1 DESCRIPTION
+=head1 Description
 
 Provides access to configuration variables set in conf/bricolage.conf.
 See L<Bric::Admin|Bric::Admin> for the list of configuration variables
@@ -804,7 +803,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -858,17 +857,17 @@ NONE
 1;
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb  E<lt>garth@perijove.comE<gt>
 
 David Wheeler E<lt>david@justatheory.comE<gt>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

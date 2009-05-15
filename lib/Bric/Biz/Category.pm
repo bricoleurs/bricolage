@@ -1,9 +1,8 @@
 package Bric::Biz::Category;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Category - A module to group assets into categories.
 
@@ -11,7 +10,7 @@ Bric::Biz::Category - A module to group assets into categories.
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Return a new category object.
  my $cat = Bric::Biz::Category->new($init);
@@ -60,7 +59,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # Save information for this category to the database.
  $cat->save;
 
-=head1 DESCRIPTION
+=head1 Description
 
 Allows assets to be grouped into categories. In addition to assets a category
 can contain other categories, allowing a hierarchical layout of categories and
@@ -168,7 +167,7 @@ BEGIN {
 
 #==============================================================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1933,11 +1932,11 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Garth Webb <garth@perijove.com>
 
@@ -1945,7 +1944,7 @@ Jeff "japhy" Pinyan <japhy@pobox.com>
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric::Util::Grp::Category>, L<Bric>, L<Bric::Biz::Keyword>,
 L<Bric::Biz::Asset>

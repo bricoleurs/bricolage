@@ -1,8 +1,6 @@
 package Bric::Dist::ActionType;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Dist::ActionType - Interface to types of actions supported by Bricolage distribution.
 
@@ -11,7 +9,7 @@ Bric::Dist::ActionType - Interface to types of actions supported by Bricolage di
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use Bric::Dist::ActionType;
 
@@ -37,7 +35,7 @@ require Bric; our $VERSION = Bric->VERSION;
   my $medias = $at->get_medias_href;
   print "AT is ", $at->is_active ? '' : 'not ', "active\n";
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class defines types of actions that can be performed on resources. Types of
 actions include "Akamaize," "Gzip," "Put," "Delete," etc. All actions are
@@ -107,7 +105,7 @@ BEGIN {
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -673,7 +671,7 @@ sub is_active { $_[0]->_get('_active') ? $_[0] : undef }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -801,15 +799,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>
 

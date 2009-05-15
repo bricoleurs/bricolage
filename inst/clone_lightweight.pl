@@ -1,20 +1,20 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 clone_lightweight.pl
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make clone" after clone_files.pl to remove all
 pre-compiled and locally previewed files from the tree in order to make a
 lightweight clone.
 
-=head1 AUTHOR
+=head1 Author
 
 Paul Orrock <paulo@digitalcraftsmen.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 

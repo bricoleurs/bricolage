@@ -20,16 +20,16 @@ __END__
 
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 Story.pl - a test script for Bric::SOAP::Story
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   $ ./Story.pl
   ok 1 ...
 
-=head1 DESCRIPTION
+=head1 Description
 
 This is a Test::More test script for the Bric::SOAP::Story module.  It
 requires a mix of stories in the running Bricolage instance to work
@@ -69,7 +69,7 @@ DOMCount into your path.
 You can still run the tests without Xerces C++ installed but the
 schema validation tests will be skipped.
 
-=head1 CONSTANTS
+=head1 Constants
 
 =over 4
 
@@ -95,7 +95,7 @@ the GUI after the test.
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
@@ -134,14 +134,14 @@ my $soap = new SOAP::Lite
     uri      => 'http://bricolage.sourceforge.net/Bric/SOAP/Auth',
     readable => DEBUG;
 $soap->proxy('http://localhost/soap',
-	     cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
+         cookie_jar => HTTP::Cookies->new(ignore_discard => 1));
 isa_ok($soap, 'SOAP::Lite');
 
 my ($response, $story_ids);
 
 # login
 $response = $soap->login(name(username => USER), 
-			 name(password => PASSWORD));
+             name(password => PASSWORD));
 ok(!$response->fault, 'fault check');
 exit 1 if $response->fault;
 
@@ -184,22 +184,22 @@ ok($workflow_id, "Got workflow id for Story");
 # pairs of list_ids() and normal list_ids() arg hashes that must return
 # the same list of stories.
 my @queries = (
-	       [ { }, { } ],
-	       [ { publish_status => 1 }, { publish_status => 1 } ],
-	       [ { element => 'Story' },
-		 { element_type_id => $story_element_id } ],
-	       [ { category => '/', },
-		 { category_id => 0 }, ],
-	       [ { workflow => 'Story' },
-		 { workflow__id => $workflow_id } ],
-	      );
+           [ { }, { } ],
+           [ { publish_status => 1 }, { publish_status => 1 } ],
+           [ { element => 'Story' },
+         { element_type_id => $story_element_id } ],
+           [ { category => '/', },
+         { category_id => 0 }, ],
+           [ { workflow => 'Story' },
+         { workflow__id => $workflow_id } ],
+          );
 
 foreach my $queries (@queries) {
   my ($soap_query, $query) = @$queries;
 
   # try Bric::SOAP::Story
   my $response = $soap->list_ids(map { name($_, $soap_query->{$_}) } 
-			      keys %$soap_query);
+                  keys %$soap_query);
   ok(!$response->fault, 'SOAP result is not a fault');
   exit 1 if $response->fault;
   my $soap_story_ids = $response->result;
@@ -215,9 +215,9 @@ foreach my $queries (@queries) {
   print STDERR "SOAP: ", join(', ', @$soap_story_ids), "\n" if DEBUG;
 
   is_deeply(\@bric_story_ids, $soap_story_ids, 
-	    "Comparing SOAP to non-SOAP query : (" . 
-	    join(', ', map { "$_ => $soap_query->{$_}" } keys %$soap_query) . 
-	    ")");
+        "Comparing SOAP to non-SOAP query : (" . 
+        join(', ', map { "$_ => $soap_query->{$_}" } keys %$soap_query) . 
+        ")");
 }
 
 # }
@@ -239,53 +239,53 @@ ok($xsd, "Extracted XSD from Bric::SOAP: $xsd");
 my @export_ops = ( [], [ name(export_related_stories => 1) ] );
 my $num = 1;
 my $copy_sym = 1;
-foreach my $ops (@export_ops) {		  
+foreach my $ops (@export_ops) {          
     foreach my $story_id (@$story_ids) {
-	$response = $soap->export(name(story_id => $story_id), @$ops);
-	if ($response->fault) {
-	    fail('SOAP export() response fault check');
-	    exit 1;
-	} else {
-	    pass('SOAP export() response fault check');  
-	    
-	    my $document = $response->result;
-	    ok($document, "recieved document for story $story_id");
-	    check_doc($document, $xsd, "story $story_id");
-	    
-	    # add (copy) to title and try to create copy
+    $response = $soap->export(name(story_id => $story_id), @$ops);
+    if ($response->fault) {
+        fail('SOAP export() response fault check');
+        exit 1;
+    } else {
+        pass('SOAP export() response fault check');  
+        
+        my $document = $response->result;
+        ok($document, "recieved document for story $story_id");
+        check_doc($document, $xsd, "story $story_id");
+        
+        # add (copy) to title and try to create copy
             $document =~ s!<slug>(.*?)</slug>!<slug>$1$copy_sym</slug>!g;
             $document =~ s!<primary_uri>(.*?)</primary_uri>!<primary_uri>$1$copy_sym</primary_uri>!;
-	    $copy_sym++;
-	    $response = $soap->create(name(document => $document)->type('base64'));
-	    ok(!$response->fault, 'SOAP create() result is not a fault');
-	    exit 1 if $response->fault;
-	    my $ids = $response->result;
-	    isa_ok($ids, 'ARRAY');
-	    
+        $copy_sym++;
+        $response = $soap->create(name(document => $document)->type('base64'));
+        ok(!$response->fault, 'SOAP create() result is not a fault');
+        exit 1 if $response->fault;
+        my $ids = $response->result;
+        isa_ok($ids, 'ARRAY');
+        
 
-	    # modify copy with update to add to description of first item
-	    $document =~ s!<description>(.*?)</description>!<description>$1 (description updated $copy_sym)</description>!;
-	    $document =~ s!<name>(.*?)</name>!<name>$1 (update)</name>!g;
-	    $document =~ s!id=".*?"!id="$ids->[0]"!;
-	    $copy_sym++;
-	    $response = $soap->update(name(document => $document)->type('base64'),
-				      name(update_ids => [ name(story_id => 
-								$ids->[0]) ]));
-	    ok(!$response->fault, 'SOAP update() result is not a fault');
-	    exit 1 if $response->fault;
-	    my $updated_ids = $response->result;
-	    isa_ok($ids, 'ARRAY');
-	    is($updated_ids->[0], $ids->[0], "update() worked in place");
+        # modify copy with update to add to description of first item
+        $document =~ s!<description>(.*?)</description>!<description>$1 (description updated $copy_sym)</description>!;
+        $document =~ s!<name>(.*?)</name>!<name>$1 (update)</name>!g;
+        $document =~ s!id=".*?"!id="$ids->[0]"!;
+        $copy_sym++;
+        $response = $soap->update(name(document => $document)->type('base64'),
+                      name(update_ids => [ name(story_id => 
+                                $ids->[0]) ]));
+        ok(!$response->fault, 'SOAP update() result is not a fault');
+        exit 1 if $response->fault;
+        my $updated_ids = $response->result;
+        isa_ok($ids, 'ARRAY');
+        is($updated_ids->[0], $ids->[0], "update() worked in place");
 
-	    # delete copies unless debugging and NO_DELETE unset
-	    if (DELETE_TEST_STORIES) {		
-		my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
-		$response = $soap->delete(name(story_ids => [ map { name(story_id => $_) } keys %to_delete ]));
-		ok(!$response->fault, 'SOAP delete() result is not a fault');
-		exit 1 if $response->fault;
-		ok($response->result, "SOAP delete() result check");
-	    }
-	}	
+        # delete copies unless debugging and NO_DELETE unset
+        if (DELETE_TEST_STORIES) {        
+        my %to_delete = map { $_ => 1 } (@$ids, @$updated_ids);
+        $response = $soap->delete(name(story_ids => [ map { name(story_id => $_) } keys %to_delete ]));
+        ok(!$response->fault, 'SOAP delete() result is not a fault');
+        exit 1 if $response->fault;
+        ok($response->result, "SOAP delete() result check");
+        }
+    }    
     }
     pass("Finished export() ops set $num");
     $num++;
@@ -335,7 +335,7 @@ sub extract_schema {
 
     # suck in spec
     open SPEC, "$bric_root/lib/Bric/SOAP.pm" 
-	or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
+    or die "Unable to open $bric_root/lib/Bric/SOAP.pm : $!";
     my $text = join('', <SPEC>);
     close(SPEC);
 

@@ -1,6 +1,5 @@
 -- Project: Bricolage
 --
--- $Id$
 -- Target DBMS: PostgreSQL 7.1.2
 -- Author: Michael Soderstrom <miraso@pacbell.net>
 --
@@ -9,7 +8,7 @@
 -- Table grp
 -- 
 -- Description: The grp table   Contains the name and description of the
--- 				group and its parent if it has one
+--                 group and its parent if it has one
 --
 
 CREATE TABLE grp (

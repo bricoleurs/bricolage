@@ -1,6 +1,5 @@
 package Bric::SOAP::Desk;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -23,7 +22,7 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::Desk - SOAP interface to Bricolage desks
 
@@ -31,7 +30,7 @@ Bric::SOAP::Desk - SOAP interface to Bricolage desks
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -52,13 +51,13 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of all desk IDs
   my $ids = $soap->list_ids()->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage desks.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -465,13 +464,13 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>,
 L<Bric::Biz::Workflow::Parts::Desk|Bric::Biz::Workflow::Parts::Desk>

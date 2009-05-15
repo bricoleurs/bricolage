@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Business::Story;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
@@ -11,7 +10,7 @@ Bric::Biz::Asset::Business::Story - The interface to the Story Object
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # creation of new objects
  $story = Bric::Biz::Asset::Business::Story->new( $init )
@@ -132,7 +131,7 @@ require Bric; our $VERSION = Bric->VERSION;
  # Save to the database
  $story = $story->save()
 
-=head1 DESCRIPTION
+=head1 Description
 
 Story contains all of the data that will result in published page(s) It
 contains the metadata and associations with story documents. It inherits from
@@ -518,7 +517,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1536,13 +1535,13 @@ sub get_secondary_categories {
         $self->_set({ '_categories' => $cats });
         $self->_set__dirty($dirty);
     }
-	if (($sort) && ($sort eq 'uri')) {
-	    @seconds =
-	      map  { $_->[1]                  }
-		  sort { $a->[0] cmp $b->[0]      }
-	      map  { [ lc $_->get_uri => $_ ] }
-		  @seconds; 
-	};
+    if (($sort) && ($sort eq 'uri')) {
+        @seconds =
+          map  { $_->[1]                  }
+          sort { $a->[0] cmp $b->[0]      }
+          map  { [ lc $_->get_uri => $_ ] }
+          @seconds; 
+    };
     return wantarray ? @seconds : \@seconds;
 }
 
@@ -1929,7 +1928,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2503,15 +2502,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 Michael Soderstrom <miraso@pacbell.net>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>
 

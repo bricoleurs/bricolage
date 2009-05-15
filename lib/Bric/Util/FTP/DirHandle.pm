@@ -1,10 +1,8 @@
 package Bric::Util::FTP::DirHandle;
 
-# $Id$
-
 =pod
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::FTP::DirHandle - Virtual FTP Server DirHandle
 
@@ -14,12 +12,12 @@ require Bric; our $VERSION = Bric->VERSION;
 
 =pod
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a directory handle object for use by
 Bric::Util::FTP::Server.
 
-=head1 INTERFACE
+=head1 Interface
 
 This module inherits from Net::FTPServer::DirHandle and overrides the
 required methods.  This class is used internally by Bric::Util::FTP::Server.
@@ -614,7 +612,7 @@ sub can_mkdir  { 0; }
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Functions
 
@@ -685,11 +683,11 @@ __END__
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Net:FTPServer::DirHandle|Net:FTPServer::DirHandle>
 

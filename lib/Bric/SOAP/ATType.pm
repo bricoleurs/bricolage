@@ -1,6 +1,5 @@
 package Bric::SOAP::ATType;
 
-# $Id$
 ###############################################################################
 
 use strict;
@@ -23,7 +22,7 @@ use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
 
-=head1 NAME
+=head1 Name
 
 Bric::SOAP::ATType - SOAP interface (deprecated) to Bricolage element type sets
 
@@ -31,7 +30,7 @@ Bric::SOAP::ATType - SOAP interface (deprecated) to Bricolage element type sets
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   use SOAP::Lite;
   import SOAP::Data 'name';
@@ -52,14 +51,14 @@ require Bric; our $VERSION = Bric->VERSION;
   # get a list of all element type sets
   my $ids = $soap->list_ids()->result;
 
-=head1 DESCRIPTION
+=head1 Description
 
 This module provides a SOAP interface to manipulating Bricolage element type sets.
 This interface is deprecated and will be removed in version 1.12.
 
 =cut
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Public Class Methods
 
@@ -454,11 +453,11 @@ sub serialize_asset {
 
 =back
 
-=head1 AUTHOR
+=head1 Author
 
 Scott Lanning <lannings@who.int>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::SOAP|Bric::SOAP>, L<Bric::SOAP::Asset|Bric::SOAP::Asset>
 

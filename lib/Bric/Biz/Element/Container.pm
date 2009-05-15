@@ -1,9 +1,8 @@
 package Bric::Biz::Element::Container;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Element::Container - Container Element
 
@@ -11,7 +10,7 @@ Bric::Biz::Element::Container - Container Element
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Creation of Objects
   my $container = Bric::Biz::Element::Container->new($init);
@@ -27,7 +26,7 @@ require Bric; our $VERSION = Bric->VERSION;
   $container = $container->is_container;
   $container = $container->reorder->(@new_order);
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class contains the contents of container elements, also known as story
 type elements, media type elements, and container subelements. These objects
@@ -181,7 +180,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1981,7 +1980,7 @@ sub update_from_pod {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2782,18 +2781,18 @@ __END__
 
 =end private
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHORS
+=head1 Authors
 
 Michael Soderstrom <miraso@pacbell.net>
 
 Refactoring and POD serialization and parsing by David Wheeler
 <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>, L<Bric>, L<Bric::Biz::Asset>, L<Bric::Biz::Asset::Business>,
 L<Bric::Biz::Element>

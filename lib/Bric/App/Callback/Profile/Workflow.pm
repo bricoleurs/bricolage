@@ -1,7 +1,5 @@
 package Bric::App::Callback::Profile::Workflow;
 
-# $Id$
-
 use base qw(Bric::App::Callback::Profile);
 __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'workflow';
@@ -51,7 +49,7 @@ sub save : Callback {
         } elsif (@wfs == 1 && !defined $wf_id) {
             $used = 1;
         } elsif (@wfs == 1 && defined $wf_id
-	   && $wfs[0] != $wf_id) {
+       && $wfs[0] != $wf_id) {
             $used = 1;
         }
         $self->add_message(

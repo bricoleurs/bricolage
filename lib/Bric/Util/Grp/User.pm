@@ -1,8 +1,6 @@
 package Bric::Util::Grp::User;
 
-# $Id$
-
-=head1 NAME
+=head1 Name
 
 Bric::Util::Grp::User - Interface to Bric::Biz::Person::User Groups
 
@@ -11,11 +9,11 @@ Bric::Util::Grp::User - Interface to Bric::Biz::Person::User Groups
 # Grab the Version Number.
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 See Bric::Util::Grp
 
-=head1 DESCRIPTION
+=head1 Description
 
 See Bric::Util::Grp.
 
@@ -63,18 +61,18 @@ my ($class, $mem_class);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-			 # Public Fields
+             # Public Fields
 
-			 # Private Fields
-			 _privs => Bric::FIELD_NONE
-			});
+             # Private Fields
+             _privs => Bric::FIELD_NONE
+            });
 }
 
 ################################################################################
 # Class Methods
 ################################################################################
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -332,7 +330,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Constructors
 
@@ -378,15 +376,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 David Wheeler <david@justatheory.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric|Bric>, 
 L<Bric::Biz::Person::User|Bric::Biz::Person::User>, 

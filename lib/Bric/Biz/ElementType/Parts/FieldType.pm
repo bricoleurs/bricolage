@@ -1,9 +1,8 @@
 package Bric::Biz::ElementType::Parts::FieldType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::ElementType::Parts::FieldType - Bricolage Field Type management
 
@@ -11,7 +10,7 @@ Bric::Biz::ElementType::Parts::FieldType - Bricolage Field Type management
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  $field = Bric::Biz::ElementType::Parts::FieldType->new( $initial_state )
 
@@ -65,7 +64,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
  $field = $field->save()
 
-=head1 DESCRIPTION
+=head1 Description
 
 This class holds the data about data that will eventualy populate Published
 Assets. The C<key_name> and C<description> fields can be set as can a number
@@ -220,8 +219,8 @@ BEGIN {
         default_val     => Bric::FIELD_RDWR,
         autopopulated   => Bric::FIELD_READ,
         active          => Bric::FIELD_READ,
-        max_occurrence	=> Bric::FIELD_RDWR,
-        min_occurrence	=> Bric::FIELD_RDWR,
+        max_occurrence    => Bric::FIELD_RDWR,
+        min_occurrence    => Bric::FIELD_RDWR,
         _attr           => Bric::FIELD_NONE,
         _meta           => Bric::FIELD_NONE,
         _attr_obj       => Bric::FIELD_NONE,
@@ -232,7 +231,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -1673,7 +1672,7 @@ sub save {
 
 =back
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -1928,15 +1927,15 @@ NONE
 
 __END__
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 michael soderstrom ( miraso@pacbell.net )
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<perl>,L<Bric>,L<Bric::Biz::Asset::Business::Story>,L<Bric::Biz::ElementType>,
 

@@ -1,10 +1,8 @@
 package Bric::Util::Language::zh_tw;
 
-# $Id$
-
 =encoding utf8
 
-=head1 NAME
+=head1 Name
 
 Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
@@ -12,13 +10,13 @@ Bric::Util::Language::zh_tw - Bricolage 正體中文翻譯
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
 In F<bricolage.conf>:
 
   LANGUAGE = zh_tw
 
-=head1 DESCRIPTION
+=head1 Description
 
 Bricolage 正體中文翻譯.
 
@@ -783,11 +781,11 @@ Notice:
 
 __END__
 
-=head1 AUTHOR
+=head1 Author
 
 Kang-min Liu <gugod@gugod.org>, Jimmy <jimmybric@tp4.us>.
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Util::Language|Bric::Util::Language>
 

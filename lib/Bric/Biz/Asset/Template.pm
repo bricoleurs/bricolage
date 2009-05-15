@@ -1,9 +1,8 @@
 package Bric::Biz::Asset::Template;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::Asset::Template - Template assets
 
@@ -11,7 +10,7 @@ Bric::Biz::Asset::Template - Template assets
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
  # Creation of Objects
  $fa = Bric::Biz::Asset::Template->new( $init )
@@ -97,7 +96,7 @@ require Bric; our $VERSION = Bric->VERSION;
  ($grps || @grps) = $asset->get_grp_ids()
 
 
-=head1 DESCRIPTION
+=head1 Description
 
 This has changed, it will need to be updated in a bit
 
@@ -422,7 +421,7 @@ BEGIN {
 #==============================================================================#
 
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -2013,7 +2012,7 @@ sub save {
 
 =back
 
-=head2 PRIVATE
+=head2 Private
 
 =over 4
 
@@ -2423,15 +2422,15 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE
 
-=head1 AUTHOR
+=head1 Author
 
 michael soderstrom - miraso@pacbell.net
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric>, L<Bric::Biz::Asset>
 

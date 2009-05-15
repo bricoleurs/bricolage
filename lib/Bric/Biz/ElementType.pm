@@ -1,9 +1,8 @@
 package Bric::Biz::ElementType;
 
-# $Id$
 ###############################################################################
 
-=head1 NAME
+=head1 Name
 
 Bric::Biz::ElementType - Bricolage element types
 
@@ -11,7 +10,7 @@ Bric::Biz::ElementType - Bricolage element types
 
 require Bric; our $VERSION = Bric->VERSION;
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   # Create new types of elements.
   $element = Bric::Biz::ElementType->new($init)
@@ -73,7 +72,7 @@ require Bric; our $VERSION = Bric->VERSION;
   # Save this element type.
   $element = $element->save()
 
-=head1 DESCRIPTION
+=head1 Description
 
 The element type class registers new type of elements that define the
 structures of story and media documents. Element type objects are composed of
@@ -267,7 +266,7 @@ BEGIN {
 # Interface Methods                    #
 #======================================#
 
-=head1 INTERFACE
+=head1 Interface
 
 =head2 Constructors
 
@@ -2135,7 +2134,7 @@ sub get_meta {
 
 ##############################################################################
 
-=head1 PRIVATE
+=head1 Private
 
 =head2 Private Class Methods
 
@@ -2809,17 +2808,17 @@ __END__
 
 =back
 
-=head1 NOTES
+=head1 Notes
 
 NONE.
 
-=head1 AUTHOR
+=head1 Author
 
 Michael Soderstrom <miraso@pacbell.net>
 
 Refactored by David Wheeler <david@kineticode.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Biz::Element|Bric::Biz::Element>,
 L<Bric::Util::Coll::OCElement|Bric::Util::Coll::OCElement>.

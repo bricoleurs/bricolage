@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 
-=head1 NAME
+=head1 Name
 
 clone.pl - installation script to gather clone information
 
-=head1 DESCRIPTION
+=head1 Description
 
 This script is called by "make clone" to prepare for building a cloned
 distribution.  Gathers configuration information from the user and
@@ -23,11 +23,11 @@ execution is possible:
 
   make INSTALL_VERBOSITY=QUIET clone
 
-=head1 AUTHOR
+=head1 Author
 
 Sam Tregar <stregar@about-inc.com>
 
-=head1 SEE ALSO
+=head1 See Also
 
 L<Bric::Admin>
 
@@ -97,32 +97,32 @@ sub get_clone_name {
 # find the bricolage to update
 sub get_bricolage_root {
     ask_confirm("Bricolage Root Directory to Clone?",
-		\$CLONE{BRICOLAGE_ROOT},
+        \$CLONE{BRICOLAGE_ROOT},
                 $QUIET);
 
     $CLONE{CONFIG_DIR} = $ENV{CONFIG_DIR} ||
         catdir $CLONE{BRICOLAGE_ROOT}, 'conf';
 
     ask_confirm("Bricolage Config Directory",
-		\$CLONE{CONFIG_DIR},
+        \$CLONE{CONFIG_DIR},
                 $QUIET);
 
     # verify that we have a Bricolage install here
     hard_fail("No Bricolage installation found in $CLONE{BRICOLAGE_ROOT}.\n")
-	unless -e catfile($CLONE{CONFIG_DIR}, "bricolage.conf");
+    unless -e catfile($CLONE{CONFIG_DIR}, "bricolage.conf");
 
     # verify that this Bricolage was installed with "make install"
     hard_fail("The Bricolage Installation found in $CLONE{BRICOLAGE_ROOT}\n",
-	      "was installed manually and cannot be cloned.")
-	unless -e catfile($CLONE{CONFIG_DIR}, "install.db");
+          "was installed manually and cannot be cloned.")
+    unless -e catfile($CLONE{CONFIG_DIR}, "install.db");
 }
 
 # read the install.db file from the chosen bricolage root
 sub read_install_db {
     my $install_file = catfile($CLONE{CONFIG_DIR}, "install.db");
     if (-e $install_file) {
-	# read it in if it exists
-	do $install_file or die "Failed to read $install_file : $!";
+    # read it in if it exists
+    do $install_file or die "Failed to read $install_file : $!";
     }
 }
 
@@ -165,8 +165,8 @@ sub output_dbs {
     # fake up the .dbs from %INSTALL
     my %dbs = (
         DB     => "database.db",
-		CONFIG => "config.db",
-		AP     => "apache.db",
+        CONFIG => "config.db",
+        AP     => "apache.db",
     );
 
     while ( my ($key, $file) = each %dbs) {

@@ -43,51 +43,51 @@ while (fetch($oc_sel)) {
     execute($tm_sel, $oc_id);
     bind_columns($tm_sel, \$tid);
     while (fetch($tm_sel)) {
-	my $tplate = $tclass->lookup({ id => $tid });
-	# Okay, we've got the template. Get the file name.
-	my $old_file_name = $tplate->get_file_name;
-	my @dirs = $fs->split_uri($old_file_name);
-	my @old_dirs = @dirs;
-	my ($is_post, $is_pre);
+    my $tplate = $tclass->lookup({ id => $tid });
+    # Okay, we've got the template. Get the file name.
+    my $old_file_name = $tplate->get_file_name;
+    my @dirs = $fs->split_uri($old_file_name);
+    my @old_dirs = @dirs;
+    my ($is_post, $is_pre);
 
-	# Dump any post directory.
-	if ($post && $dirs[-2] eq $post) {
-	    $is_post = 1;
-	    splice @dirs, -2, 1;
-	}
+    # Dump any post directory.
+    if ($post && $dirs[-2] eq $post) {
+        $is_post = 1;
+        splice @dirs, -2, 1;
+    }
 
-	# Dump any pre directory.
-	if ($pre && $dirs[1] eq $pre) {
-	    $is_pre = 1;
-	    splice @dirs, 1, 1;
-	}
+    # Dump any pre directory.
+    if ($pre && $dirs[1] eq $pre) {
+        $is_pre = 1;
+        splice @dirs, 1, 1;
+    }
 
-	# Just jump to the next record unless there's domething for us to
-	# actually do here.
-	next unless $is_pre || $is_post;
+    # Just jump to the next record unless there's domething for us to
+    # actually do here.
+    next unless $is_pre || $is_post;
 
-	# Assign the proper file name and save it!
-	my $new_file_name = $fs->cat_uri(@dirs);
-	$tplate->{file_name} = $new_file_name;
-	$tplate->_set__dirty(1);
-	$tplate->save;
+    # Assign the proper file name and save it!
+    my $new_file_name = $fs->cat_uri(@dirs);
+    $tplate->{file_name} = $new_file_name;
+    $tplate->_set__dirty(1);
+    $tplate->save;
 
-	# Skip to the next record unless this sucker is deployed.
-	next unless $tplate->get_deploy_status;
+    # Skip to the next record unless this sucker is deployed.
+    next unless $tplate->get_deploy_status;
 
-	# Okay, now we have to move the file!
-	my $oc_dir = "oc_$oc_id";
-	my $old_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @old_dirs);
-	# Skip it unless it exists on the file system.
-	next unless -e $old_file;
-	# Get the new file name and directory name.
-	my $new_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @dirs);
-	my $new_dir = $fs->dir_name($new_file);
-	# Create the new directory and move the file.
-	$fs->mk_path($new_dir);
-	$fs->move($old_file, $new_file);
-	# Make sure that the permissions are properly set.
-	chown SYS_USER, SYS_GROUP, $new_file;
+    # Okay, now we have to move the file!
+    my $oc_dir = "oc_$oc_id";
+    my $old_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @old_dirs);
+    # Skip it unless it exists on the file system.
+    next unless -e $old_file;
+    # Get the new file name and directory name.
+    my $new_file = $fs->cat_dir(BURN_COMP_ROOT, $oc_dir, @dirs);
+    my $new_dir = $fs->dir_name($new_file);
+    # Create the new directory and move the file.
+    $fs->mk_path($new_dir);
+    $fs->move($old_file, $new_file);
+    # Make sure that the permissions are properly set.
+    chown SYS_USER, SYS_GROUP, $new_file;
     }
 }
 
