@@ -132,7 +132,7 @@ Bricolage. This directive forces Bricolage to always use SSL throughout the
 entire applications, and thus ensures that all communications (including with
 the distribution and SOAP servers) are always encrypted.
 
-=head1 AuthorIZATION
+=head1 Authorization
 
 The authorization features of Bricolage comprise two parts: authorization
 itself and permissions management. The Bricolage authorization system is
