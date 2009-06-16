@@ -169,6 +169,10 @@ Made the popup dialog for related stories/media a bit bigger. [Scott]
 
 Added a throbber to category completion in New Story and Story Profile. [Scott]
 
+=item *
+
+Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to contribs. Generates RSS output for all system events. [Greg Heo]
+
 =back
 
 =head2 Bug Fixes
