@@ -772,8 +772,10 @@ May use C<ANY> for a list of possible values.
 =item data_text
 
 Text stored in the fields of the media element or any of its subelements. Only
-fields that use the "short" storage type will be searched. May use C<ANY> for
-a list of possible values.
+fields that use the "short" storage type will be searched unless the
+C<BLOB_SEARCH> F<bricolage.conf> directive is enabled, in which case the
+"blob" storage will also be searched. May use C<ANY> for a list of possible
+values.
 
 =item simple
 
