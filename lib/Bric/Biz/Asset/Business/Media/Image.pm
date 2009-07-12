@@ -514,13 +514,13 @@ sub find_or_create_alternate {
     $p = { %{ $p } };
 
     for my $spec (
-        [ title_prefix => 'Thumbnail for '                    ],
-        [ title_suffix => ''                                  ],
-        [ file_prefix  => ''                                  ],
-        [ file_suffix  => '_thumb'                            ],
-        [ checkin      => 1                                   ],
-        [ relate       => 1                                   ],
-        [ move_to_pub  => 1                                   ],
+        [ title_prefix => 'Thumbnail for ' ],
+        [ title_suffix => ''               ],
+        [ file_prefix  => ''               ],
+        [ file_suffix  => '_thumb'         ],
+        [ checkin      => 1                ],
+        [ relate       => 1                ],
+        [ move_to_pub  => 1                ],
     ) {
         $p->{ $spec->[0] } = $spec->[1] unless exists $p->{ $spec->[0] };
     }
