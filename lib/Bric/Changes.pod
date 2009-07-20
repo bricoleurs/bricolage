@@ -30,6 +30,11 @@ XML::LibXML. [David]
 Fixed a bug where a story published but with no resources (files) could cause
 an error. Reported by Paul Hyland. [David]
 
+=item *
+
+Fixed a bug where assets could not be checked in and their version numbers
+would revert to older ones (Bug #93) [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.7 (2009-03-12)
