@@ -46,6 +46,9 @@ sub checkin : Callback {
     $d->checkin($a_obj);
     $d->save;
 
+    clear_state("${a_class}_prof");
+    clear_state('container_prof');
+
     if ($a_class eq 'template') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
            $sb->undeploy($a_obj);
