@@ -271,7 +271,6 @@ kernel setting (note that the kernel setting is in bytes, so our setting is
 C<192 * 1024 * 1024 = 201326592>):
 
   kernel.shmmax = 201326592
-  kernel.shmall = 201326592
 
 These settings can then be enabled by running C</sbin/sysctl -p>. See
 L<http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
