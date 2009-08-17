@@ -4,11 +4,7 @@ package Bric;
 
 Bric - The Bricolage base class.
 
-=head1 VITALS
-
-=over 4
-
-=item Release Version
+=head1 Release Version
 
 1.10.8
 
