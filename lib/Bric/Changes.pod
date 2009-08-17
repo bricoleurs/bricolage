@@ -171,7 +171,15 @@ Added a throbber to category completion in New Story and Story Profile. [Scott]
 
 =item *
 
-Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to contribs. Generates RSS output for all system events. [Greg Heo]
+Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to
+contribs. Generates RSS output for all system events. [Greg Heo]
+
+=item *
+
+Renamed F<Makefile> to F<Makefile.in> and changed C<Makefile.PL> so that it
+creates F<Makefile> from F<Makefile.in>. This is so that F<Makefile> is no
+longer changed in-place, which could get annoying when doing development.
+[David]
 
 =back
 
