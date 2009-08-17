@@ -41,6 +41,14 @@ sub checkin : Callback {
     $desk->checkin($obj);
     log_event("${class}_checkin", $obj, { Version => $obj->get_version });
 
+    # If the same asset is cached in the session, remove it.
+    if (my $cached = get_state_data("$class\_prof" => $class)) {
+        if ($cached->get_id == $obj->get_id) {
+            clear_state("$class\_prof");
+            clear_state('container_prof');
+        }
+    }
+
     my ($next_desk_id, $next_workflow_id) =
         split /-/, $self->params->{"desk_asset|next_desk"};
 
@@ -94,14 +102,15 @@ sub checkout : Callback {
         $obj->save;
         log_event("${class}_checkout", $obj);
 
-        $id = $obj->get_id;
-
         if ($class eq 'template') {
             my $sandbox = Bric::Util::Burner->new({user_id => get_user_id() });
             $sandbox->deploy($obj);
         }
     }
 
+    # Clear the profile state of stale data and redirect to the profile.
+    clear_state("$class\_prof");
+    clear_state('container_prof');
     $self->set_redirect("/workflow/profile/$class/$id/?checkout=1");
 }
 
