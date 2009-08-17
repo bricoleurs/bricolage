@@ -33,7 +33,7 @@ an error. Reported by Paul Hyland. [David]
 =item *
 
 Fixed a bug where assets could not be checked in and their version numbers
-would revert to older ones (Bug #93) [Greg Heo]
+would revert to older ones (Bug #93). [Greg Heo & David]
 
 =back
 

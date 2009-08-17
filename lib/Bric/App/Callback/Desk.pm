@@ -46,8 +46,13 @@ sub checkin : Callback {
     $d->checkin($a_obj);
     $d->save;
 
-    clear_state("${a_class}_prof");
-    clear_state('container_prof');
+    # If the same asset is cached in the session, remove it.
+    if (my $cached = get_state_data("${a_class}_prof" => $a_class)) {
+        if ($cached->get_id == $a_obj->get_id) {
+            clear_state("${a_class}_prof");
+            clear_state('container_prof');
+        }
+    }
 
     if ($a_class eq 'template') {
         my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
@@ -70,6 +75,10 @@ sub checkout : Callback {
     $d->save;
     $a_obj->save;
     log_event("${a_class}_checkout", $a_obj);
+
+    # Clear the profile state, because we're about to redirect to the profile.
+    clear_state("${a_class}_prof");
+    clear_state('container_prof');
 
     $a_id = $a_obj->get_id;
 
