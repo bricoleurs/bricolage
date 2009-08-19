@@ -182,9 +182,10 @@ longer changed in-place, which could get annoying when doing development.
 
 =item *
 
-Added C<mark_as_published> method to L<Bric::Biz::Asset::Business>. This marks
-an asset as published in the database but does not create jobs or resources 
-and no templates will be called. 
+Added C<mark_as_published()> method to
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>. This method marks a
+document as published but does not create jobs or resources and no templates
+will be executed. [Paul Orrock]
 
 =back
 

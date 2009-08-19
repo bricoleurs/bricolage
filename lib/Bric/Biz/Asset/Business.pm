@@ -887,12 +887,12 @@ sub get_contributors {
     if (my @objs_needed = grep { !$contribs->{$_}->{obj} } keys %$contribs) {
         $contribs->{$_->get_id}->{obj} = $_ for Bric::Util::Grp::Parts::Member::Contrib->list({ id => ANY(@objs_needed) });
     }
-    
+
     my @ret;
-    push @ret, $contribs->{$_}->{obj} for 
+    push @ret, $contribs->{$_}->{obj} for
         sort { $contribs->{$a}->{place} <=> $contribs->{$b}->{place} }
         keys %$contribs;
-        
+
     return wantarray ? @ret : \@ret;
 }
 
@@ -1015,7 +1015,7 @@ sub reorder_contributors {
         if (exists $existing->{$_}) {
             unless ($existing->{$_}->{'place'} == $i) {
                 $existing->{$_}->{'place'} = $i;
-                $existing->{$_}->{'action'} = 'update' 
+                $existing->{$_}->{'action'} = 'update'
                   unless $existing->{$_}->{'action'} eq 'insert';
             }
                         $i++;
@@ -1587,28 +1587,33 @@ sub get_publish_date { local_date($_[0]->_get('publish_date'), $_[1]) }
 
 =item $self = $story->mark_as_published
 
-Marks the story as published, setting the publish status, publish date, version 
-and saving the story. This should be used with caution since this method does 
-not create jobs or resources and no templates will be called. 
+    $doc->mark_as_published;
+    $doc->save;
+
+If the document is not already marked as published, this method does so,
+setting the publish status and publish date and saving the story. Use with
+caution, since this method does not actually publish the document (no jobs are
+created and no templates are executed).
 
 B<Throws:> NONE.
 
-B<Side Effects:>  Sets the first C<published_version> to the value stored
-in the C<version> attribute if it hasn't been set before. Also sets the first 
-publish date if it hasn't been set before.
+B<Side Effects:> Sets the C<publish_status> to true and the C<publish_date> to
+the current date and time, unless the document is already marked as published.
+The setting of <publish_date> causes the C<first_publish_date> to be set to
+the same date.
 
-B<Notes:> This method is usually used when you have sucked the content of the 
-asset into something else that you are really publishing and want this asset to
-be marked as published without creating any content on it's own.
+B<Notes:> This method is usually used when you have sucked the content of the
+asset into something else that you are really publishing and want this asset
+to be marked as published without creating any content on its own.
 
 =cut
 
 sub mark_as_published {
     my $self = shift;
+    return if $self->get_publish_status;
     $self->set_publish_status(1);
-    $self->set_publish_date(local_date(undef,undef,1));
-    $self->save;
-} 
+    $self->set_publish_date( local_date(undef, undef, 1) );
+}
 
 ################################################################################
 
@@ -2904,4 +2909,3 @@ michael soderstrom <miraso@pacbell.net>
 L<Bric>, L<Bric::Biz::Asset>
 
 =cut
-
