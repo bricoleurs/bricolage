@@ -1585,6 +1585,33 @@ sub get_publish_date { local_date($_[0]->_get('publish_date'), $_[1]) }
 
 ################################################################################
 
+=item $self = $story->mark_as_published
+
+Marks the story as published, setting the publish status, publish date, version 
+and saving the story. This should be used with caution since this method does 
+not create jobs or resources and no templates will be called. 
+
+B<Throws:> NONE.
+
+B<Side Effects:>  Sets the first C<published_version> to the value stored
+in the C<version> attribute if it hasn't been set before. Also sets the first 
+publish date if it hasn't been set before.
+
+B<Notes:> This method is usually used when you have sucked the content of the 
+asset into something else that you are really publishing and want this asset to
+be marked as published without creating any content on it's own.
+
+=cut
+
+sub mark_as_published {
+    my $self = shift;
+    $self->set_publish_status(1);
+    $self->set_publish_date(local_date(undef,undef,1));
+    $self->save;
+} 
+
+################################################################################
+
 =item (@objs || $objs) = $asset->get_related_objects
 
 Return all the related story or media objects for this business asset. If the

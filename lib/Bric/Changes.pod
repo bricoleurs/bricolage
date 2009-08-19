@@ -38,9 +38,8 @@ Added support for copying and pasting elements in the story profile.
 Added the C<find_or_create_alternate()> method to
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> class.
 This method makes it easy for templates to create alternate representations of
-an image as a new media document as a new media document. Useful for
-generating thumbnails and the like. As a side-effect, L<Imager|Imager> is now
-a required module. [David]
+an image as a new media document. Useful for generating thumbnails and the 
+like. As a side-effect, L<Imager|Imager> is now a required module. [David]
 
 =item *
 
@@ -180,6 +179,12 @@ Renamed F<Makefile> to F<Makefile.in> and changed C<Makefile.PL> so that it
 creates F<Makefile> from F<Makefile.in>. This is so that F<Makefile> is no
 longer changed in-place, which could get annoying when doing development.
 [David]
+
+=item *
+
+Added C<mark_as_published> method to L<Bric::Biz::Asset::Business>. This marks
+an asset as published in the database but does not create jobs or resources 
+and no templates will be called. 
 
 =back
 
