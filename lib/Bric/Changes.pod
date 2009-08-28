@@ -188,6 +188,14 @@ publish. Reported by Ashlee Caul (Bug #1446). [David]
 
 The C<bric_media_upload> app works again. [David]
 
+=item *
+
+Response error handling in L<Bric::Dist::Client|Bric::Dist::Client>, which is
+used by F<bric_dist_mon>, now properly checks the error status before looking
+to see if the response is from a proper distribution handler URL. This makes
+it easier to see what problems there are in a failed response, rather than
+just bailing without any useful information. [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

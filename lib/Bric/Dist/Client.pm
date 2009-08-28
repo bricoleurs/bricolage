@@ -419,33 +419,40 @@ sub send {
     my $cookie = $self->get_cookie;
 
     eval {
-        my $req = HTTP::Request->new(GET => $self->_get('url'));
+        my $url = $self->_get('url');
+        my $req = HTTP::Request->new(GET => $url);
 #        $req->header(Execute => $exec);
         $req->header(Cookie => $cookie) if $cookie;
         my $res = $ua->request($req);
 
-        # Make sure that the URL is correct, that we actually hit a
-        # Bricolage distribution server.
-        my $errstr = "Failed to connect to Bricolage distribution server. " .
-          "Be sure that " . $self->_get('url') . ' is the proper URL';
-        throw_gen(error => $errstr) unless $res->header('BricolageDist');
-
-        if (my $c = $res->content) {
-            # There was an error.
-            throw_gen(error => $c);
-        } elsif (not $res->is_success) {
-            # Something else is amiss.
-            throw_gen(error => $res->status_line);
+        if ($res->is_error) {
+            # Bail if the response is an error.
+            throw_gen(
+                error   => "Error connecting to $url",
+                payload => $res->status_line,
+            );
+        } elsif (my $c = $res->content) {
+            # Bail if content was sent back. The body should be empty.
+            throw_gen(
+                error   => "Unexpected content returned from $url",
+                payload => $c,
+            );
+        } else {
+            # Bail if the URL doesn't look like the distribution server.
+            throw_gen(
+                error => "$url is not a Bricolage distribution server"
+            ) unless $res->header('BricolageDist');
         }
 
         # The request was successful, just return.
-    return $self;
+        return $self;
 
     };
 
-    throw_gen(error => "Error sending jobs to distributor.",
-              payload => $@)
-      if $@;
+    throw_gen(
+        error   => "Error sending jobs to distributor.",
+        payload => $@
+    ) if $@;
 }
 
 ################################################################################
