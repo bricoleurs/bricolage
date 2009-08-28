@@ -187,6 +187,11 @@ L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>. This method marks a
 document as published but does not create jobs or resources and no templates
 will be executed. [Paul Orrock]
 
+=item *
+
+Added the C<timeout> attribute to L<Bric::Dist::Client|Bric::Dist::Client> and
+the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
+
 =back
 
 =head2 Bug Fixes
