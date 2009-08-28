@@ -520,6 +520,14 @@ Fixed bug 1464: URLs weren't wrapping properly in IE. [Adrian]
 
 Fixed bug 1466: the Checkout icon wasn't working on desks in IE. [Scott]
 
+=item *
+
+Response error handling in L<Bric::Dist::Client|Bric::Dist::Client>, which is
+used by F<bric_dist_mon>, now properly checks the error status before looking
+to see if the response is from a proper distribution handler URL. This makes
+it easier to see what problems there are in a failed response, rather than
+just bailing without any useful information. [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
