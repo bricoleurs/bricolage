@@ -525,24 +525,31 @@ sub find_or_create_alternate {
         $p->{ $spec->[0] } = $spec->[1] unless exists $p->{ $spec->[0] };
     }
 
-    my $et_key_name = $p->{et_key_name} || (
-        $p->{element_type}
-            ? $p->{element_type}->get_key_name
-            : $self->get_element_key_name
-    );
+    # Figure out what element type to use.
+    my $et = $p->{et_key_name}
+        ? Bric::Biz::ElementType->lookup({ key_name => $p->{et_key_name} })
+        : $p->{element_type} || $self->get_element_type;
 
     # Construct a URI for the alternate image.
     my $image_fn  = $self->get_file_name;
     (my $alt_fn = $p->{file_prefix} . $image_fn)
         =~ s{(\.[^.\\/]+)$}{$p->{file_suffix}$1}gs;
-    (my $uri = URI::Escape::uri_unescape($self->get_uri))
-        =~ s{\Q$image_fn\E$}{$alt_fn};
+    my $uri = do {
+        # We need to use the same element type, so that the URI is correct. So
+        # we trick get_element_type() to return the object we want. Yeah, it's
+        # a hack, but it's the cleanest way to do it without creating
+        # unnecesary pain.
+        local $self->{_element_type_object} = $et;
+        (my $u = URI::Escape::uri_unescape($self->get_uri($self->get_primary_oc)))
+            =~ s{\Q$image_fn\E$}{$alt_fn};
+        $u;
+    };
 
     # Return it if it already exists.
     my ($alt) = ref($self)->list({
         site_id      => $self->get_site_id,
         uri          => $uri,
-        element_type => $et_key_name,
+        element_type => $et->get_key_name,
     });
     return $alt if $alt;
 
@@ -550,11 +557,6 @@ sub find_or_create_alternate {
     local $HTML::Mason::Commands::session{_bric_user}->{object} = $p->{user}
         if $p->{user};
     my $user = Bric::App::Util::get_user_object;
-
-    # Figure out what element type to use.
-    my $et = $p->{et_key_name}
-        ? Bric::Biz::ElementType->lookup({ key_name => $p->{et_key_name} })
-        : $p->{element_type} || $self->get_element_type;
 
     # Create a new media document.
     $alt = ref($self)->new({

@@ -138,6 +138,10 @@ sub test_alternate : Test(no_plan) {
     ok my $et = Bric::Biz::ElementType->lookup({ key_name => 'illustration' }),
         'Look up a different element type';
 
+    # Make the alternate fixed, so the URI will be different. This is a
+    # regression.
+    $et->set_fixed_uri(1);
+
     my %params = (
         element_type => $et,
         title_prefix => 'Alt of ',
