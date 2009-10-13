@@ -76,7 +76,7 @@ documents to publish from within templates. [David]
 
 =item *
 
-Fixed a bug where authorization failiures in callbacks could lead to a bogus
+Fixed a bug where authorization failures in callbacks could lead to a bogus
 error, rather than sending a "Permission Denied" error to the user. Reported
 by Matt Rolf (Bug #1362). [David]
 
