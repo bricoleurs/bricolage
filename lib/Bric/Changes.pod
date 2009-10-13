@@ -968,7 +968,7 @@ documents to publish from within templates. [David]
 
 =item *
 
-Fixed a bug where authorization failiures in callbacks could lead to a bogus
+Fixed a bug where authorization failures in callbacks could lead to a bogus
 error, rather than sending a "Permission Denied" error to the user. Reported
 by Matt Rolf (Bug #1362). [David]
 
@@ -1020,7 +1020,7 @@ Reported by Phillip Smith (Bug # 1372). [David]
 
 =item *
 
-Fixed resource (file name) lookups whe publishing and/or previewing documents
+Fixed resource (file name) lookups when publishing and/or previewing documents
 so that SQL C<LIKE> wildcard characters are ignored, so as to avoid confusing,
 for example, C</foo/bar> with C</foo_bar>. Reported by Scott (Bug # 1368).
 [David]
