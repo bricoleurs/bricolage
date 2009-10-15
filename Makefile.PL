@@ -5,8 +5,8 @@ use warnings;
 use Config;
 use File::Copy;
 
-my $old = 'Makefile';
-my $new = 'Makefile.new';
+my $old = 'Makefile.in';
+my $new = 'Makefile';
 
 open OLD, "<", $old or die "Unable to open $old: $!\n";
 open NEW, ">", $new or die "Unable to open $new: $!\n";
@@ -24,5 +24,3 @@ while (<OLD>) {
 
 close OLD;
 close NEW;
-
-move $new, $old;

@@ -76,7 +76,7 @@ sub test_atts : Test(9) {
     my $self = shift;
     my $class = $self->class;
     ok( my $key = $class->key_name, "Get key" );
-     return "OCs tested only by subclass" if $key eq 'biz';
+    return "Attributes tested only by subclass" if $key eq 'biz';
     ok( my $ba = $self->construct(name => 'Foo'), "Construct $key object" );
     my %args = $self->new_args;
     like uc $ba->get_uuid,
@@ -389,6 +389,32 @@ sub test_alias : Test(43) {
     ok( $element->remove_sites([$site1]), "Remove site" );
     ok( $element->save, "Save element type" );
 }
+
+sub test_mark_as_published :Test(11) {
+    my $self = shift;
+    my $class = $self->class;
+    ok my $key = $class->key_name, 'Get key';
+    return "Publish marking tested only by subclass" if $key eq 'biz';
+    ok my $doc = $self->construct(name => 'Foo'), "Construct $key object";
+
+    # Before marking.
+    ok !$doc->get_publish_status, 'Should not be published';
+    ok !$doc->get_publish_date, 'Should have no publish date';
+    ok !$doc->get_first_publish_date, 'Should have no first publish date';
+
+    # Mark it.
+    is $doc->mark_as_published, $doc,
+        'Should get the doc back when marking as published';
+
+    # After marking.
+    ok $doc->get_publish_status, 'Should be published';
+    ok $doc->get_publish_date, 'Should have publish date';
+    ok $doc->get_first_publish_date, 'Should have first publish date';
+    is $doc->get_publish_date, $doc->get_first_publish_date,
+        'Publish date and first publish date should be the same';
+    ok !$doc->get_id, 'Should have no ID';
+}
+
 
 1;
 __END__

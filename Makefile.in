@@ -317,5 +317,6 @@ clean 		:
 	-rm -rf inst/db_tmp
 	cd bin ; $(PERL) Makefile.PL ; $(MAKE) clean
 	-rm -rf bin/Makefile.old
+	-rm Makefile
 
 .PHONY 		: clean

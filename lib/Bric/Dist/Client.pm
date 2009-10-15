@@ -60,7 +60,7 @@ use base qw(Bric);
 # Constants
 ################################################################################
 use constant DEBUG => 0;
-use constant TIMEOUT => 30;
+use constant DEFAULT_TIMEOUT => 30;
 
 ################################################################################
 # Fields
@@ -70,7 +70,6 @@ use constant TIMEOUT => 30;
 ################################################################################
 # Private Class Fields
 my $ua = LWP::UserAgent->new;
-$ua->timeout(TIMEOUT);
 
 ################################################################################
 
@@ -78,13 +77,11 @@ $ua->timeout(TIMEOUT);
 # Instance Fields
 BEGIN {
     Bric::register_fields({
-             # Public Fields
-             exec_ids => Bric::FIELD_READ,
-             url => Bric::FIELD_RDWR,
-             cookie => Bric::FIELD_RDWR
-
-             # Private Fields
-            });
+        exec_ids => Bric::FIELD_READ,
+        url      => Bric::FIELD_RDWR,
+        cookie   => Bric::FIELD_RDWR,
+        timeout  => Bric::FIELD_RDWR,
+    });
 }
 
 ################################################################################
@@ -129,6 +126,7 @@ sub new {
     my ($pkg, $init) = @_;
     my $self = bless {}, ref $pkg || $pkg;
     @{$init->{exec_ids}}{ @{ delete $init->{exec_ids} || [] } } = ();
+    $self->set_timeout(DEFAULT_TIMEOUT);
     $self->SUPER::new($init);
 }
 
@@ -244,6 +242,70 @@ Cannot AUTOLOAD private methods.
 =item *
 
 Access denied: WRITE access for field 'url' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item my $timeout = $dist->get_timeout
+
+Returns the distribution server request timeout. This is the amount of time,
+in seconds, that the client should wait for a response from the distribution
+server before timing out. Defaults to 30 if not set.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: READ access for field 'timeout' required.
+
+=item *
+
+No AUTOLOAD method.
+
+=back
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=item $self = $dist->set_timeout($timeout)
+
+  $dist->set_timeout(60);
+
+Sets the distribution server request timeout.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bad AUTOLOAD method format.
+
+=item *
+
+Cannot AUTOLOAD private methods.
+
+=item *
+
+Access denied: WRITE access for field 'timeout' required.
 
 =item *
 
@@ -411,23 +473,30 @@ sub send {
     my $cookie = $self->get_cookie;
 
     eval {
-        my $req = HTTP::Request->new(GET => $self->_get('url'));
+        my $url = $self->_get('url');
+        my $req = HTTP::Request->new(GET => $url);
 #        $req->header(Execute => $exec);
         $req->header(Cookie => $cookie) if $cookie;
+        $ua->timeout($self->get_timeout);
         my $res = $ua->request($req);
 
-        # Make sure that the URL is correct, that we actually hit a
-        # Bricolage distribution server.
-        my $errstr = "Failed to connect to Bricolage distribution server. " .
-          "Be sure that " . $self->_get('url') . ' is the proper URL';
-        throw_gen(error => $errstr) unless $res->header('BricolageDist');
-
-        if (my $c = $res->content) {
-            # There was an error.
-            throw_gen(error => $c);
-        } elsif (not $res->is_success) {
-            # Something else is amiss.
-            throw_gen(error => $res->status_line);
+        if ($res->is_error) {
+            # Bail if the response is an error.
+            throw_gen(
+                error   => "Error connecting to $url",
+                payload => $res->status_line,
+            );
+        } elsif (my $c = $res->content) {
+            # Bail if content was sent back. The body should be empty.
+            throw_gen(
+                error   => "Unexpected content returned from $url",
+                payload => $c,
+            );
+        } else {
+            # Bail if the URL doesn't look like the distribution server.
+            throw_gen(
+                error => "$url is not a Bricolage distribution server"
+            ) unless $res->header('BricolageDist');
         }
 
         # The request was successful, just return.
@@ -435,9 +504,10 @@ sub send {
 
     };
 
-    throw_gen(error => "Error sending jobs to distributor.",
-              payload => $@)
-      if $@;
+    throw_gen(
+        error   => "Error sending jobs to distributor.",
+        payload => $@
+    ) if $@;
 }
 
 ################################################################################

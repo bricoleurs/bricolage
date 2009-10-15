@@ -88,7 +88,7 @@ if ($vals->{props}{type} eq 'checkbox') {
 # Set the array of possible values, if necessary.
 if ( my $tmp = $vals->{props}{vals} ) {
     if ($vals->{props}{type} eq 'codeselect') {
-        $vals->{props}{vals} = eval_codeselect($tmp);
+        $vals->{props}{vals} = eval_codeselect($tmp, $element);
     } else {
         my $val_prop;
         foreach my $line (split /\n/, $tmp) {

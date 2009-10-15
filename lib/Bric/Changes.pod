@@ -38,9 +38,8 @@ Added support for copying and pasting elements in the story profile.
 Added the C<find_or_create_alternate()> method to
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> class.
 This method makes it easy for templates to create alternate representations of
-an image as a new media document as a new media document. Useful for
-generating thumbnails and the like. As a side-effect, L<Imager|Imager> is now
-a required module. [David]
+an image as a new media document. Useful for generating thumbnails and the 
+like. As a side-effect, L<Imager|Imager> is now a required module. [David]
 
 =item *
 
@@ -171,7 +170,28 @@ Added a throbber to category completion in New Story and Story Profile. [Scott]
 
 =item *
 
-Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to contribs. Generates RSS output for all system events. [Greg Heo]
+Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to
+contribs. Generates RSS output for all system events. [Greg Heo]
+
+=item *
+
+Renamed F<Makefile> to F<Makefile.in> and changed C<Makefile.PL> so that it
+creates F<Makefile> from F<Makefile.in>. This is so that F<Makefile> is no
+longer changed in-place, which could get annoying when doing development.
+[David]
+
+=item *
+
+Added C<mark_as_published()> method to
+L<Bric::Biz::Asset::Business|Bric::Biz::Asset::Business>. This method marks a
+document as published but does not create jobs or resources and no templates
+will be executed. [Paul Orrock]
+
+=item *
+
+Added the C<timeout> attribute to L<Bric::Dist::Client|Bric::Dist::Client> and
+the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
+>>>>>>> 3a8e2716dc801ad7ba6c1f14a3ce9b45664e9957:lib/Bric/Changes.pod
 
 =back
 
@@ -505,6 +525,14 @@ Fixed bug 1464: URLs weren't wrapping properly in IE. [Adrian]
 =item *
 
 Fixed bug 1466: the Checkout icon wasn't working on desks in IE. [Scott]
+
+=item *
+
+Response error handling in L<Bric::Dist::Client|Bric::Dist::Client>, which is
+used by F<bric_dist_mon>, now properly checks the error status before looking
+to see if the response is from a proper distribution handler URL. This makes
+it easier to see what problems there are in a failed response, rather than
+just bailing without any useful information. [David]
 
 =back
 
