@@ -201,6 +201,12 @@ the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
 
 =item *
 
+Fixed an IE6 CSS bug that caused the sideNav layer to be hidden if the mainContent layer wasn't tall enough to show it (bug #88 / #1465) [Phillip Smith]
+
+=item *
+
+=item *
+
 Fixed a bug in the loading of WYSIWYG editor callback code in the Apache
 configuration. [John Durkin]
 
