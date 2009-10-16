@@ -191,12 +191,19 @@ will be executed. [Paul Orrock]
 
 Added the C<timeout> attribute to L<Bric::Dist::Client|Bric::Dist::Client> and
 the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
+>>>>>>> 3a8e2716dc801ad7ba6c1f14a3ce9b45664e9957:lib/Bric/Changes.pod
 
 =back
 
 =head2 Bug Fixes
 
 =over
+
+=item *
+
+Fixed an IE6 CSS bug that caused the sideNav layer to be hidden if the mainContent layer wasn't tall enough to show it (bug #88 / #1465) [Phillip Smith]
+
+=item *
 
 =item *
 

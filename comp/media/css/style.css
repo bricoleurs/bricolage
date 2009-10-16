@@ -32,9 +32,9 @@ textarea {
 #help             { background: white; padding: 10px; }
 
 #bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
-#mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; }
+#mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; height: 100%; }
 body.popup #mainContainer { min-width: 450px; }
-#sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; }
+#sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; padding-bottom: 20px; }
 #contentContainer { padding: 8px 0 0 158px; }
 body.popup #contentContainer { padding: 0; }
 #help #contentContainer { padding: 0; }
