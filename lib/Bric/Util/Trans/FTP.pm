@@ -49,6 +49,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
+my $unescape_uri;
 
 ################################################################################
 # Constants
@@ -68,7 +69,20 @@ my $fs = Bric::Util::Trans::FS->new;
 
 ################################################################################
 # Instance Fields
-BEGIN { Bric::register_fields() }
+BEGIN {
+    Bric::register_fields();
+
+    # Set up the best unescape_uri() function.
+    if ($ENV{MOD_PERL}) {
+        require Apache::Util;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&Apache::Util::unescape_uri;
+    } else {
+        require URI::Escape;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&URI::Escape::uri_unescape;
+    }
+}
 
 ################################################################################
 # Class Methods
@@ -172,15 +186,15 @@ sub put_res {
         foreach my $r (@$res) {
             # Get the source and destination paths for the resource.
             my $src = $r->get_tmp_path || $r->get_path;
-            my $dest = $fs->cat_uri($doc_root, $r->get_uri);
+            my $dest = $fs->cat_file($doc_root, $unescape_uri->($r->get_uri));
             # Create the destination directory if it doesn't exist and we haven't
             # created it already.
-            my $dest_dir = $fs->uri_dir_name($dest);
+            my $dest_dir = $fs->dir_name($dest);
             unless ($dirs{$dest_dir}) {
                 unless ($ftp->cwd($dest_dir)) {
                     # The directory doesn't exist.
                     # Get the list of all of the directories.
-                    foreach my $dir ($fs->split_uri($dest_dir)) {
+                    foreach my $dir ($fs->split_dir($dest_dir)) {
                         # Create each one if it doesn't exist.
                         unless ($ftp->cwd($dir)) {
                             $ftp->mkdir($dir);
@@ -280,7 +294,7 @@ sub del_res {
         my $doc_root = $s->get_doc_root;
         foreach my $r (@$res) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $file = $fs->cat_file($doc_root, $unescape_uri->($r->get_uri));
 
             # Get the directory to ls, and the file we are looking for
             my $fn   = $fs->base_name($file);

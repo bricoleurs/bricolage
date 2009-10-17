@@ -196,6 +196,14 @@ to see if the response is from a proper distribution handler URL. This makes
 it easier to see what problems there are in a failed response, rather than
 just bailing without any useful information. [David]
 
+=item *
+
+Fixed a bug introduced in 1.10.7 where the C<get_uri()> method, now properly
+URI-escaping itself, was breaking media distribution for media documents with
+spaces or other URI-escapeable characters in their file names. Thanks to Scott
+Lanning for the spot, and Aaron Fuleki for the kick to get it fixed (Bug #82 /
+#1456). [David]
+
 =back
 
 =head1 VERSION 1.10.6 (2008-10-02)

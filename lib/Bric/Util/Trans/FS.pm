@@ -109,7 +109,7 @@ my $osen = { mac => 'MacOS',
              amiga => 'AmigaOS',
              amigaos => 'AmigaOS',
            };
-my $escape_uri;
+my ($escape_uri, $unescape_uri);
 
 ################################################################################
 
@@ -123,10 +123,12 @@ BEGIN {
         require Apache::Util;
         rethrow_exception($@) if $@;
         $escape_uri = \&Apache::Util::escape_uri;
+        $unescape_uri = \&Apache::Util::unescape_uri;
     } else {
         require URI::Escape;
         rethrow_exception($@) if $@;
         $escape_uri = \&URI::Escape::uri_escape;
+        $unescape_uri = \&URI::Escape::uri_unescape;
     }
 }
 
@@ -296,7 +298,7 @@ sub put_res {
         # We've got the document root on each server.
         while (my ($uri, $src) = each %src_paths) {
             # Copy the resource to $doc_root/$uri.
-            copy($pkg, $src, cat_dir($pkg, $doc_root, $uri));
+            copy($pkg, $src, cat_dir($pkg, $doc_root, $unescape_uri->($uri)));
         }
     }
     return 1;
@@ -381,7 +383,7 @@ B<Notes:> NONE.
 sub del_res {
     my ($pkg, $res, $st) = @_;
     # Get the resource paths.
-    my @paths = map { $_->get_uri } @$res;
+    my @paths = map { $unescape_uri->($_->get_uri) } @$res;
     foreach my $s ($st->get_servers) {
         next unless $s->is_active;
         # Grab the document root.
@@ -668,7 +670,7 @@ sub cat_file { shift; return File::Spec::Functions::catfile(@_) }
 
 =item my $uri = $fs->cat_uri(@uri_parts)
 
-Takes a URI and returns its directory parts.
+Takes a list of directory parts and concatenates them into a URI.
 
 B<Throws:> NONE.
 
@@ -678,7 +680,13 @@ B<Notes:> Uses File::Spec::Unix->catdir() internally.
 
 =cut
 
-sub cat_uri { shift; return File::Spec::Unix->catdir(@_) }
+sub cat_uri {
+    my $self = shift;
+    File::Spec::Unix->catdir(
+        map { $escape_uri->($_) }
+        map { $_ ? $self->split_uri($unescape_uri->($_)) : $_ } @_
+    );
+}
 
 ################################################################################
 
@@ -712,7 +720,7 @@ B<Notes:> Uses File::Spec::Unix->splitdir() internally.
 
 sub split_uri {
     (my $uri = $_[1]) =~ s|(?<=.)/$||;
-    return File::Spec::Unix->splitdir($uri);
+    return File::Spec::Unix->splitdir($unescape_uri->($uri));
 }
 
 ################################################################################
@@ -746,8 +754,8 @@ sub trunc_dir {
 
 =item my $uri = $fs->trunc_uri($uri)
 
-Takes a URI name, chops off the last URI specification, and returns the
-truncated URI. Returns undef when the URI passed in is the root URI (e.g., '/').
+Takes a URI, chops off the last directoey, and returns the truncated URI.
+Returns undef when the URI passed in is the root URI (e.g., '/').
 
 B<Throws:> NONE.
 
@@ -784,7 +792,7 @@ sub dir_to_uri {
     # Dump any leading drive name on Win32 and OS/2.
     $d[0] = '' if ($^O eq 'Win32' || $^O eq 'OS2') &&
       File::Spec::Functions::file_name_is_absolute($_[1]);
-    return File::Spec::Unix->catdir(map { &$escape_uri($_) } @d);
+    return File::Spec::Unix->catdir(map { $escape_uri->($_) } @d);
 }
 
 ################################################################################
@@ -803,7 +811,7 @@ internally.
 =cut
 
 sub uri_to_dir {
-    my @d = File::Spec::Unix->splitdir($_[1]);
+    my @d = File::Spec::Unix->splitdir($unescape_uri->($_[1]));
     return File::Spec::Functions::catdir(@d);
 }
 

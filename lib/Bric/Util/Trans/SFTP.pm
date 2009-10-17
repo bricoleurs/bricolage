@@ -52,7 +52,7 @@ use base qw(Bric);
 ################################################################################
 # Function and Closure Prototypes
 ################################################################################
-my ($no_warn, $sftp_args);
+my ($no_warn, $sftp_args, $unescape_uri);
 
 ################################################################################
 # Constants
@@ -72,7 +72,20 @@ my $fs = Bric::Util::Trans::FS->new;
 
 ################################################################################
 # Instance Fields
-BEGIN { Bric::register_fields() }
+BEGIN {
+    Bric::register_fields();
+
+    # Set up the best unescape_uri() function.
+    if ($ENV{MOD_PERL}) {
+        require Apache::Util;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&Apache::Util::unescape_uri;
+    } else {
+        require URI::Escape;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&URI::Escape::uri_unescape;
+    }
+}
 
 ################################################################################
 # Class Methods
@@ -159,7 +172,7 @@ sub put_res {
             my $src = $r->get_tmp_path || $r->get_path;
             # Create the destination directory if it doesn't exist and we
             # haven't created it already.
-            my $dest_dir = $fs->uri_dir_name($r->get_uri);
+            my $dest_dir = $fs->dir_name($unescape_uri->($r->get_uri));
             my ($status, $dirhandle);
             unless ($dirs{$dest_dir}) {
                 $dirhandle = eval {
@@ -171,7 +184,7 @@ sub put_res {
                     # Get the list of all of the directories.
                     my $attrs = Net::SFTP::Attributes->new();
                     my $subdir = $doc_root;
-                    foreach my $dir ($fs->split_uri($dest_dir)) {
+                    foreach my $dir ($fs->split_dir($dest_dir)) {
                         # Create each one if it doesn't exist.
                         $subdir = $fs->cat_dir($subdir, $dir);
                         # Mark that we've created it, so we don't try to do it
@@ -200,7 +213,7 @@ sub put_res {
                 }
             }
             # Now, put the file on the server.
-            my $dest_file = $fs->cat_dir($doc_root, $r->get_uri);
+            my $dest_file = $fs->cat_dir($doc_root, $unescape_uri->($r->get_uri));
             my $tmp_dest = $dest_file . '.tmp';
             $status = eval{
                 local $SIG{__WARN__} = $no_warn;
@@ -272,7 +285,7 @@ sub del_res {
         my $doc_root = $s->get_doc_root;
         foreach my $r (@$res) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $file = $fs->cat_file($doc_root, $unescape_uri->($r->get_uri));
             my $status = eval{
                 local $SIG{__WARN__} = $no_warn;
                 $sftp->do_stat($file);

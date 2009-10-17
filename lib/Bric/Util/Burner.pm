@@ -254,6 +254,7 @@ use constant SYNTAX_MODE => 3;
 #--------------------------------------#
 # Private Class Fields
 my $fs = Bric::Util::Trans::FS->new;
+my $unescape_uri;
 
 #--------------------------------------#
 # Instance Fields
@@ -288,6 +289,17 @@ BEGIN {
         _notes                => Bric::FIELD_NONE,
         _output_preview_msgs  => Bric::FIELD_NONE,
     });
+
+    # Set up the best unescape_uri() function.
+    if ($ENV{MOD_PERL}) {
+        require Apache::Util;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&Apache::Util::unescape_uri;
+    } else {
+        require URI::Escape;
+        rethrow_exception($@) if $@;
+        $unescape_uri = \&URI::Escape::uri_unescape;
+    }
 }
 
 #==============================================================================#
@@ -999,7 +1011,7 @@ sub preview {
             foreach my $rsrc (@$res) {
                 $fs->copy($rsrc->get_path,
                           $fs->cat_dir($comp_root, PREVIEW_LOCAL,
-                                       $rsrc->get_uri));
+                                       $unescape_uri->($rsrc->get_uri)));
             }
             # Return the redirection URL.
             return $fs->cat_uri('/', PREVIEW_LOCAL, $res->[0]->get_uri);
