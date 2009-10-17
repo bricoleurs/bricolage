@@ -34,6 +34,7 @@ use Net::SSH2::SFTP;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:dist);
+use Bric::Util::ApacheUtil qw(unescape_uri escape_uri);
 
 ################################################################################
 # Inheritance
@@ -159,7 +160,7 @@ sub put_res {
             my $src = $res->get_tmp_path || $res->get_path;
             # Create the destination directory if it doesn't exist and we
             # haven't created it already.
-            my $dest_dir = $fs->uri_dir_name($res->get_uri);
+            my $dest_dir = $fs->dir_name(unescape_uri $res->get_uri);
             my ($status, $dirhandle);
             unless ($dirs{$dest_dir}) {
                 $dirhandle = eval {
@@ -170,7 +171,7 @@ sub put_res {
                     # The directory doesn't exist.
                     # Get the list of all of the directories.
                     my $subdir = $doc_root;
-                    foreach my $dir ($fs->split_uri($dest_dir)) {
+                    foreach my $dir ($fs->split_dir($dest_dir)) {
                         # Create each one if it doesn't exist.
                         $subdir = $fs->cat_dir($subdir, $dir);
                         # Mark that we've created it, so we don't try to do it
@@ -195,8 +196,8 @@ sub put_res {
                 }
             }
             # Now, put the file on the server.
-            my $dest_file = $fs->cat_dir($doc_root, $res->get_uri);
-            # Strip the filename off end of uri and escape it
+            my $dest_file = $fs->cat_file($doc_root, unescape_uri $res->get_uri);
+            # Strip the filename off end of dest and escape it
             my $orig_base = $fs->base_name($dest_file);
             my $escaped_base;
             ($escaped_base = $orig_base) =~ s/(.)/\\$1/g;
@@ -286,7 +287,7 @@ sub del_res {
         my $doc_root = $s->get_doc_root;
         foreach my $res (@$resources) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_dir($doc_root, $res->get_uri);
+            my $file = $fs->cat_file($doc_root, unescape_uri $res->get_uri);
             # Delete the file
             $sftp->unlink($file);
         }

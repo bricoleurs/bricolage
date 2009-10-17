@@ -27,7 +27,7 @@ use URI::Escape ();
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT = ();
-our @EXPORT_OK = qw(unescape_url escape_uri);
+our @EXPORT_OK = qw(unescape_url escape_uri unescape_uri);
 
 use Bric::Config qw(:mod_perl);
 BEGIN {
@@ -71,6 +71,19 @@ sub escape_uri {
     # note: uri_escape takes a 2nd arg, which differs from escape_path,
     # so don't just alias this
     return URI::Escape::uri_escape($_[0]);
+}
+
+=item my $str = Bric::Util::ApacheUtil::unescape_uri($uri, $r->pool);
+
+Replaces C<Apache::Util::unescape_uri>, C<Apache2::Util::unescape_path>,
+or C<URI::Escape::uri_unescape>.
+
+=cut
+
+sub unescape_uri {
+    # note: uri_escape takes a 2nd arg, which differs from escape_path,
+    # so don't just alias this
+    return URI::Escape::uri_unescape($_[0]);
 }
 
 =back

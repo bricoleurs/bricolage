@@ -1051,9 +1051,14 @@ sub preview {
         if (PREVIEW_LOCAL) {
             # Copy the files for previewing locally.
             foreach my $rsrc (@$resources) {
-                $fs->copy($rsrc->get_path,
-                          $fs->cat_dir($comp_root, PREVIEW_LOCAL,
-                                       $rsrc->get_uri));
+                $fs->copy(
+                    $rsrc->get_path,
+                    $fs->cat_dir(
+                        $comp_root,
+                        PREVIEW_LOCAL,
+                        $fs->uri_to_dir($rsrc->get_uri)
+                    )
+                );
             }
             # Return the redirection URL.
             return $fs->cat_uri('/', PREVIEW_LOCAL, $resources->[0]->get_uri);

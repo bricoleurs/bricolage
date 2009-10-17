@@ -191,19 +191,12 @@ will be executed. [Paul Orrock]
 
 Added the C<timeout> attribute to L<Bric::Dist::Client|Bric::Dist::Client> and
 the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
->>>>>>> 3a8e2716dc801ad7ba6c1f14a3ce9b45664e9957:lib/Bric/Changes.pod
 
 =back
 
 =head2 Bug Fixes
 
 =over
-
-=item *
-
-Fixed an IE6 CSS bug that caused the sideNav layer to be hidden if the mainContent layer wasn't tall enough to show it (bug #88 / #1465) [Phillip Smith]
-
-=item *
 
 =item *
 
@@ -539,6 +532,20 @@ used by F<bric_dist_mon>, now properly checks the error status before looking
 to see if the response is from a proper distribution handler URL. This makes
 it easier to see what problems there are in a failed response, rather than
 just bailing without any useful information. [David]
+
+=item *
+
+Fixed an IE6 CSS bug that caused the sideNav layer to be hidden if the
+mainContent layer wasn't tall enough to show it (bug #88 / #1465) [Phillip
+Smith]
+
+=item *
+
+Fixed a bug introduced in 1.10.7 (and 1.11.1) where the C<get_uri()> method,
+now properly URI-escaping itself, was breaking media distribution for media
+documents with spaces or other URI-escapeable characters in their file names.
+Thanks to Scott Lanning for the spot, and Aaron Fuleki for the kick to get it
+fixed (Bug #82 / #1456). [David]
 
 =back
 
