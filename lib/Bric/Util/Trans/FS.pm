@@ -684,7 +684,7 @@ sub cat_uri {
     my $self = shift;
     File::Spec::Unix->catdir(
         map { $escape_uri->($_) }
-        map { $_ ? $self->split_uri($unescape_uri->($_)) : $_ } @_
+        map { $_ ? $self->split_uri($unescape_uri->("$_")) : $_ } @_
     );
 }
 
