@@ -343,7 +343,7 @@ START MODULE LIST
 
 =item Devel::Symdump
 
-=item DBI 1.18
+=item DBI 1.49
 
 =item Error
 

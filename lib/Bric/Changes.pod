@@ -547,6 +547,14 @@ documents with spaces or other URI-escapeable characters in their file names.
 Thanks to Scott Lanning for the spot, and Aaron Fuleki for the kick to get it
 fixed (Bug #82 / #1456). [David]
 
+=item *
+
+Fixed compatibility issues on MySQL. Bricolage now sets C<sql_mode> when it
+connects to the database, so that MySQL itself does not have to globally set
+that option, as it could cause conflicts with other apps running on MySQL.
+Also removed the attempt to set C<sql_mode> globally at installation time; it
+was bad manners, really. Thanks to Waldo Jaquith for the report. [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)

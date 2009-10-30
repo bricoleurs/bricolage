@@ -51,7 +51,18 @@ use constant DSN_STRING => 'database=' . DB_NAME
   . (DB_PORT ? eval "';port=' . DB_PORT" : '');
 
 # This is to set up driver-specific database handle attributes.
-use constant DBH_ATTR => ( );
+use constant DBH_ATTR => (
+    Callbacks => {
+        connected => sub {
+            my $dbh = shift;
+            $dbh->do(q{
+                SET SESSION sql_mode='ansi,strict_trans_tables,no_auto_value_on_zero';
+            }) unless exists $dbh->{private_bric_sql_mode};
+            $dbh->{private_bric_sql_mode} = 1;
+            return;
+        },
+    },
+);
 
 # This is the maximum for LIMIT rowcount in MySQL
 use constant LIMIT_DEFAULT => '18446744073709551615';
