@@ -128,14 +128,15 @@ $save = sub {
             log_event("${type}_deact", $at);
         }
 
-    # Update the rules.
-        my $rids  = mk_aref($param->{alert_type_rule_id});
+        # Update the rules.
+        my %curr  = map { $_->get_id => $_ } $at->get_rules;
+        my $rids  = mk_aref( $param->{alert_type_rule_id} );
         my $attrs = mk_aref( $param->{attr} );
         my $ops   = mk_aref( $param->{operator} );
         my $vals  = mk_aref( $param->{value} );
         for (my $i = 0; $i < @{ $attrs }; $i++) {
             if (my $id = $rids->[$i]) {
-                my ($rule) = $at->get_rules($id);
+                my ($rule) = delete $curr{$id};
                 $rule->set_attr($attrs->[$i]);
                 $rule->set_operator($ops->[$i]);
                 $rule->set_value($vals->[$i]);
@@ -144,8 +145,7 @@ $save = sub {
                 my $rule = $at->new_rule( $attrs->[$i], $ops->[$i], $vals->[$i] );
             }
         }
-        $at->del_rules(@{ mk_aref($param->{del_alert_type_rule})} )
-            if $param->{del_alert_type_rule};
+        $at->del_rules( keys %curr ) if %curr;
     } else {
         if (defined $param->{event_type_id}) {
             $at->set_event_type_id($param->{event_type_id});
