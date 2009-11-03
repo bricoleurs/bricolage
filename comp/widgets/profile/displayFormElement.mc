@@ -413,8 +413,9 @@ my %formSubs = (
             $value = { map { $_ => 1 } split /__OPT__/, $value }
               if $vals->{props}{multiple};
 
+            $id ||= $key;
             $m->print(qq{<div class="row">\n}) if $useTable;
-            $m->print(qq{    <div class="$label"><label for="$key">$name</label>:</div>\n}) if $name;
+            $m->print(qq{    <div class="$label"><label for="$id">$name</label>:</div>\n}) if $name;
             $m->print('<br />') if !$useTable && $name;
             $m->print(qq{        <div class="input">\n}) if $useTable;
 
@@ -441,7 +442,7 @@ my %formSubs = (
                 # Output the select list.
                 $js = $js ? " $js" : '';
                 $m->print(
-                    qq{            <select name="$key" id="$key" size="},
+                    qq{            <select name="$key" id="$id" size="},
                     $vals->{props}{size} || ($vals->{props}{multiple} ? 5 : 1),
                     '"'
                 );

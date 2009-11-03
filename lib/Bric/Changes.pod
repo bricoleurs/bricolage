@@ -577,6 +577,11 @@ publish status, rather than no stories at all (Bug #1). [David]
 Alert type rules can once again be deleted from the UI. Thanks to Scott for
 the report (Bug #81). [David]
 
+=item *
+
+Contributors can be deleted again. Thanks to Phillip for the report (Bug
+#111). [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
