@@ -555,6 +555,16 @@ that option, as it could cause conflicts with other apps running on MySQL.
 Also removed the attempt to set C<sql_mode> globally at installation time; it
 was bad manners, really. Thanks to Waldo Jaquith for the report. [David]
 
+=item *
+
+Passing a false value for the C<published_version> parameter to the C<list()>
+method of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, and
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template> now works as
+expected, returning the latest version of all stories regardless of their
+publish status, rather than no stories at all (Bug #1). [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)

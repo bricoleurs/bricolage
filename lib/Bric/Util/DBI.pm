@@ -840,6 +840,9 @@ sub clean_params {
     # Map inverse alias inactive to active.
     $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
       if exists $param->{'inactive'};
+    # Help out Template.
+    $param->{pubished_version} = $param->{deployed_version}
+        if exists $param->{deployed_version};
     unless ($param->{published_version} or $param->{version_id}) {
         # checked_out has some special cases
         # deal with the checked_out param.  The all argument is actually
@@ -875,6 +878,7 @@ sub clean_params {
       || defined $param->{version}
       || $param->{published_version}
       || $param->{version_id};
+    delete $param->{published_version} unless $param->{published_version};
     # add default order
     $param->{Order} = $class->DEFAULT_ORDER unless $param->{Order};
     # support of NULL workflow__id
