@@ -582,6 +582,11 @@ the report (Bug #81). [David]
 Contributors can be deleted again. Thanks to Phillip for the report (Bug
 #111). [David]
 
+=item *
+
+Fixed odd positioning of the "Check-in" menu on /workflow/profile/workspace 
+(Bug #89). [Phillip Smith]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
