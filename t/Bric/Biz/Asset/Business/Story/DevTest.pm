@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(201) {
+sub test_select_methods: Test(205) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -952,6 +952,14 @@ sub test_select_methods: Test(201) {
     is 1, @$got, 'There should now be only one story';
     is $OBJ_IDS->{story}[2], $got->[0]->get_id,
         'It should have the ID of the second story';
+
+    # Test published_version.
+    ok $got = class->list({ publish_status => 0 }),
+        'Get a list of unpublished stories';
+    is @$got, 5, 'There should be five of them';
+    ok $got = class->list({ publish_status => 1 }),
+        'Get a list of published stories';
+    is @$got, 1, 'There should be one';
 }
 
 ##############################################################################
