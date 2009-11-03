@@ -610,11 +610,11 @@ sub load_asset {
                 # TODO Something smarter with the default place number
                 ($elem_min, $elem_max, $place) = (0, 0, 0);
             }
-            
+
             # add name to fixup hash for this element type
             $fixup{$edata->{key_name}} = []
               unless exists $fixup{$edata->{key_name}};
-            push @{$fixup{$edata->{key_name}}}, 
+            push @{$fixup{$edata->{key_name}}},
                 [ $kn, $elem_min, $elem_max, $place ];
         }
 
@@ -643,19 +643,6 @@ sub load_asset {
             ($field->{key_name} = lc $field->{name}) =~ y/a-z0-9/_/cs
               unless defined $field->{key_name};
 
-            # figure out sql_type.
-            my $sql_type;
-            if ($field->{widget_type} eq 'date'){
-                $sql_type = 'date';
-            } elsif ($field->{widget_type} eq 'textarea' or
-                     (defined $field->{max_size} and
-                      ($field->{max_size} == 0 or
-                       $field->{max_size} > 1024))) {
-                $sql_type = 'blob';
-            } else {
-                $sql_type = 'short';
-            }
-
             # Verify the code if it's a codeselect
             # XXX: triplicated now... (cf. comp/widgets/profile/displayAttrs.mc
             # and lib/Bric/App/Callback/Profile/FormBuilder.pm)
@@ -679,7 +666,7 @@ sub load_asset {
                 $data->set_description( $field->{description});
                 $data->set_min_occurrence( $field->{min_occur} || 0 );
                 $data->set_max_occurrence( $field->{max_occur} || 0 );
-                $data->set_sql_type(    $sql_type);
+                $data->set_sql_type(    $field->{sql_type} ) if $field->{sql_type};
                 $data->set_place(       $place);
                 $data->set_max_length(  $field->{max_size});
                 $data->set_widget_type( $field->{widget_type} || $field->{type});
@@ -703,7 +690,7 @@ sub load_asset {
                     description   => $field->{description},
                     min_occurrence => $field->{min_occur} || 0,
                     max_occurrence => $field->{max_occur} || 0,
-                    sql_type      => $sql_type,
+                    sql_type      => $field->{sql_type} || _suss_sql_type($field),
                     place         => $place,
                     max_length    => $field->{max_size},
                     widget_type   => $field->{widget_type} || $field->{type},
@@ -763,7 +750,7 @@ sub load_asset {
               unless defined $sub_id;
               $element->add_container($sub_id);
               $element->save;
-              
+
               # Now set the subelement stuff
               # Note: We need to get it so a subelement is returned
               my ($sub_elem) = $element->get_containers($sub_id);
@@ -771,7 +758,7 @@ sub load_asset {
               $sub_elem->set_max_occurrence($sub_max || 0);
               $sub_elem->set_place($sub_place);
               $sub_elem->save;
-              
+
         }
         $element->save;
     }
@@ -874,6 +861,7 @@ sub serialize_asset {
         $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );
+        $writer->dataElement( sql_type    => $data->get_sql_type           );
         $writer->dataElement( default_val => $data->get_default_val        );
         $writer->dataElement( options     => $data->get_vals               );
         $writer->dataElement( multiple    => $data->get_multiple   ? 1 : 0 );
@@ -893,6 +881,22 @@ sub serialize_asset {
 
     # close the element
     $writer->endTag('element_type');
+}
+
+sub _suss_sql_type {
+    my $field = shift;
+    # Try to suss it out.
+    if ($field->{widget_type} eq 'date'){
+        return 'date';
+    } elsif ($field->{widget_type} eq 'textarea' or (
+        defined $field->{max_size} and (
+            $field->{max_size} == 0 or $field->{max_size} > 1024
+        )
+    )) {
+        return 'blob';
+    } else {
+        return 'short';
+    }
 }
 
 =back
