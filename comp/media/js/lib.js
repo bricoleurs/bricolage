@@ -1472,6 +1472,7 @@ Lightbox.prototype = {
     display: function(display){
         this.overlay().style.display = display;
         this.content.style.display = display;
+        this.overlay().onclick =  this.deactivate.bindAsEventListener(this);
         this.content.style.top = window.scrollY + 100 + 'px';
         if (display != 'none') this.actions();
     },
