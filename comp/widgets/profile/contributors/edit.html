@@ -3,7 +3,8 @@
 &>
     <script type="text/javascript">
     function deleteContrib(button) {
-        Element.remove('contrib_id_' + $(button).value); $(button).form.submit();
+        var form = $(button).form;
+        Element.remove('contrib_id_' + $(button).value); form.submit();
     }
     </script>
     <div id="contribs">

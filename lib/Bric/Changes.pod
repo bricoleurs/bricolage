@@ -587,6 +587,12 @@ Contributors can be deleted again. Thanks to Phillip for the report (Bug
 Fixed odd positioning of the "Check-in" menu on /workflow/profile/workspace 
 (Bug #89). [Phillip Smith]
 
+=item *
+
+Fixed the contributor association popup so that hitting the "Enter" key to
+perform a search no longer deletes contributors you've just added (Bug #112).
+[David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)

@@ -1,6 +1,6 @@
 <%args>
 $formName  => 'theForm'
-$callback
+$callback  => undef
 $value     => 1
 $image
 $vspace    => 0

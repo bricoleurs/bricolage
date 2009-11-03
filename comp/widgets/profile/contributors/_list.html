@@ -56,19 +56,18 @@ my $value_sub = sub {
                   js => qq{class="reorder" onchange="reorder(this, 'contribs')"}
         )
     } elsif ($_[1] eq 'delete') {
+        my $elem_id = 'contrib_id_' . $_[0]->get_id;
         $m->scomp('/widgets/profile/hidden.mc',
-            id      => "contrib_id_" . $_[0]->get_id,
+            id      => $elem_id,
             name    => "contrib_id",
             value   => $_[0]->get_id,
         ) .
-        $m->scomp('/widgets/profile/button.mc',
-            disp      => $lang->maketext("Delete Contributor"),
-            name      => 'delete_contrib',
-            value     => $_[0]->get_id,
-            button    => 'delete_red',
-            useTable  => 0,
-            js        => qq{onclick="deleteContrib(this); return false"}
+        $m->scomp('/widgets/profile/imageSubmit.mc',
+            image => 'delete_red',
+            js    => qq{onclick="deleteContrib(\$('$elem_id')); return false"},
+            useHidden => 0,
         );
     }
 };
 </%init>
+
