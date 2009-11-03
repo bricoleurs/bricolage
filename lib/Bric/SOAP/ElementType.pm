@@ -638,19 +638,6 @@ sub load_asset {
             ($field->{key_name} = lc $field->{name}) =~ y/a-z0-9/_/cs
               unless defined $field->{key_name};
 
-            # figure out sql_type.
-            my $sql_type;
-            if ($field->{widget_type} eq 'date'){
-                $sql_type = 'date';
-            } elsif ($field->{widget_type} eq 'textarea' or
-                     (defined $field->{max_size} and
-                      ($field->{max_size} == 0 or
-                       $field->{max_size} > 1024))) {
-                $sql_type = 'blob';
-            } else {
-                $sql_type = 'short';
-            }
-
             # Verify the code if it's a codeselect
             # XXX: triplicated now... (cf. comp/widgets/profile/displayAttrs.mc
             # and lib/Bric/App/Callback/Profile/FormBuilder.pm)
@@ -674,7 +661,7 @@ sub load_asset {
                 $data->set_description( $field->{description});
                 $data->set_required(    $field->{required});
                 $data->set_quantifier(  $field->{repeatable});
-                $data->set_sql_type(    $sql_type);
+                $data->set_sql_type(    $field->{sql_type} ) if $field->{sql_type};
                 $data->set_place(       $place);
                 $data->set_max_length(  $field->{max_size});
                 $data->set_widget_type( $field->{widget_type} || $field->{type});
@@ -698,7 +685,7 @@ sub load_asset {
                     description   => $field->{description},
                     required      => $field->{required},
                     quantifier    => $field->{repeatable},
-                    sql_type      => $sql_type,
+                    sql_type      => $field->{sql_type} || _suss_sql_type($field),
                     place         => $place,
                     max_length    => $field->{max_size},
                     widget_type   => $field->{widget_type} || $field->{type},
@@ -854,6 +841,7 @@ sub serialize_asset {
         $writer->dataElement( autopopulated => $data->get_autopopulated ? 1 : 0 );
         $writer->dataElement( place       => $data->get_place              );
         $writer->dataElement( widget_type => $data->get_widget_type        );
+        $writer->dataElement( sql_type    => $data->get_sql_type           );
         $writer->dataElement( default_val => $data->get_default_val        );
         $writer->dataElement( options     => $data->get_vals               );
         $writer->dataElement( multiple    => $data->get_multiple   ? 1 : 0 );
@@ -873,6 +861,22 @@ sub serialize_asset {
 
     # close the element
     $writer->endTag('element_type');
+}
+
+sub _suss_sql_type {
+    my $field = shift;
+    # Try to suss it out.
+    if ($field->{widget_type} eq 'date'){
+        return 'date';
+    } elsif ($field->{widget_type} eq 'textarea' or (
+        defined $field->{max_size} and (
+            $field->{max_size} == 0 or $field->{max_size} > 1024
+        )
+    )) {
+        return 'blob';
+    } else {
+        return 'short';
+    }
 }
 
 =back
