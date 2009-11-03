@@ -54,7 +54,7 @@
 % if (!$user && $action eq 'checkin_cb') {
             <li style="padding-right: 8em !important;">
 <a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
-                <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu" style="display: none;">
+                <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu checkin" style="display: none;">
                     <h4>Check in:</h4>
                     <ul>
 % foreach (@$checkin_opts) {
@@ -72,7 +72,7 @@
 
 % if (!$user && $can_edit && $move_opts) {
             <li style="margin-left: 3em;"> <a id="<% "move_to_$class\_$id" %>" href="#" onclick="Desk.menuHandler(this, event); return false" title="Move"> <img src="/media/images/move.gif" alt="Move" />Move </a>
-                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu" style="right: 0; display: none;">
+                <div id="<% "move_to_$class\_$id" %>_desks" class="popup-menu move" style="right: 0; display: none;">
                     <h4>Move:</h4>
                     <ul>
 % foreach (@$move_opts) {

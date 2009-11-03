@@ -406,6 +406,9 @@ div.popup-menu {
     z-index: 1000;
     display: block;
 }
+div.popup-menu.checkin {
+	left: 0px;    
+}
 div.popup-menu ul {
     list-style: none outside;
     width: 100%;
