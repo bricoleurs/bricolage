@@ -192,6 +192,13 @@ will be executed. [Paul Orrock]
 Added the C<timeout> attribute to L<Bric::Dist::Client|Bric::Dist::Client> and
 the corresponding C<-t> option to L<bric_dist_mon|bric_dist_mon>. [David]
 
+=item *
+
+Added the C<sql_type> element to the export of field types from SOAP. This
+prevents the SOAP server from having to guess the SQL type of a field type
+when updating an element type. Thanks to David Oliveira for the report (Bug
+#79). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -569,13 +576,6 @@ publish status, rather than no stories at all (Bug #1). [David]
 
 Alert type rules can once again be deleted from the UI. Thanks to Scott for
 the report (Bug #81). [David]
-
-=item *
-
-Added the C<sql_type> element to the export of field types from SOAP. This
-prevents the SOAP server from having to guess the SQL type of a field type
-when updating an element type. Thanks to David Oliveira for the report (Bug
-#79). [David]
 
 =back
 
