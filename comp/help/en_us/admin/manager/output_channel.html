@@ -1,11 +1,15 @@
 <help page="Output Channels Manager">
 
-<p>Output Channels dictate the file extension and URI convention for your files.  When you create templates, they will be associated with an output channel.  Output channels in turn are associated with destinations for your files to be published to.</p>
+<p>Output Channels dictate the file extension and URI convention for your files.  
+When you create templates, they will be associated with an output channel.  
+Output channels in turn are associated with destinations for your files to be 
+published to.</p>
 
-<p><dl>
+<dl>
 <dt>Search</dt>
 <dd>Searches Output Channels by name. Do a blank search to list all Output
-    Channels or click a letter for an alphabetical list.</dd>
+    Channels<% get_pref('Show Alpha Search') ? ' or click a letter for an alphabetical list' : '' %>.
+</dd>
 
 <dt>Add a New Output Channel</dt>
 <dd>Click this link to create a new Output Channel. It brings you to the Output
@@ -13,10 +17,10 @@
     description.</dd>
 
 <dt>Existing Output Channels</dt>
-<dd>Click <i>Edit</i> to modify an Output Channel's profile. Click <i>Log</i> to
+<dd>Click <em>Edit</em> to modify an Output Channel's profile. Click <em>Log</em> to
     view its event history. To delete a channel, check the Delete box,
-    scroll to the bottom of the page and click the <i>Delete Checked</i>
+    scroll to the bottom of the page and click the <em>Delete Checked</em>
     button.</dd>
-</dl></p>
+</dl>
 
 </help>

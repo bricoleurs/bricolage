@@ -5,10 +5,11 @@ first use, the only Category in Bricolage is the Root Category, but you can
 create and edit new Categories in this area. Publishing content items in
 multiple Categories can help to organize your site's components.</p>
 
-<p><dl>
+<dl>
 <dt>Search</dt>
-<dd>Searches Categories by name. Do a blank search to list all Categories or
-    click a letter for an alphabetical list.</dd>
+<dd>Searches Categories by name. Do a blank search to list all Categories
+    <% get_pref('Show Alpha Search') ? ' or click a letter for an alphabetical list' : '' %>.
+</dd>
 
 <dt>Add a New Category</dt>
 <dd>Click this link to create a new Category. It brings you to the Category
@@ -18,6 +19,6 @@ multiple Categories can help to organize your site's components.</p>
 <dd>Click <em>Edit</em> to modify a Category's profile. Click <em>Log</em> to view
     its event history. To delete a Category, check the Delete box, scroll
     to the bottom of the page and click the <em>Delete Checked</em> button.</dd>
-</dl></p>
+</dl>
 
 </help>

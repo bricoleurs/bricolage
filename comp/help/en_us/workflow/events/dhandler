@@ -1,6 +1,6 @@
 <help page="Events Log">
 
-<p>The &#8216;Log&#8217; for a media asset, story or template shows a
+<p>The <em>Log</em> for a media asset, story or template shows a
  history of events associated with it, such as when it was created, moved
  to a different desk in the workflow, or published.</p>
 
@@ -22,7 +22,7 @@
   column will give the name of the desk it was moved to.</dd>
 </dl>
 
-<p>By default the events are shown in date order, starting with the oldest
+<p>By default the events are shown in date order, starting with the newest
  events.  Click on the title for one of the columns in the table to change
  the ordering.</p>
 

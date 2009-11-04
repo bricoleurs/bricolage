@@ -5,18 +5,17 @@ which are the servers you want your content
 distributed to when it is published or previewed. Note that publishing
 and moving (or in general, Actions) are done in separate phases.
 Publishing runs the content of elements through
-templates (this is called &quot;burning&quot;), storing the resulting
+templates (this is called <q>burning</q>), storing the resulting
 files (usually HTML) to a local staging directory.
-Then later the &quot;distribution monitor&quot;, <code>bric_dist_mon</code>,
+Then later the <q>distribution monitor,</q> <code>bric_dist_mon</code>,
 causes the burned files to be moved from the staging
 directory to destination servers.</p>
 
-<p>
 <dl>
 
 <dt>Search</dt>
 <dd>Searches active destinations by name. Do a blank search to list all
-    destinations.</dd>
+    destinations<% get_pref('Show Alpha Search') ? ' or click a letter for an alphabetical list' : '' %>.</dd>
 
 <dt>Add a New Destination</dt>
 <dd>Click this link to create a new destination. It brings you to the
@@ -30,6 +29,5 @@ directory to destination servers.</p>
     click the Delete Checked button.</dd>
 
 </dl>
-</p>
 
 </help>

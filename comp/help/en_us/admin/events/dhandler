@@ -1,7 +1,13 @@
 <help page="Events Log">
 
-<p>The &#8216;Log&#8217; for a Bricolage object shows a history of events
- associated with it, such as when it was created, saved, or deleted.</p>
+<p>The <em>Trail/Log</em> (also known as <q>Story Events</q>)
+ for a Bricolage object shows a history of events
+ associated with it. By default the story's events are filtered by
+ <em>Story Moved to Desk</em>, which shows the story's trail through
+ a workflow. The <em>Show all</em> link switches the view to show the
+ story's complete log of events, such as when it was created, saved,
+ or deleted. The <em>Customize</em> link can be used to limit the log
+ to show only certain types of events.</p>
 
 <p>The table of events has the following columns:</p>
 
@@ -21,8 +27,8 @@
   column will give the name of the desk it was moved to.</dd>
 </dl>
 
-<p>By default the events are shown in date order, starting with the oldest
- events.  Click on the title for one of the columns in the table to change
+<p>By default the events are shown in date order, starting with the most recent
+ events. Click on the title for one of the columns in the table to change
  the ordering.</p>
 
 </help>

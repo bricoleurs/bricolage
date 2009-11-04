@@ -84,21 +84,20 @@ element sets for each story type and create new element types from
 scratch.</p>
 
 <p>Click the <em>Edit</em> button next to an element to go to its Element
-Profile, where you can insert text and potentially add subelements. To add a
-new element, select one from the pulldown menu and click the <em>Add
-Element</em> button. Fields will simply be added to the list of elements,
-while container elements will load in their own profiles. To edit all of the
-elements and fields in the entire story at once, click <em>Bulk Edit</em>.</p>
+Profile (if applicable), or simply input content directly into the elements 
+presented. To add a new element, click <em>Add Element</em> and select one from
+menu. To edit all of the elements and fields in the entire story at once, 
+click <em>Bulk Edit</em>.</p>
 
 <dl>
 <dt>Reorder</dt>
-<dd>to change the order of the elements, use the pulldowns to adjust the
-position numbers, then click the <em>Reorder</em> button.</dd>
+<dd>to change the order of the elements, simply click or <q>grab</q> on the 
+element's name and drag it to the position where you'd like it to appear. The
+other elements should re-order themselvs accordingly.</dd>
 
 <dt>Delete</dt>
-<dd>To delete an element, check the box next to it and the click
-the <em>Delete</em> button. You can delete more than one item at a time by
-selecting more than one checkbox before clicking <em>Delete.</em></dd>
+<dd>To delete an element, check the delete icon next to it.
+</dd>
 </dl>
 
 % unless (ENABLE_CATEGORY_BROWSER) {
@@ -107,14 +106,10 @@ selecting more than one checkbox before clicking <em>Delete.</em></dd>
 
 <dl>
 <dt>Primary</dt>
-<dd>To choose a new category as the Primary one, select its radio button, then
-    click <em>Save</em> or <em>Save and Stay</em> at the bottom of the
-    page.</dd>
+<dd>To choose a new category as the Primary one, select its radio button.</dd>
 
 <dt>Delete</dt>
-<dd>To delete a Category, select the checkbox next to it and then click the
-    <em>Delete</em> button. You can delete more than one category at a
-    time by selecting multiple checkboxes before clicking <em>Delete.</em></dd>
+<dd>To delete a Category, click the <em>Delete</em> button.</dd>
 </dl>
 % }
 
@@ -126,32 +121,23 @@ the radio button to change the primary output channel. Add more output
 channels by selecting them from the select list, if there is one.</p>
 % }
 
-<h3><% $i++ %>) Associations</h3>
-
-<p>In this section, you provide meta information (information that is embedded
-in the Story but not displayed), which allows for more accurate searches and
-automated associations between Stories.</p>
 
 <dl>
 % if (ENABLE_CATEGORY_BROWSER) {
 <dt>Categories</dt>
-<dd><% sprintf $cat_info, 'the pencil icon' %> Search for the categories you
-wish to include, click <em>Associate</em> for each one, and
-click <em>Save</em> when you're done.</dd>
+<dd>Search for the categories you wish to include, they should appear as you
+type. Click the <em>Add Category</em> button to add the selected category.</dd>
 % }
 <dt>Keywords</dt>
 <dd>Enter any words or phrases relating to the story's subject(s) that will
     help tie it to other documents and also allow it to be found by archive
-    searches. Click the pencil icon to get to the <q>Edit Keywords</q> page,
-    then type the keywords into the blank fields. You do not need to fill in
-    all of the keyword fields, but you can include as many additional fields
-    as you want by clicking <em>Add More.</em> When done,
-    click <em>Save.</em></dd>
+    searches. Enter the keyword you would like to associate with the story
+    and press the <em>Add</em> button.</dd>
 
 <dt>Contributors</dt>
 <dd>Manage the story's contributors, including any writer or editor who was
-    involved in the creation of the story. Click the pencil icon to get to the
-    <q>Contributor Association</q> page. Under <q>Choose Contributors,</q>
+    involved in the creation of the story. Click the <em>Add</em> button to get 
+	to the <q>Contributor Association</q> page. Under <q>Choose Contributors,</q>
     find the person's name and click <em>Associate.</em> On the next page,
     select his or her role and click <em>Next.</em> When done,
     click <em>Save.</em></dd>

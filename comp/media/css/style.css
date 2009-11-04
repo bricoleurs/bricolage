@@ -61,7 +61,7 @@ body.popup #contentContainer { padding: 0; }
 .helpBox dd>q,
 .helpBox strong>q,
 .helpBox em>q {
-    quotes: "\201c" "\201d" "\2018" "\x2019"
+    quotes: "\201c" "\201d" "\2018" "\2019"
 }
 
 .padding { padding: 10px; }

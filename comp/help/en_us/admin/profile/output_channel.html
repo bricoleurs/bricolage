@@ -5,7 +5,7 @@
 <dd>
 <p> Enter the Output Channel's name and a brief description. Enter the file name
     and extension for the stories files created in this output channel in the 
-    &quot;File Name&quot; and &quot;File Extension&quot; fields.</p>
+    <em>File Name</em> and <em>File Extension</em> fields.</p>
 
 <p> The URI Format properties determine how the URIs of stories and media will
     be created in this output channel. In the &quot;URI Format&quot; and
@@ -13,7 +13,6 @@
     various parts out of which the URI should be made. Tokens must be
     separated by <code>/</code>; like a URI. The currently available tokens are:</p>
 
-<ul>
   <dl>
     <dt><code>%{categories}</code></dt>
     <dd><p>The category path.</p></dd>
@@ -38,7 +37,7 @@
 
     <dt>%{hex_uuid}</dt>
     <dd><p>The hex representation of the document UUID.</p></dd>
-</ul>
+</dl>
 
 <p>For example, a story in the category <code>/stories</code>, whose slug
     is <code>hello</code>, with a cover date of Feb. 27, 2002 and URI
@@ -56,11 +55,11 @@
     uri would be /foo/stories/hello/bar/index.html. This feature is useful if 
     you're keeping different kinds of content on one delivery server.</p>
 
-<p> The &quot;URI Case&quot; select list forces URIs in this output channel to
-    be formatted in a particular case, either &quot;Mixed Case&quot; (the
-    default), &quot;Lowercase&quot;, or &quot;Uppercase&quot;.</p>
+<p> The<em>URI Case</em> select list forces URIs in this output channel to
+    be formatted in a particular case, either <em>Mixed Case</em> (the
+    default), <em>Lowercase</em>, or <em>Uppercase</em>.</p>
 
-<p> The &quot;Use Slug for Filename&quot; field indicates that the names of
+<p> The <em>Use Slug for Filename</em> field indicates that the names of
     the story files created in this output channel should use the slug when
     possible. This means that non-fixed stories will use the slug to name the
     file, if it's available. Fixed stories will instead use the name specified

@@ -1,13 +1,14 @@
 <help page="Contributor Type Manager">
 
 <p>Contributor Types are used to classify Contributors by role, such as
-&quot;Writer&quot; and &quot;Photographer.&quot; Once a Contributor Type has
+<q>Writer</q>; and <q>Photographer.</q> Once a Contributor Type has
 been created, a user can select it in the Contributor Profile page.</p>
 
-<p><dl>
+<dl>
 <dt>Search</dt>
 <dd>Searches Contributor Types by name. Do a blank search to list all
-    Contributor Types or click a letter for an alphabetical list.</dd>
+    Contributor Types<% get_pref('Show Alpha Search') ? ' or click a letter for an alphabetical list' : '' %>.
+</dd>
 
 <dt>Add a New Contributor Type</dt>
 <dd>Click this link to create a new Contributor Type. It brings you to the
@@ -16,10 +17,10 @@ been created, a user can select it in the Contributor Profile page.</p>
 
 <dt>Existing Contributor Type</dt>
 
-<dd>Click <i>Edit</i> to modify a Contributor 
-  Type's profile. Click <i>Log</i> to view its event history. To delete a 
+<dd>Click <em>Edit</em> to modify a Contributor 
+  Type's profile. Click <em>Log</em> to view its event history. To delete a 
   Contributor Type, check the Delete box, scroll to the bottom of the page and 
   click the <i>Delete Checked</i> button.</dd>
-</dl></p>
+</dl>
 
 </help>

@@ -6,8 +6,9 @@
 <dl>
 
 <dt>Search</dt>
-<dd>Searches Media Types by name. Do a blank search to list all Media Types or
-    click a letter for an alphabetical list.</dd>
+<dd>Searches Media Types by name. Do a blank search to list all Media Types
+<% get_pref('Show Alpha Search') ? ' or click a letter for an alphabetical list' : '' %>.
+</dd>
 
 <dt>Add a New Media Type</dt>
 <dd>Click this link to create a new Media Type. It brings you to the Media Type
