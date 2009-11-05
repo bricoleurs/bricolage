@@ -1162,6 +1162,7 @@ $get_em = sub {
                     # It's between two sizes.
                     push @wheres, "$table.$k BETWEEN ? AND ?";
                     push @params, (db_date($v->[0]), db_date($v->[1]));
+#                    s/[.]0+$// for @params[-2..-1];
                 }
             }
             elsif (!defined $v) {

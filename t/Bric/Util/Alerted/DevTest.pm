@@ -212,7 +212,7 @@ sub test_list : Test(73) {
     is scalar @alerteds, 3, 'Should have three alerteds';
 
     ok @alerteds = Bric::Util::Alerted->list({
-        timestamp => [ $begin => $end ],
+        timestamp => [ strfdate($epoch, '%Y-%m-%d %T') => $end ], # $begin works on Pg, but not MySQL
     }), "Search on timestamp array";
     is scalar @alerteds, 15, 'Should have fifteen alerteds';
 
@@ -352,7 +352,7 @@ sub test_list_ids : Test(73) {
     is scalar @alerted_ids, 3, 'Should have three alerted ids';
 
     ok @alerted_ids = Bric::Util::Alerted->list_ids({
-        timestamp => [ $begin => $end ],
+        timestamp => [ strfdate($epoch, '%Y-%m-%d %T') => $end ], # $begin works on Pg, but not MySQL
     }), "Search on timestamp array";
     is scalar @alerted_ids, 15, 'Should have fifteen alerted ids';
 

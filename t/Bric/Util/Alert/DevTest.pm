@@ -168,7 +168,7 @@ sub test_list : Test(53) {
 
     # Try time_start and time_end.
     ok @alerts = Bric::Util::Alert->list({
-        time_start => $begin,
+        time_start => strfdate($epoch, '%Y-%m-%d %T'), # $begin works on Pg, but not MySQL
         time_end   => $end,
     }), "Search on time_start and time_end";
     is scalar @alerts, 10, 'Should have ten alerts';
@@ -272,7 +272,7 @@ sub test_list_ids : Test(53) {
 
     # Try time_start and time_end.
     ok @alert_ids = Bric::Util::Alert->list_ids({
-        time_start => $begin,
+        time_start => strfdate($epoch, '%Y-%m-%d %T'), # $begin works on Pg, but not MySQL
         time_end   => $end,
     }), "Search on time_start and time_end";
     is scalar @alert_ids, 10, 'Should have ten alert IDs';
