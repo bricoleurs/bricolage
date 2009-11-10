@@ -43,7 +43,7 @@ sub add_note : Callback {
     # Cache the object in the session if it's the current object.
     my $type = $obj->key_name;
     if (my $c_obj = get_state_data($types{$type} => $type)) {
-        if ($obj->get_uuid eq $c_obj->get_uuid) {
+        if ($obj->get_id == $c_obj->get_id) {
             # It's the same object. Put it in the cache with the new note.
             set_state_data($types{$type}, $type, $obj);
         } else {

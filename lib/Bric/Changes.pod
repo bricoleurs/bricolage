@@ -56,6 +56,11 @@ L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template> now works as
 expected, returning the latest version of all stories regardless of their
 publish status, rather than no stories at all (Bug #1). [David]
 
+=item *
+
+Template notes are once again editable from the template profile. Thanks to
+Aaron Fuleki for the report (Bug #101). [David]
+
 =back
 
 =head1 VERSION 1.10.7 (2009-03-12)
