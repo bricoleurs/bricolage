@@ -836,6 +836,9 @@ sub send {
     # Clean up message for CRLF of quoted-printable
     $msg =~ s/\r\n|\r/\n/gs;
 
+    # Default to UTF-8 encoding.
+    $ct .= '; charset=UTF-8' if $ct =~ m{^text/} && $ct !~ /\s+charset=/;
+
     # Assemble the arguments we'll need for MIME::Entity.
     my @args = ( 'X-Mailer' => $mailer,
                  ($from ? (From => $from) : ()),
