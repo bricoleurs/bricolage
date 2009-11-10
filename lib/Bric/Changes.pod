@@ -987,6 +987,11 @@ XML::LibXML. [David]
 Fixed a bug where a story published but with no resources (files) could cause
 an error. Reported by Paul Hyland. [David]
 
+=item *
+
+Template notes are once again editable from the template profile. Thanks to
+Aaron Fuleki for the report (Bug #101). [David]
+
 =back
 
 =head1 Version 1.10.7 (2009-03-12)
