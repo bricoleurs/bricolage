@@ -1007,6 +1007,12 @@ publish status, rather than no stories at all (Bug #1). [David]
 Template notes are once again editable from the template profile. Thanks to
 Aaron Fuleki for the report (Bug #101). [David]
 
+=item *
+
+Emails sent by Bricolage now have the character set specified in the
+content-type header when they're text messages. Thanks to Czerny for the
+report (Bug #94). [David]
+
 =back
 
 =head1 Version 1.10.7 (2009-03-12)
