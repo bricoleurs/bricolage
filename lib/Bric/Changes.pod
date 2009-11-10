@@ -989,6 +989,21 @@ an error. Reported by Paul Hyland. [David]
 
 =item *
 
+Fixed a bug where assets could not be checked in and their version numbers
+would revert to older ones (Bug #93). [Greg Heo & David]
+
+=item *
+
+Passing a false value for the C<published_version> parameter to the C<list()>
+method of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, and
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template> now works as
+expected, returning the latest version of all stories regardless of their
+publish status, rather than no stories at all (Bug #1). [David]
+
+=item *
+
 Template notes are once again editable from the template profile. Thanks to
 Aaron Fuleki for the report (Bug #101). [David]
 
