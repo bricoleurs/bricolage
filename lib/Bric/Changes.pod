@@ -199,6 +199,11 @@ prevents the SOAP server from having to guess the SQL type of a field type
 when updating an element type. Thanks to David Oliveira for the report (Bug
 #79). [David]
 
+=item *
+
+Added a timetamp for data that F<bric_queued> sends to its log. Thanks to Neal
+Sofge for the suggestion (Bug #41). [David]
+
 =back
 
 =head2 Bug Fixes

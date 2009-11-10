@@ -238,12 +238,12 @@ sub run_as_daemon {
             failed     => '0',
             executing  => '0',
         })) {
-            print 'Executing ' . $job->get_name . "\n" if $Verbose;
+            logit('Executing ' . $job->get_name . "\n") if $Verbose;
             eval {
                 $job->execute_me;
                 commit_events();
             };
-            print $@ if $@;
+            logit($@) if $@;
             terminate() if $CaughtSignal;
         }
 
@@ -253,7 +253,7 @@ sub run_as_daemon {
                 Bric::Util::Burner->flush_another_queue;
                 commit_events();
             };
-            print $@ if $@;
+            logit($@) if $@;
             terminate() if $CaughtSignal;
         }
 
@@ -266,11 +266,11 @@ sub run_as_daemon {
         # the child (dist) process is still running so that the user only
         # has one to worry about.
         if ($DistPid) {
-            print "Checking on Dist process, $DistPid ..." if $Verbose;
+            logit("Checking on Dist process, $DistPid ...") if $Verbose;
             if (kill 0 => $DistPid) {
-                print "OK\n" if $Verbose;
+                logit("OK\n") if $Verbose;
             } else {
-                print "No child pid found.  Exiting.\n";
+                logit("No child pid found. Exiting.\n");
                 # The safest thing to do at this point is to quit and let
                 # perl clean everything up.
                 terminate();
@@ -314,13 +314,13 @@ sub run_single_job {
         executing  => '0',
     });
     exit unless $job;
-    print 'Executing ' . $job->get_name . "\n" if $Verbose;
+    logit('Executing ' . $job->get_name . "\n") if $Verbose;
     eval {
         $job->execute_me;
         Bric::Util::Burner->flush_another_queue if $pkg eq PUB_PKG;
         commit_events();
     };
-    print $@ if $@;
+    logit($@) if $@;
 }
 
 ##############################################################################
@@ -358,12 +358,12 @@ To be run after whatever job is in progress when we catch a SIGTERM.
 ##############################################################################
 
 sub terminate {
-    print "Received TERM signal. Shutting down.";
+    logit("Received TERM signal. Shutting down.");
     if ($DistPid) {  # we are the parent if this is non-zero
         kill 15 => $DistPid;
         del_pid();
     }
-    print " OK\n";
+    logit(" OK\n");
     exit;
 }
 
@@ -481,6 +481,13 @@ sub login {
 
     # Set up localization.
     Bric::Util::Language->get_handle($user->get_pref('Language'));
+}
+
+##############################################################################
+
+sub logit {
+    push @_, $/ unless $_[-1] =~ /\n\Z/;
+    print '[', local_date(undef, undef, 1), '] ', @_;
 }
 
 __END__
