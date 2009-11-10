@@ -208,36 +208,40 @@ sub create_apache_conf {
     # DSO Apache's need that sweet DSO spike in the vein just to get
     # up in the morning
     if ($AP->{dso}) {
-        my $dso_section = "# Load DSOs\n\n";
+        my $dso_section = "# Load DSOs (Uncomment AddModule lines if needed)\n\n";
         foreach my $mod (qw(perl log_config config_log mime alias ssl apache_ssl gzip)) {
             # static modules need no load
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{apache_ssl};
+
+            # Looks like AddModule isn't required in anything but very old
+            # versions of Apache. We require 1.3.34, so hopefull that's recent
+            # enough.
 
             if ($mod eq 'log_config' || $mod eq 'config_log') {
                 # I want to kill whoever decided this was a good idea
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t config_log_module " .
                       $AP->{load_modules}{"${mod}_module"} . "\n" .
-                        "AddModule \t mod_log_config.c\n\n";
+                        "# AddModule \t mod_log_config.c\n\n";
                 }
             } elsif ($mod eq 'gzip') {
                 # Load optional module mod_gzip
                 if ($AP->{load_modules}{"${mod}_module"}) {
                     $dso_section .= "LoadModule \t ${mod}_module " .
                         $AP->{load_modules}{"${mod}_module"} . "\n";
-                    $dso_section .= "AddModule \t mod_$mod.c\n\n";
+                    $dso_section .= "# AddModule \t mod_$mod.c\n\n";
                 }
             } elsif ($mod eq 'apache_ssl') {
                 next unless $AP->{ssl} =~ /apache_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t apache_ssl.c\n\n";
+                $dso_section .= "# AddModule \t apache_ssl.c\n\n";
             } else {
                 next if $mod eq 'ssl' && $AP->{ssl} !~ /mod_ssl/;
                 $dso_section .= "LoadModule \t ${mod}_module " .
                     $AP->{load_modules}{"${mod}_module"} . "\n";
-                $dso_section .= "AddModule \t mod_$mod.c\n\n";
+                $dso_section .= "# AddModule \t mod_$mod.c\n\n";
             }
         }
 
