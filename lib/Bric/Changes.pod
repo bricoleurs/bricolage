@@ -211,6 +211,12 @@ now checked by default, rather than unchecked. Uncheck it to prevent Bricolage
 from auotopopulating values in the future. Thanks to Marshall for the
 suggestion (Bug #32). [David]
 
+=item *
+
+Changed "Click here to start" to "Start Bricolage" on the welcome page.
+Suggested by Chris Heiland and Czerny (Bug # 42). [David]
+
+
 =back
 
 =head2 Bug Fixes

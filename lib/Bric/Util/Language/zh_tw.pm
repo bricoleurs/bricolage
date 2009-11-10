@@ -579,7 +579,6 @@ our %Lexicon =
      'Permission to delete "[_1]" denied.' => '刪除 [_1] 權限遭到拒絕' ,
      'Permissions saved.' => '權限已儲存' ,
      'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => '請仔細檢查URL並且再試一次。如果你覺得你是因為某種伺服器產生的錯誤而來到這個頁面，請儘速通知管理員，並請附上盡量詳細的資訊，包括使用的瀏覽器、作業系統、以及達到這一頁的每個步驟。' ,
-     'Please click [_1]here[_2] to start.' => '請點選 [_1]這裡[_2] 開始' ,
      'Please log in:' => '請登入：' ,
      'Please select a primary category.' => '請選擇一個主要的分類' ,
      'Please select a primary output channel.' => '請選擇一個主要的輸出頻道' ,
@@ -768,6 +767,7 @@ To translate:
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
+  'Start Bricolage' => 'Start Bricolage',
 
 Notice:
 

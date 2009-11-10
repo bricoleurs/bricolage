@@ -646,7 +646,6 @@ our %Lexicon = (
   'Permissions saved.' => 'Rechte gespeichert',
   'place must be a positive number.' => 'Die Stelle muss eine positive Zahl sein.',
   'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => 'Bitte überprüfen Sie den URL und versuchen Sie es erneut. Wenn Sie der Meinung sind, dass Sie diese Seite aufgrund eines Serverfehlers oder eines anderen Problems angezeigt bekommen, verständigen Sie bitte den Administrator des Servers. Geben Sie bitte soviel Details wie möglich an, inklusive dem Browsertyp, Betriebssystem und wie Sie an diese Seite gekommen sind.',
-  'Please click [_1]here[_2] to start.' => 'Bitte [_1]hier[_2] klicken zum Start.',
   'Please log in:' => 'Bitte einloggen:',
   'Please select a primary category.' => 'Bitte eine Primärkategorie auswählen.',
   'Please select a primary output channel.' => 'Bitte eine Primärer Ausgabekanal',
@@ -788,6 +787,7 @@ To Translate:
 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
 'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
 'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
+'Start Bricolage' => 'Start Bricolage',
 
 =end comment
 
