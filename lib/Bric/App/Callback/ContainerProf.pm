@@ -368,10 +368,10 @@ sub lock_val : Callback {
 
     foreach my $id (@$autopop) {
         my $field = $fields->{$id} or next;
-        if (exists $param->{"$key|lock_val_$id"}) {
-            $field->lock_val;
-        } else {
+        if (exists $param->{"$key|auto_pop_$id"}) {
             $field->unlock_val;
+        } else {
+            $field->lock_val;
         }
     }
 }
@@ -680,7 +680,7 @@ sub _update_subelements {
 
         if (!$is_cont && (
             !$t->is_autopopulated
-            or exists $param->{$widget . "|lock_val_$id"}
+            or not exists $param->{$widget . "|auto_pop_$id"}
         )) {
             my $val = $param->{$widget . "|$id"};
             $val = '' unless defined $val;

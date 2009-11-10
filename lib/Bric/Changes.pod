@@ -204,6 +204,13 @@ when updating an element type. Thanks to David Oliveira for the report (Bug
 Added a timetamp for data that F<bric_queued> sends to its log. Thanks to Neal
 Sofge for the suggestion (Bug #41). [David]
 
+=item *
+
+Renamed the "Lock Val" checkbox in the media profile to "Autopopulate". It is
+now checked by default, rather than unchecked. Uncheck it to prevent Bricolage
+from auotopopulating values in the future. Thanks to Marshall for the
+suggestion (Bug #32). [David]
+
 =back
 
 =head2 Bug Fixes
