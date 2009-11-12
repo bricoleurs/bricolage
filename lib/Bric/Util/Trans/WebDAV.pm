@@ -178,7 +178,7 @@ sub put_res {
         foreach my $r (@$res) {
             # Get the source and destination paths for the resource.
             my $src = $r->get_tmp_path || $r->get_path;
-            my $dest = $fs->cat_uri($doc_root, $r->get_uri);
+            my $dest = $fs->cat_uri($doc_root, substr $r->get_uri, 1);
             # Create the destination directory if it doesn't exist and we haven't
             # created it already.
             my $dest_dir = $fs->uri_dir_name($dest);
@@ -300,7 +300,7 @@ sub del_res {
 
         foreach my $r (@$res) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_uri($doc_root, $r->get_uri);
+            my $file = $fs->cat_uri($doc_root, substr $r->get_uri, 1);
 
             my $resource = $d->propfind( -url => $file);
             if ($resource && $resource->get_property("getcontentlength") > -1) {

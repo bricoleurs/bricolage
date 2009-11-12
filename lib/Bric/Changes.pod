@@ -84,6 +84,12 @@ modifying the parameter hash passed to it, as the modification was persisting
 in the list manager's state. Thanks to Aaron Fuleki for the report and for
 making the Denison available to diagnose the problem (Bug #102). [David]
 
+=item *
+
+Avoid C<//> in distribution file names and/or directories. This caused
+problems with FTP distribution, but it seems prudent to fix it for SFTP and
+WebDAV, too. [David]
+
 =back
 
 =head1 VERSION 1.10.7 (2009-03-12)

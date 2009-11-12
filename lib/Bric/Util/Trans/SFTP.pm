@@ -177,7 +177,7 @@ sub put_res {
             unless ($dirs{$dest_dir}) {
                 $dirhandle = eval {
                     local $SIG{__WARN__} = $no_warn;
-                    $sftp->do_opendir($fs->cat_dir($doc_root, $dest_dir));
+                    $sftp->do_opendir($fs->cat_dir($doc_root, substr $dest_dir, 1));
                 };
                 unless (defined $dirhandle) {
                     # The directory doesn't exist.
@@ -213,7 +213,7 @@ sub put_res {
                 }
             }
             # Now, put the file on the server.
-            my $dest_file = $fs->cat_dir($doc_root, $unescape_uri->($r->get_uri));
+            my $dest_file = $fs->cat_dir($doc_root, $unescape_uri->(substr $r->get_uri, 1));
             my $tmp_dest = $dest_file . '.tmp';
             $status = eval{
                 local $SIG{__WARN__} = $no_warn;
@@ -285,7 +285,7 @@ sub del_res {
         my $doc_root = $s->get_doc_root;
         foreach my $r (@$res) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_file($doc_root, $unescape_uri->($r->get_uri));
+            my $file = $fs->cat_file($doc_root, $unescape_uri->(substr $r->get_uri, 1));
             my $status = eval{
                 local $SIG{__WARN__} = $no_warn;
                 $sftp->do_stat($file);
