@@ -80,16 +80,16 @@ sub story : Callback {
         );
     }
 
-    # Display no results for an empty search.
-    return unless @field;
-
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
-    $state->{advanced_search} = ($self->value eq "advanced");
-    $state->{criterion} = \@crit;
-    $state->{field}     = \@field;
-    $state->{timestamp} = time();
+    $state->{advanced_search} = $self->value eq 'advanced';
+    # Display results only for non-empty search.
+    if (@field) {
+        $state->{criterion} = \@crit;
+        $state->{field}     = \@field;
+        $state->{timestamp} = time;
+    }
     set_state_data($widget, $object => $state);
 }
 
@@ -116,16 +116,16 @@ sub media : Callback {
         );
     }
 
-    # Display no results for an empty search.
-    return unless @field;
-
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
-    $state->{advanced_search} = ($self->value eq "advanced");
-    $state->{criterion} = \@crit;
-    $state->{field}     = \@field;
-    $state->{timestamp} = time();
+    $state->{advanced_search} = $self->value eq 'advanced';
+    # Display results only for non-empty search.
+    if (@field) {
+        $state->{criterion} = \@crit;
+        $state->{field}     = \@field;
+        $state->{timestamp} = time;
+    }
     set_state_data($widget, $object => $state);
 }
 
@@ -152,16 +152,16 @@ sub template : Callback {
         );
     }
 
-    # Display no results for an empty search.
-    return unless @field;
-
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
     my $state  = get_state_data($widget => $object);
-    $state->{advanced_search} = ($self->value eq "advanced");
-    $state->{criterion} = \@crit;
-    $state->{field}     = \@field;
-    $state->{timestamp} = time();
+    $state->{advanced_search} = $self->value eq 'advanced';
+    # Display results only for non-empty search.
+    if (@field) {
+        $state->{criterion} = \@crit;
+        $state->{field}     = \@field;
+        $state->{timestamp} = time;
+    }
     set_state_data($widget, $object => $state);
 }
 
@@ -215,7 +215,8 @@ sub clear : Callback {
     my $self = shift;
     my $widget = $self->class_key;
     my $object = get_state_name($widget);
-    set_state_data($widget, $object => {});
+    # Clear is only in advanced search.
+    set_state_data($widget, $object => { advanced_search => 1 });
 }
 
 ###
