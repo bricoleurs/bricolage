@@ -618,6 +618,12 @@ advanced or simple mode when a an empty search is submitted and when the
 "Clear Values" button is clicked. Thanks to Matt Rol for the report (Bug #
 74). [David]
 
+=item *
+
+Avoid C<//> in distribution file names and/or directories. This caused
+problems with FTP distribution, but it seems prudent to fix it for SFTP and
+WebDAV, too. [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
