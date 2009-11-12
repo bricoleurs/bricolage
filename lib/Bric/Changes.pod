@@ -618,12 +618,6 @@ advanced or simple mode when a an empty search is submitted and when the
 "Clear Values" button is clicked. Thanks to Matt Rol for the report (Bug #
 74). [David]
 
-=item *
-
-Avoid C<//> in distribution file names and/or directories. This caused
-problems with FTP distribution, but it seems prudent to fix it for SFTP and
-WebDAV, too. [David]
-
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
@@ -1073,6 +1067,12 @@ the C<list()> method of L<Bric::Biz::ElementType|Bric::Biz::ElementType> from
 modifying the parameter hash passed to it, as the modification was persisting
 in the list manager's state. Thanks to Aaron Fuleki for the report and for
 making the Denison available to diagnose the problem (Bug #102). [David]
+
+=item *
+
+Avoid C<//> in distribution file names and/or directories. This caused
+problems with FTP distribution, but it seems prudent to fix it for SFTP and
+WebDAV, too. [David]
 
 =back
 
