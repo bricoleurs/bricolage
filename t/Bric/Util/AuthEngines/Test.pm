@@ -124,6 +124,7 @@ BEGIN {
         my $caller = caller or return;
         no strict 'refs';
         *{"${caller}::LDAP_INVALID_CREDENTIALS"} = sub () { 49 };
+        *{"${caller}::LDAP_INAPPROPRIATE_AUTH"} = sub () { 48 };
         *{"${caller}::LDAP_SUCCESS"} = sub () { 0 };
     }
     my $ldap = bless {};

@@ -90,6 +90,11 @@ Avoid C<//> in distribution file names and/or directories. This caused
 problems with FTP distribution, but it seems prudent to fix it for SFTP and
 WebDAV, too. [David]
 
+=item *
+
+Fix LDAP 500 Error when a password is blank. Thanks to Aaron Fuleki for the
+report (Bug #103). [David]
+
 =back
 
 =head1 VERSION 1.10.7 (2009-03-12)
