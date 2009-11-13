@@ -596,6 +596,14 @@ function confirmChanges(obj) {
         }
     }
 
+    // Check for invalid category.
+    if (Element.visible('new_cat_warning')) {
+        // The cateogry isn't valid. Return false.
+        alert('Please select a valid category');
+        confirming = false;
+        return false;
+    }
+
     // look for a delete checkbox and do an alert if it is checked...
     for (var i=0; i < document.forms.length; i++) {
         var tmp = document.forms[i];

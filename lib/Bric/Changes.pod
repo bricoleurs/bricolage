@@ -618,6 +618,14 @@ advanced or simple mode when a an empty search is submitted and when the
 "Clear Values" button is clicked. Thanks to Matt Rol for the report (Bug #
 74). [David]
 
+=item *
+
+The category autocompetion feature in the "New Story" profile now refuses to
+submit if a non-existant category has been typed in. If the user somehow
+manages to submit anyway, she'll be returned to the form with a message asking
+for a proper category name, rather than getting an error. Thanks to Scott for
+the report. [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)

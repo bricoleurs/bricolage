@@ -468,7 +468,10 @@ sub create : Callback {
     my $cat = Bric::Biz::Category->lookup({
         uri     => $curi,
         site_id => $wf->get_site_id,
-    });
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+
     $story->add_categories([$cat]);
     $story->set_primary_category($cat);
 
