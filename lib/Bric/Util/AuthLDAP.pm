@@ -37,7 +37,7 @@ use strict;
 # Programmatic Dependencies
 use Bric::Config qw(:ldap);
 use Bric::Util::Fault qw(throw_auth);
-use Net::LDAP qw(LDAP_INVALID_CREDENTIALS LDAP_SUCCESS);
+use Net::LDAP qw(LDAP_INVALID_CREDENTIALS LDAP_SUCCESS LDAP_INAPPROPRIATE_AUTH);
 use Net::LDAP::Util qw(ldap_error_desc);
 use Net::LDAP::Filter;
 
@@ -82,8 +82,11 @@ sub authenticate {
         version => LDAP_VERSION,
         onerror => sub {
             my $mesg = shift;
+            my $code = $mesg->code;
             # Invalid credentials are okay.
-            return $mesg if $mesg->code == LDAP_INVALID_CREDENTIALS;
+            return $mesg if grep { $_ == $code }
+                LDAP_INVALID_CREDENTIALS,
+                LDAP_INAPPROPRIATE_AUTH;
             throw_auth "LDAP Error: " . ldap_error_desc($mesg);
         }
     ) or throw_auth error => "Unable to connect to LDAP Server", payload => $@;
