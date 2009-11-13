@@ -626,6 +626,12 @@ manages to submit anyway, she'll be returned to the form with a message asking
 for a proper category name, rather than getting an error. Thanks to Scott for
 the report. [David]
 
+=item *
+
+Double-clicking an asset on a desk to check it into that desk no longer causes
+the asset to drop off the desk. It will only drop off if it's being checked
+into a different desk (Bug #97). [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)

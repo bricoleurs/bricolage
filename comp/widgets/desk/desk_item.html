@@ -53,7 +53,7 @@
         <ul>
 % if (!$user && $action eq 'checkin_cb') {
             <li style="padding-right: 8em !important;">
-<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="Desk.request({ parameters: '<% ${widget} %>|checkin_cb=<% ${class} %>_<% $id %>' }, function (r) { Effect.DropOut('<% ${class} %>_<% $id %>') } ); return false"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
+<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="<% $desk_type eq 'workspace' ? qq{Desk.request({ parameters: '${widget}|checkin_cb=${class}_$id' }, function (r) { Effect.DropOut('${class}_$id') } ); return false} : $checkin_js->("$desk_id-" . $workflow->get_id) %>"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
                 <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu checkin" style="display: none;">
                     <h4>Check in:</h4>
                     <ul>
