@@ -1573,14 +1573,7 @@ sub _do_list {
     my @params;
 
     # Set up the active property.
-    if (exists $params->{active}) {
-        if ($params->{active} eq 'all') {
-            delete $params->{active};
-        } else {
-            $wheres .= " AND a.active = ?";
-            push @params, delete $params->{active} ? 1 : 0;
-        }
-    } else {
+    unless (exists $params->{active}) {
         $wheres .= " AND a.active = ?";
         push @params, 1;
     }
@@ -1605,6 +1598,11 @@ sub _do_list {
             $wheres .= " AND a.id = c2.object_id AND c2.member__id = m2.id "
               . " AND m2.active = '1' AND "
               . any_where($v, "m2.grp__id = ?", \@params);
+        } elsif ($k eq 'active') {
+            if ($v ne 'all') {
+                $wheres .= " AND a.active = ?";
+                push @params, delete $params->{active} ? 1 : 0;
+            }
         } elsif ($k eq 'active_sites') {
             next unless $v;
             $tables .= ', site';
