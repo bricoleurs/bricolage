@@ -216,6 +216,12 @@ suggestion (Bug #32). [David]
 Changed "Click here to start" to "Start Bricolage" on the welcome page.
 Suggested by Chris Heiland and Czerny (Bug # 42). [David]
 
+=item *
+
+When an asset drops off a desk or My Workspace (because it is checked in or
+moved to a different desk), and it's the last asset of its type (story, media,
+or template), the asset type label and sort menu will also drop off the desk
+or workspace. Thanks to Matt Rolf for the suggestiong (Bug #69). [David]
 
 =back
 

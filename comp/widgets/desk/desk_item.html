@@ -53,7 +53,7 @@
         <ul>
 % if (!$user && $action eq 'checkin_cb') {
             <li style="padding-right: 8em !important;">
-<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="<% $desk_type eq 'workspace' ? qq{Desk.request({ parameters: '${widget}|checkin_cb=${class}_$id' }, function (r) { Effect.DropOut('${class}_$id') } ); return false} : $checkin_js->("$desk_id-" . $workflow->get_id) %>"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
+<a name="check_in_<% ${class} %>_<% $id %>" id="check_in_<% ${class} %>_<% $id %>" title="Check in (double click to check in to <% $desk->get_name %>)" onclick="Desk.menuHandler(this, event); return false" ondblclick="<% $desk_type eq 'workspace' ? qq{Desk.request({ parameters: '${widget}|checkin_cb=${class}_$id' }, } . $drop_js->($class, $id) . '); return false' : $checkin_js->("$desk_id-" . $workflow->get_id) %>"><img src = "/media/images/checkin.gif" alt="Check In" />Check In</a>
                 <div id="<% "check_in_$class\_$id" %>_desks" class="popup-menu checkin" style="display: none;">
                     <h4>Check in:</h4>
                     <ul>
@@ -249,6 +249,21 @@ my $rowtype = sub {
     return;
 };
 
+my $drop_js = sub {
+    my ($class, $id) = @_;
+    # JS to drop out the asset being removed from a desk, and also to drop out
+    # the asset header with sort select list if there are no other items below
+    # it.
+    return "function (r) {
+        var e = \$('${class}_${id}');
+        Effect.DropOut(e);
+        if (!Selector.findChildElements(e.up(), ['.item']).find(function (s) {
+            return s.id != '${class}_${id}' && s.visible()
+        })) {
+            Effect.DropOut(e.up().previous('.desk-top'));
+        }
+    }"
+};
 
 my $checkin_js = sub {
     my $next_desk = shift;
@@ -261,7 +276,7 @@ my $checkin_js = sub {
         # to disappear.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|checkin_cb=${class}_${id}", ($next_desk ? ("desk_asset|next_desk=$next_desk") : ()));
-        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') } ); return false";
+        return "Desk.request({ parameters: '$parameters' }, " . $drop_js->($class, $id) . " ); return false";
     } else {
         my $parameters = join('&amp;', "desk_type=workflow",
                                        "obj=${class}_${id}",
@@ -279,7 +294,7 @@ my $move_js = sub {
         # disappear when it's moved to a different desk.
         my $uri = $r->uri;
         my $parameters = join('&amp;', "desk_asset|move_cb=$class\_$id", "desk_asset|next_desk=$next_desk");
-        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') }); return false";
+        return "Desk.request({ parameters: '$parameters' }, " . $drop_js->($class, $id) . '); return false';
     } else {
         # The workspace shows assets from many desks, so the asset needs
         # to be updated.
@@ -289,7 +304,7 @@ my $move_js = sub {
                                        "desk_asset|move_cb=${class}_${id}",
                                        "desk_asset|next_desk=$next_desk");
         if ($next_desk eq 'shelve') {
-            return "Desk.request({ parameters: '$parameters' }, function(r) { Effect.DropOut('${class}_${id}') }); return false";
+            return "Desk.request({ parameters: '$parameters' }, " . $drop_js->($class, $id) . '); return false';
         } else {
             return "Desk.update('${class}_${id}', { parameters: '$parameters' }); return false";
         }
@@ -301,10 +316,10 @@ my $publish_js = sub {
     my $uri = $r->uri;
     if ($class eq 'template') {
         my $parameters = join('&amp;', "desk_asset|deploy_cb=1", "desk_asset|template_pub_ids=${version_id}");
-        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('template_${id}') }); return false";
+        return "Desk.request({ parameters: '$parameters' }, " . $drop_js->('template', $id) . '); return false';
     } else {
         my $parameters = join('&amp;', "desk_asset|publish_cb=1", "${class}_pub=${class}_${version_id}");
-        return "Desk.request({ parameters: '$parameters' }, function (r) { Effect.DropOut('${class}_${id}') } ); return false";
+        return "Desk.request({ parameters: '$parameters' }, " . $drop_js->($class, $id) . '); return false';
     }
 };
 
