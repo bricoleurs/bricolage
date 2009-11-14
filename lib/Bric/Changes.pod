@@ -95,6 +95,11 @@ WebDAV, too. [David]
 Fix LDAP 500 Error when a password is blank. Thanks to Aaron Fuleki for the
 report (Bug #103). [David]
 
+=item *
+
+The "Site" column no longer comes and goes when searching for categories in
+with multiple sites. Thanks to Paul Orrock for the spot (Bug #100). [David]
+
 =back
 
 =head1 VERSION 1.10.7 (2009-03-12)

@@ -79,7 +79,7 @@ sub test_lookup : Test(17) {
 
 ##############################################################################
 # Test the list() method.
-sub test_list : Test(36) {
+sub test_list : Test(45) {
     my $self = shift;
 
     # Create a new category group.
@@ -170,6 +170,25 @@ sub test_list : Test(36) {
         "Look up parent_id 1" );
     is( scalar @cats, 5, "Check for 5 categories" );
 
+    # Try active.
+    $cats[1]->deactivate->save;
+    my $params = {active => 1};
+    ok( @cats = Bric::Biz::Category->list($params),
+        'Look up active categories');
+    is( scalar @cats, 6, "Check for 6 active categories" );
+    is_deeply $params, { active => 1 }, 'The params should not have been modified';
+
+    $params = {active => 0};
+    ok( @cats = Bric::Biz::Category->list($params),
+        'Look up inactive categories');
+    is( scalar @cats, 1, "Check for 1 inactive category" );
+    is_deeply $params, { active => 0 }, 'The params should not have been modified';
+
+    $params = {active => 'all'};
+    ok( @cats = Bric::Biz::Category->list($params),
+        'Look up a and inctive categories');
+    is( scalar @cats, 7, "Check for 7 categories total" );
+    is_deeply $params, { active => 'all' }, 'The params should not have been modified';
 }
 
 sub test_root_changes : Test(7) {
