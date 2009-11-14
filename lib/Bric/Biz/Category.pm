@@ -1601,7 +1601,7 @@ sub _do_list {
         } elsif ($k eq 'active') {
             if ($v ne 'all') {
                 $wheres .= " AND a.active = ?";
-                push @params, delete $params->{active} ? 1 : 0;
+                push @params, $params->{active} ? 1 : 0;
             }
         } elsif ($k eq 'active_sites') {
             next unless $v;

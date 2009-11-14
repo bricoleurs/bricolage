@@ -1088,6 +1088,11 @@ Avoid C<//> in distribution file names and/or directories. This caused
 problems with FTP distribution, but it seems prudent to fix it for SFTP and
 WebDAV, too. [David]
 
+=item *
+
+The "Site" column no longer comes and goes when searching for categories in
+with multiple sites. Thanks to Paul Orrock for the spot (Bug #100). [David]
+
 =back
 
 =head1 Version 1.10.7 (2009-03-12)
