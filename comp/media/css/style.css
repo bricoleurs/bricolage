@@ -1028,5 +1028,9 @@ table.dlman tr.dlbtns { height: 30px; }
 .lightboxconflict .errorMsg  { color: #ff5500; }
 .lightboxforbidden .errorMsg { color: #800000; }
 
-
 .lightbox[id]{ /* IE6 and below Can't See This */    position:fixed;    }#overlay[id]{ /* IE6 and below Can't See This */    position:fixed;    }
+
+#contribbuttons {
+  padding-bottom: 1em;
+  text-align:right;
+}

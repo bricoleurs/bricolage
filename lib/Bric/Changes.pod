@@ -214,7 +214,7 @@ suggestion (Bug #32). [David]
 =item *
 
 Changed "Click here to start" to "Start Bricolage" on the welcome page.
-Suggested by Chris Heiland and Czerny (Bug # 42). [David]
+Suggested by Chris Heiland and Czerny (Bug #42). [David]
 
 =item *
 
@@ -222,6 +222,14 @@ When an asset drops off a desk or My Workspace (because it is checked in or
 moved to a different desk), and it's the last asset of its type (story, media,
 or template), the asset type label and sort menu will also drop off the desk
 or workspace. Thanks to Matt Rolf for the suggestiong (Bug #69). [David]
+
+=item *
+
+Moved the "Cancel" and "Save" buttons in the contributor popup up from the
+bottom of the screen (it was below search results) to under the list of
+contributors currently associated with the story and above the search box.
+This makes it much easier to find the buttons when there are a lot of search
+results. Thanks to Scott for the report (Bug #84). [David]
 
 =back
 

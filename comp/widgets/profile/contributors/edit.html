@@ -20,6 +20,23 @@
 
 <& '/widgets/wrappers/table_bottom.mc' &>
 
+<div id="contribbuttons">
+<& "/widgets/profile/button.mc",
+    disp      => 'Cancel',
+    name      => 'cancel',
+    button    => 'cancel_lgreen',
+    js        => 'onclick="self.close(); return false"',
+    useTable  => 0
+&>
+<& "/widgets/buttons/submit.mc",
+    disp      => 'Save',
+    name      => 'save',
+    button    => 'save_red',
+    js        => qq{onclick="window.opener.document.getElementById('contribs').innerHTML = \$('contribs').innerHTML; self.close(); return false"},
+    useTable  => 0
+&>
+</div>
+
 <& /widgets/search/search.mc,
    object       => 'contrib',
    field        => 'lname',
@@ -41,21 +58,6 @@
        behavior => 'expand',
     &>
 <& '/widgets/wrappers/table_bottom.mc' &>
-
-<& "/widgets/buttons/submit.mc",
-    disp      => 'Save',
-    name      => 'save',
-    button    => 'save_red',
-    js        => qq{onclick="window.opener.document.getElementById('contribs').innerHTML = \$('contribs').innerHTML; self.close(); return false"},
-    useTable  => 0
-&>
-<& "/widgets/profile/button.mc",
-    disp      => 'Cancel',
-    name      => 'cancel',
-    button    => 'cancel_lgreen',
-    js        => 'onclick="self.close(); return false"',
-    useTable  => 0
-&>
 
 <%args>
 $asset_type => 'story'
