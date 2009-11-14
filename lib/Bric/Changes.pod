@@ -1022,7 +1022,7 @@ to install files in their proper locations. [Brian Smith and David]
 
 =back
 
-=head1 Version 1.10.8 ()
+=head1 VERSION 1.10.8 (2009-11-14)
 
 =head2 Improvements
 
@@ -1051,9 +1051,10 @@ good enough to comment it out and add a note to uncomment them if necessary
 
 =item *
 
-Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
+Fixed a compatibility issue in
+L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
 C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
-thread-saftey reasons." This change backward-compatible with older versions of
+thread-safety reasons." This change backward-compatible with older versions of
 XML::LibXML. [David]
 
 =item *
@@ -1094,13 +1095,19 @@ type results when clicking the links for subsequent pages. Fixed by preventing
 the C<list()> method of L<Bric::Biz::ElementType|Bric::Biz::ElementType> from
 modifying the parameter hash passed to it, as the modification was persisting
 in the list manager's state. Thanks to Aaron Fuleki for the report and for
-making the Denison available to diagnose the problem (Bug #102). [David]
+making the Denison Bricolage installation available to diagnose the problem
+(Bug #102). [David]
 
 =item *
 
 Avoid C<//> in distribution file names and/or directories. This caused
 problems with FTP distribution, but it seems prudent to fix it for SFTP and
 WebDAV, too. [David]
+
+=item *
+
+Fix LDAP 500 Error when a password is blank. Thanks to Aaron Fuleki for the
+report (Bug #103). [David]
 
 =item *
 
