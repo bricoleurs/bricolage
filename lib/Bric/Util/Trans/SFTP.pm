@@ -133,13 +133,13 @@ sub put_res {
 
         # Instantiate a Net::SSH2 object and login.
 
-        (my $hn = $s->get_host_name) =~ s/:\d+$//;
+        my ($hn, $port) = split /:/,  $s->get_host_name;
         my $user = $s->get_login;
         my $password = $s->get_password;
 
         my $ssh2 = Net::SSH2->new();
         my $connect = eval {
-            $ssh2->connect($hn);
+            $ssh2->connect($hn, $port);
             $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
             $ssh2->auth( username => $user, password => $password );
         };
@@ -266,13 +266,13 @@ sub del_res {
         next unless $s->is_active;
 
         # Instantiate a Net::SSH2 object and login.
-        (my $hn = $s->get_host_name) =~ s/:\d+$//;
+        my ($hn, $port) = split /:/,  $s->get_host_name;
         my $user = $s->get_login;
         my $password = $s->get_password;
 
         my $ssh2 = Net::SSH2->new();
         my $connect = eval {
-            $ssh2->connect($hn);
+            $ssh2->connect($hn, $port);
             $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
             $ssh2->auth( username => $user, password => $password );
         };

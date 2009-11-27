@@ -8,6 +8,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 1.11.3 ()
 
+=head2 Improvements
+
+=over
+
+=item *
+
+The SFTP mover now respects a port specification in the host name (e.g,
+"foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
+report and fix. [David]
+
+=back
+
 =head1 Version 1.11.2 (2009-11-14)
 
 =head2 New Features
