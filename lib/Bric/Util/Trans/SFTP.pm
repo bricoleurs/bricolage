@@ -355,13 +355,14 @@ $sftp_args = sub {
         push @ssh_args, cipher   => SFTP_MOVER_CIPHER if SFTP_MOVER_CIPHER;
     }
 
-    (my $hn = $server->get_host_name) =~ s/:\d+$//;
+    my ($hn, $port) = split /:/, $server->get_host_name;
     return (
         $hn,
         debug    => DEBUG,
         ssh_args => \@ssh_args,
         user     => $server->get_login,
-        password => $server->get_password
+        password => $server->get_password,
+        ($port ? (port => $port) : ()),
     );
 };
 
