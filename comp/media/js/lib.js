@@ -597,7 +597,7 @@ function confirmChanges(obj) {
     }
 
     // Check for invalid category.
-    if (Element.visible('new_cat_warning')) {
+    if ($('new_cat_warning') && Element.visible('new_cat_warning')) {
         // The cateogry isn't valid. Return false.
         alert('Please select a valid category');
         confirming = false;
