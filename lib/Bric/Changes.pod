@@ -24,6 +24,18 @@ report and fix. [David]
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Cover dates are no longer exported with the wrong year (2009) when their dates
+are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
+#122) and David Oliveira via Bret Dawson for the fix! [David]
+
+=back
+
 =head1 VERSION 1.10.8 (2009-11-14)
 
 =head2 Improvements
