@@ -18,6 +18,18 @@ The SFTP mover now respects a port specification in the host name (e.g,
 "foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
 report and fix. [David]
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Cover dates are no longer exported with the wrong year (2009) when their dates
+are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
+#122) and David Oliveira via Bret Dawson for the fix! [David]
+
+=back
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
