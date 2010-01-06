@@ -457,22 +457,15 @@ paramter alone.
 
 =over
 
-=item L<http://powerpostgresql.com/Downloads/annotated_conf_80.html>
+=item L<http://www.pgexperts.com/document.html?id=34>
 
-The "Annotated F<postgresql.conf> Guide for PostgreSQL," by Josh Berkus and
-Joe Conway.
-
-=item L<http://www.varlena.com/varlena/GeneralBits/Tidbits/perf.html>
-
-"Tuning PostgreSQL for performance," by Josh Berkus.
+"The Mighty GUCS" package, by Josh Berkus. Includes annotated GUCs (PostgreSQL
+configuration directives), presentation slides, and F<postgresql.conf.simple>
+updated for version 8.4.
 
 =item L<http://archives.postgresql.org/pgsql-performance/>
 
 Search the archives of the pgsql-performance list.
-
-=item L<http://webmail.postgresql.org/mj/mj_wwwusr?domain=postgresql.org&func=lists-long-full&extra=pgsql-performance>.
-
-Subscribe to the pgsql-performance list.
 
 =back
 
