@@ -35,6 +35,17 @@ to the database as a boolean. [David Oliveira]
 
 =back
 
+=head2 Improvements
+
+=item *
+
+The virtual FTP server now assumes that template files uploaded to it are
+encoded in the user's preferred encoding. So if you have Windows gremlins in
+your templates, you can set your Character Set preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+
+=back
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
