@@ -40,11 +40,12 @@ use strict;
 
 ################################################################################
 # Programmatic Dependences
-use Bric::Config qw(:ftp);
+use Bric::Config qw(:ftp :l10n);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::App::Authz qw(:all);
 use Bric::Util::Burner;
+BEGIN { require Bric::Util::CharTrans if ENCODE_OK }
 use Bric::Biz::Asset::Template;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::FTP::DirHandle;
@@ -490,7 +491,7 @@ the name of the file ends in ".deploy".
 =cut
 
 package Bric::Util::FTP::FileHandle::IO;
-use Bric::Config qw(FTP_DEBUG);
+use Bric::Config qw(FTP_DEBUG ENCODE_OK);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Event;
 use Bric::Util::Priv::Parts::Const qw(:all);
@@ -542,7 +543,10 @@ use base 'IO::Scalar';
             $ftps->check_out($template)
         }
 
-        # save the new code
+        # Encode and save the new code
+        Bric::Util::CharTrans->new($user->get_pref('Character Set'))->to_utf8($sref)
+            if ENCODE_OK;
+
         $template->set_data($$sref);
         $template->save;
 
