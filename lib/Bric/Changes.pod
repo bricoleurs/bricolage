@@ -25,6 +25,16 @@ encoded in the user's preferred encoding. So if you have Windows gremlins in
 your templates, you can set your Character Set preference to "CP1252" and it
 will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
 
+=item *
+
+Added the C<--without-file> option to F<bric_soap> for use with the C<media
+export> command. When this is specified, the resulting XML file will contain
+no C<< <file> >> elements (which normally contain the Base64-encoded content
+of the exported media documents). Also, when a media document is updated via
+C<bric_soap media update>, if the XML file sent to the server contains no C<<
+<file> >> elements, the existing file will be left alone, rather than deleted.
+Suggested by Ashlee Caul. [David]
+
 =back
 
 =head2 Bug Fixes

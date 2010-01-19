@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/local/bin/perl -w
 
 use strict;
 
@@ -70,6 +70,9 @@ Options:
   --with-related-stories - tell export and publish to include related stories
 
   --with-related-media   - tell export and publish to include related media
+
+  --without-file         - tell media export to omit the C<< <file> >> element
+                           from the output
 
   --use-related-uri      - tell export to use related_story_uri and
                            related_media_uri instead of related_story_id and
@@ -241,6 +244,7 @@ BEGIN {
     our %search;
     our $with_related_stories = 0;
     our $with_related_media   = 0;
+    our $without_file         = 0;
     our $use_related_uri      = 0;
     our $to_preview           = 0;
     our $publish_date;
@@ -266,6 +270,7 @@ BEGIN {
            "search=s"               => \%search,
            "with-related-stories"   => \$with_related_stories,
            "with-related-media"     => \$with_related_media,
+           "without-file"           => \$without_file,
            "use-related-uri"        => \$use_related_uri,
            "all"                    => sub { $with_related_stories = $with_related_media = 1; },
            "to-preview"             => \$to_preview,
@@ -291,10 +296,12 @@ BEGIN {
         }
     }
 }
-our ($module, $command, %search, $with_related_stories, $with_related_media,
-     $to_preview, $publish_date, $published_only, $username, $password, $server,
-     $verbose, $desk, $workflow, $timeout, $use_cookie, $save_cookie, $chunks,
-     $continue, $use_related_uri);
+our (
+     $module, $command, %search, $with_related_stories, $with_related_media,
+     $without_file, $to_preview, $publish_date, $published_only, $username,
+     $password, $server, $verbose, $desk, $workflow, $timeout, $use_cookie,
+     $save_cookie, $chunks, $continue, $use_related_uri
+);
 
 use SOAP::Lite ($verbose > 2 ? (trace => [qw(debug)]) : ()),
   on_fault => \&_handle_fault;
@@ -469,6 +476,7 @@ sub export {
     push @opts, name($module . '_ids', \@ids);
     push @opts, name(export_related_stories => 1) if $with_related_stories;
     push @opts, name(export_related_media   => 1) if $with_related_media;
+    push @opts, name(no_file   => 1)              if $without_file;
     push @opts, name(use_related_uri        => 1) if $use_related_uri;
 
     print $soap->export(@opts)->result;
