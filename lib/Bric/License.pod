@@ -270,6 +270,8 @@ Folks who have submitted patches include:
 
 =item * Brian Smith
 
+=item * David Oliveira
+
 =back
 
 Friends who have spotted bugs include:

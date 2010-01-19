@@ -895,9 +895,9 @@ sub edit_type {
 
     my $ins = prepare_c(qq{
         INSERT INTO contact (id, type, description, active, alertable)
-        VALUES (${\next_key('contact')}, ?, ?, ?, 0)
+        VALUES (${\next_key('contact')}, ?, ?, ?, ?)
     }, undef);
-    execute($ins, $type, $desc, 1);
+    execute($ins, $type, $desc, 1, 0);
 }
 
 ################################################################################
