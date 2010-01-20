@@ -168,10 +168,9 @@ sub diff : Callback {
     );
 }
 
-sub cancel : Callback(priority => 6) {
-    my $self = shift;
+sub _cancel {
+    my ($self, $fa) = @_;
 
-    my $fa = get_state_data($self->class_key, 'template');
     if ($fa->get_version == 0) {
         # If the version number is 0, the template was never checked in to a
         # desk. So just delete it.
@@ -179,7 +178,7 @@ sub cancel : Callback(priority => 6) {
     } else {
         # Cancel the checkout.
         Bric::App::Callback::Util::Asset->cancel_checkout($fa);
-        $self->add_message('Template "[_1]" check out canceled.', $fa->get_file_name);
+        $self->add_message('Template "[_1]" checked in and reverted.', $fa->get_title);
     }
     clear_state($self->class_key);
 
@@ -467,11 +466,14 @@ $checkin = sub {
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($self, $widget, $fa);
 
-    $fa->checkin;
-
     # Get the desk information.
     my $desk_id = $param->{"$widget|desk"};
     my $cur_desk = $fa->get_current_desk;
+
+    # Just let the reversion take care of things.
+    return $self->_cancel($fa) if $desk_id eq 'revert';
+
+    $fa->checkin;
 
     # See if this template needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {

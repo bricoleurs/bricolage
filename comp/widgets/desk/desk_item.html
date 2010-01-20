@@ -203,7 +203,7 @@ if ($checkin_opts || $move_opts) {
     }
     push @$checkin_opts, (
         ['shelve', $lang->maketext('and Shelve')],
-        ['cancel', $lang->maketext('and ' . ($obj->get_version == 0 ? 'Delete' : 'Revert'))],
+        ['revert', $lang->maketext('and ' . ($obj->get_version == 0 ? 'Delete' : 'Revert'))],
     );
 
 }

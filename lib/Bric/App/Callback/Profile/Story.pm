@@ -130,6 +130,13 @@ sub checkin : Callback(priority => 6) {
     # Abort this save if there were any errors.
     return unless $self->_save_data($param, $widget, $story);
 
+    # Get the desk information.
+    my $desk_id = $param->{"$widget|desk"};
+    my $cur_desk = $story->get_current_desk;
+
+    # Just let the reversion take care of things.
+    return $self->_cancel($story) if $desk_id eq 'revert';
+
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
     if ($work_id) {
@@ -143,10 +150,6 @@ sub checkin : Callback(priority => 6) {
     }
 
     $story->checkin;
-
-    # Get the desk information.
-    my $desk_id = $param->{"$widget|desk"};
-    my $cur_desk = $story->get_current_desk;
 
     # See if this story needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
@@ -284,10 +287,8 @@ sub save_and_stay : Callback(priority => 6) {
     }
 }
 
-sub cancel : Callback(priority => 6) {
-    my $self = shift;
-
-    my $story = get_state_data($self->class_key, 'story');
+sub _cancel {
+    my ($self, $story) = @_;
     if ($story->get_version == 0) {
         # If the version number is 0, the story was never checked in. So just
         # delete it.
@@ -296,7 +297,7 @@ sub cancel : Callback(priority => 6) {
         # Cancel the checkout.
         Bric::App::Callback::Util::Asset->cancel_checkout($story);
         $self->add_message(
-            'Story "[_1]" check out canceled.',
+            'Story "[_1]" checked in and reverted.',
             '<span class="l10n">' . $story->get_title . '</span>',
         );
     }

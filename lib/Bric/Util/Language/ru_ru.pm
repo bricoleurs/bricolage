@@ -772,6 +772,9 @@ To Translate:
   'Start Bricolage' => 'Start Bricolage',
   'and Revert' => 'and Revert',
   'and Delete' => 'and Delete',
+  'Media "[_1]" checked in and reverted.' => 'Media "[_1]" checked in and reverted.',
+  'Story "[_1]" checked in and reverted.' => 'Story "[_1]" checked in and reverted.',
+  'Template "[_1]" checked in and reverted.' => 'Template "[_1]" checked in and reverted.',
 
 =end comment
 

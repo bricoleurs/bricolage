@@ -228,6 +228,13 @@ sub checkin : Callback(priority => 6) {
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
+    # Get the desk information.
+    my $desk_id = $param->{"$widget|desk"};
+    my $cur_desk = $media->get_current_desk;
+
+    # Just let the reversion take care of things.
+    return $self->_cancel($media) if $desk_id eq 'revert';
+
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
     if ($work_id) {
@@ -241,10 +248,6 @@ sub checkin : Callback(priority => 6) {
     }
 
     $media->checkin;
-
-    # Get the desk information.
-    my $desk_id = $param->{"$widget|desk"};
-    my $cur_desk = $media->get_current_desk;
 
     # See if this media asset needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
@@ -394,9 +397,8 @@ sub save_and_stay : Callback(priority => 6) {
 
 ################################################################################
 
-sub cancel : Callback(priority => 6) {
-    my $self = shift;
-    my $media = get_state_data($self->class_key, 'media');
+sub _cancel {
+    my ($self, $media) = @_;
 
     if ($media->get_version == 0) {
         # If the version number is 0, the media was never checked in to a
@@ -405,7 +407,7 @@ sub cancel : Callback(priority => 6) {
     } else {
         # Cancel the checkout.
         Bric::App::Callback::Util::Asset->cancel_checkout($media);
-        $self->add_message('Media "[_1]" check out canceled.', $media->get_title);
+        $self->add_message('Media "[_1]" checked in and reverted.', $media->get_title);
     }
     $self->clear_my_state;
     if (my $prev = get_state_data('_profile_return')) {

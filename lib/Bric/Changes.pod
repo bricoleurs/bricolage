@@ -45,6 +45,13 @@ duplicated nearly verbatim in the callbacks for the story, media, and template
 profiles has been factored out into a new class
 L<Bric::App::Callback::Util::Asset>. [David]
 
+=item *
+
+Removed the "Cancel Checkout" button from asset profiles, and added the "and
+Revert" item to the "Check In" menu in its place. This brings it in line with
+the same option added to the "Check In" menu on desks and My Workspace.
+[David]
+
 =back
 
 =head2 Bug Fixes

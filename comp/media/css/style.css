@@ -613,13 +613,12 @@ div.addelement { text-align: right;}
     border-top: solid #CCCC99 1px;
 }
 
-.buttonBar .save { 
+.buttonBar .cancel { 
     clear: both; float: left; 
-    width: 40%; 
     text-align: right;
     padding: 5px 0 10px 0;
 }
-.buttonBar .cancel { 
+.buttonBar .save { 
     float: right;
     width: 40%;
     padding: 5px 0 10px 0;

@@ -50,9 +50,8 @@ sub checkin : Callback {
     my ($next_desk_id, $next_workflow_id) =
         split /-/, $self->params->{"desk_asset|next_desk"};
 
-    if ($next_desk_id eq 'cancel') {
+    if ($next_desk_id eq 'revert') {
         my $action;
-        print STDERR "####### ", $obj->get_checked_out, $/;
         if ($obj->get_version == 0) {
             # If the version number is 0, the asset was never checked in to a
             # desk. So just delete it.

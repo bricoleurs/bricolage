@@ -605,6 +605,9 @@ To translate:
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
   'and Revert' => 'and Revert',
   'and Delete' => 'and Delete',
+  'Media "[_1]" checked in and reverted.' => 'Media "[_1]" checked in and reverted.',
+  'Story "[_1]" checked in and reverted.' => 'Story "[_1]" checked in and reverted.',
+  'Template "[_1]" checked in and reverted.' => 'Template "[_1]" checked in and reverted.',
 
 =end comment
 
