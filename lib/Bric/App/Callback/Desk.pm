@@ -12,6 +12,7 @@ use Bric::App::Session qw(:state :user);
 use Bric::App::Event qw(log_event);
 use Bric::App::Util qw(:pkg :aref);
 use Bric::App::Callback::Publish;
+use Bric::App::Callback::Util::Asset;
 use Bric::Biz::Asset::Business::Media;
 use Bric::Biz::Asset::Business::Story;
 use Bric::Biz::Asset::Template;
@@ -38,9 +39,6 @@ sub checkin : Callback {
     my $obj  = $pkgs->{$class}->lookup({'id' => $id, checkout => 1});
     my $desk = $obj->get_current_desk;
 
-    $desk->checkin($obj);
-    log_event("${class}_checkin", $obj, { Version => $obj->get_version });
-
     # If the same asset is cached in the session, remove it.
     if (my $cached = get_state_data("$class\_prof" => $class)) {
         if ($cached->get_id == $obj->get_id) {
@@ -51,6 +49,29 @@ sub checkin : Callback {
 
     my ($next_desk_id, $next_workflow_id) =
         split /-/, $self->params->{"desk_asset|next_desk"};
+
+    if ($next_desk_id eq 'cancel') {
+        my $action;
+        print STDERR "####### ", $obj->get_checked_out, $/;
+        if ($obj->get_version == 0) {
+            # If the version number is 0, the asset was never checked in to a
+            # desk. So just delete it.
+            Bric::App::Callback::Util::Asset->remove($obj);
+            $action = 'deleted';
+        } else {
+            # Cancel the checkout.
+            Bric::App::Callback::Util::Asset->cancel_checkout($obj);
+            $action = 'check out canceled';
+        }
+        $self->add_message(
+            ucfirst $obj->key_name . qq{ "[_1]" $action.},
+            '<span class="l10n">' . $obj->get_title . '</span>',
+        );
+        return;
+    }
+
+    $desk->checkin($obj);
+    log_event("${class}_checkin", $obj, { Version => $obj->get_version });
 
     if ($next_desk_id eq 'shelve') {
         $desk->remove_asset($obj)->save;

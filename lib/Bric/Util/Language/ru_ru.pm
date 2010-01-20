@@ -770,6 +770,8 @@ To Translate:
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
   'Start Bricolage' => 'Start Bricolage',
+  'and Revert' => 'and Revert',
+  'and Delete' => 'and Delete',
 
 =end comment
 

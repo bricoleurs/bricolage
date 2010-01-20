@@ -23,6 +23,7 @@ use Bric::Util::Fault qw(:all);
 use Bric::Util::Grp::Parts::Member::Contrib;
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::App::Callback::Search;
+use Bric::App::Callback::Util::Asset;
 
 my $SEARCH_URL = '/workflow/manager/story/';
 my $ACTIVE_URL = '/workflow/active/story/';
@@ -293,45 +294,7 @@ sub cancel : Callback(priority => 6) {
         return unless $self->_handle_delete($story);
     } else {
         # Cancel the checkout.
-        $story->cancel_checkout;
-        log_event('story_cancel_checkout', $story);
-
-        # If the story was last recalled from the library, then remove it
-        # from the desk and workflow. We can tell this because there will
-        # only be one story_moved event and one story_checkout event
-        # since the last story_add_workflow event.
-        my @events = Bric::Util::Event->list({
-            class => ref $story,
-            obj_id => $story->get_id
-        });
-        my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'story_add_workflow') {
-            my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'story_moved') {
-                $desks++;
-            } elsif ($kn eq 'story_checkout') {
-                $cos++
-            }
-        }
-
-        # If one move to desk, and one checkout, and this isn't the first
-        # time the story has been in workflow since it was created...
-        # XXX Three events upon creation: story_create, story_add_category,
-        # and story_moved.
-        if ($desks == 1 && $cos == 1 && @events > 3) {
-            # It was just recalled from the library. So remove it from the
-            # desk and from workflow.
-            my $desk = $story->get_current_desk;
-            $desk->remove_asset($story);
-            $story->set_workflow_id(undef);
-            $desk->save;
-            $story->save;
-            log_event("story_rem_workflow", $story);
-        } else {
-            # Just save the cancelled checkout. It will be left in workflow for
-            # others to find.
-            $story->save;
-        }
+        Bric::App::Callback::Util::Asset->cancel_checkout($story);
         $self->add_message(
             'Story "[_1]" check out canceled.',
             '<span class="l10n">' . $story->get_title . '</span>',
@@ -987,15 +950,7 @@ sub _handle_contributors {
 
 sub _handle_delete {
     my ($self, $story) = @_;
-    my $desk = $story->get_current_desk();
-    $desk->checkin($story) if $story->get_checked_out;
-    $desk->remove_asset($story);
-    $story->set_workflow_id(undef);
-    $story->deactivate;
-    $desk->save;
-    $story->save;
-    log_event("story_rem_workflow", $story);
-    log_event("story_deact", $story);
+    Bric::App::Callback::Util::Asset->remove($story);
     $self->add_message(
         'Story "[_1]" deleted.',
         '<span class="l10n">' . $story->get_title . '</span>',

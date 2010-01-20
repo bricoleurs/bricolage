@@ -201,8 +201,11 @@ if ($checkin_opts || $move_opts) {
             push @$checkin_opts, @and_publish;
         }
     }
-    my @and_shelve = ['shelve', $lang->maketext('and Shelve')];
-    push @$checkin_opts, @and_shelve;
+    push @$checkin_opts, (
+        ['shelve', $lang->maketext('and Shelve')],
+        ['cancel', $lang->maketext('and ' . ($obj->get_version == 0 ? 'Delete' : 'Revert'))],
+    );
+
 }
 
 my ($name, $date, $date_label, $type_label, $uri, $uuid);

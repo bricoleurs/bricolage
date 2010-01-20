@@ -9,6 +9,7 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:history);
+use Bric::App::Callback::Util::Asset;
 use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
@@ -176,47 +177,8 @@ sub cancel : Callback(priority => 6) {
         # desk. So just delete it.
         $delete_fa->($self, $fa);
     } else {
-        # Cancel the checkout and undeploy the template from the user's
-        # sand box.
-        $fa->cancel_checkout;
-        log_event('template_cancel_checkout', $fa);
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-        $sb->undeploy($fa);
-
-        # If the template was last recalled from the library, then remove it
-        # from the desk and workflow. We can tell this because there will
-        # only be one template_moved event and one template_checkout event
-        # since the last template_add_workflow event.
-        my @events = Bric::Util::Event->list({
-            class => ref $fa,
-            obj_id => $fa->get_id
-        });
-        my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'template_add_workflow') {
-            my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'template_moved') {
-                $desks++;
-            } elsif ($kn eq 'template_checkout') {
-                $cos++
-            }
-        }
-
-        # If one move to desk, and one checkout, and this isn't the first
-        # time the template has been in workflow since it was created...
-        if ($desks == 1 && $cos == 1 && @events > 2) {
-            # It was just recalled from the library. So remove it from the
-            # desk and from workflow.
-            my $desk = $fa->get_current_desk;
-            $desk->remove_asset($fa);
-            $fa->set_workflow_id(undef);
-            $desk->save;
-            $fa->save;
-            log_event("template_rem_workflow", $fa);
-        } else {
-            # Just save the cancelled checkout. It will be left in workflow for
-            # others to find.
-            $fa->save;
-        }
+        # Cancel the checkout.
+        Bric::App::Callback::Util::Asset->cancel_checkout($fa);
         $self->add_message('Template "[_1]" check out canceled.', $fa->get_file_name);
     }
     clear_state($self->class_key);
@@ -630,19 +592,7 @@ $check_syntax = sub {
 
 $delete_fa = sub {
     my ($self, $fa) = @_;
-    my $desk = $fa->get_current_desk;
-    $desk->checkin($fa);
-    $desk->remove_asset($fa);
-    $desk->save;
-    log_event("template_rem_workflow", $fa);
-    my $burn = Bric::Util::Burner->new;
-    $burn->undeploy($fa);
-    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
-       $sb->undeploy($fa);
-    $fa->set_workflow_id(undef);
-    $fa->deactivate;
-    $fa->save;
-    log_event("template_deact", $fa);
+    Bric::App::Callback::Util::Asset->remove($fa);
     $self->add_message('Template "[_1]" deleted.', $fa->get_file_name);
 };
 

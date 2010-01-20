@@ -603,6 +603,8 @@ To translate:
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
+  'and Revert' => 'and Revert',
+  'and Delete' => 'and Delete',
 
 =end comment
 

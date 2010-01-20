@@ -26,6 +26,7 @@ use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
 use Bric::App::Callback::Search;
+use Bric::App::Callback::Util::Asset;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -403,44 +404,7 @@ sub cancel : Callback(priority => 6) {
         return unless $handle_delete->($media, $self);
     } else {
         # Cancel the checkout.
-        $media->cancel_checkout;
-        log_event('media_cancel_checkout', $media);
-
-        # If the media was last recalled from the library, then remove it
-        # from the desk and workflow. We can tell this because there will
-        # only be one media_moved event and one media_checkout event
-        # since the last media_add_workflow event.
-        my @events = Bric::Util::Event->list({
-            class => 'Bric::Biz::Asset::Business::Media',
-            obj_id => $media->get_id
-        });
-        my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'media_add_workflow') {
-            my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'media_moved') {
-                $desks++;
-            } elsif ($kn eq 'media_checkout') {
-                $cos++
-            }
-        }
-
-        # If one move to desk, and one checkout, and this isn't the first
-        # time the media has been in workflow since it was created...
-        # XXX Two events upon creation: media_create and media_moved.
-        if ($desks == 1 && $cos == 1 && @events > 2) {
-            # It was just recalled from the library. So remove it from the
-            # desk and from workflow.
-            my $desk = $media->get_current_desk;
-            $desk->remove_asset($media);
-            $media->set_workflow_id(undef);
-            $desk->save;
-            $media->save;
-            log_event("media_rem_workflow", $media);
-        } else {
-            # Just save the cancelled checkout. It will be left in workflow for
-            # others to find.
-            $media->save;
-        }
+        Bric::App::Callback::Util::Asset->cancel_checkout($media);
         $self->add_message('Media "[_1]" check out canceled.', $media->get_title);
     }
     $self->clear_my_state;
@@ -901,15 +865,7 @@ sub _handle_contributors {
 
 $handle_delete = sub {
     my ($media, $self) = @_;
-    my $desk = $media->get_current_desk;
-    $desk->checkin($media);
-    $desk->remove_asset($media);
-    $media->set_workflow_id(undef);
-    $media->deactivate;
-    $desk->save;
-    $media->save;
-    log_event("media_rem_workflow", $media);
-    log_event("media_deact", $media);
+    Bric::App::Callback::Util::Asset->remove($media);
     $self->add_message('Media "[_1]" deleted.', $media->get_title);
 };
 

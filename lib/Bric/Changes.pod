@@ -35,6 +35,16 @@ C<bric_soap media update>, if the XML file sent to the server contains no C<<
 <file> >> elements, the existing file will be left alone, rather than deleted.
 Suggested by Ashlee Caul. [David]
 
+=item *
+
+Added the "and Revert" or "and Delete" option to the "Check In" menu on
+desk/My Workspace views. This saves the user from having to click "Edit" and
+then "Cancel Checkout". Suggested by Matt Rolf and Phillip Smith. In order to
+make this happen, the code that handles cancelling a checkout, which was
+duplicated nearly verbatim in the callbacks for the story, media, and template
+profiles has been factored out into a new class
+L<Bric::App::Callback::Util::Asset>. [David]
+
 =back
 
 =head2 Bug Fixes
