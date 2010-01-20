@@ -44,7 +44,7 @@
 %           if ($class eq 'story') {
             <li><a href="/workflow/profile/workspace/clone/<% $id %>" title="<% $lang->maketext("Clone") %>"><img src="/media/images/clone.png" alt="<% $lang->maketext("Clone") %>" /><% $lang->maketext("Clone") %></a></li>
 %           }
-            <li style="margin-right: 1.2em;"><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Trail/Log') %>"><img src="/media/images/log.png" alt="<% $lang->maketext('Trail/Log') %>" /><% $lang->maketext('Trail/Log') %></a></li>
+            <li style="margin-right: 1.2em;"><a href="/workflow/events/<% $class %>/<% $id %>?filter_by=<% $class %>_moved" title="<% $lang->maketext('Log') %>"><img src="/media/images/log.png" alt="<% $lang->maketext('Log') %>" /><% $lang->maketext('Log') %></a></li>
 % if ($can_edit) {
     <li> <a name="<% ${class} %>_delete_ids" id="<% ${widget} %>_<% $id %>" title="<% $lang->maketext('Delete') %>"  onclick="if (Desk.confirmDelete()) { Desk.request({ parameters: '<% ${widget} %>|delete_cb=<% ${class} %>_<% $id %>' }); Effect.Shrink('<% ${class} %>_<% $id %>'); } return false"> <img src="/media/images/trash.png" alt="Trash Can" />Delete</a> </li>
 % }
