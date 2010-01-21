@@ -593,6 +593,10 @@ Fixed the contributor association popup so that hitting the "Enter" key to
 perform a search no longer deletes contributors you've just added (Bug #112).
 [David]
 
+=item *
+
+Updated contextual help pages. (Bug #108). [Phillip Smith]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
