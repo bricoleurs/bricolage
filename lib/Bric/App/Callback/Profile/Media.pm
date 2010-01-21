@@ -48,9 +48,19 @@ sub update : Callback(priority => 1) {
     $media->set_source__id($param->{"$widget|source__id"})
       if $param->{"$widget|source__id"};
 
-    $media->set_category__id($param->{"$widget|category__id"})
-      if defined $param->{"$widget|category__id"}
-      && $media->get_category__id ne $param->{"$widget|category__id"};
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $media->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+    $media->set_category__id($cat_id);
 
     # set the name
     $media->set_title($param->{title})
@@ -519,12 +529,26 @@ sub create : Callback {
                  cover_date   => $param->{cover_date},
                  title        => $param->{title},
                  user__id     => get_user_id(),
-                 category__id => $param->{"$widget|category__id"},
                  site_id      => $site_id,
                };
 
     # Create the media object.
     my $media = $pkg->new($init);
+
+    # Set the category
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $wf->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+    $media->set_category__id($cat_id);
 
     # Set the workflow this media should be in.
     $media->set_workflow_id($WORK_ID);

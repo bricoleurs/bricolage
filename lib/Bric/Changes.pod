@@ -52,6 +52,11 @@ Revert" item to the "Check In" menu in its place. This brings it in line with
 the same option added to the "Check In" menu on desks and My Workspace.
 [David]
 
+=item *
+
+Category selection when editing a media document now uses an autocomplete
+feild rather than a select list, just like the story profile does. [David]
+
 =back
 
 =head2 Bug Fixes
