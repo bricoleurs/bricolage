@@ -6,13 +6,13 @@ Bric - The Bricolage base class.
 
 =head1 Version
 
-1.11.2 - Development Track for 2.0.0
+1.11.3 - Development Track for 2.0.0
 
 =cut
 
 # Set the Version Number.
 BEGIN {
-    our $VERSION = '1.11.2';
+    our $VERSION = '1.11.3';
 }
 
 =head1 Synopsis

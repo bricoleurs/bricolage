@@ -658,7 +658,6 @@ our %Lexicon = (
   'Permission to grant permission "[_1]" to group "[_2]" denied' => 'Нет разрешения для предоставления прав "[_1]" для группы "[_2]"',
   'place must be a positive number.' => 'place должен быть положительным числом.',
   'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => 'Проверьте URL и повторите попытку. Если вы думаете, что получили это сообщение в результате сбоя сервера или другой ошибки, то известите системного администратора. Постарайтесь собрать как можно больше подробностей, включая тип броузера, тип операционной системы, а также протокол действий, в результате которых вы оказались здесь.',
-  'Please click [_1]here[_2] to start.' => 'Начало работы [_1]здесь[_2].',
   'Please log in:' => 'Введите имя пользователя:',
   'Please select a primary category.' => 'Выберите первичную категорию.',
   'Please select a primary output channel.' => 'Выберите первичный канал вывода.',
@@ -770,6 +769,12 @@ To Translate:
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
+  'Start Bricolage' => 'Start Bricolage',
+  'and Revert' => 'and Revert',
+  'and Delete' => 'and Delete',
+  'Media "[_1]" checked in and reverted.' => 'Media "[_1]" checked in and reverted.',
+  'Story "[_1]" checked in and reverted.' => 'Story "[_1]" checked in and reverted.',
+  'Template "[_1]" checked in and reverted.' => 'Template "[_1]" checked in and reverted.',
 
 =end comment
 

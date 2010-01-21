@@ -1,1 +1,4 @@
 Makefile
+inst/*.sql
+comp/data/
+

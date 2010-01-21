@@ -318,6 +318,12 @@ Specifies a single media_id to be retrieved.
 Specifies a list of media_ids.  The value for this option should be an
 array of interger "media_id" elements.
 
+=item no_file
+
+Boolean value that, when true, indicates that the resulting XML should not
+include the C<< <file> >> element with the Base-64 encoded content for
+any exported media.
+
 =back
 
 Throws:
@@ -570,7 +576,7 @@ my $allowed = {
                   grep { /^[^_]/}
                     keys %{ Bric::Biz::Asset::Business::Media->PARAM_WHERE_MAP }
                 },
-    export   => { map { $_ => 1 } map { module() . "_$_" }  qw(id ids) },
+    export   => { map { $_ => 1 } 'no_file', map { module() . "_$_" }  qw(id ids) },
     create   => { map { $_ => 1 } qw(document workflow desk) },
     update   => { map { $_ => 1 } qw(document update_ids workflow desk) },
 };
@@ -872,13 +878,16 @@ sub load_asset {
                 $media->upload_file($fh, @{$mdata->{file}}{qw(name media_type size)});
                 log_event('media_upload', $media);
             } else {
+                # Do nothing, leave the existing file as-is. Old behavior kept
+                # commented-out for reference.
+
                 # clear the media object by uploading an empty file - this
                 # is functionality that isn't actually supported by
                 # Bricolage.  We should add a Media->delete_file() method at
                 # some point and use it here.
-                my $data = "";
-                my $fh  = new IO::Scalar \$data;
-                $media->upload_file($fh, "empty", 0, 0);
+                # my $data = "";
+                # my $fh  = new IO::Scalar \$data;
+                # $media->upload_file($fh, "empty", 0, 0);
             }
         }
 
@@ -1100,7 +1109,7 @@ sub serialize_asset {
                            object => $media);
 
         # output file if we've got one
-        if (my $file_name = $media->get_file_name) {
+        if (!$options{args}->{no_file} && (my $file_name = $media->get_file_name)) {
             $writer->startTag("file");
             $writer->dataElement(name => $file_name);
             $writer->dataElement(size => $media->get_size);

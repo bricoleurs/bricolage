@@ -9,6 +9,7 @@ use Bric::App::Authz qw(:all);
 use Bric::App::Event qw(log_event);
 use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(:history);
+use Bric::App::Callback::Util::Asset;
 use Bric::Biz::Asset::Template;
 use Bric::Biz::ElementType;
 use Bric::Biz::Workflow;
@@ -167,57 +168,17 @@ sub diff : Callback {
     );
 }
 
-sub cancel : Callback(priority => 6) {
-    my $self = shift;
+sub _cancel {
+    my ($self, $fa) = @_;
 
-    my $fa = get_state_data($self->class_key, 'template');
     if ($fa->get_version == 0) {
         # If the version number is 0, the template was never checked in to a
         # desk. So just delete it.
         $delete_fa->($self, $fa);
     } else {
-        # Cancel the checkout and undeploy the template from the user's
-        # sand box.
-        $fa->cancel_checkout;
-        log_event('template_cancel_checkout', $fa);
-        my $sb = Bric::Util::Burner->new({user_id => get_user_id()});
-        $sb->undeploy($fa);
-
-        # If the template was last recalled from the library, then remove it
-        # from the desk and workflow. We can tell this because there will
-        # only be one template_moved event and one template_checkout event
-        # since the last template_add_workflow event.
-        my @events = Bric::Util::Event->list({
-            class => ref $fa,
-            obj_id => $fa->get_id
-        });
-        my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'template_add_workflow') {
-            my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'template_moved') {
-                $desks++;
-            } elsif ($kn eq 'template_checkout') {
-                $cos++
-            }
-        }
-
-        # If one move to desk, and one checkout, and this isn't the first
-        # time the template has been in workflow since it was created...
-        if ($desks == 1 && $cos == 1 && @events > 2) {
-            # It was just recalled from the library. So remove it from the
-            # desk and from workflow.
-            my $desk = $fa->get_current_desk;
-            $desk->remove_asset($fa);
-            $fa->set_workflow_id(undef);
-            $desk->save;
-            $fa->save;
-            log_event("template_rem_workflow", $fa);
-        } else {
-            # Just save the cancelled checkout. It will be left in workflow for
-            # others to find.
-            $fa->save;
-        }
-        $self->add_message('Template "[_1]" check out canceled.', $fa->get_file_name);
+        # Cancel the checkout.
+        Bric::App::Callback::Util::Asset->cancel_checkout($fa);
+        $self->add_message('Template "[_1]" checked in and reverted.', $fa->get_title);
     }
     clear_state($self->class_key);
 
@@ -475,12 +436,24 @@ $save_meta = sub {
         $param->{"$widget|code"} =~ s/\r\n?/\n/g;
         $fa->set_data($param->{"$widget|code"});
     }
-    if (exists $param->{category_id}) {
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $fa->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+
+    if ($fa->get_category_id != $cat_id) {
         # Remove the existing version from the user's sand box.
         my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
         $sb->undeploy($fa);
         # Set the new category.
-        $fa->set_category_id($param->{category_id});
+        $fa->set_category_id($cat_id);
     }
     return set_state_data($widget, 'template', $fa);
 };
@@ -505,11 +478,14 @@ $checkin = sub {
     my $new = defined $fa->get_id ? 0 : 1;
     $save_meta->($self, $widget, $fa);
 
-    $fa->checkin;
-
     # Get the desk information.
     my $desk_id = $param->{"$widget|desk"};
     my $cur_desk = $fa->get_current_desk;
+
+    # Just let the reversion take care of things.
+    return $self->_cancel($fa) if $desk_id eq 'revert';
+
+    $fa->checkin;
 
     # See if this template needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
@@ -630,19 +606,7 @@ $check_syntax = sub {
 
 $delete_fa = sub {
     my ($self, $fa) = @_;
-    my $desk = $fa->get_current_desk;
-    $desk->checkin($fa);
-    $desk->remove_asset($fa);
-    $desk->save;
-    log_event("template_rem_workflow", $fa);
-    my $burn = Bric::Util::Burner->new;
-    $burn->undeploy($fa);
-    my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
-       $sb->undeploy($fa);
-    $fa->set_workflow_id(undef);
-    $fa->deactivate;
-    $fa->save;
-    log_event("template_deact", $fa);
+    Bric::App::Callback::Util::Asset->remove($fa);
     $self->add_message('Template "[_1]" deleted.', $fa->get_file_name);
 };
 
@@ -650,12 +614,23 @@ $create_fa = sub {
     my ($self, $widget, $param) = @_;
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
-    my $cat_id = $param->{$widget.'|cat_id'};
     my $tplate_type = $param->{tplate_type};
+    my $work_id = get_state_data($widget, 'work_id');
+    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
 
-    my $site_id = Bric::Biz::Workflow->lookup({
-        id => get_state_data($widget => 'work_id')
-    })->get_site_id;
+    # Determine.
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $wf->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
 
     my ($at, $name);
     if ($tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
@@ -674,8 +649,6 @@ $create_fa = sub {
     } # Otherwise, it'll default to a category template.
 
     # Check permissions.
-    my $work_id = get_state_data($widget, 'work_id');
-    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
     my $start_desk = $wf->get_start_desk;
     my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
@@ -690,7 +663,7 @@ $create_fa = sub {
             priority           => $param->{priority},
             name               => $name,
             user__id           => get_user_id(),
-            site_id            => $site_id,
+            site_id            => $wf->get_site_id,
         });
     };
 
@@ -705,7 +678,7 @@ $create_fa = sub {
                 output_channel_id => $oc_id,
                 category_id => $cat_id,
                 element_type_id => $at_id,
-                site_id => $site_id,
+                site_id => $wf->get_site_id,
             });
             if (defined $fa) {
                 $self->add_message('Deactivated template was reactivated.');

@@ -56,7 +56,7 @@ use constant DBH_ATTR => (
         connected => sub {
             my $dbh = shift;
             $dbh->do(q{
-                SET SESSION sql_mode='ansi,strict_trans_tables,no_auto_value_on_zero';
+                SET SESSION sql_mode='sql-mode=ansi,strict_trans_tables,no_auto_value_on_zero,no_zero_date,no_zero_in_date,only_full_group_by';
             }) unless exists $dbh->{private_bric_sql_mode};
             $dbh->{private_bric_sql_mode} = 1;
             return;

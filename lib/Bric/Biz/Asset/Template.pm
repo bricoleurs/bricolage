@@ -1428,6 +1428,28 @@ NONE
 
 ################################################################################
 
+=item $file_name = $template->get_title()
+
+An alias for C<get_file_name()>.
+
+B<Throws:>
+
+NONE
+
+B<Side Effects:>
+
+NONE
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub get_title { shift->get_file_name }
+
+################################################################################
+
 =item $name = $template->get_output_channel_name;
 
 Return the name of the output channel.

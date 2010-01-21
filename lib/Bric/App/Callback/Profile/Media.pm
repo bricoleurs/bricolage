@@ -26,6 +26,7 @@ use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::MediaType;
 use Bric::Util::Trans::FS;
 use Bric::App::Callback::Search;
+use Bric::App::Callback::Util::Asset;
 
 my $SEARCH_URL = '/workflow/manager/media/';
 my $ACTIVE_URL = '/workflow/active/media/';
@@ -47,9 +48,19 @@ sub update : Callback(priority => 1) {
     $media->set_source__id($param->{"$widget|source__id"})
       if $param->{"$widget|source__id"};
 
-    $media->set_category__id($param->{"$widget|category__id"})
-      if defined $param->{"$widget|category__id"}
-      && $media->get_category__id ne $param->{"$widget|category__id"};
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $media->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+    $media->set_category__id($cat_id);
 
     # set the name
     $media->set_title($param->{title})
@@ -227,6 +238,13 @@ sub checkin : Callback(priority => 6) {
     # Just return if there was a problem with the update callback.
     return if delete $param->{__data_errors__};
 
+    # Get the desk information.
+    my $desk_id = $param->{"$widget|desk"};
+    my $cur_desk = $media->get_current_desk;
+
+    # Just let the reversion take care of things.
+    return $self->_cancel($media) if $desk_id eq 'revert';
+
     my $work_id = get_state_data($widget, 'work_id');
     my $wf;
     if ($work_id) {
@@ -240,10 +258,6 @@ sub checkin : Callback(priority => 6) {
     }
 
     $media->checkin;
-
-    # Get the desk information.
-    my $desk_id = $param->{"$widget|desk"};
-    my $cur_desk = $media->get_current_desk;
 
     # See if this media asset needs to be removed from workflow or published.
     if ($desk_id eq 'remove') {
@@ -393,9 +407,8 @@ sub save_and_stay : Callback(priority => 6) {
 
 ################################################################################
 
-sub cancel : Callback(priority => 6) {
-    my $self = shift;
-    my $media = get_state_data($self->class_key, 'media');
+sub _cancel {
+    my ($self, $media) = @_;
 
     if ($media->get_version == 0) {
         # If the version number is 0, the media was never checked in to a
@@ -403,45 +416,8 @@ sub cancel : Callback(priority => 6) {
         return unless $handle_delete->($media, $self);
     } else {
         # Cancel the checkout.
-        $media->cancel_checkout;
-        log_event('media_cancel_checkout', $media);
-
-        # If the media was last recalled from the library, then remove it
-        # from the desk and workflow. We can tell this because there will
-        # only be one media_moved event and one media_checkout event
-        # since the last media_add_workflow event.
-        my @events = Bric::Util::Event->list({
-            class => 'Bric::Biz::Asset::Business::Media',
-            obj_id => $media->get_id
-        });
-        my ($desks, $cos) = (0, 0);
-        while (@events && $events[0]->get_key_name ne 'media_add_workflow') {
-            my $kn = shift(@events)->get_key_name;
-            if ($kn eq 'media_moved') {
-                $desks++;
-            } elsif ($kn eq 'media_checkout') {
-                $cos++
-            }
-        }
-
-        # If one move to desk, and one checkout, and this isn't the first
-        # time the media has been in workflow since it was created...
-        # XXX Two events upon creation: media_create and media_moved.
-        if ($desks == 1 && $cos == 1 && @events > 2) {
-            # It was just recalled from the library. So remove it from the
-            # desk and from workflow.
-            my $desk = $media->get_current_desk;
-            $desk->remove_asset($media);
-            $media->set_workflow_id(undef);
-            $desk->save;
-            $media->save;
-            log_event("media_rem_workflow", $media);
-        } else {
-            # Just save the cancelled checkout. It will be left in workflow for
-            # others to find.
-            $media->save;
-        }
-        $self->add_message('Media "[_1]" check out canceled.', $media->get_title);
+        Bric::App::Callback::Util::Asset->cancel_checkout($media);
+        $self->add_message('Media "[_1]" checked in and reverted.', $media->get_title);
     }
     $self->clear_my_state;
     if (my $prev = get_state_data('_profile_return')) {
@@ -553,12 +529,26 @@ sub create : Callback {
                  cover_date   => $param->{cover_date},
                  title        => $param->{title},
                  user__id     => get_user_id(),
-                 category__id => $param->{"$widget|category__id"},
                  site_id      => $site_id,
                };
 
     # Create the media object.
     my $media = $pkg->new($init);
+
+    # Set the category
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $wf->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+    $media->set_category__id($cat_id);
 
     # Set the workflow this media should be in.
     $media->set_workflow_id($WORK_ID);
@@ -901,15 +891,7 @@ sub _handle_contributors {
 
 $handle_delete = sub {
     my ($media, $self) = @_;
-    my $desk = $media->get_current_desk;
-    $desk->checkin($media);
-    $desk->remove_asset($media);
-    $media->set_workflow_id(undef);
-    $media->deactivate;
-    $desk->save;
-    $media->save;
-    log_event("media_rem_workflow", $media);
-    log_event("media_deact", $media);
+    Bric::App::Callback::Util::Asset->remove($media);
     $self->add_message('Media "[_1]" deleted.', $media->get_title);
 };
 

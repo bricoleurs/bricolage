@@ -613,13 +613,12 @@ div.addelement { text-align: right;}
     border-top: solid #CCCC99 1px;
 }
 
-.buttonBar .save { 
+.buttonBar .cancel { 
     clear: both; float: left; 
-    width: 40%; 
     text-align: right;
     padding: 5px 0 10px 0;
 }
-.buttonBar .cancel { 
+.buttonBar .save { 
     float: right;
     width: 40%;
     padding: 5px 0 10px 0;
@@ -1028,5 +1027,9 @@ table.dlman tr.dlbtns { height: 30px; }
 .lightboxconflict .errorMsg  { color: #ff5500; }
 .lightboxforbidden .errorMsg { color: #800000; }
 
-
 .lightbox[id]{ /* IE6 and below Can't See This */    position:fixed;    }#overlay[id]{ /* IE6 and below Can't See This */    position:fixed;    }
+
+#contribbuttons {
+  padding-bottom: 1em;
+  text-align:right;
+}

@@ -39,8 +39,6 @@ my $deskText = qq{<select name="$widget|desk">};
 my $can_pub;
 if ($desks) {
     my $to      = $lang->maketext('to');
-    my $and     = $lang->maketext('and');
-    my $shelve  = $lang->maketext('Shelve');
 
     foreach my $d (@$desks) {
         my $id = $d->get_id;
@@ -54,14 +52,16 @@ if ($desks) {
     }
 
     # Set up choice to remove from workflow.
-    $deskText .= qq{<option value="remove">$and $shelve</option>};
+    $deskText .=
+          '<option value="remove">' . $lang->maketext('and Shelve') . '</option>'
+        . '<option value="revert">' . $lang->maketext('and Revert') . '</option>';
 
     # Set up choice to publish, if possible.
     if ($can_pub) {
         my ($act, $cb) = $widget eq 'tmpl_prof'
-          ? ($lang->maketext('Deploy'), 'deploy')
-          : ($lang->maketext('Publish'), 'publish');
-        $deskText .= qq{<option value="$cb">$and $act</option>};
+          ? ($lang->maketext('and Deploy'), 'deploy')
+          : ($lang->maketext('and Publish'), 'publish');
+        $deskText .= qq{<option value="$cb">$act</option>};
     }
     $deskText .= "</select>";
 }
@@ -122,22 +122,6 @@ if ($version) {
 % }
 
 <div class="buttons">
-<div class="save">
-    <& "/widgets/buttons/submit.mc",
-        disp      => 'Save',
-        widget    => $widget,
-        cb        => 'save_cb',
-        button    => 'save_red',
-        useTable  => 0
-    &>
-    <& "/widgets/buttons/submit.mc",
-        disp      => 'Save and Stay',
-        widget    => $widget,
-        cb        => 'save_and_stay_cb',
-        button    => 'save_and_stay_lgreen',
-        useTable  => 0
-    &>
-</div>
 <div class="cancel">
     <& "/widgets/buttons/submit.mc",
         disp      => 'Return',
@@ -146,11 +130,20 @@ if ($version) {
         button    => 'cancel_lgreen',
         useTable  => 0
     &>
+</div>
+<div class="save">
     <& "/widgets/buttons/submit.mc",
-        disp      => 'Cancel Checkout',
+        disp      => 'Save and Stay',
         widget    => $widget,
-        cb        => 'cancel_cb',
-        button    => 'cancel_check_out_lgreen',
+        cb        => 'save_and_stay_cb',
+        button    => 'save_and_stay_lgreen',
+        useTable  => 0
+    &>
+    <& "/widgets/buttons/submit.mc",
+        disp      => 'Save',
+        widget    => $widget,
+        cb        => 'save_cb',
+        button    => 'save_red',
         useTable  => 0
     &>
 </div>

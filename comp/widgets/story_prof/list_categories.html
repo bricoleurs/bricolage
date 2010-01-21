@@ -75,14 +75,14 @@ Element.hide(throbber);
 $('new_category_uri').insert({ after: throbber });
 
 new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices",
-                       "/widgets/story_prof/autocomplete_categories.html",
+                       "/widgets/profile/autocomplete_categories.html",
                        {
                          onEmpty:    function() { Element.show('new_cat_warning'); },
                          onNotEmpty: function() { Element.hide('new_cat_warning') },
                          onEnter:    function() { catListMan.add('new_category_uri') },
                          minChars:   2,
                          indicator:  'category_autocomplete_indicator',
-                         parameters: 'site_id=<% $story->get_site_id %>'
+                         parameters: 'site_id=<% $story->get_site_id %>&key=story'
                        }
 );
 </script>

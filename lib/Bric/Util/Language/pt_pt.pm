@@ -580,7 +580,6 @@ our %Lexicon = (
   'Permission to delete "[_1]" denied.' => 'Não está autorizado a apagar "[_1]".',
   'Permissions saved.' => 'Permissões guardadas',
   'Please check the URL and try again. If you feel you have reached this page as a result of a server error or other bug, please notify the server administrator. Be sure to include as much detail as possible, including the type of browser, operating system, and the steps leading up to your arrival here.' => 'Por favor verifique o URL e volte a tentar. Caso pense que chegou a esta página em resultado de um erro de servidor ou outra falha, por favor notifique o administrador do sistema. Inclua o máximo de informação possível, incluindo o tipo de browser, sistema operativo, e os passos que percorreu até chegar aqui.',
-  'Please click [_1]here[_2] to start.' => 'Por favor clique [_1]aqui[_2] para iniciar.',
   'Please log in:' => 'Por favor, introduza o seu Nome de Utilizador e respectiva Password',
   'Please select a primary category.' => 'Por favor seleccione uma categoria primária.',
   'Please select a primary output channel.' => 'Por favor seleccione um canal de distribuição primário.',
@@ -774,6 +773,12 @@ To translate:
   'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.' => 'Could not create keyword, "[_1]", as you have not been granted permission to create new keywords.',
   'Paste ([_1])' => 'Paste ([_1])', # As in Copy/Paste
   'You do not have [_1] access to any desks in the "[_2]" workflow' => 'You do not have [_1] access to any desks in the "[_2]" workflow'
+  'Start Bricolage' => 'Start Bricolage',
+  'and Revert' => 'and Revert',
+  'and Delete' => 'and Delete',
+  'Media "[_1]" checked in and reverted.' => 'Media "[_1]" checked in and reverted.',
+  'Story "[_1]" checked in and reverted.' => 'Story "[_1]" checked in and reverted.',
+  'Template "[_1]" checked in and reverted.' => 'Template "[_1]" checked in and reverted.',
 
 =end comment
 

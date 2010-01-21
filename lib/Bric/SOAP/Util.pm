@@ -205,7 +205,7 @@ Notes: NONE
 
 sub db_date_to_xs_date {
     my $db = shift;
-    my $xs = strfdate(local_date($db, "epoch"), "%G-%m-%dT%TZ", 1);
+    my $xs = strfdate(local_date($db, "epoch"), "%Y-%m-%dT%TZ", 1);
     print STDERR "db_date_to_xs_date:\n  $db\n  $xs\n\n" if DEBUG;
     return $xs;
 }

@@ -2271,8 +2271,8 @@ sub _do_list {
     # Multisite element types are all the top-level for the site,
     # plus all non top-level element types.
     if ($params->{site_id} && !$params->{top_level}) {
+        $params = { %{ $params }, top_level => 0 };
         delete $params->{site_id};
-        $params->{top_level} = 0;
         push @elems, _do_list($pkg, $params);
 
     }

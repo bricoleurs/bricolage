@@ -594,7 +594,7 @@ sub test_oc : Test(60) {
 ##############################################################################
 # Test Site methods.
 ##############################################################################
-sub test_site : Test(26) {
+sub test_site : Test(28) {
     my $self = shift;
 
     #dependant on intial values
@@ -700,6 +700,14 @@ sub test_site : Test(26) {
 
     is scalar @{$top_level_element->get_sites()}, 1,
         'We should have one site now';
+
+    # Make sure that the params aren't changed.
+    my $params = { site_id => 100 };
+    is scalar @{Bric::Biz::ElementType->list($params) },
+        13, 'Check that list works with site_id and no top_level params';
+
+    is_deeply $params, { site_id => 100 },
+        'The params should be unmodified';
 }
 
 ##############################################################################

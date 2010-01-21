@@ -6,7 +6,78 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 1.11.2 (2008-??-??)
+=head1 Version 1.11.3 ()
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The SFTP mover now respects a port specification in the host name (e.g,
+"foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
+report and fix. [David]
+
+=item *
+
+The virtual FTP server now assumes that template files uploaded to it are
+encoded in the user's preferred encoding. So if you have Windows gremlins in
+your templates, you can set your Character Set preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+
+=item *
+
+Added the C<--without-file> option to F<bric_soap> for use with the C<media
+export> command. When this is specified, the resulting XML file will contain
+no C<< <file> >> elements (which normally contain the Base64-encoded content
+of the exported media documents). Also, when a media document is updated via
+C<bric_soap media update>, if the XML file sent to the server contains no C<<
+<file> >> elements, the existing file will be left alone, rather than deleted.
+Suggested by Ashlee Caul. [David]
+
+=item *
+
+Added the "and Revert" or "and Delete" option to the "Check In" menu on
+desk/My Workspace views. This saves the user from having to click "Edit" and
+then "Cancel Checkout". Suggested by Matt Rolf and Phillip Smith. In order to
+make this happen, the code that handles cancelling a checkout, which was
+duplicated nearly verbatim in the callbacks for the story, media, and template
+profiles has been factored out into a new class
+L<Bric::App::Callback::Util::Asset>. [David]
+
+=item *
+
+Removed the "Cancel Checkout" button from asset profiles, and added the "and
+Revert" item to the "Check In" menu in its place. This brings it in line with
+the same option added to the "Check In" menu on desks and My Workspace.
+[David]
+
+=item *
+
+Category selection when editing a media document or a template now uses an
+autocomplete feild rather than a select list, just like the story profile
+does. [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Cover dates are no longer exported with the wrong year (2009) when their dates
+are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
+#122) and David Oliveira via Bret Dawson for the fix! [David]
+
+=item *
+
+Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
+to the database as a boolean. [David Oliveira]
+
+=back
+
+=head1 Version 1.11.2 (2009-11-14)
 
 =head2 New Features
 
@@ -19,9 +90,9 @@ deleted. [David, Mercier, Rolf and Herring]
 
 =item *
 
-Added the C<publishing()>, C<previewing()>, and C<compling()> sugar methods to
-L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the same
-code to check modes in templates all the time. [David]
+Added the C<publishing()>, C<previewing()>, and C<compiling()> sugar methods
+to L<Bric::Util::Burner|Bric::Util::Burner> because I'm sick of seeing the
+same code to check modes in templates all the time. [David]
 
 =item *
 
@@ -44,11 +115,12 @@ like. As a side-effect, L<Imager|Imager> is now a required module. [David]
 =item *
 
 Since L<Imager|Imager> is now a required module, the C<USE_THUMBNAILS>
-directive is now enabled by default, as well. [David]
+directive is now enabled by default as well. [David]
 
 =item *
 
-Added the following aliases, so I can pretend that the versions with double underscores don't exist:
+Added the following aliases, so I can pretend that the versions with double
+underscores don't exist:
 
 =over
 
@@ -62,11 +134,14 @@ Added the following aliases, so I can pretend that the versions with double unde
 
 =back
 
+[David]
+
 =item *
 
-Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
+Fixed a compatibility issue in
+L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
 C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
-thread-saftey reasons." This change backward-compatible with older versions of
+thread-safety reasons." This change backward-compatible with older versions of
 XML::LibXML. [David]
 
 =back
@@ -78,7 +153,7 @@ XML::LibXML. [David]
 =item *
 
 Added the C<is_republish> and C<is_first_publish> methods to
-L<Bric::Util::Burner>. [David]
+L<Bric::Util::Burner|Bric::Util::Burner>. [David]
 
 =item *
 
@@ -92,12 +167,12 @@ weren't. [David]
 
 Changed autocomplete category selection for stories so that if you have the
 C<FULL_SEARCH> config directive turned on, you get wildcard matching to any
-part of the uri on your entered string, so typing bar will return /bar and
-/foo/bart . Enter "/" for a full list of categories. [Paul Orrock]
+part of the URI on your entered string, so typing "bar" will return "/bar" and
+"/foo/bart". Enter "/" for a full list of categories. [Paul Orrock]
 
 =item *
 
-Added text beneath all buttons in the desk widget to make them more intuitive.
+Added text beneath all buttons for desk items to make them more intuitive.
 [Sarah Mercier, Matt Rolf and Michael Herring]
 
 =item *
@@ -114,8 +189,8 @@ Made "Delete this Profile" text more specific depending on location, such as
 
 Switched to passing parameters for Net::SSH2 authentication in
 L<Bric::Util::Trans::SFTP|Bric::Util::Trans::SFTP> so that it will first try
-auth_password, and then follow up with auth_keyboard should the first fail
-(and will also try ssh keys if you happen to have that configured). [Alex
+C<auth_password>, and then follow up with C<auth_keyboard> should the first
+fail (and will also try SSH keys if you happen to have that configured). [Alex
 Krohn]
 
 =item *
@@ -151,14 +226,14 @@ in the UI. [David]
 
 =item *
 
-Calls to `log_event()` are immediately logged when not running under mod_perl
-or bric_queued. This is so that events will now always be properly logged.
-[David]
+Calls to C<log_event()> are immediately logged when not running under
+C<mod_perl> or F<bric_queued>. This is so that events will now always be
+properly logged. [David]
 
 =item *
 
-Made the thumbnail format-guesser case-insensitive (e.g. .JPG or .PDF will also
-work now). [Scott]
+Made the thumbnail format-guesser case-insensitive (e.g. F<.JPG> or F<.PDF>
+will also work now). [Scott]
 
 =item *
 
@@ -166,12 +241,13 @@ Made the popup dialog for related stories/media a bit bigger. [Scott]
 
 =item *
 
-Added a throbber to category completion in New Story and Story Profile. [Scott]
+Added a throbber to category completion in New Story screen and the Story
+Profile. [Scott]
 
 =item *
 
-Added 'Bricolage events feed generator' (F<contrib/bric_events_rss>) to
-contribs. Generates RSS output for all system events. [Greg Heo]
+Added the "Bricolage events feed generator" (F<contrib/bric_events_rss>)
+contrib application. Generates RSS output for all system events. [Greg Heo]
 
 =item *
 
@@ -199,6 +275,38 @@ prevents the SOAP server from having to guess the SQL type of a field type
 when updating an element type. Thanks to David Oliveira for the report (Bug
 #79). [David]
 
+=item *
+
+Added a timestamp for data that F<bric_queued> sends to its log. Thanks to Neal
+Sofge for the suggestion (Bug #41). [David]
+
+=item *
+
+Renamed the "Lock Val" checkbox in the media profile to "Autopopulate". It is
+now checked by default, rather than unchecked. Uncheck it to prevent Bricolage
+from autopopulating values in the future. Thanks to Marshall for the
+suggestion (Bug #32). [David]
+
+=item *
+
+Changed "Click here to start" to "Start Bricolage" on the welcome page.
+Suggested by Chris Heiland and Czerny (Bug #42). [David]
+
+=item *
+
+When an asset drops off a desk or My Workspace (because it is checked in or
+moved to a different desk), and it's the last asset of its type (story, media,
+or template), the asset type label and sort menu will also drop off the desk
+or workspace. Thanks to Matt Rolf for the suggestion (Bug #69). [David]
+
+=item *
+
+Moved the "Cancel" and "Save" buttons in the contributor popup up from the
+bottom of the screen (it was below search results) to under the list of
+contributors currently associated with the story and above the search box.
+This makes it much easier to find the buttons when there are a lot of search
+results. Thanks to Scott for the report (Bug #84). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -213,7 +321,7 @@ configuration. [John Durkin]
 =item *
 
 Uploading a media file to a related media element to create a new media
-document not works properly when the related media element is a subelement.
+document now Works properly when the related media element is a subelement.
 Reported by John Durkin (Bug #1364). [David]
 
 =item *
@@ -223,7 +331,7 @@ method call. Reported by Denny de la Haye. [David]
 
 =item *
 
-Added confirmation on Delete JavaScript action on Workspace and desk.
+Added a JavaScript call to confirm a delete action on Workspace and desk.
 Reported by Matt Rolf (Bug 1380). [Sarah Mercier]
 
 =item *
@@ -243,27 +351,28 @@ correctly numbered at 0 rather than 2. [Paul Orrock]
 
 =item *
 
-Fix for bug 1394 && 1397, where a story imported through L<Bric::SOAP> didn't
-have its object_order set properly so wouldn't preview through templates until
-saved in the UI. [Paul Orrock]
+Fix bug where a story imported through L<Bric::SOAP> didn't have its
+C<object_order> set properly so wouldn't preview through templates until saved
+in the UI (Bug # 1394 && Bug # 1397). [Paul Orrock]
 
 =item *
 
-Fixed up broken / non-compliant HTML on desks, search results and workspace.
+Fixed up broken/non-compliant HTML on desks, search results and workspace.
 [Paul Orrock]
 
 =item *
 
-Made css improvements concerning the popup menus on the desk widget.
-[Sarah Mercier and Matt Rolf]
+Improved the appearance of popup menuson desks. [Sarah Mercier and Matt Rolf]
 
 =item *
 
-Fix for bug #1400, primary category now shows as a required field. [Matt Rolf]
+In the story profile, the primary category now shows as a required field (Bug
+#1400). [Matt Rolf]
 
 =item *
 
-Fix for bug #1414, relabled the Associations box in edit_meta.html. [Matt Rolf]
+Re-labeled the Associations box the story and template profile (Bug #1414).
+[Matt Rolf]
 
 =item *
 
@@ -280,22 +389,22 @@ window. [Adrian Yee]
 
 =item *
 
-Fixed bug #1405, Add Element will now close on double click.
+The Add Element dropdown menu will now close on double click (Bug #1405).
 [Sarah Mercier and Matt Rolf]
 
 =item *
 
-Fixed bug #1426, find stories/media/template advanced search toggle now works
-properly. [Sarah Mercier and Matt Rolf]
+The find stories/media/template advanced search toggle now works properly.
+(Bug #1426) [Sarah Mercier and Matt Rolf]
 
 =item *
 
-Fixed bug where IE7 couldn't open the sidenav.  [Kahil Jallad]
+Fixed bug where IE7 couldn't open the sidenav. [Kahil Jallad]
 
 =item *
 
 Fixed bug where removing a subelement or custom field from an element type
-would result in an error when editting a story with one of those elements.
+would result in an error when editing a story with one of those elements.
 [Bret Dawson]
 
 =item *
@@ -304,44 +413,46 @@ Fixed typing error which caused the upgrade script to fail. [Darren Embry]
 
 =item *
 
-Deleting keywords from category would cause error. [Adrian Yee]
+Deleting keywords from a category no longer causes an error. [Adrian Yee]
 
 =item *
 
-New bulk edit button would cause submit error in IE7 because it didn't call
-the customSubmit function. [Kahil Jallad, Sarah Mercier]
+Fixed bug where new bulk edit button would cause submit error in IE7 because
+it didn't call the C<customSubmit()> JavaScript function. [Kahil Jallad, Sarah
+Mercier]
 
 =item *
 
-Fixed bug #1425, where the enter key would not submit an advanced search form.
-[Bret Dawson]
+Hitting the enter key now properly submits a search in the advanced search
+form (Bug #1425). [Bret Dawson]
 
 =item *
 
-Fixed bug #1439, desks no longer have double pagination bars at the bottom.
-[Matt Rolf]
+Desks no longer have double pagination bars at the bottom (Bug #1439). [Matt
+Rolf]
 
 =item *
 
 Fixed a bug where deleting a checked out asset from My Workspace or the desk
 would still offer an Edit link in the search results. Reported by John Durkin
-and Matt Rolf(Bug #1388). [Greg Heo]
+and Matt Rolf (Bug #1388). [Greg Heo]
 
 =item *
 
 Fixed bug in C<inst/required.pl> so it remembers what you're trying to install
 when telling you what's missing. Also added documentation to
-C<inst/htprobe_apache2.pl> about not finding apreq module. [Paul Orrock]
+C<inst/htprobe_apache2.pl> about not finding the C<apreq> module. [Paul
+Orrock]
 
 =item *
 
-Fixed bug #1386, help button no longer wipes unsaved values from pages when
-clicked. [Sarah Mercier]
+The help button no longer wipes unsaved values from pages when clicked (Bug
+#1386). [Sarah Mercier]
 
 =item *
 
-Added a check to C<inst/required.pl> to check for a preforking apache2 rather
-than a threaded worker apache2. [Paul Orrock]
+Added a check to C<inst/required.pl> to check for a preforking Apache 2 rather
+than a threaded worker Apache 2. [Paul Orrock]
 
 =item *
 
@@ -376,9 +487,9 @@ element with which it is newly associated. Reported by Matt Rolf (Bug #1432).
 
 =item *
 
-Fixed a bug where, once child elements were added or deleted, from a container
-element, the container was prevented from being deleted until the page is
-refreshed. Reported by Matt Rolf (Bug #1392). [David]
+Fixed a bug where, once child elements were added to or deleted from a
+container element, the container was prevented from being deleted until the
+page is refreshed. Reported by Matt Rolf (Bug #1392). [David]
 
 =item *
 
@@ -397,53 +508,50 @@ with an "Offset" parameter but no "Limit" now works properly on MySQL. [David]
 
 =item *
 
-Fixed a misspelled method (introduced in 1.11.1) that would've caused an
-unfriendly error message if the Cover Date was partially completed on New
-Story. [Scott]
+Fixed a misspelled method name (introduced in 1.11.1) that would've caused an
+unfriendly error message if the Cover Date was partially completed on the New
+Story screen. [Scott]
 
 =item *
 
-It was possible in New Story, despite auto_completion, to enter a category with
-no trailing slash, like C</foo/bar>, which led to an error. This was fixed by
-making C<< Bric::Biz::Category->lookup >> (and C<list>, C<list_ids>) work by
-looking up with a C<uri> not ending with a slash. [Scott]
+It was possible in the New Story screen, despite autocompletion, to enter a
+category with no trailing slash, like C</foo/bar>, which led to an error. This
+was fixed by making C<< Bric::Biz::Category->lookup >> (and C<list>,
+C<list_ids>) work by looking up with a C<uri> not ending with a slash. [Scott]
 
 =item *
 
-Fix for bug #1390, newer versions of Safari properly handle the autocomplete
-form. [Matt Rolf with much work by Sarah Mercier and Marshall Roch]
+Newer versions of Safari now properly handle the autocomplete form (Bug
+#1390). [Matt Rolf with much work by Sarah Mercier and Marshall Roch]
 
 =item *
 
 Fixed C<< Bric::Biz::Element::Field->get_max_length >> to correctly return the
-max_length. [Adrian Yee]
+maximum length of a field. [Adrian Yee]
 
 =item *
 
-Fix for bug #1434, user is properly warned if a story type is not selected on 
-story creation. [Sarah Mercier]
+The user is now properly warned when a story type is not selected on story
+creation (Bug #1434). [Sarah Mercier]
 
 =item *
 
-Fixed bug in L<auto_complete.html> so that lookups of parent categories now
-correctly use the site id [Rolf Schaufelberger, Paul Orrock]
+Fixed bug in category autocompletion so that lookups of parent categories are
+now correctly site-specific. [Rolf Schaufelberger, Paul Orrock]
 
 =item *
 
-Fixed bug where extra newlines after a C<=begin> without a default would result
-in an error. [Adrian Yee]
+Fixed bulk edit bug where extra newlines after a C<=begin> without a default
+value would result in an error. [Adrian Yee]
 
 =item *
 
-Fix bug 1452, checkboxes were always displaying as checked. [Scott]
+Checkboxes are no longer always displaying as checked (Bug #1452). [Scott]
 
 =item *
 
-Yet another desk tweak. [Michael MartE<iacute>]
-
-=item *
-
-Fixed the rendering of the Jump links in the desk header in IE6/7. [Adrian Yee]
+Fixed the rendering of the jump links in the desk headers in IE6/7. [Adrian
+Yee]
 
 =item *
 
@@ -462,12 +570,12 @@ again. Reported by John Durkin and Matt Rolf (Bug #1429). [David]
 
 =item *
 
-Make the Add keywords button (on the story and media profiles) not so huge in
+Made the Add keywords button (on the story and media profiles) not so huge in
 IE. [Adrian Yee]
 
 =item *
 
-Fixed javascript error with IE and the Check In/Move action icons on the
+Fixed JavaScript error with IE and the Check In/Move action icons on the
 workspace and desk pages. [Adrian Yee]
 
 =item *
@@ -480,7 +588,7 @@ Fixed popup menu z-index issues on the workspace/desk pages in IE. [Adrian Yee]
 
 =item *
 
-Added a javascript fix for popup menu z-index issues that happened after
+Added a JavaScript fix for popup menu z-index issues that happened after
 re-ordering elements. [Adrian Yee]
 
 =item *
@@ -489,15 +597,16 @@ Fixed the category autocomplete z-index issue in IE. [Adrian Yee]
 
 =item *
 
-Fixed bug 1458, where related media that failed to be thumbnailed caused the
-Story Profile to error. Similarly fixed bug 1461 for Find Media. [Scott]
+Fixed bug where related media that failed to be thumbnailed caused the Story
+Profile to error out. Similarly fixed bug 1461 for Find Media (Bug #1458).
+[Scott]
 
 =item *
 
-Fixed part of bug 1460, the auto-completion was jumping around. Slightly
-modified from code by Jason Gill and Janos Novak at
+Fixed issue where auto-completion was jumping around. Slightly modified from
+code by Jason Gill and Janos Novak at
 L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
-[Scott]
+(Bug #1460). [Scott]
 
 =item *
 
@@ -506,7 +615,7 @@ when the page isn't wide enough. [Adrian Yee]
 
 =item *
 
-Fixed bug where expanding containers on the story profile page causes IE to
+Fixed bug where expanding containers on the story profile page caused IE to
 hide the contents of the container after it's done expanding. [Adrian Yee]
 
 =item *
@@ -521,16 +630,17 @@ pages. [Adrian Yee]
 
 =item *
 
-Fixed bug 1455: the Cancel button in Profiles wasn't working because of the fix
-for bug 1343. [Scott]
+Fixed issue where the Cancel button in Profiles wasn't working because of the
+fix for Bug #1343 (Bug #1455). [Scott]
 
 =item *
 
-Fixed bug 1464: URLs weren't wrapping properly in IE. [Adrian]
+Fixed issue where URLs weren't wrapping properly in IE (Bug #1464). [Adrian]
 
 =item *
 
-Fixed bug 1466: the Checkout icon wasn't working on desks in IE. [Scott]
+Fixed issue where the Checkout icon wasn't working on desks in IE (Bug #1466).
+[Scott]
 
 =item *
 
@@ -543,7 +653,7 @@ just bailing without any useful information. [David]
 =item *
 
 Fixed an IE6 CSS bug that caused the sideNav layer to be hidden if the
-mainContent layer wasn't tall enough to show it (bug #88 / #1465) [Phillip
+mainContent layer wasn't tall enough to show it (Bug #88 / #1465) [Phillip
 Smith]
 
 =item *
@@ -561,16 +671,6 @@ connects to the database, so that MySQL itself does not have to globally set
 that option, as it could cause conflicts with other apps running on MySQL.
 Also removed the attempt to set C<sql_mode> globally at installation time; it
 was bad manners, really. Thanks to Waldo Jaquith for the report. [David]
-
-=item *
-
-Passing a false value for the C<published_version> parameter to the C<list()>
-method of
-L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
-L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, and
-L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template> now works as
-expected, returning the latest version of all stories regardless of their
-publish status, rather than no stories at all (Bug #1). [David]
 
 =item *
 
@@ -596,6 +696,27 @@ perform a search no longer deletes contributors you've just added (Bug #112).
 =item *
 
 Updated contextual help pages. (Bug #108). [Phillip Smith]
+
+=item *
+
+Story, Media, and Template search now properly remember whether they're in
+advanced or simple mode when a an empty search is submitted and when the
+"Clear Values" button is clicked. Thanks to Matt Rolf for the report (Bug #
+74). [David]
+
+=item *
+
+The category autocompletion feature in the "New Story" profile now refuses to
+submit if a non-existent category has been typed in. If the user somehow
+manages to submit anyway, she'll be returned to the form with a message asking
+for a proper category name, rather than getting an error. Thanks to Scott for
+the report. [David]
+
+=item *
+
+Double-clicking an asset on a desk to check it into that desk no longer causes
+the asset to drop off the desk. It will only drop off if it's being checked
+into a different desk (Bug #97). [David]
 
 =back
 
@@ -973,7 +1094,28 @@ to install files in their proper locations. [Brian Smith and David]
 
 =back
 
-=head1 Version 1.10.8 ()
+=head1 VERSION 1.10.8 (2009-11-14)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+Added the C<sql_type> element to the export of field types from SOAP. This
+prevents the SOAP server from having to guess the SQL type of a field type
+when updating an element type. Thanks to David Oliveira for the report (Bug
+#79). [David]
+
+=item *
+
+The C<AddModule> lines are now commented-out in the F<httpd.conf> generated by
+the installer. As near as I can tell from my research, this directive hasn't
+been relevant for a long time. Since we require 1.3.34 (ca. 2005), It seems
+good enough to comment it out and add a note to uncomment them if necessary
+(Bug #33). [David]
+
+=back
 
 =head2 Bug Fixes
 
@@ -981,15 +1123,68 @@ to install files in their proper locations. [Brian Smith and David]
 
 =item *
 
-Fixed a compatibility issue in Bric::Dist::Action::DTDValidate. Apparently
+Fixed a compatibility issue in
+L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
 C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
-thread-saftey reasons." This change backward-compatible with older versions of
+thread-safety reasons." This change backward-compatible with older versions of
 XML::LibXML. [David]
 
 =item *
 
 Fixed a bug where a story published but with no resources (files) could cause
 an error. Reported by Paul Hyland. [David]
+
+=item *
+
+Fixed a bug where assets could not be checked in and their version numbers
+would revert to older ones (Bug #93). [Greg Heo & David]
+
+=item *
+
+Passing a false value for the C<published_version> parameter to the C<list()>
+method of
+L<Bric::Biz::Asset::Business::Story|Bric::Biz::Asset::Business::Story>,
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media>, and
+L<Bric::Biz::Asset::Template|Bric::Biz::Asset::Template> now works as
+expected, returning the latest version of all stories regardless of their
+publish status, rather than no stories at all (Bug #1). [David]
+
+=item *
+
+Template notes are once again editable from the template profile. Thanks to
+Aaron Fuleki for the report (Bug #101). [David]
+
+=item *
+
+Emails sent by Bricolage now have the character set specified in the
+content-type header when they're text messages. Thanks to Czerny for the
+report (Bug #94). [David]
+
+=item *
+
+Paginated results in the element type manager no longer lose top-level element
+type results when clicking the links for subsequent pages. Fixed by preventing
+the C<list()> method of L<Bric::Biz::ElementType|Bric::Biz::ElementType> from
+modifying the parameter hash passed to it, as the modification was persisting
+in the list manager's state. Thanks to Aaron Fuleki for the report and for
+making the Denison Bricolage installation available to diagnose the problem
+(Bug #102). [David]
+
+=item *
+
+Avoid C<//> in distribution file names and/or directories. This caused
+problems with FTP distribution, but it seems prudent to fix it for SFTP and
+WebDAV, too. [David]
+
+=item *
+
+Fix LDAP 500 Error when a password is blank. Thanks to Aaron Fuleki for the
+report (Bug #103). [David]
+
+=item *
+
+The "Site" column no longer comes and goes when searching for categories in
+with multiple sites. Thanks to Paul Orrock for the spot (Bug #100). [David]
 
 =back
 

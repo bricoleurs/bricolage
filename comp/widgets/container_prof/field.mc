@@ -13,10 +13,10 @@
         name    => "$widget|lock_val_cb",
         value   => $element->get_id,
     &>
-    &nbsp;Lock Val:
+    &nbsp;Autopopulate:
     <& '/widgets/profile/checkbox.mc',
-        name    => "$widget|lock_val_" . $element->get_id,
-        checked => ($element->is_locked ? 1 : 0),
+        name    => "$widget|auto_pop_" . $element->get_id,
+        checked => ($element->is_locked ? 0 : 1),
     &>
 </div>
 % }
