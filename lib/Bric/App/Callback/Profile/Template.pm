@@ -436,12 +436,24 @@ $save_meta = sub {
         $param->{"$widget|code"} =~ s/\r\n?/\n/g;
         $fa->set_data($param->{"$widget|code"});
     }
-    if (exists $param->{category_id}) {
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $fa->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
+
+    if ($fa->get_category_id != $cat_id) {
         # Remove the existing version from the user's sand box.
         my $sb = Bric::Util::Burner->new({user_id => get_user_id() });
         $sb->undeploy($fa);
         # Set the new category.
-        $fa->set_category_id($param->{category_id});
+        $fa->set_category_id($cat_id);
     }
     return set_state_data($widget, 'template', $fa);
 };
@@ -602,12 +614,23 @@ $create_fa = sub {
     my ($self, $widget, $param) = @_;
     my $at_id = $param->{$widget.'|at_id'};
     my $oc_id = $param->{$widget.'|oc_id'};
-    my $cat_id = $param->{$widget.'|cat_id'};
     my $tplate_type = $param->{tplate_type};
+    my $work_id = get_state_data($widget, 'work_id');
+    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
 
-    my $site_id = Bric::Biz::Workflow->lookup({
-        id => get_state_data($widget => 'work_id')
-    })->get_site_id;
+    # Determine.
+    my $curi = $param->{new_category_autocomplete};
+    unless (defined $curi && $curi ne '') {
+        $self->raise_conflict("Please select a primary category.");
+        return;
+    }
+
+    my ($cat_id) = Bric::Biz::Category->list_ids({
+        uri     => $curi,
+        site_id => $wf->get_site_id,
+    }) or $self->raise_conflict(
+        'Unable to add category that does not exist'
+    ) and return;
 
     my ($at, $name);
     if ($tplate_type == Bric::Biz::Asset::Template::ELEMENT_TEMPLATE) {
@@ -642,7 +665,7 @@ $create_fa = sub {
             priority           => $param->{priority},
             name               => $name,
             user__id           => get_user_id(),
-            site_id            => $site_id,
+            site_id            => $wf->get_site_id,
         });
     };
 
@@ -657,7 +680,7 @@ $create_fa = sub {
                 output_channel_id => $oc_id,
                 category_id => $cat_id,
                 element_type_id => $at_id,
-                site_id => $site_id,
+                site_id => $wf->get_site_id,
             });
             if (defined $fa) {
                 $self->add_message('Deactivated template was reactivated.');

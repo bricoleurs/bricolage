@@ -54,8 +54,9 @@ the same option added to the "Check In" menu on desks and My Workspace.
 
 =item *
 
-Category selection when editing a media document now uses an autocomplete
-feild rather than a select list, just like the story profile does. [David]
+Category selection when editing a media document or a template now uses an
+autocomplete feild rather than a select list, just like the story profile
+does. [David]
 
 =back
 
