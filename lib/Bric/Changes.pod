@@ -75,6 +75,10 @@ are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
 Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
 to the database as a boolean. [David Oliveira]
 
+=item *
+
+Fixed an error in the way that IE7 handled errors thrown to a modal window. Bug #114. [Marshall Roch]
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
