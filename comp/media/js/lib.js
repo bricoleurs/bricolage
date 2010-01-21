@@ -1480,26 +1480,20 @@ Lightbox.prototype = {
     display: function(display){
         this.overlay().style.display = display;
         this.content.style.display = display;
-        this.overlay().onclick =  this.deactivate.bindAsEventListener(this);
-        this.content.style.top = window.scrollY + 100 + 'px';
+        this.overlay().observe('click', this.deactivate.bindAsEventListener(this));
+        this.content.style.top = document.viewport.getScrollOffsets()[1] + 100 + 'px';
         if (display != 'none') this.actions();
     },
 
     // Search through new links within the lightbox, and attach click event
-    actions: function(){
-        lbActions = document.getElementsByClassName('lbAction');
-
-        for(i = 0; i < lbActions.length; i++) {
-            Event.observe(
-                lbActions[i],
-                'click',
-                this[lbActions[i].rel].bindAsEventListener(this),
-                false
-            );
-            lbActions[i].onclick = function() { return false };
-        }
-        return this;
-    },
+	actions: function(){
+		this.content.select('.lbAction').each(function(lbAction) {
+			lbAction.observe('click', 
+               this[lbAction.rel].bindAsEventListener(this));
+			lbAction.onclick = function() { return false };
+		}, this);
+		return this;
+	},
 
     // Example of creating your own functionality once lightbox is initiated
     deactivate: function() {
