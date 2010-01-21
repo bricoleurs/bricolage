@@ -649,8 +649,6 @@ $create_fa = sub {
     } # Otherwise, it'll default to a category template.
 
     # Check permissions.
-    my $work_id = get_state_data($widget, 'work_id');
-    my $wf = Bric::Biz::Workflow->lookup({ id => $work_id });
     my $start_desk = $wf->get_start_desk;
     my $gid = $start_desk->get_asset_grp;
     chk_authz('Bric::Biz::Asset::Template', CREATE, 0, $gid);
