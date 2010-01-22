@@ -77,7 +77,8 @@ to the database as a boolean. [David Oliveira]
 
 =item *
 
-Fixed an error in the way that IE7 handled errors thrown to a modal window. Bug #114. [Marshall Roch]
+Fixed an error in the way that IE7 handled errors thrown to a modal window
+(Bug #114). [Marshall]
 
 =back
 
