@@ -76,7 +76,7 @@ BEGIN {
             '  PerlAccessHandler      Bric::App::AccessHandler',
             '  PerlCleanupHandler     Bric::App::CleanupHandler',
             '  RedirectMatch          '.
-                    'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
+                    "permanent .*\\/favicon\\.ico\$ http://$hostname/media/images/bricicon.ico",
             '  TraceEnable            off',
         );
 
@@ -368,7 +368,7 @@ BEGIN {
             '  PerlCleanupHandler     Bric::App::CleanupHandler',
             '  PerlOptions            +GlobalRequest',
             '  RedirectMatch          ' .
-              'permanent .*\/favicon\.ico$ /media/images/bricicon.ico',
+              "permanent .*\\/favicon\\.ico\$ http://$hostname/media/images/bricicon.ico",
             '  TraceEnable            off',
         );
 
