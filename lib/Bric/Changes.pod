@@ -84,6 +84,10 @@ Fixed an error in the way that IE7 handled errors thrown to a modal window
 
 Fixed encoding issue on MySQL. Thanks to Waldo Jaquith for the report. [David]
 
+=item *
+
+Destination distribution actions are editable again (Bug # 123). [David]
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
