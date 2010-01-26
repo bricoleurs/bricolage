@@ -52,6 +52,7 @@ use constant DSN_STRING => 'database=' . DB_NAME
 
 # This is to set up driver-specific database handle attributes.
 use constant DBH_ATTR => (
+    mysql_enable_utf8 => 1,
     Callbacks => {
         connected => sub {
             my $dbh = shift;

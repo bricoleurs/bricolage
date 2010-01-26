@@ -80,6 +80,10 @@ to the database as a boolean. [David Oliveira]
 Fixed an error in the way that IE7 handled errors thrown to a modal window
 (Bug #114). [Marshall]
 
+=item *
+
+Fixed encoding issue on MySQL. Thanks to Waldo Jaquith for the report. [David]
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
