@@ -56,7 +56,7 @@ $m->comp('/widgets/profile/formButtons.mc',
          type => $ckey,
          no_del => $no_del,
          section => $section,
-         return => "/admin/profile/dest?id=$dest_id",
+         return => "/admin/profile/dest/?id=$dest_id",
          val => $label,
          no_save => $no_edit,
          widget => 'action');
