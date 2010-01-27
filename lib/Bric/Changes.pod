@@ -93,6 +93,14 @@ Destination distribution actions are editable again (Bug # 123). [David]
 Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
 URI path. [David]
 
+=item *
+
+Clicking the "Cancel" button in a server or action profile no longer redirects
+to the login screen when the hostname to which the request is sent is
+different than the hostname in the configuration file. This mainly effected
+development and evaluation installs. Thanks to Adam Prime for identifying the
+solution (disabling C<UseCanonicalName>). [David]
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
