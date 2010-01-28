@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.9 ()
+=head1 VERSION 1.10.9 (2010-01-28)
 
 =head2 Improvements
 
@@ -30,9 +30,10 @@ report and fix. [David]
 
 =item *
 
-Cover dates are no longer exported with the wrong year (2009) when their dates
-are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
-#122) and David Oliveira via Bret Dawson for the fix! [David]
+Cover dates are no longer exported via the SOAP interface with the wrong year
+(2009) when their dates are in the first three days of 2010. Thanks to Paul
+Orrock for the spot (Bug #122) and David Oliveira via Bret Dawson for the fix!
+[David]
 
 =item *
 
