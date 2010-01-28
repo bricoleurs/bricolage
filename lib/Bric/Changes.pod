@@ -39,6 +39,11 @@ are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
 Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
 to the database as a boolean. [David Oliveira]
 
+=item *
+
+Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
+URI path. [David]
+
 =back
 
 =head2 Improvements
