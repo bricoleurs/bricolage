@@ -48,6 +48,8 @@ URI path. [David]
 
 =head2 Improvements
 
+=over
+
 =item *
 
 The virtual FTP server now assumes that template files uploaded to it are
