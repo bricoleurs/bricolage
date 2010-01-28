@@ -685,7 +685,7 @@ sub my_meths {
                              get_args => [],
                              set_meth => sub { shift->set_can_be_overridden($_[0] ? 1 : 0) },
                              set_args => [],
-                             disp     => 'Can be Overriden',
+                             disp     => 'Can be Overridden',
                              len      => 1,
                              req      => 1,
                              type     => 'short',
