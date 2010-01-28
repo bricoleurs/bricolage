@@ -53,7 +53,7 @@ $m->comp('/widgets/profile/displayFormElement.mc', vals => $ord_vals,
 # Close 'er up!
 $m->comp("/widgets/wrappers/sharky/table_bottom.mc");
 $m->comp('/widgets/profile/formButtons.mc',
-         type => $type,
+         type => $ckey,
          no_del => $no_del,
          section => $section,
          return => "/admin/profile/dest?id=$dest_id",
@@ -70,9 +70,9 @@ $m->comp('/widgets/profile/formButtons.mc',
 <%once>;
 my $widget = 'profile';
 my $section = 'admin';
-my $type = 'action';
-my $class = get_package_name($type);
-my $disp = get_disp_name($type);
+my $ckey = 'action';
+my $class = get_package_name($ckey);
+my $disp = get_disp_name($ckey);
 my $dest_key = 'dest';
 my $dest_class = get_package_name($dest_key);
 </%once>
