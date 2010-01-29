@@ -6,7 +6,7 @@ Bric - The Bricolage base class.
 
 =head1 Version
 
-1.11.3 - Development Track for 2.0.0
+1.11.3 - Beta Release for 2.0.0
 
 =cut
 
