@@ -109,6 +109,15 @@ different than the hostname in F<httpd.conf>. This mainly effected development
 and evaluation installs. Thanks to Adam Prime for identifying the solution
 (disabling C<UseCanonicalName>). [David]
 
+=item *
+
+Fixed time zone compatibility issue on MySQL. Bricolage now sets C<time_zone>
+at the same time it sets C<sql_mode>: when it connects to the database. This
+ensures that date and time comparisons within the database are executed
+correctly. It of course requires that time zones be installed in MySQL, which
+can be done by running
+C<mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql>.
+
 =back
 
 =head1 Version 1.11.2 (2009-11-14)
