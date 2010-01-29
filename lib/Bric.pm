@@ -6,13 +6,13 @@ Bric - The Bricolage base class.
 
 =head1 Release Version
 
-1.10.9
+1.10.10
 
 =cut
 
 # Set the Version Number.
 BEGIN {
-    our $VERSION = '1.10.9';
+    our $VERSION = '1.10.10';
 }
 
 =head1 SYNOPSIS
