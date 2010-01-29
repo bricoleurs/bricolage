@@ -26,6 +26,13 @@ The SFTP mover now respects a port specification in the host name (e.g,
 "foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
 report and fix. [David]
 
+=item *
+
+The virtual FTP server now assumes that template files uploaded to it are
+encoded in the user's preferred encoding. So if you have Windows gremlins in
+your templates, you can set your Character Set preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -48,19 +55,6 @@ to the database as a boolean. [David Oliveira]
 
 Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
 URI path. [David]
-
-=back
-
-=head2 Improvements
-
-=over
-
-=item *
-
-The virtual FTP server now assumes that template files uploaded to it are
-encoded in the user's preferred encoding. So if you have Windows gremlins in
-your templates, you can set your Character Set preference to "CP1252" and it
-will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
 
 =back
 
