@@ -52,13 +52,17 @@ use constant DSN_STRING => 'database=' . DB_NAME
 
 # This is to set up driver-specific database handle attributes.
 use constant DBH_ATTR => (
+    mysql_enable_utf8 => 1,
     Callbacks => {
         connected => sub {
             my $dbh = shift;
-            $dbh->do(q{
-                SET SESSION sql_mode='sql-mode=ansi,strict_trans_tables,no_auto_value_on_zero,no_zero_date,no_zero_in_date,only_full_group_by';
-            }) unless exists $dbh->{private_bric_sql_mode};
-            $dbh->{private_bric_sql_mode} = 1;
+            unless (exists $dbh->{private_bric_sql_mode}) {
+                $dbh->do($_) for (
+                    q{SET SESSION sql_mode='ansi,strict_trans_tables,no_auto_value_on_zero,no_zero_date,no_zero_in_date,only_full_group_by';},
+                    'SET time_zone = UTC;'
+                );
+                $dbh->{private_bric_sql_mode} = 1;
+            }
             return;
         },
     },

@@ -19,7 +19,7 @@ $m->comp("/widgets/wrappers/table_bottom.mc");
 </%perl>
 <& '/widgets/profile/formButtons.mc', type => $type, section => $section,
    no_del => $no_del, no_save => $no_edit, widget => $type,
-   return => "/admin/profile/dest?id=$dest_id" &>
+   return => "/admin/profile/dest/?id=$dest_id" &>
 
 </form>
 <& '/widgets/wrappers/footer.mc', param => \%ARGS &>

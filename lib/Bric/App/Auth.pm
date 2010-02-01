@@ -122,7 +122,7 @@ sub auth {
     return &$fail($r) unless my %cookies = Bric::Util::Cookie->fetch($r);
     return &$fail($r) unless my $cookie = $cookies{&AUTH_COOKIE};
     my %val = $cookie->value;
-     return &$fail($r) unless $val{exp} > time;
+    return &$fail($r) unless $val{exp} > time;
     return &$fail($r, 'Malformed cookie.')
       unless $val{ip} && $val{hash} && $val{user} && $val{exp} && $val{lmu};
 

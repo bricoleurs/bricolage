@@ -6,7 +6,11 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 1.11.3 ()
+=head1 Version 1.11.4 ()
+
+
+
+=head1 Version 1.11.3 (2010-01-28)
 
 =head2 Improvements
 
@@ -22,40 +26,42 @@ report and fix. [David]
 
 The virtual FTP server now assumes that template files uploaded to it are
 encoded in the user's preferred encoding. So if you have Windows gremlins in
-your templates, you can set your Character Set preference to "CP1252" and it
-will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+your templates, you can set your "Character Set" preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (L<Bug
+#124|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/124>).
+[David]
 
 =item *
 
 Added the C<--without-file> option to F<bric_soap> for use with the C<media
-export> command. When this is specified, the resulting XML file will contain
-no C<< <file> >> elements (which normally contain the Base64-encoded content
-of the exported media documents). Also, when a media document is updated via
-C<bric_soap media update>, if the XML file sent to the server contains no C<<
-<file> >> elements, the existing file will be left alone, rather than deleted.
-Suggested by Ashlee Caul. [David]
+export> command. With this option, the resulting XML file will contain no
+C<< <file> >> elements (which normally contain the Base64-encoded content of
+the exported media documents). Also, when a media document is updated via
+C<bric_soap media update>, if the XML file sent to the server contains no
+C<< <file> >> elements, the existing file will be left alone, rather than
+deleted. Suggested by Ashlee Caul. [David]
 
 =item *
 
 Added the "and Revert" or "and Delete" option to the "Check In" menu on
 desk/My Workspace views. This saves the user from having to click "Edit" and
-then "Cancel Checkout". Suggested by Matt Rolf and Phillip Smith. In order to
-make this happen, the code that handles cancelling a checkout, which was
-duplicated nearly verbatim in the callbacks for the story, media, and template
-profiles has been factored out into a new class
+then "Cancel Checkout" to cancel a checkout. Suggested by Matt Rolf and
+Phillip Smith. In order to make this happen, the code that handles canceling
+a checkout, which was duplicated nearly verbatim in the callbacks for the
+story, media, and template profiles has been factored out into a new class,
 L<Bric::App::Callback::Util::Asset>. [David]
 
 =item *
 
 Removed the "Cancel Checkout" button from asset profiles, and added the "and
-Revert" item to the "Check In" menu in its place. This brings it in line with
-the same option added to the "Check In" menu on desks and My Workspace.
-[David]
+Revert" item to the "Check In" menu in its place. This change brings story,
+media, and template profiles in line with the same option added to the "Check
+In" menu on desks and My Workspace. [David]
 
 =item *
 
 Category selection when editing a media document or a template now uses an
-autocomplete feild rather than a select list, just like the story profile
+autocomplete field rather than a select list, just like the story profile
 does. [David]
 
 =back
@@ -66,9 +72,11 @@ does. [David]
 
 =item *
 
-Cover dates are no longer exported with the wrong year (2009) when their dates
-are in the first three days of 2010. Thanks to Paul Orrock for the spot (Bug
-#122) and David Oliveira via Bret Dawson for the fix! [David]
+Cover dates are no longer exported from the SOAP API with the wrong year
+(2009) when their dates are in the first three days of 2010. Thanks to Paul
+Orrock for the spot (L<Bug
+#122|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/122>)
+and David Oliveira via Bret Dawson for the fix! [David]
 
 =item *
 
@@ -77,7 +85,42 @@ to the database as a boolean. [David Oliveira]
 
 =item *
 
-Fixed an error in the way that IE7 handled errors thrown to a modal window. Bug #114. [Marshall Roch]
+Fixed an error in the way that IE7 handled errors thrown to a modal window
+(L<Bug
+#114|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/114>).
+[Marshall]
+
+=item *
+
+Fixed encoding issue on MySQL. Thanks to Waldo Jaquith for the report. [David]
+
+=item *
+
+Destination distribution actions are editable again (L<Bug #
+123|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/123>).
+[David]
+
+=item *
+
+Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
+URI path. [David]
+
+=item *
+
+Clicking the "Cancel" button in a server or action profile no longer redirects
+to the login screen when the hostname to which the request is sent is
+different than the hostname in F<httpd.conf>. This mainly effected development
+and evaluation installs. Thanks to Adam Prime for identifying the solution
+(disabling C<UseCanonicalName>). [David]
+
+=item *
+
+Fixed time zone compatibility issue on MySQL. Bricolage now sets C<time_zone>
+at the same time it sets C<sql_mode>: when it connects to the database. This
+ensures that date and time comparisons within the database are executed
+correctly. It of course requires that time zones be installed in MySQL, which
+can be done by running
+C<mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql>.
 
 =back
 
@@ -696,10 +739,6 @@ Fixed odd positioning of the "Check-in" menu on /workflow/profile/workspace
 Fixed the contributor association popup so that hitting the "Enter" key to
 perform a search no longer deletes contributors you've just added (Bug #112).
 [David]
-
-=item *
-
-Updated contextual help pages. (Bug #108). [Phillip Smith]
 
 =item *
 
