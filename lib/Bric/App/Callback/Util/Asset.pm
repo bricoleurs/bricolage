@@ -11,7 +11,7 @@ sub cancel_checkout {
     $ass->cancel_checkout;
     my $kn = $ass->key_name;
     my $class = ref $ass;
-    $class =~ s/::Media::.++$/::Media/ if $class =~ /Business::Media/;
+    $class =~ s/::Media::.+$/::Media/ if $class =~ /Business::Media/;
 
     log_event("$kn\_cancel_checkout", $ass);
     if ($ass->isa('Bric::Biz::Asset::Template')) {
