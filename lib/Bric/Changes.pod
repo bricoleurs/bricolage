@@ -8,7 +8,15 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 1.11.4 ()
 
+=head2 Bug Fixes
 
+=over
+
+=item *
+
+Fixed a regular expression typo that led to a test failure. [Greg Heo]
+
+=back
 
 =head1 Version 1.11.3 (2010-01-28)
 
