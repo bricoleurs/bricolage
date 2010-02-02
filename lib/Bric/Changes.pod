@@ -8,6 +8,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 1.11.4 ()
 
+=head2 New Features
+
+=over
+
+=item *
+
+Added the C<--match-title> option to F<contrib/bric_media_upload>. This will
+match the uploading filename against the title of the media object rather than
+the filename [Paul Orrock]
+
+=back
+
 =head2 Bug Fixes
 
 =over

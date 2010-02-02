@@ -45,13 +45,19 @@ Options:
   --fatal-no-cat    - die if a category doesn't exist, rather than defaulting to /
                       (see --make-categories)
 
-  --media-type            - import as this media type.  Defaults to 'Photograph',
+  --media-type      - import as this media type.  Defaults to 'Photograph',
                       if exists.
 
   --media-info      - add media info elements.
 
   --content-source  - the content source for which the content will be imported.
                       Defaults to 'Internal'.
+
+  --match-title     - match filename of local file against title of Bricolage 
+                      media rather than the filename. Used when Bricolage is 
+                      changing filenames on the fly using the unique media 
+                      filename directive. If more than one media with the same
+                      title is found then bric_soap will stop at that point.
 
   --site            - the site for the content.
                       Defaults to 'Default Site'.
@@ -131,7 +137,8 @@ BEGIN {
     our $make_categories        = 0;
     our $fatal_no_cat           = 0;
     our $media_info             = 0;
-    our $temp_dir                    = catdir(tmpdir(), "bric_media_upload.$$");
+    our $match_title            = 0;
+    our $temp_dir               = catdir(tmpdir(), "bric_media_upload.$$");
     our $media_type             = 'Photograph';
     our $timeout                = 60;
     our $skip_existing          = 0;
@@ -149,6 +156,7 @@ BEGIN {
                "fatal-no-cat"           => \$fatal_no_cat,
                "media-type=s"           => \$media_type,
                "media-info"             => \$media_info,
+               "match-title"            => \$match_title,
                "timeout=s"              => \$timeout,
                "content-source=s"       => \$content_source,
                "site=s"                 => \$site,
@@ -351,9 +359,12 @@ EOS
 }
 
 sub check_media_exist {
-    our ($timeout, $media_type, $temp_dir);
+    our ($timeout, $media_type, $temp_dir, $match_title);
     my ($media,$targ_url) = @_;
-    my $exec_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media list_ids --search file_name='".$media->{name}."' --search category='".$media->{category}."' --search element='".$media_type."' ";
+    my $main_search = "file_name='".$media->{name}."'";
+    $main_search = "title='".$media->{name}."'" if ($match_title);
+
+    my $exec_code = "$BRIC_SOAP --use-cookie-file $temp_dir/logincookie --timeout $timeout --server $targ_url media list_ids --search $main_search --search category='".$media->{category}."' --search element='".$media_type."' ";
 
     print "Executing $exec_code\n" if $VERBOSE;
     my $exec_result = `$exec_code 2>&1`;
