@@ -16,6 +16,11 @@ This document lists the Changes to Bricolage introduced with each release.
 
 Fixed a regular expression typo that led to a test failure. [Greg Heo]
 
+=item *
+
+Adding a category to a story in a multi-site installation no longer has
+a chance to throw a "Too many category objects found" error. [Greg Heo]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
