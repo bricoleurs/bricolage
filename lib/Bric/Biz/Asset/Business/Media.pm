@@ -2374,6 +2374,26 @@ sub _preview {
     $self->_set(['needs_preview'] => [0]);
 }
 
+################################################################################
+
+=item $self = $self->_can_expire()
+
+Returns true if the media document can be expired. Specifically, if the media
+document has been published and has a URI.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _can_expire {
+    my $self = shift;
+    $self->get_publish_status && $self->get_uri;
+}
+
 1;
 __END__
 

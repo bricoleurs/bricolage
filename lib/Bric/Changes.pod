@@ -33,6 +33,21 @@ Fixed a regular expression typo that led to a test failure. [Greg Heo]
 Adding a category to a story in a multi-site installation no longer has
 a chance to throw a "Too many category objects found" error. [Greg Heo]
 
+=item *
+
+Moved document expriration on deletion from L<Bric::Biz::Asset> to
+L<Bric::Biz::Asset::Business> because it's useless for templates and left
+no-op job records lying around when templates were deleted. This code path
+only executes when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf> directive is
+enabled. [David]
+
+=item *
+
+Fixed document expiration when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf>
+directive is enabled so that it doesn't try to expire documents that have
+never been published, or media docuemnts that have no URI associatd with them.
+Thanks to Aaron Fuleki and Denison University for the report. [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
