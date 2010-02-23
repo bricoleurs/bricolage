@@ -1212,9 +1212,8 @@ sub blaze_another {
 
 =item $published = $burner->publish($ba, $key, $user_id, $publish_date);
 
-Not designed to be called from a template, C<publish()> publishes an asset,
-then remove it from workflow. Returns 1 if publish was successful, else 0. The
-supported arguments are:
+Not designed to be called from a template, C<publish()> publishes an asset.
+Returns 1 if publish was successful, else 0. The supported arguments are:
 
 =over 4
 
@@ -1406,28 +1405,15 @@ sub publish {
     }
 
     if ($published) {
-        # Set published version if we've reverted
-        # (i.e. unless we're republishing published_version)
+        # Set published version if we've reverted unless republishing.
         my $pubversion = $ba->get_published_version;
         unless (defined $pubversion && $ba->get_version <= $pubversion) {
             $ba->set_published_version($ba->get_version);
+            $ba->save;
         }
-        # Now log that we've published and get it out of workflow.
+
+        # Log that we've published and we're done.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
-
-        # Remove it from the desk it's on.
-        if (my $d = $ba->get_current_desk) {
-            $d->remove_asset($ba);
-            $d->save;
-        }
-        # Remove it from the workflow by setting is workflow ID to undef
-        if ($ba->get_workflow_id) {
-            $ba->set_workflow_id(undef);
-            log_event("${key}_rem_workflow", $ba);
-        }
-
-        # Save it!
-        $ba->save;
     }
 
     $self->_set([qw(mode _republish)], [undef, undef]);
