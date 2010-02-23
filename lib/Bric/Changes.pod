@@ -18,6 +18,10 @@ Added the C<--match-title> option to F<contrib/bric_media_upload>. This will
 match the uploading filename against the title of the media object rather than
 the filename [Paul Orrock]
 
+=item *
+
+Added the new Bricolage logo to the user interface. [Phillip Smith]
+
 =back
 
 =head2 Bug Fixes
