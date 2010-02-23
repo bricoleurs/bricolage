@@ -29,7 +29,6 @@ $m->comp(
     '/widgets/listManager/listManager.mc',
     object         => 'contrib',
     userSort       => 0,
-    state_key      => 'story_contrib',
     def_sort_field => 'order',
     objs           => \@contribs,
     profile        => undef,
@@ -38,7 +37,8 @@ $m->comp(
     field_titles   => { order => 'Order' },
     field_values   => $order_sub,
     select         => [ 'Delete', "$widget|delete_id" ],
-    addition       => ''
+    addition       => '',
+    state_key      => 'story_contrib_assoc',
 );
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>
@@ -50,6 +50,7 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
    object       => 'contrib',
    field        => 'lname',
    type         => 'dual',
+   state_key    => 'story_contrib',
    use_form_tag => 0
 &>
 <& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Contributors' &>
@@ -58,11 +59,12 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
    title     => 'Choose Contributors',
    select    => undef,
    profile   => $contrib_profile,
-   exclude  	=> \@existing_contribs,
+   exclude   => \@existing_contribs,
    fields    => [qw(lname fname type)],
    constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
    addition  => '',
-   behavior => 'expand',
+   behavior  => 'expand',
+   state_key => 'story_contrib',
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 

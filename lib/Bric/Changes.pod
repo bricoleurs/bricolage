@@ -64,6 +64,13 @@ calls publish. The publish callback already did, and now so does the
 L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
 report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
 
+=item *
+
+Fixed a bug where contributor and category search results would be propagated
+to the contributor and category editing screens with a story or media
+document. Searches from within documents should cache their own results,
+separate from the admin search interfaces. [David]
+
 =back
 
 =head1 VERSION 1.10.8 (2009-11-14)

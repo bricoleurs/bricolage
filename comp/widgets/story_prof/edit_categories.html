@@ -13,7 +13,8 @@
     field_titles    => { primary => 'Primary' },
     field_values    => $primary_sub,
     select          =>  $category_select,
-    addition        => ''
+    addition        => '',
+    state_key       => 'story_category_assoc',
 &>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
@@ -22,6 +23,7 @@
    object       => 'category',
    field        => 'uri',
    type         => 'singular',
+   state_key    => 'story_category',
    use_form_tag => 0
 &>
 
@@ -37,7 +39,8 @@
    exclude   => $exclude_cats,
    fields    => [qw(uri site name)],
    addition  => '',
-   behavior => 'expand',
+   behavior  => 'expand',
+   state_key => 'story_category',
 &>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>

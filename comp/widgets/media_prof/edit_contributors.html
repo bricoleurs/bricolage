@@ -27,7 +27,7 @@ my $role_sub = sub {
 $m->comp('/widgets/wrappers/sharky/table_top.mc', caption => 'Current Contributors');
 $m->comp(
     '/widgets/listManager/listManager.mc',
-    state_key      => 'media_contrib',
+    state_key      => 'media_contrib_assoc',
     object         => 'contrib',
     userSort       => 0,
     def_sort_field => 'order',
@@ -51,18 +51,20 @@ var selectOrderNames = new Array(<% join ', ', @sort_array %>);
    object       => 'contrib',
    field        => 'lname',
    type         => 'dual',
-   use_form_tag => 0
+   use_form_tag => 0,
+   state_key    => 'media_contrib',
 &>
 <& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Contributors' &>
 <& /widgets/listManager/listManager.mc,
    object    => 'contrib',
    select    => undef,
    profile   => $contrib_profile,
-   exclude  	=> \@existing_contribs,
+   exclude   => \@existing_contribs,
    fields    => [qw(lname fname type)],
    constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
    addition  => '',
-   behavior => 'expand',
+   behavior  => 'expand',
+   state_key => 'media_contrib',
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 

@@ -10,6 +10,7 @@ $m->comp('/widgets/listManager/listManager.mc',
          fields    => [qw(uri site name)],
          select => '',
          addition  => '',
+         state_key => 'media_cat_assoc',
         );
 $m->comp('/widgets/profile/hidden.mc',
          name => 'category_id',
@@ -21,7 +22,8 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    object       => 'category',
    field        => 'uri',
    type         => 'singular',
-   use_form_tag => 0
+   use_form_tag => 0,
+   state_key => 'media_cat',
 &>
 <& '/widgets/wrappers/sharky/table_top.mc', caption => 'Choose Categories' &>
 <& /widgets/listManager/listManager.mc,
@@ -32,7 +34,8 @@ $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
    exclude   => $exclude_cats,
    fields    => [qw(uri site name)],
    addition  => '',
-   behavior => 'expand',
+   behavior  => 'expand',
+   state_key => 'media_cat',
 &>
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
 
