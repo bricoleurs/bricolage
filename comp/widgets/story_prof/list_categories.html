@@ -112,13 +112,13 @@ my $new_category;
 
 if ($new_category_uri) {
     $new_category_uri .= "/" unless substr($new_category_uri, -1) eq "/";
-    $new_category = $cat_pkg->lookup({ uri => $new_category_uri });
+    $new_category = $cat_pkg->lookup({ uri => $new_category_uri, site_id => $story->get_site_id });
 }
 $new_category_id = $new_category->get_id if $new_category;
 
 $category_id = mk_aref($category_id);
 push @$category_id, $new_category_id if defined $new_category_id;
-push @$categories, $cat_pkg->list({ id => ANY(@$category_id) }) if @$category_id;
+push @$categories, $cat_pkg->list({ id => ANY(@$category_id), site_id => $story->get_site_id }) if @$category_id;
 
 my $curr_cats = {};
 </%init>

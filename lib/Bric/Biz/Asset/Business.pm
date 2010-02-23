@@ -113,7 +113,8 @@ use strict;
 #--------------------------------------#
 # Programatic Dependencies
 
-use Bric::Config qw(:mod_perl);
+use Bric::App::Event qw(:all);
+use Bric::Config qw(:mod_perl :time EXPIRE_ON_DEACTIVATE);
 use Bric::Util::DBI qw(:all);
 use Bric::Util::Time qw(:all);
 use Bric::Util::Fault qw(:all);
@@ -2164,6 +2165,33 @@ sub checkout {
     $self->_set(['_update_contributors'] => [1]) if $contribs;
 }
 
+sub deactivate {
+    my $self = shift->SUPER::deactivate;
+
+    if (EXPIRE_ON_DEACTIVATE && $self->_can_expire) {
+        my $tz = Bric::Util::Pref->lookup_val('Time Zone');
+        $self->set_expire_date(
+            my $now = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT)
+        );
+        $self->save;
+        my $key = $self->key_name;
+
+        require Bric::Util::Job::Pub;
+        my $job = Bric::Util::Job::Pub->new({
+            sched_time          => $now,
+            user_id             => Bric::App::Session::get_user_id,
+            name                => 'Expire "' . $self->get_name . '"',
+            "$key\_instance_id" => $self->get_version_id,
+            priority            => $self->get_priority,
+            type                => 1,
+        });
+
+        $job->save;
+        log_event('job_new', $job);
+    }
+
+    return $self;
+}
 ################################################################################
 
 =item $ba = $ba->save()
@@ -2745,6 +2773,25 @@ sub _update_uris {
 
     # If we succeeded, then mark it!
     $self->_set(['_update_uri'] => [0]);
+}
+
+################################################################################
+
+=item $self = $self->_can_expire()
+
+Returns true if the documement can be expired. Specifically, if the document
+has been published.
+
+B<Throws:> NONE.
+
+B<Side Effects:> NONE.
+
+B<Notes:> NONE.
+
+=cut
+
+sub _can_expire {
+    shift->get_publish_status;
 }
 
 ################################################################################
