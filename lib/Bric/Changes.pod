@@ -56,6 +56,14 @@ to the database as a boolean. [David Oliveira]
 Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
 URI path. [David]
 
+=item *
+
+L<Bric::Util::Burner>'s C<publish()> method no longer removes documents from
+workflow after publishing them, as such is the responsbility of the code that
+calls publish. The publish callback already did, and now so does the
+L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
+report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
+
 =back
 
 =head1 VERSION 1.10.8 (2009-11-14)

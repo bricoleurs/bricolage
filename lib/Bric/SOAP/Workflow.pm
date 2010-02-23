@@ -300,6 +300,28 @@ sub publish {
             })->save;
             log_event('job_new', $job);
             push @published, name( "$type\_id" => $id );
+
+            # If it's a new publish, remove from workflow.
+            unless ($published_only) {
+                # Remove it from the desk it's on.
+                if (my $d = $obj->get_current_desk) {
+                    $d->remove_asset($obj);
+                    $d->save;
+                }
+
+                # Remove it from the workflow by setting its workflow ID to undef
+                # Yes, we have to use user__id instead of checked_out because
+                # non-current versions of documents always have checked_out set to
+                # 0, even when the current version is checked out.
+                if ($obj->get_workflow_id
+                        && !defined $obj->get_user__id # Not checked out.
+                            && $obj->get_version == $obj->get_current_version
+                        ) {
+                    $obj->set_workflow_id(undef);
+                    log_event("$type\_rem_workflow", $obj);
+                }
+                $obj->save;
+            }
         }
     }
 
