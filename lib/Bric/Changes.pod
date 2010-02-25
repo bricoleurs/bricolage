@@ -91,6 +91,11 @@ we get around that issue. Documents with that many categories or contributors
 are rare, so the trade-off seems worthwhile. Thanks to Bret Dawson for the
 report (Bug #121). [David]
 
+=item *
+
+Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
+Jaquith]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
