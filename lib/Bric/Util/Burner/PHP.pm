@@ -1,4 +1,4 @@
-71package Bric::Util::Burner::PHP;
+package Bric::Util::Burner::PHP;
 
 ###############################################################################
 
