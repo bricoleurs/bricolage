@@ -41,7 +41,8 @@
    object       => 'contrib',
    field        => 'lname',
    type         => 'dual',
-   use_form_tag => 0
+   use_form_tag => 0,
+   state_key    => "$asset_type\_contrib",
 &>
 
 <& '/widgets/wrappers/table_top.mc', caption => 'Choose Contributors' &>
@@ -56,6 +57,7 @@
        constrain => { no_grp_id => Bric::Biz::Person->INSTANCE_GROUP_ID },
        addition  => '',
        behavior => 'expand',
+       state_key => "$asset_type\_contrib",
     &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 

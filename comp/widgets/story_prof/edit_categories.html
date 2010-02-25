@@ -5,7 +5,7 @@
 <& '/widgets/listManager/listManager.mc',
     object          => 'category',
     userSort        => 0,
-    def_sort_field  => 'uri',
+    sortBy          => 'uri',
     title           => 'Current Categories',
     objs            => \@categories,
     profile         => undef,
@@ -13,7 +13,9 @@
     field_titles    => { primary => 'Primary' },
     field_values    => $primary_sub,
     select          =>  $category_select,
-    addition        => ''
+    addition        => '',
+    no_pagination   => 1,
+    state_key       => 'story_category',
 &>
 
 <& '/widgets/wrappers/table_bottom.mc' &>
@@ -22,10 +24,11 @@
    object       => 'category',
    field        => 'uri',
    type         => 'singular',
-   use_form_tag => 0
+   use_form_tag => 0,
+   state_key    => 'story_category',
 &>
 
-<& '/widgets/wrappers/table_top.mc', 
+<& '/widgets/wrappers/table_top.mc',
     caption => 'Choose Categories',
 &>
 
@@ -37,7 +40,8 @@
    exclude   => $exclude_cats,
    fields    => [qw(uri site name)],
    addition  => '',
-   behavior => 'expand',
+   behavior  => 'expand',
+   state_key => 'story_category',
 &>
 
 <& '/widgets/wrappers/table_bottom.mc' &>

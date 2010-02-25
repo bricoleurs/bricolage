@@ -1,7 +1,7 @@
 <& '/widgets/listManager/listManager.mc',
     object         => 'contrib',
     userSort       => 0,
-    state_key      => 'story_contrib',
+    state_key      => "$asset_type\_contrib_assoc",
     def_sort_field => 'order',
     objs           => $contribs,
     profile        => undef,
@@ -9,7 +9,8 @@
     field_titles   => { order => 'Order', role => 'Role', delete => '' },
     field_values   => $value_sub,
     select         => undef,
-    addition       => ''
+    addition       => '',
+    no_pagination  => 1,
 &>
 <script type="text/javascript">
 var selectOrderNames = new Array(<% join ', ', @sort_array %>);
