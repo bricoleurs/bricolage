@@ -33,6 +33,12 @@ encoded in the user's preferred encoding. So if you have Windows gremlins in
 your templates, you can set your Character Set preference to "CP1252" and it
 will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
 
+=item *
+
+When displaying categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
+are now displayed in alphabetical order by URI. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -70,6 +76,23 @@ Fixed a bug where contributor and category search results would be propagated
 to the contributor and category editing screens with a story or media
 document. Searches from within documents should cache their own results,
 separate from the admin search interfaces. [David]
+
+=item *
+
+Contributors associated with a story or media document and categories
+associated with a story document are no longer paginated. When there were more
+contributors or categories than would fit on a paginated page, the pagination
+didn't work and reording didn't work. So by disabling pagination in this case,
+we get around that issue. Documents with that many categories or contributors
+are rare, so the trade-off seems worthwhile. Thanks to Bret Dawson for the
+report (Bug #121). [David]
+
+=item *
+
+When associating a contributor with a media document, don't prompt for role
+selection if the contributor has only one role. This saves a page load for
+each contributor association and brings media in line with how story
+contributor association already works. [David]
 
 =back
 

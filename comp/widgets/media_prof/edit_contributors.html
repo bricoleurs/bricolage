@@ -39,6 +39,7 @@ $m->comp(
     field_values   => $order_sub,
     select         => [ 'Delete', "$widget|delete_id" ],
     addition       => '',
+    no_pagination  => 1,
 );
 $m->comp('/widgets/wrappers/sharky/table_bottom.mc');
 </%perl>

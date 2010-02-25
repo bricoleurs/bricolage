@@ -5,7 +5,7 @@
 <& '/widgets/listManager/listManager.mc',
     object          => 'category',
     userSort        => 0,
-    def_sort_field  => 'uri',
+    sortBy          => 'uri',
     title           => 'Current Categories',
     objs            => \@categories,
     profile         => undef,
@@ -15,6 +15,7 @@
     select          =>  $category_select,
     addition        => '',
     state_key       => 'story_category_assoc',
+    no_pagination   => 1,
 &>
 
 <& '/widgets/wrappers/sharky/table_bottom.mc' &>
