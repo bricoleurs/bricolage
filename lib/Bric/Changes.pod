@@ -96,6 +96,12 @@ report (Bug #121). [David]
 Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
 Jaquith]
 
+=item *
+
+New media can once again be created from a related media element. It was
+broken by the switch to autocompleted category selection for new media
+documents in 1.11.3. Thanks to Iván Chavero for the spot (Bug #135). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)

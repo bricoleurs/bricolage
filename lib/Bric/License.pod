@@ -484,6 +484,8 @@ Friends who have spotted bugs include:
 
 =item * Adam Wilson
 
+=item * Iván Chavero
+
 =back
 
 Bricolage's translation team:

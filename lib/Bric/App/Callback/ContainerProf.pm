@@ -236,14 +236,14 @@ sub create_related_media : Callback( priority => 6) {
         ? Bric::Util::Trans::FS->base_name($param->{"$widget|file"}, 'win32')
         : $param->{"$widget|file"};
     my $m_param = {
-        'title'                   => $filename,
-        'cover_date'              => strfdate(),
-        'priority'                => $asset->get_priority,
-        'media_prof|category__id' => $asset->get_primary_category->get_id,
-        'media_prof|source__id'   => $asset->get_source__id,
-        'media_prof|at_id'        => $param->{'media_prof|at_id'},
-        'media_prof|file'         => $param->{"$widget|file"},
-        'file_field_name'         => "$widget|file",
+        'title'                     => $filename,
+        'cover_date'                => strfdate(),
+        'priority'                  => $asset->get_priority,
+        'new_category_autocomplete' => $asset->get_primary_category->get_uri,
+        'media_prof|source__id'     => $asset->get_source__id,
+        'media_prof|at_id'          => $param->{'media_prof|at_id'},
+        'media_prof|file'           => $param->{"$widget|file"},
+        'file_field_name'           => "$widget|file",
     };
 
     my $media_cb = Bric::App::Callback::Profile::Media->new(
