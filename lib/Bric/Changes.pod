@@ -12,26 +12,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.10.10 ()
 
-
-
-=head1 VERSION 1.10.9 (2010-01-28)
-
 =head2 Improvements
-
-=over
-
-=item *
-
-The SFTP mover now respects a port specification in the host name (e.g,
-"foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
-report and fix. [David]
-
-=item *
-
-The virtual FTP server now assumes that template files uploaded to it are
-encoded in the user's preferred encoding. So if you have Windows gremlins in
-your templates, you can set your Character Set preference to "CP1252" and it
-will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
 
 =item *
 
@@ -44,23 +25,6 @@ are now displayed in alphabetical order by URI. [David]
 =head2 Bug Fixes
 
 =over
-
-=item *
-
-Cover dates are no longer exported via the SOAP interface with the wrong year
-(2009) when their dates are in the first three days of 2010. Thanks to Paul
-Orrock for the spot (Bug #122) and David Oliveira via Bret Dawson for the fix!
-[David]
-
-=item *
-
-Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
-to the database as a boolean. [David Oliveira]
-
-=item *
-
-Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
-URI path. [David]
 
 =item *
 
@@ -93,6 +57,55 @@ When associating a contributor with a media document, don't prompt for role
 selection if the contributor has only one role. This saves a page load for
 each contributor association and brings media in line with how story
 contributor association already works. [David]
+
+=item *
+
+Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
+Jaquith]
+
+=back
+
+=head1 VERSION 1.10.9 (2010-01-28)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The SFTP mover now respects a port specification in the host name (e.g,
+"foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
+report and fix. [David]
+
+=item *
+
+The virtual FTP server now assumes that template files uploaded to it are
+encoded in the user's preferred encoding. So if you have Windows gremlins in
+your templates, you can set your Character Set preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Cover dates are no longer exported via the SOAP interface with the wrong year
+(2009) when their dates are in the first three days of 2010. Thanks to Paul
+Orrock for the spot (Bug #122) and David Oliveira via Bret Dawson for the fix!
+[David]
+
+=item *
+
+Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
+to the database as a boolean. [David Oliveira]
+
+=item *
+
+Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
+URI path. [David]
 
 =back
 
