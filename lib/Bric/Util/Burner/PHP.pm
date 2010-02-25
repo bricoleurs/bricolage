@@ -78,7 +78,9 @@ my %vars;
 do {
     no strict 'refs';
     while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
-        if (my $type = first { defined *{$v}{$_} }
+        if (ref $v eq 'SCALAR') {
+            $vars{$k} = $$v;
+        } elsif (my $type = first { defined *{$v}{$_} }
             qw(CODE HASH ARRAY IO GLOB FORMAT)
         ) {
             # Use the reference to the variable. IOs can be used directly.

@@ -65,6 +65,11 @@ contributor association already works. [David]
 Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
 Jaquith]
 
+=item *
+
+Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
+[Alex Krohn]
+
 =back
 
 =head1 VERSION 1.10.9 (2010-01-28)
