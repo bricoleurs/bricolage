@@ -100,7 +100,8 @@ Jaquith]
 
 New media can once again be created from a related media element. It was
 broken by the switch to autocompleted category selection for new media
-documents in 1.11.3. Thanks to Iván Chavero for the spot (Bug #135). [David]
+documents in 1.11.3. Thanks to Waldo Jaquith and Iván Chavero for the spot
+(Bugs #134 and #135). [David]
 
 =back
 
