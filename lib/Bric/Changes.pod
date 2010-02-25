@@ -103,6 +103,11 @@ broken by the switch to autocompleted category selection for new media
 documents in 1.11.3. Thanks to Waldo Jaquith and Iván Chavero for the spot
 (Bugs #134 and #135). [David]
 
+=item *
+
+Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
+[Alex Krohn]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
