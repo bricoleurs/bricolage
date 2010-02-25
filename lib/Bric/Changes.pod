@@ -22,12 +22,6 @@ the filename [Paul Orrock]
 
 Added the new Bricolage logo to the user interface. [Phillip Smith]
 
-=item *
-
-When displaying categories associated with a story when the
-C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
-are now displayed in alphabetical order by URI. [David]
-
 =back
 
 =head2 Improvements
@@ -35,6 +29,10 @@ are now displayed in alphabetical order by URI. [David]
 =over
 
 =item *
+
+When displaying categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
+are now displayed in alphabetical order by URI. [David]
 
 =back
 
