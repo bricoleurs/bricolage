@@ -328,7 +328,7 @@ $featured_color => '#cccc99'    # The color for the bkground of the featured row
 $objs           => undef        # These are user objects to be listed.
 $def_sort_field => undef
 $def_sort_order => undef        # Whether to sort in descending order by default
-$cx_filter      => 1            # Make false to override Filter by Site Context.<
+$cx_filter      => 1            # Make false to override Filter by Site Context.
 $no_pagination  => 0
 </%args>
 <%init>;
