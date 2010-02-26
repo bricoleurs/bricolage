@@ -34,6 +34,12 @@ When displaying categories associated with a story when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
 are now displayed in alphabetical order by URI. [David]
 
+=item *
+
+The installer no longer requires that L<Term::ReadPassword> be installed from
+the CPAN before it continues. It will use it if it finds it, but if not
+substitutes a simple implementation that does the trick (Bug #136). [David]
+
 =back
 
 =head2 Bug Fixes
