@@ -86,7 +86,7 @@ build_done	: required.db modules.db apache.db postgres.db config.db \
 ###########################
 
 dist            : check_dist distclean inst/Pg.sql dist_dir \
-                  rm_svn rm_tmp dist/INSTALL dist/Changes \
+                  rm_git rm_tmp dist/INSTALL dist/Changes \
                   dist/License dist_tar
 
 check_dist      :
@@ -100,8 +100,8 @@ dist_dir	:
 	mkdir dist
 	ls | grep -v dist | grep -v sql | $(PERL) -lne 'system("cp -pR $$_ dist")'
 
-rm_svn		:
-	find dist/ -type d -name '.svn' | xargs rm -rf
+rm_git		:
+	find dist/ -type d -name '.git*' | xargs rm -rf
 
 rm_tmp		:
 	find dist/ -name '#*#' -o -name '*~' -o -name '.#*' | xargs rm -rf
@@ -128,7 +128,7 @@ inst/Pg.sql : $(SQL_FILES)
 	grep -vh '^--' `find sql/Pg -name '*.val' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 	grep -vh '^--' `find sql/Pg -name '*.con' | env LANG= LANGUAGE= LC_ALL=POSIX sort` >>  $@;
 
-.PHONY 		: distclean inst/Pg.sql dist_dir rm_svn dist_tar check_dist
+.PHONY 		: distclean inst/Pg.sql dist_dir rm_git dist_tar check_dist
 
 ##########################
 # clone rules            #
@@ -136,11 +136,11 @@ inst/Pg.sql : $(SQL_FILES)
 
 
 clone           : cloneclean clone.db clone_dist_dir clone_files clone_sql \
-		  rm_svn rm_tmp \
+		  rm_git rm_tmp \
                   dist/INSTALL dist/Changes dist/License \
 		  clone_tar 
 devclone  : distclean clone.db clone_dist_dir clone_files clone_sql \
-    rm_svn rm_tmp \
+    rm_git rm_tmp \
     dist/INSTALL dist/Changes dist/License \
     clone_lightweight \
     clone_tar 
@@ -150,7 +150,7 @@ cloneclean	: clean
 	-rm -rf dist
 
 hot_copy  : cloneclean clone.db clone_dist_dir clone_sql clone_files_with_hot_copy \
-            rm_svn rm_tmp dist/INSTALL dist/Changes dist/License \
+            rm_git rm_tmp dist/INSTALL dist/Changes dist/License \
             hot_copy_install distclean
 
 hot_copy_install :
