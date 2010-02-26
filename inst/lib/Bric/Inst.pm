@@ -41,13 +41,28 @@ use strict;
 use File::Spec::Functions qw(catdir tmpdir catfile);
 eval { require Term::ReadPassword; import Term::ReadPassword 'read_password' };
 if ($@) {
-    print "#" x 79, "\n\n", <<END, "\n", "#" x 79, "\n";
-Bricolage installation requires Term::ReadPassword. Please install
-this Perl module from CPAN.
-END
-
-    exit 1;
+    # Poor man's Term::ReadPassword.
+    eval q{
+        use POSIX qw(:termios_h);
+        sub read_password {
+            print @_;
+            my $fd_stdin = fileno(STDIN);
+            my $term     = POSIX::Termios->new;
+            $term->getattr($fd_stdin);
+            my $oflags   = $term->getlflag;
+            my $no_echo  = $oflags & ~(ISIG | ECHO | ICANON);
+            $term->setlflag($no_echo);
+            $term->setattr($fd_stdin, TCSAFLUSH);
+            my $answer = <STDIN>;
+            $term->setlflag($oflags);
+            $term->setattr($fd_stdin, TCSAFLUSH);
+            chomp $answer;
+            print $/;
+            return $answer;
+        }
+    };
 }
+
 require Exporter;
 use base 'Exporter';
 our @EXPORT_OK = qw(soft_fail hard_fail ask_yesno ask_confirm ask_choice
