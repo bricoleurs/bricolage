@@ -24,6 +24,24 @@ Added the new Bricolage logo to the user interface. [Phillip Smith]
 
 =back
 
+=head2 Improvements
+
+=over
+
+=item *
+
+When displaying categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
+are now displayed in alphabetical order by URI. [David]
+
+=item *
+
+The installer no longer requires that L<Term::ReadPassword> be installed from
+the CPAN before it continues. It will use it if it finds it, but if not
+substitutes a simple implementation that does the trick (Bug #136). [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over
@@ -59,6 +77,40 @@ workflow after publishing them, as such is the responsbility of the code that
 calls publish. The publish callback already did, and now so does the
 L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
 report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
+
+=item *
+
+Fixed a bug where contributor and category search results would be propagated
+to the contributor and category editing screens with a story or media
+document. Searches from within documents should cache their own results,
+separate from the admin search interfaces. [David]
+
+=item *
+
+Contributors associated with a story or media document and categories
+associated with a story document are no longer paginated. When there were more
+contributors or categories than would fit on a paginated page, the pagination
+didn't work and reording didn't work. So by disabling pagination in this case,
+we get around that issue. Documents with that many categories or contributors
+are rare, so the trade-off seems worthwhile. Thanks to Bret Dawson for the
+report (Bug #121). [David]
+
+=item *
+
+Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
+Jaquith]
+
+=item *
+
+New media can once again be created from a related media element. It was
+broken by the switch to autocompleted category selection for new media
+documents in 1.11.3. Thanks to Waldo Jaquith and Iván Chavero for the spot
+(Bugs #134 and #135). [David]
+
+=item *
+
+Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
+[Alex Krohn]
 
 =back
 

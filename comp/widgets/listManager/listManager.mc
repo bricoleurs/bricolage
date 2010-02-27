@@ -255,6 +255,13 @@ default to a standard color if not passed.
 
 =back
 
+=item no_pagination
+
+By default, listManager paginates results if the pagination preference
+indicates that they should be paginated. If C<no_pagination> is passed a true
+value, the results will not be paginated, even if there is a pagination
+preference.
+
 =head1 NOTES
 
 There is one other way to pass search criteria to the listManager. By setting
@@ -322,6 +329,7 @@ $objs           => undef        # These are user objects to be listed.
 $def_sort_field => undef
 $def_sort_order => undef        # Whether to sort in descending order by default
 $cx_filter      => 1            # Make false to override Filter by Site Context.
+$no_pagination  => 0
 </%args>
 <%init>;
 
@@ -344,7 +352,8 @@ $fields ||= [sort keys %$meth];
 my %featured_lookup = map { ($_,1) } @$featured;
 
 # limit the number of results to display per page
-my $limit = Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
+my $limit = $no_pagination ? 0
+    : Bric::Util::Pref->lookup_val( 'Search Results / Page' ) || 0;
 
 #--------------------------------------#
 # Set up pagination data.

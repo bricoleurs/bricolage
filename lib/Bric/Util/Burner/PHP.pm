@@ -71,7 +71,10 @@ my %vars;
 do {
     no strict 'refs';
     while ( my ($k, $v) = each %{TEMPLATE_BURN_PKG . '::'} ) {
-        if (my $type = first { defined *{$v}{$_} }
+        # Perl 5.10 stores constants in the symbol table as scalar refs
+        if (ref $v eq 'SCALAR') {
+            $vars{$k} = $$v;
+        } elsif (my $type = first { defined *{$v}{$_} }
             qw(CODE HASH ARRAY IO GLOB FORMAT)
         ) {
             # Use the reference to the variable. IOs can be used directly.
