@@ -2052,17 +2052,7 @@ Login to the remote server in order to initialize F<~/.ssh/known_hosts> before
 using the SFTP mover. You might also need to create the directory F</.ssh> on
 the Bricolage server (and possibly on the destination server, too) with write
 permission for "nobody", in case nobody's home directory is something like
-F</bin/false> and ssh falls back to F</> as the home directory). To use a
-private key, it must be named F<~/.ssh/identity> for F<~/.ssh/id_rsa>, as
-those are the files that Net::SSH::Perl looks for. Defaults to "Off" if not
-specified.
-
-=item *
-
-B<SFTP_HOME:> If you've enabled SFTP, set this directive to a directory
-containing your SSH keys and with permisssions appropriate for C<SYS_USER> to
-access. If no value is provided, the default will be specified by Net::SFTP,
-but is generally F</> (and therefore probably I<not> what you want).
+F</bin/false> and ssh falls back to F</> as the home directory).
 
 =item *
 
@@ -2074,6 +2064,15 @@ for a complete list of supported ciphers for SSH-2. As of this writing, the
 suppported ciphers are "aes256-cbc", "aes192-cbc", "aes128-cbc", "blowfish-cbc"
 "arcfour", "cast128-cbc", "3des-cbc" and "none". The default SSH-2 cipher is
 "aes256-cbc".
+
+=item *
+
+B<SFTP_KEY_TYPE, SFTP_PUBLIC_KEY_FILE, and SFTP_PRIVATE_KEY_FILE:> These
+directives set the key-based authentication variables. As of this writing,
+Net::SSH2 supports SFTP_KEY_TYPE values of 'ssh-rsa' and 'ssh-dss'. You
+may need to adjust the permissions of the key files so they are readable
+by C<SYS_USER>. The username and private key password (if any) must be
+entered in the Bricolage interface when setting up the destination.
 
 =item *
 
