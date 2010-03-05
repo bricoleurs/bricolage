@@ -322,7 +322,7 @@ publish in a particular category.
 
 As you can see, a story published in a particular category will look I<up> the
 category URI to find an element template to format it if it can't find it in
-the the story's own category. This functionality works identically for all
+the story's own category. This functionality works identically for all
 supported templating architectures.
 
 Note that in the case of the stories published in "/music/rock/" and in
@@ -771,10 +771,9 @@ corresponding field.
 
 The $num argument is optional. It is meant for fields that can occur more than
 once, such as "paragraph"s in our "column" example. If $num is not given then
-it defaults to "1", meaning that the the first instance of the field
-identified by $key_name will be returned. The ordering is determined by the
-content author (you want all your paragraphs to be in the correct order,
-right?).
+it defaults to "1", meaning that the first instance of the field identified by
+$key_name will be returned. The ordering is determined by the content author
+(you want all your paragraphs to be in the correct order, right?).
 
 =item C<< $element->get_value($key_name, $num, $format) >>
 
