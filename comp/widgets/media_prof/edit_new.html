@@ -43,12 +43,13 @@ $m->comp(
 &>
 % }
 <& /widgets/select_object/select_object.mc,
-   disp     => 'Source',
-   object   => 'source',
-   name     => "$widget|source__id",
-   field    => 'source_name',
-   selected => $sel_source,
-   useTable => 1,
+   disp       => 'Source',
+   object     => 'source',
+   name       => "$widget|source__id",
+   field      => 'source_name',
+   sort_field => 'source_name',
+   selected   => $sel_source,
+   useTable   => 1,
 &>
 <& /widgets/profile/text.mc,
     disp => 'Category',

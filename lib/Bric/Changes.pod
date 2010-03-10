@@ -40,6 +40,12 @@ The installer no longer requires that L<Term::ReadPassword> be installed from
 the CPAN before it continues. It will use it if it finds it, but if not
 substitutes a simple implementation that does the trick (Bug #136). [David]
 
+=item *
+
+The Source select list when creating or editing a story or media document now
+lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
+[David]
+
 =back
 
 =head2 Bug Fixes

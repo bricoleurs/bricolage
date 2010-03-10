@@ -38,13 +38,14 @@ $m->comp( '/widgets/select_object/select_object.mc',
         );
 
 $m->comp( '/widgets/select_object/select_object.mc',
-          disp     => 'Source',
-          object   => 'source',
-          name     => "$widget|source__id",
-          field    => 'source_name',
-          localize => 0,
-          useTable => 1,
-          exclude  => $excl_sub,
+          disp       => 'Source',
+          object     => 'source',
+          name       => "$widget|source__id",
+          field      => 'source_name',
+          sort_field => 'source_name',
+          localize   => 0,
+          useTable   => 1,
+          exclude    => $excl_sub,
         );
 
 $m->comp(
