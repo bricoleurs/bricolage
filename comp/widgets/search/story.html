@@ -208,14 +208,14 @@ $m->comp("/widgets/wrappers/table_top.mc",
                      style      => 'inline',
                   &>
 
-        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_title').value; $('search-button').name = 'simple_search'; $('search-button').onclick = $('search-type').value = 'simple'; $('basic-search', 'advanced-search', 'clear-button').invoke('toggle'); $('button-wrap').setStyle({margin: '5px 0 0 -140px'}); return false">&laquo; Show fewer options</a>
+        <a href="#" class="small" style="margin-left: 10px;" onclick="$('search_simple').value = $('search_title').value; $('search-button').name = 'simple_search'; $('search-button').onclick = $('search-type').value = 'simple'; $('basic-search', 'advanced-search', 'clear-button').invoke('toggle'); $('button-wrap').setStyle({margin: '5px 0 0'}); return false">&laquo; Show fewer options</a>
 
         </div>
     </div>
 </div>
 
-<div id="button-wrap" class="row"<% ($advanced_search) ? '' : ' style="margin: 5px 0 0 -140px;"' %>>
-    <div class="input" id="search-buttons">
+<div id="button-wrap" class="row"<% ($advanced_search) ? '' : ' style="margin: 5px 0 0;"' %>>
+    <div id="search-buttons">
         <& /widgets/profile/button.mc,
           id      => 'search-button',
           disp    => $lang->maketext('Search'),
