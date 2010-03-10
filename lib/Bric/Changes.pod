@@ -157,6 +157,12 @@ The simple search in workflows no longer disables navigation links on the same
 horizontal line as the "Search" button. Thanks to Matt Rolf for the report
 (Bug # 141) and to Marshall for the CSS jujitsu. [David]
 
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now avoids expired stories
+when searching for aliased stories. Thanks to Zdravko Balorda for the catch
+(Bug #144). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)

@@ -486,6 +486,8 @@ Friends who have spotted bugs include:
 
 =item * Iván Chavero
 
+=item * Zdravko Balorda
+
 =back
 
 Bricolage's translation team:
