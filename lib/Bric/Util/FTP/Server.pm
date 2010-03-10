@@ -60,7 +60,7 @@ use strict;
 ################################################################################
 # Programmatic Dependences
 use Bric::Util::DBI qw(:all);
-use Bric::Config qw(:ftp);
+use Bric::Config qw(:ftp :sys_user);
 use Bric::Biz::Person::User;
 use Net::FTPServer;
 use Bric::Util::FTP::FileHandle;
@@ -150,6 +150,25 @@ sub system_error_hook {
   return delete $self->{error}
     if exists $self->{error};
   return "Unknown error occurred.";
+}
+
+=item post_bind_hook()
+
+This method is called after the control port is bound but before starting the
+accept infinite loop block. It's used in this class to become the Bricolage
+system user (but only if the FTP server was started by the root user).
+
+=cut
+
+sub post_bind_hook {
+    return if $> != 0;
+    # Switch from root to the system user (set in bricolage.conf).
+    $) = SYS_GROUP;
+    die "Unable to set effective group id ". SYS_GROUP . "\n"
+        unless $) == SYS_GROUP;
+    $> = SYS_USER;
+    die "Unable to set effective user id ". SYS_USER . "\n"
+        unless $> == SYS_USER;
 }
 
 sub find_workflow {

@@ -2594,12 +2594,12 @@ bind to the specified address.
 =item *
 
 B<FTP_LOG:> Set this to the file where you want to FTP logs written
-to. Defaults to C<$BRICOLAGE_ROOT/ftp.log> if not set.
+to. Defaults to C<$BRICOLAGE_ROOT/log/ftp.log> if not set.
 
 =item *
 
 B<FTP_PID_FILE:> Set this to the file where you want to the FTP daemon PID
-stored. Defaults to C<$BRICOLAGE_ROOT/ftp.pid> if not set.
+stored. Defaults to C<$BRICOLAGE_ROOT/log/ftp.pid> if not set.
 
 =item *
 

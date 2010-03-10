@@ -727,9 +727,9 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
-      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'log', 'ftp.log');
     use constant FTP_PID_FILE      => $config->{FTP_PID_FILE}      ||
-      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.pid');
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'log', 'ftp.pid');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => $config->{DEFAULT_FILENAME} || 'index';

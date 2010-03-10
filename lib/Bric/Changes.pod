@@ -46,6 +46,21 @@ The Source select list when creating or editing a story or media document now
 lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
 [David]
 
+=item *
+
+When started by the root user, the F<bric_queued> and F<bric_ftpd> daemons now
+become the Bricolage system user (usually the Apache user) after forking their
+subprocesses, rather than before. This means that the PID file is now created
+by the root user, and so should encounter no permission errors when saving the
+PID file to standard OS locations. Reported by Serge Ivanchenko. [David]
+
+=item *
+
+The default location for the FTP server's log files is now the F<log>
+subdirectory of the bricolage root directory, rather than the bricolage root
+directory itself. This is what comments in F<bricoalge.conf> have always
+suggested, even if L<Bric::Admin> and the code did not. [David]
+
 =back
 
 =head2 Bug Fixes
