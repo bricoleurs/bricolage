@@ -456,6 +456,8 @@ Friends who have spotted bugs include:
 
 =item * John Kirkwood
 
+=item * Zdravko Balorda
+
 =back
 
 Bricolage's translation team:

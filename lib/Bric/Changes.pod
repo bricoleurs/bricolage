@@ -82,6 +82,12 @@ Jaquith]
 Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
 [Alex Krohn]
 
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now avoids expired stories
+when searching for aliased stories. Thanks to Zdravko Balorda for the catch
+(Bug #144). [David]
+
 =back
 
 =head1 VERSION 1.10.9 (2010-01-28)

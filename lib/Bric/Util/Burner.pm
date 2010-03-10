@@ -1841,6 +1841,7 @@ sub best_uri {
     } else {
         # The asset's not in this site. Try to lookup an alias in this site.
         if (my $rel = $ba->lookup({ alias_id => $ba->get_id,
+                                    unexpired => 1,
                                     site_id  => $site_id })) {
             # Use the alias, instead.
             $ba = $rel;
