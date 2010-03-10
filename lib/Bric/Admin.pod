@@ -2231,6 +2231,15 @@ from 1993 to 2013.
 
 =item *
 
+B<CATEGORY_MIN_CHARS AND CATEGORY_MIN_CHARS_TMPL:> These directives tell the
+UI how many characters the user needs to type in before it suggests a list
+of possible options. By default this is 1, since to begin with a Bricolage
+intallation wont have many categories. But if you start to find that it's
+taking to long to suggest categories because there are just too many (and
+they all start with the first character, "/"), try changing it to 2.
+
+=item *
+
 B<ENABLE_CATEGORY_BROWSER:> Category browser setting. Enable this directive to
 make the Media and Story profiles use the category browser. This is useful if
 you have a lot of categories, as it prevents them all from being loaded into a

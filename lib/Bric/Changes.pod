@@ -70,6 +70,15 @@ subdirectory of the bricolage root directory, rather than the bricolage root
 directory itself. This is what comments in F<bricoalge.conf> have always
 suggested, even if L<Bric::Admin> and the code did not. [David]
 
+=item *
+
+Added the C<CATEGORY_MIN_CHARS> AND C<CATEGORY_MIN_CHARS_TMPL>
+F<bricolage.conf> directives. These give adminstrators the ability to control
+the responsiveness of the autosuggest box for selecting categories to
+associate with assets. It has been set to 2 to make it more responsive to
+sites with very large numbers of categories, but most folks only need it set
+to 1. [David]
+
 =back
 
 =head2 Bug Fixes

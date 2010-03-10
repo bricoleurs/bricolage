@@ -80,7 +80,7 @@ new Ajax.Autocompleter("new_category_uri", "category_autocomplete_choices",
                          onEmpty:    function() { Element.show('new_cat_warning'); },
                          onNotEmpty: function() { Element.hide('new_cat_warning') },
                          onEnter:    function() { catListMan.add('new_category_uri') },
-                         minChars:   2,
+                         minChars:   <% CATEGORY_MIN_CHARS %>,
                          indicator:  'category_autocomplete_indicator',
                          parameters: 'site_id=<% $story->get_site_id %>&key=story'
                        }

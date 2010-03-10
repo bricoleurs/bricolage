@@ -167,6 +167,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
+                    CATEGORY_MIN_CHARS
+                    CATEGORY_MIN_CHARS_TMPL
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
@@ -274,6 +276,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
+                                     CATEGORY_MIN_CHARS
+                                     CATEGORY_MIN_CHARS_TMPL
                                      ENABLE_WYSIWYG
                                      WYSIWYG_EDITOR
                                      XINHA_PLUGINS
@@ -753,6 +757,8 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Category browser setting
     use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER};
+    use constant CATEGORY_MIN_CHARS      => $config->{CATEGORY_MIN_CHARS} || 1;
+    use constant CATEGORY_MIN_CHARS_TMPL => $config->{CATEGORY_MIN_CHARS_TMPL} || 1;
 
     # L10N & Character Translation settings.
     use constant ENCODE_OK              => $] >= 5.008;
