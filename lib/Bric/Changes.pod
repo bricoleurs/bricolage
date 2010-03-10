@@ -48,6 +48,15 @@ lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
 
 =item *
 
+Added the C<SFTP_KEY_TYPE>, C<SFTP_PRIVATE_KEY_FILE> and
+C<SFTP_PUBLIC_KEY_FILE> F<bricolage.conf> directives to to restore key-based
+authentication to the SFTP mover. These were necessary as the old F<SFTP_HOME>
+diretive does not work with the new implementation based on F<Net::SSH2> (Bug
+# 127). [Greg Heo]
+
+
+=item *
+
 When started by the root user, the F<bric_queued> and F<bric_ftpd> daemons now
 become the Bricolage system user (usually the Apache user) after forking their
 subprocesses, rather than before. This means that the PID file is now created
