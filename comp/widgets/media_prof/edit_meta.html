@@ -175,7 +175,7 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
     function deleteContrib(button) {
         var id = $(button).value;
         var index = $('contrib_order_' + id).selectedIndex;
-        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
+        $('contribs').select('.reorder').each(function(select) {
             if (select.selectedIndex > index) select.selectedIndex--;
             Element.remove(select.options[select.options.length - 1]);
         });

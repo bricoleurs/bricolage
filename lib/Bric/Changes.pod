@@ -163,6 +163,11 @@ The C<best_uri()> method of L<Bric::Util::Burner> now avoids expired stories
 when searching for aliased stories. Thanks to Zdravko Balorda for the catch
 (Bug #144). [David]
 
+=item *
+
+Fixed issue with the use of C<findElementsByClass()> when used with Prototype
+1.6.0.3. Thanks to Adrian Yee for the report and suggested fix. [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)

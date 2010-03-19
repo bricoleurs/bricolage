@@ -358,8 +358,8 @@ This function is called when a position drop down is changed in a story profile.
 function reorder(obj, container) {
 
     var container = $(container);
-    var selects = $A(document.getElementsByClassName("reorder", container));
-    var newIndex = obj.selectedIndex;
+    var selects   = container.select('.reorder');
+    var newIndex  = obj.selectedIndex;
 
     var order = $A();
     selects.each(function(select) {
@@ -1281,7 +1281,7 @@ FastAdd.prototype = {
         ]);
 
         var placed = false;
-        $A(document.getElementsByClassName('value', this.list)).each((function(sibling) {
+        this.list.select('.value').each((function(sibling) {
             if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
                 this.list.insertBefore(item, sibling.parentNode);
                 placed = true;
@@ -1306,8 +1306,8 @@ FastAdd.prototype = {
 var Tabs = Class.create();
 Tabs.prototype = {
     initialize: function(tabGroup, pageGroup) {
-        this.tabs = document.getElementsByClassName('tab', $(tabGroup));
-        this.pages = document.getElementsByClassName('page', $(pageGroup));
+        this.tabs  = $(tabGroup).select('.tab');
+        this.pages = $(pageGroup).select('.page');
 
         var selected = this.tabs.first();
         this.tabs.each(function(tab) {
@@ -1717,7 +1717,7 @@ var Container = {
 };
 
 Event.observe(window, 'load', function() {
-  $A(document.getElementsByClassName('listManager')).each(function(table) {
+  $$('.listManager').each(function(table) {
       alternateTableRows(table);
   })
 });
