@@ -181,6 +181,18 @@ function validateStory(obj) {
     return true;
 }
 
+// Deletes a contributor table row from the DOM.
+function deleteContrib(button) {
+    var id = $(button).value;
+    var index = $('contrib_order_' + id).selectedIndex;
+    $('contribs').select('.reorder').each(function(select) {
+        if (select.selectedIndex > index) select.selectedIndex--;
+        Element.remove(select.options[select.options.length - 1]);
+    });
+    Element.remove($('contrib_id_' + id).parentNode.parentNode);
+    alternateTableRows('contribs');
+}
+
 /*
 returns number of words in form field, based on number of spaces found
 */

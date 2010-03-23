@@ -177,18 +177,6 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
     caption => "Contributors",
     number  => $num++
 &>
-    <script type="text/javascript">
-    function deleteContrib(button) {
-        var id = $(button).value;
-        var index = $('contrib_order_' + id).selectedIndex;
-        $('contribs').select('.reorder').each(function(select) {
-            if (select.selectedIndex > index) select.selectedIndex--;
-            Element.remove(select.options[select.options.length - 1]);
-        });
-        Element.remove($('contrib_id_' + id).parentNode.parentNode);
-        alternateTableRows('contribs');
-    }
-    </script>
     <div id="contribs">
     <& '/widgets/profile/contributors/_list.html',
         asset      => $story,

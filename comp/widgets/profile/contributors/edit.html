@@ -1,12 +1,6 @@
 <& '/widgets/wrappers/table_top.mc',
     caption => 'Current Contributors'
 &>
-    <script type="text/javascript">
-    function deleteContrib(button) {
-        var form = $(button).form;
-        Element.remove('contrib_id_' + $(button).value); form.submit();
-    }
-    </script>
     <div id="contribs">
     <& '_list.html',
         asset      => $asset,
@@ -32,7 +26,7 @@
     disp      => 'Save',
     name      => 'save',
     button    => 'save_red',
-    js        => qq{onclick="window.opener.document.getElementById('contribs').innerHTML = \$('contribs').innerHTML; self.close(); return false"},
+    js        => q{onclick="window.opener.document.getElementById('contribs').innerHTML = $('contribs').innerHTML; self.close(); return false"},
     useTable  => 0
 &>
 </div>
