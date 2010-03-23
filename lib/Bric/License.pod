@@ -488,6 +488,8 @@ Friends who have spotted bugs include:
 
 =item * Zdravko Balorda
 
+=item * Vincent Stemen
+
 =back
 
 Bricolage's translation team:

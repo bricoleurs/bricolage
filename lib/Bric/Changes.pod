@@ -173,6 +173,13 @@ when searching for aliased stories. Thanks to Zdravko Balorda for the catch
 Fixed issue with the use of C<findElementsByClass()> when used with Prototype
 1.6.0.3. Thanks to Adrian Yee for the report and suggested fix. [David]
 
+=item *
+
+Subelements can once again be added to media documents when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is enabled without
+getting the error "Please select a primary category." Broken in 1.11.3. Thanks
+to Vincent Stemen for the report (Bug #143). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
