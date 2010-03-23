@@ -180,6 +180,17 @@ C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is enabled without
 getting the error "Please select a primary category." Broken in 1.11.3. Thanks
 to Vincent Stemen for the report (Bug #143). [David]
 
+=item *
+
+The field type profile now properly validates code select code and lets the
+user know if it's not valid. [David]
+
+=item *
+
+The validation of code select field code is now consistent between the element
+type profile, the field type profile, and the SOAP element type interface.
+Thanks to Krzysztof Rudnik for the report (Bug #140). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)

@@ -7,7 +7,7 @@ use constant CLASS_KEY => 'field_type';
 use strict;
 use Bric::App::Event qw(log_event);
 use Bric::App::Authz qw(:all);
-use Bric::App::Util qw(:history);
+use Bric::App::Util qw(:history :elem);
 
 my $type = CLASS_KEY;
 my $disp_name = 'Field';
@@ -70,6 +70,10 @@ sub save : Callback {
             $set_meta_string->($ed, $f, $param);
         }
 
+        for my $f (qw(multiple)) {
+            $set_meta_boolean->($ed, $f, $param);
+        }
+
         # The default value for checkboxes is boolean.
         if ($ed->get_widget_type eq 'checkbox') {
             $set_meta_boolean->($ed, 'default_val', $param);
@@ -78,16 +82,9 @@ sub save : Callback {
         # All other default vals are strings.
         else {
             $set_meta_string->($ed, 'default_val', $param);
+            # Return if it's a code select with broken code.
+            return if $ed->get_widget_type eq 'codeselect' && ! eval_codeselect $param->{vals};
         }
-
-        for my $f (qw(multiple)) {
-            $set_meta_boolean->($ed, $f, $param);
-        }
-
-        # The occurrence specs are string variables
-        #for my $f (qw(min_occurrence max_occurrence)) {
-        #    $set_meta_string->($ed, $f, $param);
-        #}
 
         $self->add_message(qq{$disp_name profile "[_1]" saved.}, $name);
         log_event("$type\_save", $ed);
