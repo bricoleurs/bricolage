@@ -40,7 +40,7 @@ For SSL also install mod_ssl or (on Apache 1 only apache-ssl).
 
 =item 3
 
-Install PostgreSQL 7.3 or greater (8.1+ preferred) or MySQL 5.0.3 or greater.
+Install PostgreSQL 8.1 or greater or MySQL 5.0.3 or greater.
 
 =item 4
 

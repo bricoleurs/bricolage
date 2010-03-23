@@ -90,7 +90,7 @@ unless (
     hard_fail(
         "Required software not found:\n\n",
         ($RESULTS{PG} or ($REQ{DB_TYPE} eq 'mysql')) ? '' :
-            "\tPostgreSQL >= 7.3.0       (http://postgresql.org)\n",
+            "\tPostgreSQL >= 8.1.0       (http://postgresql.org)\n",
         ($RESULTS{MYSQL} or ($REQ{DB_TYPE} eq 'Pg')) ? '' :
             "\tMySQL client >= 4.1.0     (http://mysql.com)\n",
         ($RESULTS{APACHE} or ($REQ{HTTPD_VERSION} eq 'apache2')) ? '' :
@@ -114,7 +114,7 @@ exit 0;
 
 
 sub find_pg {
-    print "Looking for PostgreSQL with version >= 7.3.0...\n";
+    print "Looking for PostgreSQL with version >= 8.1.0...\n";
 
     # find PostgreSQL by looking for pg_config.
     my @paths = (split(", ", get_default("PG_CONFIG_PATH")), path);
@@ -157,8 +157,8 @@ sub find_pg {
     ) unless defined $x and defined $y;
     $z ||= 0;
     return soft_fail(
-        "Found old version of Postgres: $x.$y.$z - 7.3.0 or greater required."
-    ) unless (($x > 7) or ($x == 7 and $y >= 3));
+        "Found old version of Postgres: $x.$y.$z - 8.1.0 or greater required."
+    ) unless ($x > 8 or ($x == 8 and $y >= 1));
     print "Found acceptable version of Postgres: $x.$y.$z.\n";
 
     $REQ{PG_VERSION} = [$x,$y,$z];

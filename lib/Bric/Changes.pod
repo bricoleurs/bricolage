@@ -79,6 +79,11 @@ associate with assets. It has been set to 2 to make it more responsive to
 sites with very large numbers of categories, but most folks only need it set
 to 1. [David]
 
+=item *
+
+Now require PostgreSQL 8.1 or higher. We will no longer support 8.0 or lower.
+[David]
+
 =back
 
 =head2 Bug Fixes
@@ -342,14 +347,6 @@ underscores don't exist:
 =back
 
 [David]
-
-=item *
-
-Fixed a compatibility issue in
-L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
-C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
-thread-safety reasons." This change backward-compatible with older versions of
-XML::LibXML. [David]
 
 =back
 
@@ -921,6 +918,14 @@ Double-clicking an asset on a desk to check it into that desk no longer causes
 the asset to drop off the desk. It will only drop off if it's being checked
 into a different desk (Bug #97). [David]
 
+=item *
+
+Fixed a compatibility issue in
+L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
+C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
+thread-safety reasons." This change backward-compatible with older versions of
+XML::LibXML. [David]
+
 =back
 
 =head1 Version 1.11.1 (2008-10-03)
@@ -1166,7 +1171,7 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =over
 
-=item * Fields and subelements in the story, media, and category profiles
+=item * Fields and subelements in the story and media profiles
 
 =item * Keywords in the story, media, and category profiles
 
@@ -1188,14 +1193,14 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item *
 
-Fields and subelements in the story and media profiles are displayed
-recursively, so a story's entire contents can be edited from one screen, as
-opposed to one screen per subelement as it was previously.
+Fields and subelements in the story and media profiles are displayed in full,
+so a story's entire contents can be edited from one screen, as opposed to one
+screen per subelement as it was previously.
 
 =item *
 
 The right side of desk items has been redesigned. Icons are used because they
-save space. and they finally allow assets to be moved between desks from the
+save space, and they finally allow assets to be moved between desks from the
 Workspace, and assets to be checked in to any desk from the Desk view. The
 "and Publish" and "and Shelve" options have also been added. Additionally, you
 have the option to immediately publish assets on publish desks, or schedule
@@ -1242,16 +1247,6 @@ Added the new C<BLOB_SEARCH> F<bricolage.conf> directive, which enables data
 text searches in the UI to search paragraph-type fields as well as shorter
 header-type fields. [David]
 
-=item *
-
-When editing a field type, if a numeric value is set to an empty value, it
-will be set to 0 rather than retaining its previous value. [David]
-
-=item *
-
-The expire information for sources is now localized in the list view (the
-Sources Manager). [David]
-
 =back
 
 =head2 Improvements
@@ -1294,6 +1289,16 @@ bit that required the user to be root, and is required for compatibility with
 "ident" authentication. The default is to not become the database system user,
 although C<make install> may still need to be run as the super user in order
 to install files in their proper locations. [Brian Smith and David]
+
+=item *
+
+When editing a field type, if a numeric value is set to an empty value, it
+will be set to 0 rather than retaining its previous value. [David]
+
+=item *
+
+The expire information for sources is now localized in the list view (the
+Sources Manager). [David]
 
 =back
 
