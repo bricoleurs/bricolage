@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Name
 
 Bric::Changes - Bricolage Changes
@@ -190,6 +192,12 @@ user know if it's not valid. [David]
 The validation of code select field code is now consistent between the element
 type profile, the field type profile, and the SOAP element type interface.
 Thanks to Krzysztof Rudnik for the report (Bug #140). [David]
+
+=item *
+
+Media no longer throw the exception “Can't call method "write" on an undefined
+value” when L<Imager> is doesn't recognize an image file format. Thanks to
+Matt Rolf for the report (Bug #146). [David]
 
 =back
 

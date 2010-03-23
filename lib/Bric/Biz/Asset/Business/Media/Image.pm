@@ -695,7 +695,7 @@ sub find_or_create_alternate {
 =item my $created_ok = $image->create_thumbnail
 
 Creates a thumbnail image from the supplied image object. Returns 1 on
-successful completion or error string if it fails.
+successful completion and C<undef> on failure.
 
 B<Throws:> NONE.
 
@@ -724,7 +724,7 @@ sub create_thumbnail {
                 type    => 'min',
             );
         },
-    });
+    }) or return;
 
     # Save the image or die.
     my $thumbfile = $self->_thumb_file;
