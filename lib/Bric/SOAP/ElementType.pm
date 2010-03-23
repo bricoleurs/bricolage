@@ -8,6 +8,7 @@ use Bric::Biz::ElementType;
 use Bric::Biz::ATType;
 use Bric::Biz::Site;
 use Bric::App::Session qw(get_user_id);
+use Bric::App::Util    qw(:elem :msg);
 use Bric::App::Authz   qw(chk_authz READ);
 use Bric::App::Event   qw(log_event);
 use Bric::Util::Fault  qw(throw_ap throw_dp);
@@ -639,14 +640,8 @@ sub load_asset {
               unless defined $field->{key_name};
 
             # Verify the code if it's a codeselect
-            # XXX: triplicated now... (cf. comp/widgets/profile/displayAttrs.mc
-            # and lib/Bric/App/Callback/Profile/FormBuilder.pm)
             if ($field->{widget_type} eq 'codeselect') {
-                my $code = $field->{options};
-                my $items = eval "$code";
-                unless (ref $items eq 'ARRAY' and !(@$items % 2)) {
-                    throw_dp "Invalid codeselect code (didn't return an array ref of even size)";
-                }
+                throw_dp get_msg unless eval_codeselect $field->{options};
             }
 
             # get a data object

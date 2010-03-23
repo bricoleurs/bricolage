@@ -536,10 +536,7 @@ $add_new_attrs = sub {
             $$no_save = 1;
         } else {
             if ($param->{fb_type} eq 'codeselect') {
-                # XXX: change if comp/widgets/profile/displayAttrs.mc changes..
-                my $code = $param->{fb_vals};
-                my $items = eval_codeselect($code);
-                unless (ref $items eq 'HASH' or ref $items eq 'ARRAY') {
+                unless ( eval_codeselect $param->{fb_vals} ) {
                     $$no_save = 1;
                     return;
                 }
