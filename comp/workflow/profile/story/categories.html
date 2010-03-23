@@ -1,3 +1,27 @@
+<& /widgets/wrappers/header.mc,
+    title => 'Edit Categories',
+    context => $context . $r->pnotes('story_prof|title') . ' | Categories'
+&>
+<% $content %>
+
+<& /widgets/wrappers/footer.mc &>
+<%once>;
+my $type = 'element';
+my $disp = get_disp_name('story');
+my $context = "Workflow | Profile | $disp | ";
+</%once>
+<%args>
+$id => undef
+</%args>
+<%init>
+# Do any redirects first.
+do_queued_redirect();
+
+my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
+                        id      => $id,
+                        section => 'categories',
+                        param => \%ARGS);
+</%init>
 <%doc>
 ###############################################################################
 
@@ -13,41 +37,3 @@ factored out into an association.html component.)
 
 =cut
 </%doc>
-
-%#-- Once Section --#
-<%once>;
-my $type = 'element';
-my $disp = get_disp_name('story');
-my $context = "Workflow | Profile | $disp | ";
-</%once>
-
-%#-- Args Section --#
-<%args>
-$id => undef
-</%args>
-
-%#-- Init Section --#
-<%init>
-# Do any redirects first.
-do_queued_redirect();
-
-my $content = $m->scomp('/widgets/story_prof/story_prof.mc',
-                        id      => $id,
-                        section => 'categories',
-                        param => \%ARGS);
-</%init>
-
-%#-- Begin HTML --#
-
-<& /widgets/wrappers/header.mc,
-    title => 'Edit Categories',
-    context => $context . $r->pnotes('story_prof|title') . ' | Categories'
-&>
-<form action="<% $r->uri %>" method="post" name="theForm">
-<% $content %>
-</form>
-
-<& /widgets/wrappers/footer.mc &>
-
-%#-- End HTML --#
-

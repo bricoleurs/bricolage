@@ -1,3 +1,4 @@
+<form action="<% $r->uri %>" method="post" name="theForm">
 <& '/widgets/wrappers/table_top.mc',
     caption => 'Current Contributors'
 &>
@@ -30,7 +31,8 @@
     useTable  => 0
 &>
 </div>
-
+</form>
+<form action="<% $r->uri %>" method="post" name="searchForm">
 <& /widgets/search/search.mc,
    object       => 'contrib',
    field        => 'lname',
@@ -38,6 +40,7 @@
    use_form_tag => 0,
    state_key    => "$asset_type\_contrib",
 &>
+</form>
 
 <& '/widgets/wrappers/table_top.mc', caption => 'Choose Contributors' &>
     <& /widgets/listManager/listManager.mc,

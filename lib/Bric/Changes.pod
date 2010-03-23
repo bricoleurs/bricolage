@@ -199,6 +199,17 @@ Media no longer throw the exception “Can't call method "write" on an undefined
 value” when L<Imager> is doesn't recognize an image file format. Thanks to
 Matt Rolf for the report (Bug #146). [David]
 
+=item *
+
+Deleting contributors in the contibutor popup window now works the same as it
+does when deleting them in the story or media profile. [David]
+
+=item *
+
+Hitting the "enter" key when searching for contributors in the contributor
+popup no longer closes the window, but properly submits the search. Thanks to
+Matt Rolf for the report (Bug #147).
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
