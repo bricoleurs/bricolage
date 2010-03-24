@@ -86,6 +86,16 @@ to 1. [David]
 Now require PostgreSQL 8.1 or higher. We will no longer support 8.0 or lower.
 [David]
 
+=item *
+
+The contributor popup now submits the updated list of contributors to
+Bricolage, which updates them in the document and returns the updated list of
+contributors. That list then updates the contributors section of the document
+profile. Thanks to this change, editing contributors twice in a document
+without saving in between no longer causes the changes from the first edit to
+be forgotten. It also allows any changes to contributor order to in the popup
+to be properly updated in the document profile. [David]
+
 =back
 
 =head2 Bug Fixes

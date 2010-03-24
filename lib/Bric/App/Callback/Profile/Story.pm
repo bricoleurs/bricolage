@@ -675,6 +675,19 @@ sub leave_category : Callback {
     pop_page();
 }
 
+sub save_contributors : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $story  = get_state_data($widget, 'story');
+    my $params  = $self->params;
+    $self->_handle_contributors($story, $params, $widget);
+    # Set up for execution of /widgets/profile/contributors/_list.html
+    $params->{widget}     = $widget;
+    $params->{asset}      = $story;
+    $params->{asset_type} = 'story';
+    $params->{contribs}   = $story->get_contributors;
+}
+
 ### end of callbacks
 
 sub clear_my_state {
@@ -932,14 +945,6 @@ sub _handle_contributors {
             delete $existing->{$id};
             log_event('story_del_contrib', $story,
                       { Name => $contrib->get_name });
-        }
-        if (scalar @to_delete > 1) {
-            $self->add_message('Contributors disassociated.');
-        } else {
-            $self->add_message(
-                'Contributor "[_1]" disassociated.',
-                $contrib->get_name,
-            );
         }
     }
 

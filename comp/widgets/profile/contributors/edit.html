@@ -25,9 +25,10 @@
 &>
 <& "/widgets/buttons/submit.mc",
     disp      => 'Save',
-    name      => 'save',
+    widget    => $widget,
+    cb        => 'save_contributors_cb',
     button    => 'save_red',
-    js        => q{onclick="window.opener.document.getElementById('contribs').innerHTML = $('contribs').innerHTML; self.close(); return false"},
+    js        => qq{onclick="updateContribs(this.form, '$widget'); return false"},
     useTable  => 0
 &>
 </div>

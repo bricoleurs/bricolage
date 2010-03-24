@@ -785,6 +785,19 @@ sub save_related : Callback {
     }
 }
 
+sub save_contributors : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $media  = get_state_data($widget, 'media');
+    my $params  = $self->params;
+    $self->_handle_contributors($media, $params, $widget);
+    # Set up for execution of /widgets/profile/contributors/_list.html
+    $params->{widget}     = $widget;
+    $params->{asset}      = $media;
+    $params->{asset_type} = 'media';
+    $params->{contribs}   = $media->get_contributors;
+}
+
 ### end of callbacks ##########################################################
 
 sub clear_my_state {

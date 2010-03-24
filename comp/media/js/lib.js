@@ -193,6 +193,24 @@ function deleteContrib(button) {
     alternateTableRows('contribs');
 }
 
+// Used by the contributor popup to submit the updated contributors and to
+// update the contributors list in the main window with the updated list
+// returned by the server.
+function updateContribs(form, widget) {
+    new Ajax.Updater(
+        { success: window.opener.document.getElementById('contribs') },
+        '/widgets/profile/contributors/_list.html',
+        {
+            asynchronous: false,
+            parameters: Form.serialize(form),
+            onSuccess: function(r) { window.close(); },
+            onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
+            on409: Bricolage.handleConflict
+        }
+    );
+}
+
 /*
 returns number of words in form field, based on number of spaces found
 */
