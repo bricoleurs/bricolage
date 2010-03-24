@@ -212,7 +212,8 @@ Matt Rolf for the report (Bug #146). [David]
 =item *
 
 Deleting contributors in the contibutor popup window now works the same as it
-does when deleting them in the story or media profile. [David]
+does when deleting them in the story or media profile: without a submit, but
+by simply removing the contributor from the DOM. [David]
 
 =item *
 
