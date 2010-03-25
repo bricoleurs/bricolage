@@ -96,6 +96,13 @@ without saving in between no longer causes the changes from the first edit to
 be forgotten. It also allows any changes to contributor order to in the popup
 to be properly updated in the document profile. [David]
 
+=item *
+
+When hovering over the names of custom fields in the element type or
+contributor type proile, the cursor displays as a "move" cursor, to indicate
+that one can drag the field names in order to change their order. This
+corresponds to the interface for reordering fields in documents. [David]
+
 =back
 
 =head2 Bug Fixes
