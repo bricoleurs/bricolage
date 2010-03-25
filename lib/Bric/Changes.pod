@@ -221,6 +221,11 @@ Hitting the "enter" key when searching for contributors in the contributor
 popup no longer closes the window, but properly submits the search. Thanks to
 Matt Rolf for the report (Bug #147).
 
+=item *
+
+Contributor type fields can once again be rordered and deleted. Thanks to
+Krzysztof Rudnik for the report (Bug #139). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
