@@ -868,8 +868,8 @@ Profile to error out. Similarly fixed bug 1461 for Find Media (Bug #1458).
 =item *
 
 Fixed issue where auto-completion was jumping around. Slightly modified from
-code by Jason Gill and Janos Novak at
-L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
+L<code by Jason Gill and Janos
+Novak|http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
 (Bug #1460). [Scott]
 
 =item *
@@ -1178,8 +1178,8 @@ listed to, for example, only today's job or only failed jobs. [Scott]
 
 =item *
 
-Added support for the FCKeditor WYSIWYG editor. See
-L<http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
+Added support for the FCKeditor WYSIWYG editor. See the L<FCKeditor
+site|http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
 Technologies. [David]
 
 =item *
@@ -1618,9 +1618,10 @@ The C<bric_media_upload> app works again. [David]
 =item *
 
 Added an "TraceEnable off" entry to the config in
-L<Bric::App::ApacheConfig|Bric::App::ApacheConfig>> for Apache to neutralize
-the potentially malicious use of HTTP TRACE requests.
-L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet, Alex Krohn]
+L<Bric::App::ApacheConfig|Bric::App::ApacheConfig> for Apache to neutralize
+the potentially malicious use of HTTP TRACE requests. See L<this
+report|http://www.apacheweek.com/issues/03-01-24> for details. [Dave Beaudet,
+Alex Krohn]
 
 =item *
 
@@ -5497,8 +5498,8 @@ a template. [Keith Grennan]
 =item *
 
 The JavaScript that validates form contents once again works with htmlArea,
-provided htmlArea itself is patched. See
-L<http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=69750&atid=525656>
+provided htmlArea itself is patched. See L<this
+ticket|http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=69750&atid=525656>
 for the htmlArea patch. As of this writing, you must run the version of
 htmlArea in CVS. [David & Marshall]
 
@@ -5883,9 +5884,9 @@ for an example. [David]
 =item *
 
 Bricolage now runs under a DSO C<mod_perl> as long as it uses a Perl compiled
-with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See
-L<http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used> for
-details. Thanks to Marshall Roch for finding that link. [David]
+with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See the L<mod_perl DSO
+documentation|http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used>
+for details. Thanks to Marshall Roch for finding that link. [David]
 
 =item *
 
@@ -5924,8 +5925,9 @@ Removed Bric::FAQ, since it is now maintained on the Website, instead. [David]
 
 Updated Bric::Admin to suggest that PostgreSQL's C<initdb> be run with
 C<--no-locale> so as to avoid collation issues with non-Western characters.
-See this discussion for more information:
-L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
+See L<this
+discussion|http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
+for more information.
 
 =item *
 
@@ -7004,11 +7006,11 @@ Added support for icons for all media documents when the C<USE_THUMBNAILS>
 F<bricolage.conf> directive is enabled. These rely on the presence of PNG icon
 files for each MIME type in F<comp/media/mime>. Only one such icons is
 distributed with Bricolage, F<comp/media/mime/none.png> (borrowed from the KDE
-project under L<http://artist.kde.org/new/license.html#others>), which is the
-default icon when the MIME type of a media file is unknown or when no icon
-file exists for the MIME type of the media file. Administrators are free to
-add their own icons, and the C<copy_gnome_icons> script in F<contrib> makes it
-easy to use GNOME icons. [David]
+project under L<this license|http://artist.kde.org/new/license.html#others>),
+which is the default icon when the MIME type of a media file is unknown or
+when no icon file exists for the MIME type of the media file. Administrators
+are free to add their own icons, and the C<copy_gnome_icons> script in
+F<contrib> makes it easy to use GNOME icons. [David]
 
 =item *
 
@@ -11742,8 +11744,8 @@ of options isn't arbitrarily limited. [Matt Vella]
 The group API has been approximately 75% rewritten. The goal was to optimize
 its performance, since group activity proved to be a serious bottleneck to
 Bricolage performance. Those interested in the nitty-gritty details of the
-rewrite can read about them here:
-L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
+rewrite can read about them
+L<here|http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
 
 =back
 

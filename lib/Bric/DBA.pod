@@ -66,7 +66,7 @@ multiple clients live.
 Many other combinations of authentication settings are of course possible via
 the flexible pg_hba.con configuration syntax, but the above are our recommended
 settings for ensuring the security and integrity of your data. Refer to the
-PostgreSQL documentation at L<http://www.postgresql.org/> for
+L<PostgreSQL documentation|http://www.postgresql.org/docs/current/> for
 more details, including other levels of encryption.
 
 =head1 Backup and Restore
@@ -130,8 +130,8 @@ PostgreSQL server B<must> be shut down during the backup or during restoration.
 Second, you can't do selective backups of databases or tables, only the whole
 database cluster.
 
-For more detail on PostgreSQL backup and restore, please consult the PostgreSQL
-documentation at L<http://www.postgresql.org/>.
+For more detail on PostgreSQL backup and restore, please consult the
+L<PostgreSQL documentation|http://www.postgresql.org/docs/current/>.
 
 =head1 Write-Ahead Logging (WAL)
 
@@ -194,11 +194,13 @@ C<192 * 1024 * 1024 = 201326592>):
 
   kernel.shmmax = 201326592
 
-These settings can then be enabled by running C</sbin/sysctl -p>. See
-L<http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
-for more information on shared buffers and changing your operating system's
-shared buffer settings. Now you can update your F<postgresql.conf> file's
-shared memory buffers setting to take advantage of this shared memory:
+These settings can then be enabled by running C</sbin/sysctl -p>. See the
+PostgreSQL L<Kernel
+Resources|http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
+documentation for more information on shared buffers and changing your
+operating system's shared buffer settings. Now you can update your
+F<postgresql.conf> file's shared memory buffers setting to take advantage of
+this shared memory:
 
   shared_buffers = 24576
 
@@ -265,8 +267,8 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
 The C<autovacuum> directive turns on the autovacuum daemon included in
 PostgreSQL. We strongly recommend that you take advantage of the autovacuum
-feature in order to keep database performance optimal. See
-L<http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
+feature in order to keep database performance optimal. See the L<autovacuum
+documenation|http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
 for details. To enable autovacuum, you I<must> set these direcives:
 
   stats_start_collector = on
@@ -355,13 +357,12 @@ paramter alone.
 
 =over
 
-=item L<http://www.pgexperts.com/document.html?id=34>
+=item L<The Mighty GUCS|http://www.pgexperts.com/document.html?id=34>
 
-"The Mighty GUCS" package, by Josh Berkus. Includes annotated GUCs (PostgreSQL
-configuration directives), presentation slides, and F<postgresql.conf.simple>
-updated for version 8.4.
+By Josh Berkus. Includes annotated GUCs (PostgreSQL configuration directives),
+presentation slides, and F<postgresql.conf.simple> updated for version 8.4.
 
-=item L<http://archives.postgresql.org/pgsql-performance/>
+=item L<pgsql-performance archives|http://archives.postgresql.org/pgsql-performance/>
 
 Search the archives of the pgsql-performance list.
 
