@@ -29,7 +29,7 @@ use warnings;
 use base qw(Bric::Test::Base);
 use File::Find;
 use File::Spec::Functions;
-use Test::Pod;
+use Test::Pod 1.42;
 
 ##############################################################################
 # Start by getting a list of the files we want to check.
