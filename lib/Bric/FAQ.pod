@@ -4,7 +4,7 @@ Bric::FAQ - Bricolage Frequently Asked Questions
 
 =head1 Description
 
-This document is no longer maintaineed. The new home for the Bricolage FAQ
-is L<http://www.bricolage.cc/docs/faq/>.
+This document is no longer maintained. See the new home for the L<Bricolage
+FAQ|http://www.bricolagecms.org/docs/faq/>.
 
 =cut

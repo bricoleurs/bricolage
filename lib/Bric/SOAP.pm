@@ -122,17 +122,16 @@ specification described above.
 
 =item SOAP
 
-Bricolage provides a SOAP 1.1 compatible interface. See
-L<http://www.w3.org/TR/SOAP> for the SOAP specification. The SOAP server uses
-use the SOAP::Lite (L<http://www.soaplite.com>) for its SOAP implementation.
-Clients may use any SOAP 1.1 compatible library, although only SOAP::Lite
-clients have been tested during development.
+Bricolage provides a L<SOAP 1.1|http://www.w3.org/TR/SOAP> compatible
+interface. The SOAP server uses L<SOAP::Lite|http://www.soaplite.com> for its
+SOAP implementation. Clients may use any SOAP 1.1 compatible library, although
+only SOAP::Lite clients have been tested during development.
 
 =item XML Schema
 
-The format of XML documents used by the SOAP interface are specified in XML
-Schema format. See L<http://www.w3.org/XML/Schema> for more information on
-this format. The schema is L<provided below|"XML Schema For Asset Documents">.
+The format of XML documents used by the SOAP interface are specified in L<XML
+Schema|http://www.w3.org/XML/Schema> format. The schema is L<provided
+below|"XML Schema For Asset Documents">.
 
 =back
 

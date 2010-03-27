@@ -169,8 +169,8 @@ as UTF-8. For example:
 
   $sub = mb_substr($element->get_value('deck'), 0, 255, 'utf-8');
 
-See L<http://us2.php.net/manual/en/ref.mbstring.php> for more information on
-handling multibyte characters in PHP.
+See the L<Multibyte String Functions
+manual|http://us2.php.net/manual/en/ref.mbstring.php> for more information.
 
 B<Throws:> NONE.
 

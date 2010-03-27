@@ -55,7 +55,7 @@ licenses:
 
 =item * 
 
-The Nuvola icon set, from David Vignoni (L<http://icon-king.com>), is covered
+The Nuvola icon set, from L<David Vignoni|http://icon-king.com>, is covered
 under the GNU Lesser General Public License:
 
 =over
@@ -78,10 +78,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =item *
 
-The Tango icon set, from the Tango Desktop Project 
-(L<http://tango.freedesktop.org>), is covered under the 
-Creative Commons Attribution Share-Alike license: 
-L<http://creativecommons.org/licenses/by-sa/2.5/>
+The Tango icon set, from the L<Tango Desktop
+Project|http://tango.freedesktop.org>, is covered under the L<Creative Commons
+Attribution Share-Alike
+license|http://creativecommons.org/licenses/by-sa/2.5/>.
 
 =back
 

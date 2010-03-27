@@ -76,8 +76,7 @@ have an existing person record as an existing contributor or user.
 
 =item *
 
-Resolve the "Adding Element and hitting Cancel" issue (See
-L<http://bugzilla.bricolage.cc/show_bug.cgi?id=3>).
+Resolve the "Adding Element and hitting Cancel" issue.
 
 =item *
 
@@ -191,8 +190,9 @@ etc.).
 
 =item *
 
-Revamp the element system. See the proposed functional specification here:
-L<http://bricolage.cc/docs/design/ElementRevision.html>.
+Revamp the element system. See the
+L<specification|http://bricolagecms.org/docs/design/ElementRevision.html> for
+details.
 
 =item *
 
@@ -484,9 +484,10 @@ Integrate with WebDAV (Slide? mod_dav?).
 
 =item *
 
-Add full-text indexing of the database. See
-L<http://techdocs.postgresql.org/techdocs/fulltextindexing.php>
-for one approach using PostgreSQL.
+Add full-text indexing of the database. It might be nice to allow different
+search engines to work via plugins, but probably the simplest thing to do is
+to use L<PostgreSQL's full text
+search|http://www.postgresql.org/docs/current/static/textsearch.html> support.
 
 =item *
 
