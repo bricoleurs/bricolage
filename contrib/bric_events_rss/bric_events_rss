@@ -42,7 +42,7 @@ Value of the RSS <description> field. Defaults to "Bricolage events feed".
 
 =head2 --rss-link "<link url>"
 
-Value of the RSS <link> field. Defaults to "http://www.bricolage.cc".
+Value of the RSS <link> field. Defaults to "http://www.bricolagecms.org".
 
 =head1 Dependencies
 
@@ -127,7 +127,7 @@ my %params = (
     Limit => $limit || '20'
 );
 $rss_title = $rss_title || "Bricolage events feed";
-$rss_link = $rss_link || "http://www.bricolage.cc";
+$rss_link = $rss_link || "http://www.bricolagecms.org";
 $rss_description = $rss_description || "Bricolage events feed";
 
 my $events = Bric::Util::Event->list(\%params);

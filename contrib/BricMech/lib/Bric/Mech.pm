@@ -1267,7 +1267,7 @@ __END__
 =head1 See Also
 
 L<WWW::Mechanize|WWW::Mechanize>,
-http://bricolage.cc/
+http://bricolagecms.org/
 
 =head1 Copyright and License
 

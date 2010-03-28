@@ -29,7 +29,7 @@ OPTIONS
     feed".
 
   --rss-link "<link url>"
-    Value of the RSS <link> field. Defaults to "http://www.bricolage.cc".
+    Value of the RSS <link> field. Defaults to "http://www.bricolagecms.org".
 
 DEPENDENCIES
   $BRICOLAGE_ROOT
