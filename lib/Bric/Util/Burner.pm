@@ -1854,7 +1854,7 @@ sub best_uri {
             # the URI.
             $oc = $ba->get_primary_oc;
             my $site = Bric::Biz::Site->lookup({ id => $ba->get_site_id });
-            $uri = $oc->get_protocol . $site->get_domain_name;
+            $uri = ($oc->get_protocol || 'http://') . $site->get_domain_name;
         }
     }
 

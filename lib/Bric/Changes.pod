@@ -99,6 +99,17 @@ The validation of code select field code is now consistent between the element
 type profile, the field type profile, and the SOAP element type interface.
 Thanks to Krzysztof Rudnik for the report (Bug #140). [David]
 
+=item *
+
+Setting the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive to "url" no
+longer breaks bulk edit. Thanks to Phillip for the report (Bug #150). [David]
+
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now works when creating a
+link to a story on a different site and the protocol for the output channel is
+not set. It defaults to "http://" for the protocol. [David]
+
 =back
 
 =head1 VERSION 1.10.9 (2010-01-28)
