@@ -1,6 +1,6 @@
                        Bricolage Content Management System
 
-                     Version 1.11.4 - Beta Release for 2.0.0
+                                 Version 2.0.0
 
 Bricolage is a full-featured, enterprise-class content management system. It
 offers a browser-based interface for ease-of use, a full-fledged templating
@@ -52,11 +52,6 @@ If you'd like to contribute to Bricolage, see:
 
   Bric::Hacker
   Bric::ToDo
-
-KNOWN ISSUES
-============
-
-* None at this time
 
 Enjoy!
 
