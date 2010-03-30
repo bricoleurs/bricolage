@@ -37,10 +37,6 @@ use base qw(Bric::SOAP::Asset);
 use constant DEBUG => 0;
 require Data::Dumper if DEBUG;
 
-# this is needed by Template.pl so it can test create() and update()
-# without damaging the system.
-use constant ALLOW_DUPLICATE_TEMPLATES => 0;
-
 =head1 Name
 
 Bric::SOAP::Template - SOAP interface to Bricolage templates.
@@ -671,57 +667,48 @@ sub load_asset {
         # get base template object
         my $template;
         unless ($update) {
-            # Set the template type. It shouldn't be updated for an existing
-            # template, only set for a new template.
-            $init{tplate_type} =
-              Bric::Biz::Asset::Template->get_tplate_type_code($tdata->{type});
-            # create empty template
-            $template = Bric::Biz::Asset::Template->new(\%init);
-            throw_ap(error => __PACKAGE__ .
-                       "::create : failed to create empty template object.")
-              unless $template;
-            print STDERR __PACKAGE__ .
-                "::create : created empty template object\n"
+            # Check to see if the template exists but is deactivated.
+            ($template) = Bric::Biz::Asset::Template->list({
+                active            => 0,
+                output_channel_id => $init{output_channel__id},
+                category_id       => $init{category_id},
+                site_id           => $init{site_id},
+                ($tdata->{type} eq 'Element Template'
+                     ? (element_type_id => $init{element_type}->get_id)
+                     : ()
+                )
+            });
+
+            if ($template) {
+                # We're re-activating an existing template.
+                $template->activate;
+                # Basically an update now.
+                $update = 1;
+                $template->checkout({ user__id => get_user_id });
+                $template->save();
+                log_event('template_checkout', $template);
+                # update %init fields
+                $template->_set([keys(%init)],[values(%init)]);
+            } else {
+                # Set the template type. It shouldn't be updated for an existing
+                # template, only set for a new template.
+                $init{tplate_type} = Bric::Biz::Asset::Template->get_tplate_type_code(
+                    $tdata->{type}
+                );
+                # create empty template
+                $template = Bric::Biz::Asset::Template->new(\%init);
+                throw_ap(
+                    error => __PACKAGE__ . "::create : failed to create empty template object."
+                ) unless $template;
+                print STDERR __PACKAGE__ . "::create : created empty template object\n"
                     if DEBUG;
+                log_event('template_new', $template);
+            }
 
             # is this is right way to check create access for template?
             throw_ap(error => __PACKAGE__ . " : access denied.")
                 unless chk_authz($template, CREATE, 1, $desk->get_asset_grp);
 
-            # check that there isn't already an active template with the same
-            # output channel and file_name (which is composed of category,
-            # file_type and element name).
-            my $found_dup = 0;
-            my $file_name  = $template->get_file_name;
-            my @list = Bric::Biz::Asset::Template->list_ids(
-                              { output_channel__id => $init{output_channel__id},
-                                file_name => $file_name      });
-            if (@list) {
-                $found_dup = 1;
-            } else {
-                # Arrgh.  This is the only way to search all checked out
-                # template assets.  According to Garth this isn't a
-                # problem...  I'd like to show him this code sometime and see
-                # if he still thinks so!
-                my @user_ids = Bric::Biz::Person::User->list_ids({});
-                foreach my $user_id (@user_ids) {
-                    @list = Bric::Biz::Asset::Template->list_ids(
-                           { output_channel__id => $init{output_channel__id},
-                             file_name          => $file_name,
-                             user__id           => $user_id   });
-                    if (@list) {
-                        $found_dup = 1;
-                        last;
-                    }
-                }
-            }
-
-            throw_ap(error => __PACKAGE__ . "::create : found duplicate template for "
-                       . "file_name \"$file_name\" and "
-                       . "output channel \"$tdata->{output_channel}\".")
-              if $found_dup and not ALLOW_DUPLICATE_TEMPLATES;
-
-            log_event('template_new', $template);
         } else {
             # updating - first look for a checked out version
             $template = Bric::Biz::Asset::Template->lookup({ id => $id,

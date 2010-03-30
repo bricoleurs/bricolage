@@ -255,6 +255,13 @@ The SOAP interface now sets the published version to the new version of a
 story or media document that is being updated by XML that says the document is
 published and where the published version was not previously set. [David]
 
+=item *
+
+When creating a template via the SOAP interface, if the template in the
+specified output channel, category, and site already exists but is
+deactivated, it will be re-activated and updated instead of throwing an error.
+This matches how the UI works. [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
