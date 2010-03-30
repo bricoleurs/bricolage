@@ -8,7 +8,7 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 1.11.4 ()
+=head1 Version 1.11.4 (2010-03-29)
 
 =head2 New Features
 
@@ -17,8 +17,8 @@ This document lists the Changes to Bricolage introduced with each release.
 =item *
 
 Added the C<--match-title> option to F<contrib/bric_media_upload>. This will
-match the uploading filename against the title of the media object rather than
-the filename [Paul Orrock]
+match the uploading file name against the title of the media object rather than
+the file name [Paul Orrock]
 
 =item *
 
@@ -32,19 +32,19 @@ Added the new Bricolage logo to the user interface. [Phillip Smith]
 
 =item *
 
-When displaying categories associated with a story when the
+When displaying categories associated with a story and the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
 are now displayed in alphabetical order by URI. [David]
 
 =item *
 
 The installer no longer requires that L<Term::ReadPassword> be installed from
-the CPAN before it continues. It will use it if it finds it, but if not
+the CPAN before it continues. It will use it if it finds it, but if not it
 substitutes a simple implementation that does the trick (Bug #136). [David]
 
 =item *
 
-The Source select list when creating or editing a story or media document now
+When creating or editing a story or media document, the Source select list now
 lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
 [David]
 
@@ -53,7 +53,7 @@ lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
 Added the C<SFTP_KEY_TYPE>, C<SFTP_PRIVATE_KEY_FILE> and
 C<SFTP_PUBLIC_KEY_FILE> F<bricolage.conf> directives to to restore key-based
 authentication to the SFTP mover. These were necessary as the old F<SFTP_HOME>
-diretive does not work with the new implementation based on F<Net::SSH2> (Bug
+directive does not work with the new implementation based on F<Net::SSH2> (Bug
 # 127). [Greg Heo]
 
 
@@ -69,17 +69,17 @@ PID file to standard OS locations. Reported by Serge Ivanchenko. [David]
 
 The default location for the FTP server's log files is now the F<log>
 subdirectory of the bricolage root directory, rather than the bricolage root
-directory itself. This is what comments in F<bricoalge.conf> have always
+directory itself. This is what comments in F<bricolage.conf> have always
 suggested, even if L<Bric::Admin> and the code did not. [David]
 
 =item *
 
 Added the C<CATEGORY_MIN_CHARS> AND C<CATEGORY_MIN_CHARS_TMPL>
-F<bricolage.conf> directives. These give adminstrators the ability to control
+F<bricolage.conf> directives. These give administrators the ability to control
 the responsiveness of the autosuggest box for selecting categories to
-associate with assets. It has been set to 2 to make it more responsive to
-sites with very large numbers of categories, but most folks only need it set
-to 1. [David]
+associate with documents and templates. It had been set to 2 to make it more
+responsive to sites with very large numbers of categories, but most folks only
+need it set to 1, which is now the default. [David]
 
 =item *
 
@@ -93,13 +93,13 @@ Bricolage, which updates them in the document and returns the updated list of
 contributors. That list then updates the contributors section of the document
 profile. Thanks to this change, editing contributors twice in a document
 without saving in between no longer causes the changes from the first edit to
-be forgotten. It also allows any changes to contributor order to in the popup
-to be properly updated in the document profile. [David]
+be forgotten. It also allows any changes to the contributor order to in the
+popup to be properly updated in the document profile. [David]
 
 =item *
 
 When hovering over the names of custom fields in the element type or
-contributor type proile, the cursor displays as a "move" cursor, to indicate
+contributor type profile, the cursor displays as a "move" cursor, to indicate
 that one can drag the field names in order to change their order. This
 corresponds to the interface for reordering fields in documents. [David]
 
@@ -130,7 +130,7 @@ a chance to throw a "Too many category objects found" error. [Greg Heo]
 
 =item *
 
-Moved document expriration on deletion from L<Bric::Biz::Asset> to
+Moved document expiration on deletion from L<Bric::Biz::Asset> to
 L<Bric::Biz::Asset::Business> because it's useless for templates and left
 no-op job records lying around when templates were deleted. This code path
 only executes when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf> directive is
@@ -140,13 +140,13 @@ enabled. [David]
 
 Fixed document expiration when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf>
 directive is enabled so that it doesn't try to expire documents that have
-never been published, or media docuemnts that have no URI associatd with them.
+never been published, or media documents that have no URI associated with them.
 Thanks to Aaron Fuleki and Denison University for the report. [David]
 
 =item *
 
 L<Bric::Util::Burner>'s C<publish()> method no longer removes documents from
-workflow after publishing them, as such is the responsbility of the code that
+workflow after publishing them, as such is the responsibility of the code that
 calls publish. The publish callback already did, and now so does the
 L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
 report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
@@ -228,7 +228,7 @@ Matt Rolf for the report (Bug #146). [David]
 
 =item *
 
-Deleting contributors in the contibutor popup window now works the same as it
+Deleting contributors in the contributor popup window now works the same as it
 does when deleting them in the story or media profile: without a submit, but
 by simply removing the contributor from the DOM. [David]
 
@@ -240,7 +240,7 @@ Matt Rolf for the report (Bug #147).
 
 =item *
 
-Contributor type fields can once again be rordered and deleted. Thanks to
+Contributor type fields can once again be reordered and deleted. Thanks to
 Krzysztof Rudnik for the report (Bug #139). [David]
 
 =item *
