@@ -10,6 +10,7 @@
   <tr>
 <%perl>;
   my $field_disp = shift @$data;
+  $sort_params = "&$sort_params" if $sort_params && $sort_params !~ /^[&]/;
   # Output the table header.
   foreach my $i (0..$#{$fields}) {
       my $f = $fields->[$i];
@@ -28,7 +29,7 @@
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
-          $m->out(qq{<a href="$url?listManager|sortBy_cb=$sort_sign$f">} . ($disp || "") . "</a>");
+          $m->out(qq{<a href="$url?listManager|sortBy_cb=$sort_sign$f$sort_params">} . ($disp || "") . "</a>");
       } else {
           $m->out($disp);
       }
@@ -115,6 +116,7 @@ $featured_color
 $empty_search
 $pkg => undef
 $pagination => {}
+$sort_params => ''
 </%args>
 <%init>;
 my $url       = $r->uri;

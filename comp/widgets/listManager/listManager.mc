@@ -330,6 +330,7 @@ $def_sort_field => undef
 $def_sort_order => undef        # Whether to sort in descending order by default
 $cx_filter      => 1            # Make false to override Filter by Site Context.
 $no_pagination  => 0
+$sort_params    => ''           # Extra GET string params to put into sort links.
 </%args>
 <%init>;
 
@@ -474,6 +475,7 @@ $m->comp("$style.mc",
          featured        => \%featured_lookup,
          featured_color  => $featured_color,
          empty_search    => $empty_search,
+         sort_params     => $sort_params,
          pagination      => { curr_page  => $current_page,
                               limit      => $limit,
                               pages      => $pages,

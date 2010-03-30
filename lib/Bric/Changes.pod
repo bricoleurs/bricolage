@@ -233,6 +233,12 @@ Matt Rolf for the report (Bug #147).
 Contributor type fields can once again be rordered and deleted. Thanks to
 Krzysztof Rudnik for the report (Bug #139). [David]
 
+=item *
+
+When relating a story or media document, clicking a column header in the
+search results in the related search popup no longer throws an error. Thanks
+to Phillip for the report (Bug #149). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
