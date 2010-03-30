@@ -262,6 +262,11 @@ specified output channel, category, and site already exists but is
 deactivated, it will be re-activated and updated instead of throwing an error.
 This matches how the UI works. [David]
 
+=item *
+
+Setting the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive to "url" no
+longer breaks bulk edit. Thanks to Phillip for the report (Bug #150). [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)

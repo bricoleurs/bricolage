@@ -2763,9 +2763,7 @@ sub _rel_link {
              my $site  = Bric::Biz::Site->lookup({ id => $doc->get_site_id });
              my $proto = 'http';
              if (my $oc = $doc->get_primary_oc) {
-                 if ($proto = $oc->get_protocol) {
-                     $proto =~ s{[/:]+}{}g;
-                 }
+                 ($proto = $oc->get_protocol || $proto) =~ s{[/:]+}{}g;
              }
              my $uri  = URI->new($doc->get_primary_uri);
              $uri->scheme($proto);
