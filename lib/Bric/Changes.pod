@@ -267,6 +267,12 @@ This matches how the UI works. [David]
 Setting the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive to "url" no
 longer breaks bulk edit. Thanks to Phillip for the report (Bug #150). [David]
 
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now works when creating a
+link to a story on a different site and the protocol for the output channel is
+not set. It defaults to "http://" for the protocol. [David]
+
 =back
 
 =head1 Version 1.11.3 (2010-01-28)
