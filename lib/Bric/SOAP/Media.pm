@@ -809,16 +809,13 @@ sub load_asset {
         $media->_set(\@simple_fields, [ @{$mdata}{@simple_fields} ]);
 
         # almost totally ignoring whatever publish_status is set to
-        if ($update) {
-            if ($media->get_publish_date or $media->get_first_publish_date) {
-                # some publish date is set, so it must've been published
-                $media->set_publish_status(1);
-            } else {
-                $media->set_publish_status($mdata->{publish_status});
-            }
-        } else {
-            # creating, so can't have published it yet
-            $media->set_publish_status(0);
+        $media->set_publish_status(
+            $media->get_publish_date ? 1 : $mdata->{publish_status} || 0
+        );
+
+        # Set published version if it's not set.
+        if ($media->get_publish_status && !$media->get_published_version) {
+            $media->set_published_version($media->get_current_version + 1);
         }
 
         # remove all contributors if updating

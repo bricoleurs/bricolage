@@ -103,6 +103,16 @@ contributor type proile, the cursor displays as a "move" cursor, to indicate
 that one can drag the field names in order to change their order. This
 corresponds to the interface for reordering fields in documents. [David]
 
+=item *
+
+When creating new stories or media via the SOAP interface, Bricolage no longer
+forces the publish status to be set to false, but sets it to true if the the
+publish date is set or the publish status is true in the XML. In such cases,
+it will also set the published version number to version 1. This is to make it
+easier for one to migrate documents from one Bricolage instance to another
+without having to edit the XML to set the publish status to a true value.
+[David]
+
 =back
 
 =head2 Bug Fixes
@@ -238,6 +248,12 @@ Krzysztof Rudnik for the report (Bug #139). [David]
 When relating a story or media document, clicking a column header in the
 search results in the related search popup no longer throws an error. Thanks
 to Phillip for the report (Bug #149). [David]
+
+=item *
+
+The SOAP interface now sets the published version to the new version of a
+story or media document that is being updated by XML that says the document is
+published and where the published version was not previously set. [David]
 
 =back
 
