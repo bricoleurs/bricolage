@@ -59,13 +59,6 @@ use Apache::Log;
 ################################################################################
 
 ################################################################################
-# Constants
-################################################################################
-use constant ERROR_FILE =>
-  Bric::Util::Trans::FS->cat_dir(MASON_COMP_ROOT->[0][1],
-                   Bric::Util::Trans::FS->split_uri(ERROR_URI));
-
-################################################################################
 # Fields
 ################################################################################
 # Public Class Fields
@@ -207,7 +200,7 @@ sub handle_err {
     my ($r, $err) = @_;
 
     $r->uri(ERROR_URI);
-    $r->filename(ERROR_FILE);
+    $r->filename(Bric::App::Handler::ERROR_FILE);
 
     $err = Bric::Util::Fault::Exception::AP->new(
         error => 'Error executing PreviewHandler',

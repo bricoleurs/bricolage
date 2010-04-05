@@ -291,10 +291,8 @@ B<Notes:> NONE.
 sub handle_err {
     my ($r, $err) = @_;
     # Set the filename for the error element.
-    my $uri = $r->uri;
-    (my $fn = $r->filename) =~ s/$uri/${\ERROR_URI}/;
     $r->uri(ERROR_URI);
-    $r->filename($fn);
+    $r->filename(Bric::App::Handler::ERROR_FILE);
 
     $err = Bric::Util::Fault::Exception::AP->new(
         error => 'Error executing AccessHandler',

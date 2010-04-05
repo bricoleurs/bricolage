@@ -110,6 +110,16 @@ The C<best_uri()> method of L<Bric::Util::Burner> now works when creating a
 link to a story on a different site and the protocol for the output channel is
 not set. It defaults to "http://" for the protocol. [David]
 
+=item *
+
+Fixed error handling in the access handler so that it works when a URI is a
+directory. Thanks to Dave Rolsky for the initial patch. [David]
+
+=item *
+
+Updated session error handling to recognize new error message from
+Apache::Session. [Dave Rolsky]
+
 =back
 
 =head1 VERSION 1.10.9 (2010-01-28)
