@@ -287,7 +287,15 @@ sub handle_err {
     my ($r, $err) = @_;
     # Set the filename for the error element.
     my $uri = $r->uri;
-    (my $fn = $r->filename) =~ s/$uri/${\ERROR_URI}/;
+
+    my $fn;
+    if ( -d $r->filename ) {
+        $fn = Bric::Util::Trans::FS->cat_file( $r->filename, ERROR_URI );
+    }
+    else {
+        ($fn = $r->filename) =~ s/$uri/${\ERROR_URI}/;
+    }
+
     $r->uri(ERROR_URI);
     $r->filename($fn);
 
