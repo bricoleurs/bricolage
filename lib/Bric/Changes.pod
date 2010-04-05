@@ -10,6 +10,22 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.0 ()
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed error handling in the access handler so that it works when a URI is a
+directory. Thanks to Dave Rolsky for the initial patch. [David]
+
+=item *
+
+Updated session error handling to recognize new error message from
+Apache::Session. [Dave Rolsky]
+
+=cut
+
 =head1 Version 1.11.4 (2010-03-29)
 
 =head2 New Features
