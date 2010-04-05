@@ -24,7 +24,7 @@ directory. Thanks to Dave Rolsky for the initial patch. [David]
 Updated session error handling to recognize new error message from
 Apache::Session. [Dave Rolsky]
 
-=cut
+=back
 
 =head1 Version 1.11.4 (2010-03-29)
 
