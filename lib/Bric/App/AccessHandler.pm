@@ -49,7 +49,7 @@ use strict;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl :cookies :mod_perl);
+use Bric::Config qw(:err :ssl :cookies :mod_perl :mason);
 use Bric::Util::ApacheConst;
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
@@ -286,18 +286,8 @@ B<Notes:> NONE.
 sub handle_err {
     my ($r, $err) = @_;
     # Set the filename for the error element.
-    my $uri = $r->uri;
-
-    my $fn;
-    if ( -d $r->filename ) {
-        $fn = Bric::Util::Trans::FS->cat_file( $r->filename, ERROR_URI );
-    }
-    else {
-        ($fn = $r->filename) =~ s/$uri/${\ERROR_URI}/;
-    }
-
     $r->uri(ERROR_URI);
-    $r->filename($fn);
+    $r->filename(Bric::App::Handler::ERROR_FILE);
 
     $err = Bric::Util::Fault::Exception::AP->new(
         error => 'Error executing AccessHandler',
