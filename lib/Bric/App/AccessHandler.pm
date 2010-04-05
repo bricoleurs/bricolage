@@ -49,7 +49,7 @@ use strict;
 use Bric::App::Session;
 use Bric::App::Util qw(:redir :history);
 use Bric::App::Auth qw(auth logout);
-use Bric::Config qw(:err :ssl :cookies :mod_perl :mason);
+use Bric::Config qw(:err :ssl :cookies :mod_perl);
 use Bric::Util::ApacheConst;
 use Bric::Util::Cookie;
 use Bric::Util::ApacheUtil qw(unescape_url);
