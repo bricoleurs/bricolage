@@ -42,6 +42,13 @@ the file name [Paul Orrock]
 
 Added the new Bricolage logo to the user interface. [Phillip Smith]
 
+=item
+
+The buttons once again work in the category browser when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
+Krzysztof Rudnik for the report (Bug #155). [David]
+
+
 =back
 
 =head2 Improvements
