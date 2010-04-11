@@ -24,6 +24,21 @@ directory. Thanks to Dave Rolsky for the initial patch. [David]
 Updated session error handling to recognize new error message from
 Apache::Session. [Dave Rolsky]
 
+=item *
+
+The buttons once again work in the category browser when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
+Krzysztof Rudnik for the report (Bug #155). [David]
+
+=item *
+
+Fixed subtle category autocomplete issue where it can be difficult to choose
+the root category. It would appear to work, but the "Unable to add category
+that does not exist" message would not clear and the form would not think that
+the category is legal. Could apply to other categories, but was most common
+for the root category. Thanks to Michael Herring for the detailed steps to
+reproduce (Bug #157). [David]
+
 =back
 
 =head1 Version 1.11.4 (2010-03-29)
@@ -41,21 +56,6 @@ the file name [Paul Orrock]
 =item *
 
 Added the new Bricolage logo to the user interface. [Phillip Smith]
-
-=item *
-
-The buttons once again work in the category browser when the
-C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
-Krzysztof Rudnik for the report (Bug #155). [David]
-
-=item *
-
-Fixed subtle category autocomplete issue where it can be difficult to choose
-the root category. It would appear to work, but the "Unable to add category
-that does not exist" message would not clear and the form would not think that
-the category is legal. Could apply to other categories, but was most common
-for the root category. Thanks to Michael Herring for the detailed steps to
-reproduce (Bug #157). [David]
 
 =back
 
