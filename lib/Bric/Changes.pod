@@ -10,6 +10,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.0 (2010-04-12)
 
+=head1 Version 2.0.1 ()
+
 =head2 Bug Fixes
 
 =over
