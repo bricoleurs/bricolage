@@ -66,7 +66,7 @@ multiple clients live.
 Many other combinations of authentication settings are of course possible via
 the flexible pg_hba.con configuration syntax, but the above are our recommended
 settings for ensuring the security and integrity of your data. Refer to the
-PostgreSQL documentation at L<http://www.postgresql.org/> for
+L<PostgreSQL documentation|http://www.postgresql.org/docs/current/> for
 more details, including other levels of encryption.
 
 =head1 Backup and Restore
@@ -130,8 +130,8 @@ PostgreSQL server B<must> be shut down during the backup or during restoration.
 Second, you can't do selective backups of databases or tables, only the whole
 database cluster.
 
-For more detail on PostgreSQL backup and restore, please consult the PostgreSQL
-documentation at L<http://www.postgresql.org/>.
+For more detail on PostgreSQL backup and restore, please consult the
+L<PostgreSQL documentation|http://www.postgresql.org/docs/current/>.
 
 =head1 Write-Ahead Logging (WAL)
 
@@ -143,84 +143,6 @@ using the log.
 
 Please consult the PostgreSQL documentation for more information on configuring
 WAL and recovering databases with WAL.
-
-=head1 Vacuum
-
-VACUUM is a PostgreSQL SQL command that cleans and analyzes a PostgreSQL
-database. Its purpose is to reclaim storage and to collect information for the
-optimizer. PostgreSQL uses a non-overwriting storage manager, which means that
-C<DELETE> commands don't actually remove data, they just mark it invalid;
-similarly, C<UPDATE> commands and rolled-back transactions will create more
-"old versions" of rows. These should be cleaned up on a periodic basis by
-running C<VACUUM>.
-
-Running C<ANALYZE> (known prior to PostgreSQL 7.3 as C<VACUUM ANALYZE>) also
-collects statistics representing the dispersion of the data in each column.
-The statistics include the number of tuples and number of pages stored in all
-transactions. This information is valuable when several query execution paths
-are possible. Running C<ANALYZE> periodically will increase the speed of the
-database in processing user queries.
-
-If you're running PostgreSQL 8.1 or later, we recommend that you use the
-integated support for autovacuuming the database. Skip ahead to the
-L<Autovacuum|"Autovacuum"> section for details.
-
-For older versions of PostreSQL, we recommend that you C<VACUUM> and
-C<ANALYZE> on your Bricolage database regularly, in order to remove expired
-rows and keep the database running efficiently.
-
-There are three ways to C<VACUUM> and B<ANALYZE> a database. The first is
-through an interactive shell such as C<psql>. Another approach is to schedule
-a nightly C<cron> job to do the task, and use the C<vacuumdb> utility. Here's an
-example:
-
-  PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a
-  PGPASSWORD=password /usr/local/pgsql/bin/vacuumdb -U postgres -q -a -z
-
-However, the best way to keep your database well vacuumed is to configure it
-to be automatically vacuumed. In PostgreSQL 8.1 and later, autovacuum is
-integrated into PostgreSQL and can be configured by editing
-F<postgresql.conf>. For earlier versions, you'll need to compile and install
-C<pg_autovacuum> from F<contrib/pg_autovacuum>.
-
-To configure autovacuum in 8.1 and later, set these values in
-F<postgresql.conf>:
-
-  autovacuum = on
-  autovacuum_vacuum_threshold = 300
-  autovacuum_analyze_threshold = 500
-  autovacuum_vacuum_scale_factor = 0.5
-  stats_start_collector = on
-  stats_row_level = on
-
-In PostgreSQL 8.3 and later, those last two are actually covered by a new
-configuration variable:
-
-  track_counts = on
-
-Nicely, autovacuum is turned on by default in PostgreSQL 8.3 and later, though
-you'll likely want to tweak the thresholds and scale factors as above.
-
-The C<pg_autovacuum> contrib utility comes with PostgreSQL 7.4 - 8.0 (and can
-be used with PostgreSQL 7.3, as well). To quote the C<pg_autovacuum> F<README>
-document:
-
-"C<pg_autovacuum> is a libpq client program that monitors all the databases
-associated with a PostgreSQL server. It uses the statistics collector to
-monitor insert, update and delete activity."
-
-The advantages to C<pg_autovacuum> are also detailed in the F<README>:
-
-The primary benefit of F<pg_autovacuum is> that the FSM and table statistic
-information are updated more nearly as frequently as needed. When a table is
-actively changing, C<pg_autovacuum> will perform the C<VACUUM>s and
-C<ANALYZE>s that such a table needs, whereas if a table remains static, no
-cycles will be wasted performing this unnecessarily."
-
-This has the effect of keeping your database highly optimized at all times.
-Read the rest of the C<pg_autovacuum> F<README> for installation and
-configuration instructions. When you start it up, we recommend using these
-options: C<-D -v 300 -V 0.5> for optimal vacuum maintenance.
 
 =head1 Tuning
 
@@ -272,20 +194,21 @@ C<192 * 1024 * 1024 = 201326592>):
 
   kernel.shmmax = 201326592
 
-These settings can then be enabled by running C</sbin/sysctl -p>. See
-L<http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
-for more information on shared buffers and changing your operating system's
-shared buffer settings. Now you can update your F<postgresql.conf> file's
-shared memory buffers setting to take advantage of this shared memory:
+These settings can then be enabled by running C</sbin/sysctl -p>. See the
+PostgreSQL L<Kernel
+Resources|http://www.postgresql.org/docs/current/interactive/kernel-resources.html>
+documentation for more information on shared buffers and changing your
+operating system's shared buffer settings. Now you can update your
+F<postgresql.conf> file's shared memory buffers setting to take advantage of
+this shared memory:
 
   shared_buffers = 24576
 
 =head2 Work Memory
 
-Next, it's probably also a good idea to boost your work memory (or "sort
-memory", as it was known prior to PostgreSQL 8.0) to get a better response
-time to the very large queries used to look up Bricolage objects. The work
-memory has to do with number of concurrent queries. Never risk going over
+Next, it's probably also a good idea to boost your work memory to get a better
+response time to the very large queries used to look up Bricolage objects. The
+work memory has to do with number of concurrent queries. Never risk going over
 total memory, or else PostgreSQL will go into swap and things will get
 I<really> slow. Bricolage generally uses no more than three or four concurrent
 queries, so 8 MB should be okay. Unlike C<shared_buffers>, the C<work_mem> (or
@@ -342,10 +265,10 @@ size, the number would be calculated C<2 * 1024 * 1024 * .75 / 8 = 196608>:
 
 =head2 Autovacuum
 
-The C<autovacuum> directive turns on the autovacuum daemon that is included in
-PostgreSQL 8.1 and later. We strongly recommend that you take advantage of the
-autovacuum feature in order to keep database performance optimal. See
-L<http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
+The C<autovacuum> directive turns on the autovacuum daemon included in
+PostgreSQL. We strongly recommend that you take advantage of the autovacuum
+feature in order to keep database performance optimal. See the L<autovacuum
+documenation|http://www.postgresql.org/docs/current/static/maintenance.html#AUTOVACUUM>
 for details. To enable autovacuum, you I<must> set these direcives:
 
   stats_start_collector = on
@@ -377,27 +300,13 @@ autovacuum on a Bricolage database are to set the following directives:
 
 =head2 Maintenance Work Memory
 
-The C<maintenance_work_mem> (or C<vacuum_mem>, as it was known prior to the
-release of PostgresQL 8.0) directive reserves memory for database maintenance
+The C<maintenance_work_mem> directive reserves memory for database maintenance
 work, such as C<vacuum>ing the database. If your PostgreSQL server has a
 decent amount of RAM (say 1-2 GB), increase the value of
 C<maintenance_work_mem> to allow C<vacuum>s and other mainentance work to go
 faster. We recommend 64 MB (set in KB):
 
   maintenance_work_mem = 65536
-
-=head2 Random Page Cost
-
-For servers where the entire Bricolage database will be loaded into memory,
-the value of the C<random_page_cost> directive should be significantly
-lowered. This directive is a multiple of cost to extract single random tuple
-instead of sequential tuples. It's faster to extract a series of sequential
-rows per page from disk. But if most of your database will be cached in memory
-and you have a fast machine, then the default is too high. Lower it to 2.0.
-It might even be worth it to lower it to 1.5 if you notice that the database
-is still doing unnecessary seq scans.
-
-  random_page_cost = 2
 
 =head2 Maximum Free Space Map Pages
 
@@ -448,13 +357,12 @@ paramter alone.
 
 =over
 
-=item L<http://www.pgexperts.com/document.html?id=34>
+=item L<The Mighty GUCS|http://www.pgexperts.com/document.html?id=34>
 
-"The Mighty GUCS" package, by Josh Berkus. Includes annotated GUCs (PostgreSQL
-configuration directives), presentation slides, and F<postgresql.conf.simple>
-updated for version 8.4.
+By Josh Berkus. Includes annotated GUCs (PostgreSQL configuration directives),
+presentation slides, and F<postgresql.conf.simple> updated for version 8.4.
 
-=item L<http://archives.postgresql.org/pgsql-performance/>
+=item L<pgsql-performance archives|http://archives.postgresql.org/pgsql-performance/>
 
 Search the archives of the pgsql-performance list.
 

@@ -37,7 +37,7 @@ __END__
 
 =head1 Author
 
-Maybe You? <devel@lists.bricolage.cc>
+Maybe You? <devel@lists.bricolage.cc|mailto:devel@lists.bricolage.cc>
 
 =head1 See Also
 

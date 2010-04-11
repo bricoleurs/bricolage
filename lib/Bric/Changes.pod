@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Name
 
 Bric::Changes - Bricolage Changes
@@ -6,7 +8,40 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 1.11.4 ()
+=head1 Version 2.0.0 ()
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed error handling in the access handler so that it works when a URI is a
+directory. Thanks to Dave Rolsky for the initial patch. [David]
+
+=item *
+
+Updated session error handling to recognize new error message from
+Apache::Session. [Dave Rolsky]
+
+=item *
+
+The buttons once again work in the category browser when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
+Krzysztof Rudnik for the report (Bug #155). [David]
+
+=item *
+
+Fixed subtle category autocomplete issue where it can be difficult to choose
+the root category. It would appear to work, but the "Unable to add category
+that does not exist" message would not clear and the form would not think that
+the category is legal. Could apply to other categories, but was most common
+for the root category. Thanks to Michael Herring for the detailed steps to
+reproduce (Bug #157). [David]
+
+=back
+
+=head1 Version 1.11.4 (2010-03-29)
 
 =head2 New Features
 
@@ -15,8 +50,8 @@ This document lists the Changes to Bricolage introduced with each release.
 =item *
 
 Added the C<--match-title> option to F<contrib/bric_media_upload>. This will
-match the uploading filename against the title of the media object rather than
-the filename [Paul Orrock]
+match the uploading file name against the title of the media object rather than
+the file name [Paul Orrock]
 
 =item *
 
@@ -30,15 +65,86 @@ Added the new Bricolage logo to the user interface. [Phillip Smith]
 
 =item *
 
-When displaying categories associated with a story when the
+When displaying categories associated with a story and the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
 are now displayed in alphabetical order by URI. [David]
 
 =item *
 
 The installer no longer requires that L<Term::ReadPassword> be installed from
-the CPAN before it continues. It will use it if it finds it, but if not
+the CPAN before it continues. It will use it if it finds it, but if not it
 substitutes a simple implementation that does the trick (Bug #136). [David]
+
+=item *
+
+When creating or editing a story or media document, the Source select list now
+lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
+[David]
+
+=item *
+
+Added the C<SFTP_KEY_TYPE>, C<SFTP_PRIVATE_KEY_FILE> and
+C<SFTP_PUBLIC_KEY_FILE> F<bricolage.conf> directives to to restore key-based
+authentication to the SFTP mover. These were necessary as the old F<SFTP_HOME>
+directive does not work with the new implementation based on F<Net::SSH2> (Bug
+# 127). [Greg Heo]
+
+
+=item *
+
+When started by the root user, the F<bric_queued> and F<bric_ftpd> daemons now
+become the Bricolage system user (usually the Apache user) after forking their
+subprocesses, rather than before. This means that the PID file is now created
+by the root user, and so should encounter no permission errors when saving the
+PID file to standard OS locations. Reported by Serge Ivanchenko. [David]
+
+=item *
+
+The default location for the FTP server's log files is now the F<log>
+subdirectory of the bricolage root directory, rather than the bricolage root
+directory itself. This is what comments in F<bricolage.conf> have always
+suggested, even if L<Bric::Admin> and the code did not. [David]
+
+=item *
+
+Added the C<CATEGORY_MIN_CHARS> AND C<CATEGORY_MIN_CHARS_TMPL>
+F<bricolage.conf> directives. These give administrators the ability to control
+the responsiveness of the autosuggest box for selecting categories to
+associate with documents and templates. It had been set to 2 to make it more
+responsive to sites with very large numbers of categories, but most folks only
+need it set to 1, which is now the default. [David]
+
+=item *
+
+Now require PostgreSQL 8.1 or higher. We will no longer support 8.0 or lower.
+[David]
+
+=item *
+
+The contributor popup now submits the updated list of contributors to
+Bricolage, which updates them in the document and returns the updated list of
+contributors. That list then updates the contributors section of the document
+profile. Thanks to this change, editing contributors twice in a document
+without saving in between no longer causes the changes from the first edit to
+be forgotten. It also allows any changes to the contributor order to in the
+popup to be properly updated in the document profile. [David]
+
+=item *
+
+When hovering over the names of custom fields in the element type or
+contributor type profile, the cursor displays as a "move" cursor, to indicate
+that one can drag the field names in order to change their order. This
+corresponds to the interface for reordering fields in documents. [David]
+
+=item *
+
+When creating new stories or media via the SOAP interface, Bricolage no longer
+forces the publish status to be set to false, but sets it to true if the the
+publish date is set or the publish status is true in the XML. In such cases,
+it will also set the published version number to version 1. This is to make it
+easier for one to migrate documents from one Bricolage instance to another
+without having to edit the XML to set the publish status to a true value.
+[David]
 
 =back
 
@@ -57,7 +163,7 @@ a chance to throw a "Too many category objects found" error. [Greg Heo]
 
 =item *
 
-Moved document expriration on deletion from L<Bric::Biz::Asset> to
+Moved document expiration on deletion from L<Bric::Biz::Asset> to
 L<Bric::Biz::Asset::Business> because it's useless for templates and left
 no-op job records lying around when templates were deleted. This code path
 only executes when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf> directive is
@@ -67,13 +173,13 @@ enabled. [David]
 
 Fixed document expiration when the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf>
 directive is enabled so that it doesn't try to expire documents that have
-never been published, or media docuemnts that have no URI associatd with them.
+never been published, or media documents that have no URI associated with them.
 Thanks to Aaron Fuleki and Denison University for the report. [David]
 
 =item *
 
 L<Bric::Util::Burner>'s C<publish()> method no longer removes documents from
-workflow after publishing them, as such is the responsbility of the code that
+workflow after publishing them, as such is the responsibility of the code that
 calls publish. The publish callback already did, and now so does the
 L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
 report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
@@ -111,6 +217,94 @@ documents in 1.11.3. Thanks to Waldo Jaquith and Iván Chavero for the spot
 
 Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
 [Alex Krohn]
+
+=item *
+
+The simple search in workflows no longer disables navigation links on the same
+horizontal line as the "Search" button. Thanks to Matt Rolf for the report
+(Bug # 141) and to Marshall for the CSS jujitsu. [David]
+
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now avoids expired stories
+when searching for aliased stories. Thanks to Zdravko Balorda for the catch
+(Bug #144). [David]
+
+=item *
+
+Fixed issue with the use of C<findElementsByClass()> when used with Prototype
+1.6.0.3. Thanks to Adrian Yee for the report and suggested fix. [David]
+
+=item *
+
+Subelements can once again be added to media documents when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is enabled without
+getting the error "Please select a primary category." Broken in 1.11.3. Thanks
+to Vincent Stemen for the report (Bug #143). [David]
+
+=item *
+
+The field type profile now properly validates code select code and lets the
+user know if it's not valid. [David]
+
+=item *
+
+The validation of code select field code is now consistent between the element
+type profile, the field type profile, and the SOAP element type interface.
+Thanks to Krzysztof Rudnik for the report (Bug #140). [David]
+
+=item *
+
+Media no longer throw the exception “Can't call method "write" on an undefined
+value” when L<Imager> is doesn't recognize an image file format. Thanks to
+Matt Rolf for the report (Bug #146). [David]
+
+=item *
+
+Deleting contributors in the contributor popup window now works the same as it
+does when deleting them in the story or media profile: without a submit, but
+by simply removing the contributor from the DOM. [David]
+
+=item *
+
+Hitting the "enter" key when searching for contributors in the contributor
+popup no longer closes the window, but properly submits the search. Thanks to
+Matt Rolf for the report (Bug #147).
+
+=item *
+
+Contributor type fields can once again be reordered and deleted. Thanks to
+Krzysztof Rudnik for the report (Bug #139). [David]
+
+=item *
+
+When relating a story or media document, clicking a column header in the
+search results in the related search popup no longer throws an error. Thanks
+to Phillip for the report (Bug #149). [David]
+
+=item *
+
+The SOAP interface now sets the published version to the new version of a
+story or media document that is being updated by XML that says the document is
+published and where the published version was not previously set. [David]
+
+=item *
+
+When creating a template via the SOAP interface, if the template in the
+specified output channel, category, and site already exists but is
+deactivated, it will be re-activated and updated instead of throwing an error.
+This matches how the UI works. [David]
+
+=item *
+
+Setting the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive to "url" no
+longer breaks bulk edit. Thanks to Phillip for the report (Bug #150). [David]
+
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now works when creating a
+link to a story on a different site and the protocol for the output channel is
+not set. It defaults to "http://" for the protocol. [David]
 
 =back
 
@@ -286,14 +480,6 @@ underscores don't exist:
 =back
 
 [David]
-
-=item *
-
-Fixed a compatibility issue in
-L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
-C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
-thread-safety reasons." This change backward-compatible with older versions of
-XML::LibXML. [David]
 
 =back
 
@@ -755,8 +941,8 @@ Profile to error out. Similarly fixed bug 1461 for Find Media (Bug #1458).
 =item *
 
 Fixed issue where auto-completion was jumping around. Slightly modified from
-code by Jason Gill and Janos Novak at
-L<http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
+L<code by Jason Gill and Janos
+Novak|http://blog.gilluminate.com/2009/01/20/scriptaculous-autocomplete-page-jump-using-arrow-keys/>
 (Bug #1460). [Scott]
 
 =item *
@@ -864,6 +1050,14 @@ the report. [David]
 Double-clicking an asset on a desk to check it into that desk no longer causes
 the asset to drop off the desk. It will only drop off if it's being checked
 into a different desk (Bug #97). [David]
+
+=item *
+
+Fixed a compatibility issue in
+L<Bric::Dist::Action::DTDValidate|Bric::Dist::Action::DTDValidate>. Apparently
+C<get_last_error()> was removed from L<XML::LibXML|XML::LibXML> 1.59 "for
+thread-safety reasons." This change backward-compatible with older versions of
+XML::LibXML. [David]
 
 =back
 
@@ -1057,8 +1251,8 @@ listed to, for example, only today's job or only failed jobs. [Scott]
 
 =item *
 
-Added support for the FCKeditor WYSIWYG editor. See
-L<http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
+Added support for the FCKeditor WYSIWYG editor. See the L<FCKeditor
+site|http://www.fckeditor.net/> for details and a demo. Sponsored by Freerun
 Technologies. [David]
 
 =item *
@@ -1110,7 +1304,7 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =over
 
-=item * Fields and subelements in the story, media, and category profiles
+=item * Fields and subelements in the story and media profiles
 
 =item * Keywords in the story, media, and category profiles
 
@@ -1132,14 +1326,14 @@ The following items can now be edited on-the-fly (i.e. without reloading):
 
 =item *
 
-Fields and subelements in the story and media profiles are displayed
-recursively, so a story's entire contents can be edited from one screen, as
-opposed to one screen per subelement as it was previously.
+Fields and subelements in the story and media profiles are displayed in full,
+so a story's entire contents can be edited from one screen, as opposed to one
+screen per subelement as it was previously.
 
 =item *
 
 The right side of desk items has been redesigned. Icons are used because they
-save space. and they finally allow assets to be moved between desks from the
+save space, and they finally allow assets to be moved between desks from the
 Workspace, and assets to be checked in to any desk from the Desk view. The
 "and Publish" and "and Shelve" options have also been added. Additionally, you
 have the option to immediately publish assets on publish desks, or schedule
@@ -1186,16 +1380,6 @@ Added the new C<BLOB_SEARCH> F<bricolage.conf> directive, which enables data
 text searches in the UI to search paragraph-type fields as well as shorter
 header-type fields. [David]
 
-=item *
-
-When editing a field type, if a numeric value is set to an empty value, it
-will be set to 0 rather than retaining its previous value. [David]
-
-=item *
-
-The expire information for sources is now localized in the list view (the
-Sources Manager). [David]
-
 =back
 
 =head2 Improvements
@@ -1238,6 +1422,16 @@ bit that required the user to be root, and is required for compatibility with
 "ident" authentication. The default is to not become the database system user,
 although C<make install> may still need to be run as the super user in order
 to install files in their proper locations. [Brian Smith and David]
+
+=item *
+
+When editing a field type, if a numeric value is set to an empty value, it
+will be set to 0 rather than retaining its previous value. [David]
+
+=item *
+
+The expire information for sources is now localized in the list view (the
+Sources Manager). [David]
 
 =back
 
@@ -1497,9 +1691,10 @@ The C<bric_media_upload> app works again. [David]
 =item *
 
 Added an "TraceEnable off" entry to the config in
-L<Bric::App::ApacheConfig|Bric::App::ApacheConfig>> for Apache to neutralize
-the potentially malicious use of HTTP TRACE requests.
-L<http://www.apacheweek.com/issues/03-01-24> [Dave Beaudet, Alex Krohn]
+L<Bric::App::ApacheConfig|Bric::App::ApacheConfig> for Apache to neutralize
+the potentially malicious use of HTTP TRACE requests. See L<this
+report|http://www.apacheweek.com/issues/03-01-24> for details. [Dave Beaudet,
+Alex Krohn]
 
 =item *
 
@@ -5376,8 +5571,8 @@ a template. [Keith Grennan]
 =item *
 
 The JavaScript that validates form contents once again works with htmlArea,
-provided htmlArea itself is patched. See
-L<http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=69750&atid=525656>
+provided htmlArea itself is patched. See L<this
+ticket|http://sourceforge.net/tracker/index.php?func=detail&aid=1155712&group_id=69750&atid=525656>
 for the htmlArea patch. As of this writing, you must run the version of
 htmlArea in CVS. [David & Marshall]
 
@@ -5762,9 +5957,9 @@ for an example. [David]
 =item *
 
 Bricolage now runs under a DSO C<mod_perl> as long as it uses a Perl compiled
-with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See
-L<http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used> for
-details. Thanks to Marshall Roch for finding that link. [David]
+with C<-Uusemymalloc> I<or> C<-Ubincompat5005>. See the L<mod_perl DSO
+documentation|http://perl.apache.org/docs/1.0/guide/install.html#When_DSO_can_be_Used>
+for details. Thanks to Marshall Roch for finding that link. [David]
 
 =item *
 
@@ -5803,8 +5998,9 @@ Removed Bric::FAQ, since it is now maintained on the Website, instead. [David]
 
 Updated Bric::Admin to suggest that PostgreSQL's C<initdb> be run with
 C<--no-locale> so as to avoid collation issues with non-Western characters.
-See this discussion for more information:
-L<http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
+See L<this
+discussion|http://archives.postgresql.org/pgsql-general/2004-08/threads.php#01079>
+for more information.
 
 =item *
 
@@ -6883,11 +7079,11 @@ Added support for icons for all media documents when the C<USE_THUMBNAILS>
 F<bricolage.conf> directive is enabled. These rely on the presence of PNG icon
 files for each MIME type in F<comp/media/mime>. Only one such icons is
 distributed with Bricolage, F<comp/media/mime/none.png> (borrowed from the KDE
-project under L<http://artist.kde.org/new/license.html#others>), which is the
-default icon when the MIME type of a media file is unknown or when no icon
-file exists for the MIME type of the media file. Administrators are free to
-add their own icons, and the C<copy_gnome_icons> script in F<contrib> makes it
-easy to use GNOME icons. [David]
+project under L<this license|http://artist.kde.org/new/license.html#others>),
+which is the default icon when the MIME type of a media file is unknown or
+when no icon file exists for the MIME type of the media file. Administrators
+are free to add their own icons, and the C<copy_gnome_icons> script in
+F<contrib> makes it easy to use GNOME icons. [David]
 
 =item *
 
@@ -11621,8 +11817,8 @@ of options isn't arbitrarily limited. [Matt Vella]
 The group API has been approximately 75% rewritten. The goal was to optimize
 its performance, since group activity proved to be a serious bottleneck to
 Bricolage performance. Those interested in the nitty-gritty details of the
-rewrite can read about them here:
-L<http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
+rewrite can read about them
+L<here|http://sourceforge.net/mailarchive/forum.php?thread_id=967943&forum_id=561>.
 
 =back
 

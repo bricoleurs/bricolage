@@ -125,16 +125,6 @@ END
 
 use Bric::Config qw(:sys_user);
 
-if ($> == 0) {
-    # Switch from root to the system user (set in bricolage.conf).
-    $) = SYS_GROUP;
-    die "Unable to set effective group id ". SYS_GROUP . "\n"
-      unless $) == SYS_GROUP;
-    $> = SYS_USER;
-    die "Unable to set effective user id ". SYS_USER . "\n"
-      unless $> == SYS_USER;
-}
-
 use Bric::App::Event qw(commit_events);
 use Bric::Biz::Person::User;
 use Bric::Util::Time qw(:all);
@@ -462,8 +452,19 @@ sub daemonize {
         write_pid($pid);
         exit;
     }
+
     setsid                   or die "Can't start a new session: $!\n";
     open STDERR, '>&STDOUT'  or die "Can't dup stdout: $!\n";
+
+    if ($> == 0) {
+        # Switch from root to the system user (set in bricolage.conf).
+        $) = SYS_GROUP;
+        die "Unable to set effective group id ". SYS_GROUP . "\n"
+            unless $) == SYS_GROUP;
+        $> = SYS_USER;
+        die "Unable to set effective user id ". SYS_USER . "\n"
+            unless $> == SYS_USER;
+    }
 }
 
 ##############################################################################

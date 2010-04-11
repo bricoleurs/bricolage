@@ -88,6 +88,7 @@ $m->comp(
   object   => 'source',
   name     => "$widget|source__id",
   field    => 'source_name',
+  sort_field => 'source_name',
   selected => $story->get_source__id,
   indent   => 0,
   useTable => 1,
@@ -176,18 +177,6 @@ $num = $m->comp('/widgets/container_prof/container_prof.mc',
     caption => "Contributors",
     number  => $num++
 &>
-    <script type="text/javascript">
-    function deleteContrib(button) {
-        var id = $(button).value;
-        var index = $('contrib_order_' + id).selectedIndex;
-        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
-            if (select.selectedIndex > index) select.selectedIndex--;
-            Element.remove(select.options[select.options.length - 1]);
-        });
-        Element.remove($('contrib_id_' + id).parentNode.parentNode);
-        alternateTableRows('contribs');
-    }
-    </script>
     <div id="contribs">
     <& '/widgets/profile/contributors/_list.html',
         asset      => $story,

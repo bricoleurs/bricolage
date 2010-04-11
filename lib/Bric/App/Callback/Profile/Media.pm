@@ -17,7 +17,7 @@ use Bric::Biz::Keyword;
 use Bric::Biz::OutputChannel;
 use Bric::Biz::Workflow;
 use Bric::Biz::Workflow::Parts::Desk;
-use Bric::Config qw(:media :mod_perl);
+use Bric::Config qw(:media :mod_perl ENABLE_CATEGORY_BROWSER);
 use Bric::Util::ApacheConst qw(HTTP_OK);
 use Bric::Util::DBI qw(:trans);
 use Bric::Util::Fault qw(throw_forbidden);
@@ -48,19 +48,21 @@ sub update : Callback(priority => 1) {
     $media->set_source__id($param->{"$widget|source__id"})
       if $param->{"$widget|source__id"};
 
-    my $curi = $param->{new_category_autocomplete};
-    unless (defined $curi && $curi ne '') {
-        $self->raise_conflict("Please select a primary category.");
-        return;
-    }
+    unless (ENABLE_CATEGORY_BROWSER) {
+        my $curi = $param->{new_category_autocomplete};
+        unless (defined $curi && $curi ne '') {
+            $self->raise_conflict("Please select a primary category.");
+            return;
+        }
 
-    my ($cat_id) = Bric::Biz::Category->list_ids({
-        uri     => $curi,
-        site_id => $media->get_site_id,
-    }) or $self->raise_conflict(
-        'Unable to add category that does not exist'
-    ) and return;
-    $media->set_category__id($cat_id);
+        my ($cat_id) = Bric::Biz::Category->list_ids({
+            uri     => $curi,
+            site_id => $media->get_site_id,
+        }) or $self->raise_conflict(
+            'Unable to add category that does not exist'
+        ) and return;
+        $media->set_category__id($cat_id);
+    }
 
     # set the name
     $media->set_title($param->{title})
@@ -781,6 +783,19 @@ sub save_related : Callback {
     if (my $prev = get_state_data('_profile_return')) {
         $self->return_to_other($prev);
     }
+}
+
+sub save_contributors : Callback {
+    my $self   = shift;
+    my $widget = $self->class_key;
+    my $media  = get_state_data($widget, 'media');
+    my $params  = $self->params;
+    $self->_handle_contributors($media, $params, $widget);
+    # Set up for execution of /widgets/profile/contributors/_list.html
+    $params->{widget}     = $widget;
+    $params->{asset}      = $media;
+    $params->{asset_type} = 'media';
+    $params->{contribs}   = $media->get_contributors;
 }
 
 ### end of callbacks ##########################################################

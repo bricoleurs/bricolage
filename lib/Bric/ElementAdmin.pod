@@ -860,9 +860,9 @@ David Wheeler <david@kineticode.com>
 
 =head1 See Also
 
-L<http://www.bricolage.cc/about/doc_models/> contains graphical depictions of
-the document models used to create the Bricolage Website in a nice
-illustration of how to construct document models from element types and
-fields.
+L<Bricolage Document Models|http://www.bricolagecms.org/about/doc_models/>
+contains graphical depictions of the document models used to create the
+Bricolage Website in a nice illustration of how to construct document models
+from element types and fields.
 
 =cut

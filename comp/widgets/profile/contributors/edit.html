@@ -1,12 +1,7 @@
+<form action="<% $r->uri %>" method="post" name="theForm">
 <& '/widgets/wrappers/table_top.mc',
     caption => 'Current Contributors'
 &>
-    <script type="text/javascript">
-    function deleteContrib(button) {
-        var form = $(button).form;
-        Element.remove('contrib_id_' + $(button).value); form.submit();
-    }
-    </script>
     <div id="contribs">
     <& '_list.html',
         asset      => $asset,
@@ -20,7 +15,7 @@
 
 <& '/widgets/wrappers/table_bottom.mc' &>
 
-<div id="contribbuttons">
+<div id="assocbuttons">
 <& "/widgets/profile/button.mc",
     disp      => 'Cancel',
     name      => 'cancel',
@@ -30,13 +25,15 @@
 &>
 <& "/widgets/buttons/submit.mc",
     disp      => 'Save',
-    name      => 'save',
+    widget    => $widget,
+    cb        => 'save_contributors_cb',
     button    => 'save_red',
-    js        => qq{onclick="window.opener.document.getElementById('contribs').innerHTML = \$('contribs').innerHTML; self.close(); return false"},
+    js        => qq{onclick="updateContribs(this.form, '$widget'); return false"},
     useTable  => 0
 &>
 </div>
-
+</form>
+<form action="<% $r->uri %>" method="post" name="searchForm">
 <& /widgets/search/search.mc,
    object       => 'contrib',
    field        => 'lname',
@@ -44,6 +41,7 @@
    use_form_tag => 0,
    state_key    => "$asset_type\_contrib",
 &>
+</form>
 
 <& '/widgets/wrappers/table_top.mc', caption => 'Choose Contributors' &>
     <& /widgets/listManager/listManager.mc,

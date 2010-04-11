@@ -105,7 +105,7 @@ new Ajax.Autocompleter(
     {
         onEmpty:    function() { Element.show('new_cat_warning'); },
         onNotEmpty: function() { Element.hide('new_cat_warning') },
-        minChars:   1,
+        minChars:   <% CATEGORY_MIN_CHARS_TMPL %>,
         indicator: 'category_autocomplete_indicator',
         parameters: 'site_id=<% $site_id %>&key=template'
     }

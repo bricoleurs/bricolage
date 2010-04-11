@@ -125,7 +125,6 @@ $do_contrib_type = sub {
     my $param = $self->params;
     my $name = $param->{'name'};
     my $disp_name = $conf{$key}{'disp_name'};
-    my %del_attrs = map( {$_ => 1} @{ mk_aref($param->{'delete_attr'})} );
     my $key_name = exists($param->{'key_name'})
       ? $param->{'key_name'}
       : '';
@@ -135,29 +134,33 @@ $do_contrib_type = sub {
     $obj->set_description($param->{'description'});
 
     my $data_href = $obj->get_member_attr_hash || {};
-    $data_href = { map { lc($_) => 1 } keys %$data_href };
+    $data_href = { map { lc $_ => $_ } keys %$data_href };
 
-    # Build a map from element names to their order
-    my $i = 1;
-    my %pos = map { $_ => $i++ } split ",", $param->{attr_pos};
-
+    # Update existing fields.
+    my $i = 0;
     foreach my $aname (@{ mk_aref($param->{attr_name}) } ) {
-        next if $del_attrs{$aname};
-
+        delete $data_href->{lc $aname};
         $obj->set_member_attr({
-            name => $aname,
-            sql_type => $obj->get_member_attr_sql_type
-                ({ name => $aname}),
-            value => $param->{"attr|$aname"},
+            name     => $aname,
+            sql_type => $obj->get_member_attr_sql_type({ name => $aname}),
+            value    => $param->{"attr|$aname"},
         });
         $obj->set_member_meta({
-            name => $aname,
+            name  => $aname,
             field => 'pos',
-            value => $pos{$aname},
+            value => ++$i,
         });
     }
-    my $no_save;
+
+    # Delete any attributes that are no longer needed.
+    for my $attr (values %{ $data_href }) {
+        $obj->delete_member_attr({ name => $attr });
+        # Log that we've deleted it.
+        log_event("${key}_unext", $obj, { 'Name' => $attr });
+    }
+
     # Add in any new attributes.
+    my $no_save;
     if ($param->{fb_name}) {
         # There's a new attribute. Decide what type it is.
         if ($data_href->{lc $param->{fb_name}}) {
@@ -194,15 +197,6 @@ $do_contrib_type = sub {
             }
             # Log that we've added it.
             log_event("${key}_ext", $obj, { 'Name' => $param->{fb_name} });
-        }
-    }
-
-    # Delete any attributes that are no longer needed.
-    if ($param->{delete_attr}) {
-        foreach my $attr (keys %del_attrs) {
-            $obj->delete_member_attr({ name => $attr });
-            # Log that we've deleted it.
-            log_event("${key}_unext", $obj, { 'Name' => $attr });
         }
     }
 
@@ -571,10 +565,7 @@ $add_new_attrs = sub {
             $$no_save = 1;
         } else {
             if ($param->{fb_type} eq 'codeselect') {
-                # XXX: change if comp/widgets/profile/displayAttrs.mc changes..
-                my $code = $param->{fb_vals};
-                my $items = eval_codeselect($code);
-                unless (ref $items eq 'HASH' or ref $items eq 'ARRAY') {
+                unless ( eval_codeselect $param->{fb_vals} ) {
                     $$no_save = 1;
                     return;
                 }

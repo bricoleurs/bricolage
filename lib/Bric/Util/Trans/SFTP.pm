@@ -124,9 +124,6 @@ B<Notes:> Uses Net::SFTP internally.
 sub put_res {
     my ($pkg, $resources, $st) = @_;
 
-    # Set HOME environment variable for SSH client
-    local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
-
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
@@ -140,12 +137,15 @@ sub put_res {
         my $ssh2 = Net::SSH2->new();
         my $connect = eval {
             $ssh2->connect($hn, $port);
-            $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
-            $ssh2->auth( username => $user, password => $password );
+            $ssh2->method('CRYPT_CS', SFTP_MOVER_CIPHER ) if SFTP_MOVER_CIPHER;
+            $ssh2->method('HOSTKEY', SFTP_KEY_TYPE ) if SFTP_KEY_TYPE;
+            $ssh2->auth( username => $user, password => $password,
+                         publickey => SFTP_PUBLIC_KEY_FILE,
+                         privatekey => SFTP_PRIVATE_KEY_FILE);
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
-          if $@;
+          if $@ || !$ssh2->auth_ok;
 
         # Get the document root.
         my $doc_root = $s->get_doc_root;
@@ -258,9 +258,6 @@ B<Notes:> See put_res(), above.
 sub del_res {
     my ($pkg, $resources, $st) = @_;
 
-    # Set HOME environment variable for SSH client
-    local $ENV{HOME} = SFTP_HOME if SFTP_HOME;
-
     foreach my $s ($st->get_servers) {
         # Skip inactive servers.
         next unless $s->is_active;
@@ -273,12 +270,15 @@ sub del_res {
         my $ssh2 = Net::SSH2->new();
         my $connect = eval {
             $ssh2->connect($hn, $port);
-            $ssh2->method('CRYPT_CS', SFTP_MOVER_CYPHER ) if SFTP_MOVER_CIPHER;
-            $ssh2->auth( username => $user, password => $password );
+            $ssh2->method('CRYPT_CS', SFTP_MOVER_CIPHER ) if SFTP_MOVER_CIPHER;
+            $ssh2->method('HOSTKEY', SFTP_KEY_TYPE ) if SFTP_KEY_TYPE;
+            $ssh2->auth( username => $user, password => $password,
+                         publickey => SFTP_PUBLIC_KEY_FILE,
+                         privatekey => SFTP_PRIVATE_KEY_FILE);
         };
         throw_gen error   => "Unable to login to remote server '$hn'.",
                   payload => $@
-          if $@;
+          if $@ || !$ssh2->auth_ok;
 
         # Create a Net::SSH2::SFTP object to use later
         my $sftp = $ssh2->sftp;

@@ -77,13 +77,14 @@ $m->comp(
    key => 'description',
 &>
 <& '/widgets/select_object/select_object.mc',
-  object   => 'source',
-  name     => "$widget|source__id",
-  field    => 'source_name',
-  selected => $media->get_source__id,
-  indent   => 0,
-  useTable => 1,
-  disp     => "Source"
+  object     => 'source',
+  name       => "$widget|source__id",
+  field      => 'source_name',
+  sort_field => 'source_name',
+  selected   => $media->get_source__id,
+  indent     => 0,
+  useTable   => 1,
+  disp       => "Source"
 &>
 
 % unless (ENABLE_CATEGORY_BROWSER) {
@@ -109,7 +110,7 @@ new Ajax.Autocompleter(
     {
         onEmpty:    function() { Element.show('new_cat_warning'); },
         onNotEmpty: function() { Element.hide('new_cat_warning') },
-        minChars:   2,
+        minChars:   <% CATEGORY_MIN_CHARS %>,
         indicator: 'category_autocomplete_indicator',
         parameters: 'site_id=<% $media->get_site_id %>&key=media'
     }
@@ -174,7 +175,7 @@ $num = $m->comp( '/widgets/container_prof/container_prof.mc',
     function deleteContrib(button) {
         var id = $(button).value;
         var index = $('contrib_order_' + id).selectedIndex;
-        $A(document.getElementsByClassName('reorder', 'contribs')).each(function(select) {
+        $('contribs').select('.reorder').each(function(select) {
             if (select.selectedIndex > index) select.selectedIndex--;
             Element.remove(select.options[select.options.length - 1]);
         });

@@ -52,7 +52,6 @@ use constant DSN_STRING => 'dbname=' . DB_NAME
 # This is to set up driver-specific database handle attributes.
 # XXX pg_enable_utf8 to be used only until DBI supports it itself.
 # http://www.mail-archive.com/dbi-dev@perl.org/msg03451.html
-# http://bugs.bricolage.cc/show_bug.cgi?id=802
 use constant DBH_ATTR => ( pg_enable_utf8 => 1 );
 
 # This is the a compatibility measure for MySQL for LIMIT-OFFSET

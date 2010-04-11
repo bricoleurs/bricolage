@@ -248,7 +248,7 @@ sub setup_user_session {
     # Test to see if the tie succeeded.
     if ($@) {
         # Tie did not succeed, but we can recover if it was this error...
-        if ($@ =~ /^Object does not exist in the data store/) {
+        if ($@ =~ /^(?:Object does not exist in the data store|Session could not be unserialized)/) {
             tie %HTML::Mason::Commands::session,
                 'Apache::Session::File', undef, OPTS;
             undef $cookie;

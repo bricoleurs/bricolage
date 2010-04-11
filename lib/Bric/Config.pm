@@ -103,7 +103,9 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     ENABLE_SFTP_MOVER
                     ENABLE_SFTP_V2
                     SFTP_MOVER_CIPHER
-                    SFTP_HOME
+                    SFTP_KEY_TYPE
+                    SFTP_PRIVATE_KEY_FILE
+                    SFTP_PUBLIC_KEY_FILE
                     ENABLE_WEBDAV_MOVER
                     MEDIA_FILE_ROOT
                     MEDIA_UNIQUE_FILENAME
@@ -165,6 +167,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     CACHE_DEBUG_MODE
                     STORY_URI_WITH_FILENAME
                     ENABLE_CATEGORY_BROWSER
+                    CATEGORY_MIN_CHARS
+                    CATEGORY_MIN_CHARS_TMPL
                     LOAD_LANGUAGES
                     ENCODE_OK
                     LOAD_CHAR_SETS
@@ -247,7 +251,9 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
                                      SFTP_MOVER_CIPHER
-                                     SFTP_HOME
+                                     SFTP_KEY_TYPE
+                                     SFTP_PRIVATE_KEY_FILE
+                                     SFTP_PUBLIC_KEY_FILE
                                      ENABLE_WEBDAV_MOVER
                                      DEF_MEDIA_TYPE
                                      DIST_ATTEMPTS
@@ -270,6 +276,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      YEAR_SPAN_AFTER
                                      NO_TOOLBAR
                                      ENABLE_CATEGORY_BROWSER
+                                     CATEGORY_MIN_CHARS
+                                     CATEGORY_MIN_CHARS_TMPL
                                      ENABLE_WYSIWYG
                                      WYSIWYG_EDITOR
                                      XINHA_PLUGINS
@@ -579,7 +587,9 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant ENABLE_SFTP_MOVER       => $config->{ENABLE_SFTP_MOVER};
     use constant ENABLE_SFTP_V2          => $config->{ENABLE_SFTP_V2};
     use constant SFTP_MOVER_CIPHER       => $config->{SFTP_MOVER_CIPHER} || 0;
-    use constant SFTP_HOME               => $config->{SFTP_HOME};
+    use constant SFTP_KEY_TYPE           => $config->{SFTP_KEY_TYPE};
+    use constant SFTP_PRIVATE_KEY_FILE   => $config->{SFTP_PRIVATE_KEY_FILE};
+    use constant SFTP_PUBLIC_KEY_FILE    => $config->{SFTP_PUBLIC_KEY_FILE};
     use constant ENABLE_WEBDAV_MOVER     => $config->{ENABLE_WEBDAV_MOVER};
 
     # Publishing Settings.
@@ -721,9 +731,9 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant FTP_PORT          => $config->{FTP_PORT}          || 2121;
     use constant FTP_DEBUG         => $config->{FTP_DEBUG}         || 0;
     use constant FTP_LOG           => $config->{FTP_LOG}           ||
-      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.log');
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'log', 'ftp.log');
     use constant FTP_PID_FILE      => $config->{FTP_PID_FILE}      ||
-      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'ftp.pid');
+      catfile($ENV{BRICOLAGE_ROOT} || '/usr/local/bricolage', 'log', 'ftp.pid');
 
     # Output Channel Settings.
     use constant DEFAULT_FILENAME => $config->{DEFAULT_FILENAME} || 'index';
@@ -747,6 +757,8 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # Category browser setting
     use constant ENABLE_CATEGORY_BROWSER => $config->{ENABLE_CATEGORY_BROWSER};
+    use constant CATEGORY_MIN_CHARS      => $config->{CATEGORY_MIN_CHARS} || 1;
+    use constant CATEGORY_MIN_CHARS_TMPL => $config->{CATEGORY_MIN_CHARS_TMPL} || 1;
 
     # L10N & Character Translation settings.
     use constant ENCODE_OK              => $] >= 5.008;

@@ -80,7 +80,7 @@ my ($context, $title, $page, $about);
 if ($r->uri =~ m:/help/$lang_key/about\.html:) {
     $about = 1;
     $context = 'About the <a class="blackLink" target="_blank" ' .
-      'href="http://bricolage.cc/">Bricolage Content Management System</a>';
+      'href="http://bricolagecms.org/">Bricolage Content Management System</a>';
     $title = "Bricolage " . Bric->VERSION;
     $page = '';
 } else {

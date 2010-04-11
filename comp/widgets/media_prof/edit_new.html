@@ -43,12 +43,13 @@ $m->comp(
 &>
 % }
 <& /widgets/select_object/select_object.mc,
-   disp     => 'Source',
-   object   => 'source',
-   name     => "$widget|source__id",
-   field    => 'source_name',
-   selected => $sel_source,
-   useTable => 1,
+   disp       => 'Source',
+   object     => 'source',
+   name       => "$widget|source__id",
+   field      => 'source_name',
+   sort_field => 'source_name',
+   selected   => $sel_source,
+   useTable   => 1,
 &>
 <& /widgets/profile/text.mc,
     disp => 'Category',
@@ -71,7 +72,7 @@ new Ajax.Autocompleter(
     {
         onEmpty:    function() { Element.show('new_cat_warning'); },
         onNotEmpty: function() { Element.hide('new_cat_warning') },
-        minChars:   2,
+        minChars:   <% CATEGORY_MIN_CHARS %>,
         indicator: 'category_autocomplete_indicator',
         parameters: 'site_id=<% $site_id %>&key=media'
     }

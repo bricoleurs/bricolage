@@ -50,6 +50,7 @@ Object.extend(Ajax.Autocompleter.prototype, {
     var t = this.getToken();
     if (this.cache[t]) {
       this.updateChoices(this.cache[t]);
+      this.options.onNotEmpty(this.element);
     } else {
       entry = encodeURIComponent(this.options.paramName) + '=' + encodeURIComponent(t);
 
@@ -179,6 +180,36 @@ function validateStory(obj) {
         return false;
     }
     return true;
+}
+
+// Deletes a contributor table row from the DOM.
+function deleteContrib(button) {
+    var id = $(button).value;
+    var index = $('contrib_order_' + id).selectedIndex;
+    $('contribs').select('.reorder').each(function(select) {
+        if (select.selectedIndex > index) select.selectedIndex--;
+        Element.remove(select.options[select.options.length - 1]);
+    });
+    Element.remove($('contrib_id_' + id).parentNode.parentNode);
+    alternateTableRows('contribs');
+}
+
+// Used by the contributor popup to submit the updated contributors and to
+// update the contributors list in the main window with the updated list
+// returned by the server.
+function updateContribs(form, widget) {
+    new Ajax.Updater(
+        { success: window.opener.document.getElementById('contribs') },
+        '/widgets/profile/contributors/_list.html',
+        {
+            asynchronous: false,
+            parameters: Form.serialize(form),
+            onSuccess: function(r) { window.close(); },
+            onFailure: Bricolage.handleError,
+            on403: Bricolage.handleForbidden,
+            on409: Bricolage.handleConflict
+        }
+    );
 }
 
 /*
@@ -358,8 +389,8 @@ This function is called when a position drop down is changed in a story profile.
 function reorder(obj, container) {
 
     var container = $(container);
-    var selects = $A(document.getElementsByClassName("reorder", container));
-    var newIndex = obj.selectedIndex;
+    var selects   = container.select('.reorder');
+    var newIndex  = obj.selectedIndex;
 
     var order = $A();
     selects.each(function(select) {
@@ -1281,7 +1312,7 @@ FastAdd.prototype = {
         ]);
 
         var placed = false;
-        $A(document.getElementsByClassName('value', this.list)).each((function(sibling) {
+        this.list.select('.value').each((function(sibling) {
             if (Element.collectTextNodes(sibling).toLowerCase() > value.toLowerCase()) {
                 this.list.insertBefore(item, sibling.parentNode);
                 placed = true;
@@ -1306,8 +1337,8 @@ FastAdd.prototype = {
 var Tabs = Class.create();
 Tabs.prototype = {
     initialize: function(tabGroup, pageGroup) {
-        this.tabs = document.getElementsByClassName('tab', $(tabGroup));
-        this.pages = document.getElementsByClassName('page', $(pageGroup));
+        this.tabs  = $(tabGroup).select('.tab');
+        this.pages = $(pageGroup).select('.page');
 
         var selected = this.tabs.first();
         this.tabs.each(function(tab) {
@@ -1717,7 +1748,7 @@ var Container = {
 };
 
 Event.observe(window, 'load', function() {
-  $A(document.getElementsByClassName('listManager')).each(function(table) {
+  $$('.listManager').each(function(table) {
       alternateTableRows(table);
   })
 });

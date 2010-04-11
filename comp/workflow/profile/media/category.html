@@ -2,24 +2,17 @@
         title => 'Edit Category',
         context => $context . $r->pnotes('media_prof|title') . ' | Category'
 &>
-<form action="<% $r->uri %>" method="post" name="theForm">
 <% $content %>
-</form>
-
 <& /widgets/wrappers/footer.mc &>
-
-
 <%once>;
 my $type = 'element';
 my $disp = get_disp_name('media');
 my $context = "Workflow | Profile | $disp | ";
 </%once>
-
 <%args>
 $id => undef
 </%args>
-
-<%init>
+<%init>;
 # Do any redirects first.
 do_queued_redirect();
 
@@ -28,7 +21,6 @@ my $content = $m->scomp('/widgets/media_prof/media_prof.mc',
                         section => 'category',
                         param => \%ARGS);
 </%init>
-
 <%doc>
 ###############################################################################
 

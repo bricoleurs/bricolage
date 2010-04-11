@@ -1941,6 +1941,7 @@ sub best_uri {
     } else {
         # The asset's not in this site. Try to lookup an alias in this site.
         if (my $rel = $ba->lookup({ alias_id => $ba->get_id,
+                                    unexpired => 1,
                                     site_id  => $site_id })) {
             # Use the alias, instead.
             $ba = $rel;
@@ -1953,7 +1954,7 @@ sub best_uri {
             # the URI.
             $oc = $ba->get_primary_oc;
             my $site = Bric::Biz::Site->lookup({ id => $ba->get_site_id });
-            $uri = $oc->get_protocol . $site->get_domain_name;
+            $uri = ($oc->get_protocol || 'http://') . $site->get_domain_name;
         }
     }
 

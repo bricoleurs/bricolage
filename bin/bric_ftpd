@@ -123,17 +123,7 @@ BEGIN {
 END
 }
 
-use Bric::Config qw(:ftp :sys_user);
-
-if ($> == 0) {
-    # Switch from root to the system user (set in bricolage.conf).
-    $) = SYS_GROUP;
-    die "Unable to set effective group id ". SYS_GROUP . "\n"
-      unless $) == SYS_GROUP;
-    $> = SYS_USER;
-    die "Unable to set effective user id ". SYS_USER . "\n"
-      unless $> == SYS_USER;
-}
+use Bric::Config qw(:ftp);
 
 # Kill the server if -k is passed.
 if (grep { $_ eq '-k' } @ARGV) {

@@ -2,35 +2,35 @@
 
 Bric::Hacker - A guide for Bricolage hackers.
 
-This document has been moved to the Bricolage Wiki,
-L<http://wiki.github.com/bricoleurs/bricolage>. Relevant documents include:
+This document has been moved to the L<Bricolage
+Wiki|http://wiki.github.com/bricoleurs/bricolage>. Relevant documents include:
 
 =over
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/community>
+=item * L<Community|http://wiki.github.com/bricoleurs/bricolage/community>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/coding-standards>
+=item * L<Coding Standards|http://wiki.github.com/bricoleurs/bricolage/coding-standards>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/working-with-git>
+=item * L<Working with Git|http://wiki.github.com/bricoleurs/bricolage/working-with-git>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/contributing-a-bug-fix>
+=item * L<Contributing a Bug Fix|http://wiki.github.com/bricoleurs/bricolage/contributing-a-bug-fix>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/working-with-branches>
+=item * L<Working with Branches|http://wiki.github.com/bricoleurs/bricolage/working-with-branches>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/contributing-via-email>
+=item * L<Contributing Via Email|http://wiki.github.com/bricoleurs/bricolage/contributing-via-email>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/contributing-actions-and-movers>
+=item * L<Contributing Actions and Movers|http://wiki.github.com/bricoleurs/bricolage/contributing-actions-and-movers>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/debugging>
+=item * L<Debugging|http://wiki.github.com/bricoleurs/bricolage/debugging>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/merging-with-git>
+=item * L<Merging with Git|http://wiki.github.com/bricoleurs/bricolage/merging-with-git>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/starting-a-project-branch>
+=item * L<Starting a Project Branch|http://wiki.github.com/bricoleurs/bricolage/starting-a-project-branch>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/creating-a-release>
+=item * L<Creating a Release|http://wiki.github.com/bricoleurs/bricolage/creating-a-release>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/git-hacks>
+=item * L<Git Hacks|http://wiki.github.com/bricoleurs/bricolage/git-hacks>
 
-=item * L<http://wiki.github.com/bricoleurs/bricolage/performance-tuning>
+=item * L<Performance Tuning|http://wiki.github.com/bricoleurs/bricolage/performance-tuning>
 
 =back

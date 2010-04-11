@@ -41,9 +41,9 @@ USING THE BUNDLED APACHE
 COMPILING APACHE YOURSELF
 -------------------------
 
-Complete details for building everything you need to run Bricolage on Mac OS X 
-10.2 will always be found at http://www.justatheory.com/computers/os/macosx/my_adventures.html 
-and on OS X 10.3 at http://wiki.bricolage.cc/bin/view/Bric/MacOSXPanther
+Complete details for building everything you need to run Bricolage on Mac OS X
+are on the Bricolage Wiki at
+http://wiki.github.com/bricoleurs/bricolage/installing-bricolage-on-mac-os-x.
 
   "Build Your Own Apache Server with mod_perl"
   http://www.macdevcenter.com/pub/a/mac/2002/11/05/apache_osx.html

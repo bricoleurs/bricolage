@@ -1,4 +1,5 @@
-<& '/widgets/wrappers/table_top.mc', 
+<form action="<% $r->uri %>" method="post" name="theForm">
+<& '/widgets/wrappers/table_top.mc',
     caption => 'Current Categories',
 &>
 
@@ -20,32 +21,7 @@
 
 <& '/widgets/wrappers/table_bottom.mc' &>
 
-<& /widgets/search/search.mc,
-   object       => 'category',
-   field        => 'uri',
-   type         => 'singular',
-   use_form_tag => 0,
-   state_key    => 'story_category',
-&>
-
-<& '/widgets/wrappers/table_top.mc',
-    caption => 'Choose Categories',
-&>
-
-<& /widgets/listManager/listManager.mc,
-   object    => 'category',
-   title     => 'Choose Categories',
-   select    => undef,
-   profile   => $category_choose_profile,
-   exclude   => $exclude_cats,
-   fields    => [qw(uri site name)],
-   addition  => '',
-   behavior  => 'expand',
-   state_key => 'story_category',
-&>
-
-<& '/widgets/wrappers/table_bottom.mc' &>
-<div style="float: right">
+<div id="assocbuttons">
 <& '/widgets/buttons/submit.mc',
     disp    => 'Save',
     widget  => $widget,
@@ -71,6 +47,33 @@
     useTable => 0
 &>
 </div>
+</form>
+<form action="<% $r->uri %>" method="post" name="searchForm">
+<& /widgets/search/search.mc,
+   object       => 'category',
+   field        => 'uri',
+   type         => 'singular',
+   use_form_tag => 0,
+   state_key    => 'story_category',
+&>
+</form>
+<& '/widgets/wrappers/table_top.mc',
+    caption => 'Choose Categories',
+&>
+
+<& /widgets/listManager/listManager.mc,
+   object    => 'category',
+   title     => 'Choose Categories',
+   select    => undef,
+   profile   => $category_choose_profile,
+   exclude   => $exclude_cats,
+   fields    => [qw(uri site name)],
+   addition  => '',
+   behavior  => 'expand',
+   state_key => 'story_category',
+&>
+
+<& '/widgets/wrappers/table_bottom.mc' &>
 <%args>
 $widget
 </%args>

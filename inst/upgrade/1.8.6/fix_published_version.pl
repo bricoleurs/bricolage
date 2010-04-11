@@ -8,8 +8,7 @@ use Bric::Util::DBI qw(:all);
 
 # Looks for stories where the published version is greater than the current
 # version and sets the published version to the current version if the story
-# has been published, or to NULL if the story has not been published.  See
-# http://bugs.bricolage.cc/show_bug.cgi?id=983.
+# has been published, or to NULL if the story has not been published.
 
 exit unless fetch_sql "
     SELECT 1

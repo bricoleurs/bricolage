@@ -15,6 +15,7 @@ my $keyname_re = '^attr_([a-z0-9_]+)$';
 my $num_fields = @$attr;
 my $sel_opts = [ map { [ $_ => $_] } 1..$num_fields ];
 my $curField = 1;
+my $name_css = $usePosition && !$readOnly ? ' dragger' : '';
 
 $m->out(qq{<div id="containerprof"><ul id="attrs" class="elements">});
 
@@ -48,7 +49,7 @@ foreach my $attr (@$attr) {
     };
 
     (my $attr_name = $attr->{name}) =~ s/\s|\|/_/g; # Replace spaces and pipes with underscores
-    $m->out(qq{<li id="attr_$attr_name" class="element clearboth"><h3 class="name">\n});
+    $m->out(qq{<li id="attr_$attr_name" class="element clearboth">\n});
 
     # Spit out a hidden field.
     $m->comp('/widgets/profile/hidden.mc',
@@ -56,7 +57,7 @@ foreach my $attr (@$attr) {
          name => 'attr_name'
      ) if (!$readOnly);
 
-    $m->out($attr->{meta}{disp}{value} . qq{:</h3>});
+    $m->out(qq{<h3 class="name$name_css">$attr->{meta}{disp}{value}:</h3>});
 
     $m->out(qq{<div class="content">});
 

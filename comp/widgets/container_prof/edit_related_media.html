@@ -21,6 +21,7 @@
    behavior  => 'expand',
    field_values => $field_values,
    field_titles => {  thumb => $lang->maketext('Thumb'), action => ''},
+   sort_params => 'id=' . $element->get_id,
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 

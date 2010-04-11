@@ -1,6 +1,6 @@
                        Bricolage Content Management System
 
-                     Version 1.11.4 - Beta Release for 2.0.0
+                                 Version 2.0.0
 
 Bricolage is a full-featured, enterprise-class content management system. It
 offers a browser-based interface for ease-of use, a full-fledged templating
@@ -28,8 +28,7 @@ DOCUMENTATION
 
 After you've installed Bricolage, the complete API documentation will be
 available as man pages. It is also available on the Bricolage site, at
-http://bricolage.cc/documentation.html. Here are a few entry points to get you
-started.
+http://bricolagecms.org/docs/. Here are a few entry points to get you started.
 
 For installation and system administration, see:
 
@@ -53,11 +52,6 @@ If you'd like to contribute to Bricolage, see:
 
   Bric::Hacker
   Bric::ToDo
-
-KNOWN ISSUES
-============
-
-* None at this time
 
 Enjoy!
 

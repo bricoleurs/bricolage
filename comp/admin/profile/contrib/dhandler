@@ -23,7 +23,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
 );
 
 $m->comp('/widgets/profile/dumpRemainingFields.mc',
-    objref => $contrib, 
+    objref => $contrib,
     readOnly => $no_edit,
     fieldsUsed => {
         name   => 1,
@@ -48,12 +48,12 @@ if ($mode eq "new") {
         $options->{$group->get_id} = $group->get_name
           if ($group->get_id != $instanceGrpId);
     }
-    
+
     $m->comp("/widgets/wrappers/table_top.mc",
          caption => "Contributor Type",
          number  => 2
     );
-    
+
     $m->comp("/widgets/profile/select.mc",
          value     => 'group',
          disp      => 'Contributor Type',
@@ -61,9 +61,9 @@ if ($mode eq "new") {
          name      => 'group',
          readOnly  => $no_edit
     );
-    
+
     $m->comp("/widgets/wrappers/table_bottom.mc");
-    
+
     &$stepOneOfTwo($type, $section);
 
 } elsif ( $mode eq "edit" ) {
@@ -72,15 +72,15 @@ if ($mode eq "new") {
         value => $mode,
         name => 'mode'
     );
-    
+
     my $contacts = $contrib->get_obj->get_contacts;
-    
+
     # Display the Contact info.
     $m->comp("/widgets/wrappers/table_top.mc",
          caption => "Contacts",
          number  => 2
     );
-    
+
     $m->out(qq{<div style="padding: 10px;">});
     $m->comp('/widgets/add_more/add_more.mc',
          type      => 'contact',
@@ -92,35 +92,35 @@ if ($mode eq "new") {
          no_labels => 1
     );
     $m->out(qq{</div>});
-    
+
     $m->comp("/widgets/wrappers/table_bottom.mc");
     # end contact info
-    
+
     # display attrs
     $m->comp("/widgets/wrappers/table_top.mc",
          caption => "Custom Fields",
          number  => 3
     );
-    
+
     my $subs_to_display = [];
     for my $sub (sort { $a cmp $b } @subsys) {
-        
+
         # if this is a new extension, get the meta data from the default instance
         my $default = $contrib->all_for_subsys;
         my $all = ($ARGS{subsys} && $sub eq $ARGS{subsys}) ? $default : $contrib->all_for_subsys($sub);
-        
+
         # sort the attrs and build an array
         my $attr = [];
-        my @sortedAttrs = sort { 
-            $default->{$a}{meta}{pos}{value} <=> $default->{$b}{meta}{pos}{value} 
+        my @sortedAttrs = sort {
+            $default->{$a}{meta}{pos}{value} <=> $default->{$b}{meta}{pos}{value}
         } keys %$default;
-        
+
         foreach my $key (@sortedAttrs ) {
             $default->{$key}{name} = $sub . "|" . $key;
             $default->{$key}{value} = $all->{$key}{value};
             push @$attr, $default->{$key};
         }
-        
+
         if (@$attr) {
             # Build an array of subsys to display, with Default always first
             if ($sub eq '_MEMBER_SUBSYS') {
@@ -131,18 +131,21 @@ if ($mode eq "new") {
         }
     }
 </%perl>
-    
+
+    <script type="text/javascript">
+       var subsysTabs;
+    </script>
     <div id="subsys_tabs" class="tabs clearboth">
 %   foreach my $sub (@$subs_to_display) {
 %       my ($name, $attr) = @$sub;
 %       my $selected = ($ARGS{subsys} && $name eq $ARGS{subsys}) || (!$ARGS{subsys} && $name eq '_MEMBER_SUBSYS');
-%       (my $safe_sub = $name) =~ s/\s|\|/_/g;   # Replace spaces and pipes with _
+%       (my $safe_sub = $name) =~ s/[\s|]/_/g;   # Replace spaces and pipes with _
         <div id="subsys_<% $safe_sub %>" class="tab<% $selected ? ' selected' : '' %>">
         <a href="#" onclick="subsysTabs.switchTab(this.parentNode); return false"><% $name eq '_MEMBER_SUBSYS' ? 'Default' : $name %></a>
         </div>
 %   }
     </div>
-    
+
     <div id="subsys_tab_pages" class="tabPages clearboth">
 %   foreach my $sub (@$subs_to_display) {
 %       my ($name, $attr) = @$sub;
@@ -158,13 +161,13 @@ if ($mode eq "new") {
         </div>
 %   }
     </div>
-    
+
     <script type="text/javascript">
-        var subsysTabs = new Tabs('subsys_tabs', 'subsys_tab_pages');
+       subsysTabs = new Tabs('subsys_tabs', 'subsys_tab_pages');
     </script>
-    
+
     <& "/widgets/wrappers/table_bottom.mc" &>
-    
+
     <& '/widgets/profile/formButtons.mc',
         type    => $type,
         widget  => $type,

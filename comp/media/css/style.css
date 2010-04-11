@@ -1029,7 +1029,7 @@ table.dlman tr.dlbtns { height: 30px; }
 
 .lightbox[id]{ /* IE6 and below Can't See This */    position:fixed;    }#overlay[id]{ /* IE6 and below Can't See This */    position:fixed;    }
 
-#contribbuttons {
+#assocbuttons {
   padding-bottom: 1em;
   text-align:right;
 }

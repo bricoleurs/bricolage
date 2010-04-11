@@ -35,13 +35,15 @@ the resulting PNG files installed in appropriate subdirectories. For example,
 an icon named "gnome-text-html.png" will be copied to
 F<comp/media/mime/text/html.png>.
 
-This script was developed using the GNOME MIME type icons downloaded from
-L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>. (linked to
-from L<http://developer.ximian.com/themes/icons/>), but appears as though it
+This script was developed using the GNOME MIME type icons
+(L<downloaded|http://developer.ximian.com/images/art-devel/mime-icons.tgz>,
+linked to from the L<Ximian icons
+page|http://developer.ximian.com/themes/icons/>), but appears as though it
 would work with the files in a F<mimetypes> subdirectory of most PNG icon
-distributions downloadable from L<http://art.gnome.org/themes/icon/>
-(the "NoiaWarm" theme's 48 x 48 MIME type icons look pretty nice with the
-Bricolage UI color scheme). Updates happily accepted.
+distributions downloadable from the L<GNOME Icons
+page|http://art.gnome.org/themes/icon/> (the "NoiaWarm" theme's 48 x 48 MIME
+type icons look pretty nice with the Bricolage UI color scheme). Updates
+happily accepted.
 
 =head1 Options
 
@@ -63,18 +65,14 @@ option can be a regular expression.
 
 =over 4
 
-=item L<http://developer.ximian.com/themes/icons/>
+=item L<Ximian GNOME Icons page|http://developer.ximian.com/themes/icons/>
 
-The Ximian GNOME Icons page.
+=item L<Canonical MIME type icons for GNOME|http://developer.ximian.com/images/art-devel/mime-icons.tgz>
 
-=item L<http://developer.ximian.com/images/art-devel/mime-icons.tgz>
+=item L<GNOME icon themes page|http://art.gnome.org/themes/icon/index.php>
 
-The canonical MIME type icons for GNOME.
-
-=item L<http://art.gnome.org/themes/icon/index.php>
-
-GNOME icon themes page, where several different collections of icon themes
-(some of which include the required MIME type icons) can be downloaded.
+Where several different collections of icon themes (some of which include the
+required MIME type icons) can be downloaded.
 
 =back
 
