@@ -916,7 +916,7 @@ sub where_clause {
                 $sql = $any->[1];
             }
             # For exclude with ANY, must use AND not OR
-            my $op = $sql =~ /(?:<>|!=)\s+[?]/ ? ' AND ' : ' OR ';
+            my $op = $sql =~ /(?:<>|!=|NOT\s+LIKE)\s+[?]/ ? ' AND ' : ' OR ';
             $where .= ' AND (' . join($op, ($sql) x @$v) . ')';
             my $count = $sql =~ s/\?//g;
             push @args, ($_) x $count for @$v;
@@ -968,7 +968,7 @@ sub any_where {
     if (UNIVERSAL::isa($value, 'Bric::Util::DBI::ANY')) {
         push @$params, @$value;
         # For exclude with ANY, must use AND not OR
-        my $op = $sql =~ /(?:<>|!=)\s+[?]/ ? ' AND ' : ' OR ';
+        my $op = $sql =~ /(?:<>|!=|NOT\s+LIKE)\s+[?]/ ? ' AND ' : ' OR ';
         return '(' . join($op, ($sql) x @$value) . ')';
     }
     push @$params, $value;

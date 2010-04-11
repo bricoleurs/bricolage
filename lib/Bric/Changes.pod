@@ -120,6 +120,12 @@ directory. Thanks to Dave Rolsky for the initial patch. [David]
 Updated session error handling to recognize new error message from
 Apache::Session. [Dave Rolsky]
 
+=item *
+
+Fixed bug where publishing a story with multiple categories led to the
+deletion of preivew files. Thanks to Guido Buelskaemper for the report (Bug
+#156). [David]
+
 =back
 
 =head1 VERSION 1.10.9 (2010-01-28)
