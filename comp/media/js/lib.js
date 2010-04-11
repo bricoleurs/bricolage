@@ -50,6 +50,7 @@ Object.extend(Ajax.Autocompleter.prototype, {
     var t = this.getToken();
     if (this.cache[t]) {
       this.updateChoices(this.cache[t]);
+      this.options.onNotEmpty(this.element);
     } else {
       entry = encodeURIComponent(this.options.paramName) + '=' + encodeURIComponent(t);
 

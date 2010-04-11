@@ -42,12 +42,20 @@ the file name [Paul Orrock]
 
 Added the new Bricolage logo to the user interface. [Phillip Smith]
 
-=item
+=item *
 
 The buttons once again work in the category browser when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
 Krzysztof Rudnik for the report (Bug #155). [David]
 
+=item *
+
+Fixed subtle category autocomplete issue where it can be difficult to choose
+the root category. It would appear to work, but the "Unable to add category
+that does not exist" message would not clear and the form would not think that
+the category is legal. Could apply to other categories, but was most common
+for the root category. Thanks to Michael Herring for the detailed steps to
+reproduce (Bug #157). [David]
 
 =back
 
