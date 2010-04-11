@@ -10,7 +10,7 @@ $LastChangedDate$
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 VERSION 1.10.10 ()
+=head1 VERSION 1.10.10 (2010-04-11)
 
 =head2 Improvements
 
@@ -30,7 +30,7 @@ substitutes a simple implementation that does the trick (Bug #136). [David]
 
 =item *
 
-The Source select list when creating or editing a story or media document now
+The Source select list when creating or editing a story or media documents now
 lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
 [David]
 
@@ -117,13 +117,13 @@ directory. Thanks to Dave Rolsky for the initial patch. [David]
 
 =item *
 
-Updated session error handling to recognize new error message from
-Apache::Session. [Dave Rolsky]
+Updated session error handling to recognize a different error message in
+recent versions of Apache::Session. [Dave Rolsky]
 
 =item *
 
 Fixed bug where publishing a story with multiple categories led to the
-deletion of preivew files. Thanks to Guido Buelskaemper for the report (Bug
+deletion of preview files. Thanks to Guido Buelskaemper for the report (Bug
 #156). [David]
 
 =back
