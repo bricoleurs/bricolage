@@ -39,6 +39,11 @@ the category is legal. Could apply to other categories, but was most common
 for the root category. Thanks to Michael Herring for the detailed steps to
 reproduce (Bug #157). [David]
 
+=item *
+
+Fixed bug where custom fields in the contributor profile did not appear in
+some browsers. Thanks to Krzysztof Rudnik for the report (Bug #139). [David]
+
 =back
 
 =head1 Version 1.11.4 (2010-03-29)
