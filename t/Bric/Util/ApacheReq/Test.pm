@@ -18,17 +18,22 @@ sub _test_load : Test(1) {
 sub test_url : Test(6) {
     my $mock = Test::MockModule->new($CLASS);
     $mock->mock( instance => My::Big::Fat::Req->new );
+    my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
     ok $CLASS->url, "$CLASS->url should return something";
-    is $CLASS->url, 'http://www.example.com/', 'And it should be the right thing';
-    is $CLASS->url( uri => '/foo'), 'http://www.example.com/foo',
+    is $CLASS->url, "http://www.example.com$port/", 'And it should be the right thing';
+    is $CLASS->url( uri => '/foo'), "http://www.example.com$port/foo",
         'The uri param should work';
-    is $CLASS->url( uri => ''), 'http://www.example.com',
+    is $CLASS->url( uri => ''), "http://www.example.com$port",
         'An empty uri param should work';
-    my $s = SSL_ENABLE ? 's' : '';
-    is $CLASS->url( ssl => 1), "http$s://www.example.com/",
+    my $s = '';
+    if (SSL_ENABLE) {
+        $s = 's';
+        $port = SSL_PORT == 443 ? '' : ':' . SSL_PORT;
+    }
+    is $CLASS->url( ssl => 1), "http$s://www.example.com$port/",
         'The ssl param should work';
-    is $CLASS->url( uri => '/foo', ssl => 1), "http$s://www.example.com/foo",
+    is $CLASS->url( uri => '/foo', ssl => 1), "http$s://www.example.com$port/foo",
         'The uri and ssl params should work together';
 }
 

@@ -10,6 +10,19 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.1 ()
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed a bug in the L<Bric::Util::ApacheReq> tests where they would fail if the
+C<LISTEN_PORT> or C<SSL_PORT> F<bricolage.conf> directives were anything other
+than 80 and 443, respectively. Thanks to Héctor Daniel Cortés González for the
+report. [David]
+
+=back
+
 =head1 Version 2.0.0 (2010-04-12)
 
 =head2 Bug Fixes
