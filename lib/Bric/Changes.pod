@@ -1450,6 +1450,168 @@ Sources Manager). [David]
 
 =back
 
+=head1 VERSION 1.10.10 (2010-04-11)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+When displaying categories associated with a story when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true, the categories
+are now displayed in alphabetical order by URI. [David]
+
+=item *
+
+The installer no longer requires that L<Term::ReadPassword> be installed from
+the CPAN before it continues. It will use it if it finds it, but if not
+substitutes a simple implementation that does the trick (Bug #136). [David]
+
+=item *
+
+The Source select list when creating or editing a story or media documents now
+lists sources in alphabetical order. Reported by Michael Herring (Bug # 138).
+[David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+L<Bric::Util::Burner>'s C<publish()> method no longer removes documents from
+workflow after publishing them, as such is the responsbility of the code that
+calls publish. The publish callback already did, and now so does the
+L<Bric::SOAP::Workflow> C<publish()> method. Thanks to David Beaudet for the
+report and Aaron Fuleki for the steps to replicate (Bug #98). [David]
+
+=item *
+
+Fixed a bug where contributor and category search results would be propagated
+to the contributor and category editing screens with a story or media
+document. Searches from within documents should cache their own results,
+separate from the admin search interfaces. [David]
+
+=item *
+
+Contributors associated with a story or media document and categories
+associated with a story document are no longer paginated. When there were more
+contributors or categories than would fit on a paginated page, the pagination
+didn't work and reording didn't work. So by disabling pagination in this case,
+we get around that issue. Documents with that many categories or contributors
+are rare, so the trade-off seems worthwhile. Thanks to Bret Dawson for the
+report (Bug #121). [David]
+
+=item *
+
+When associating a contributor with a media document, don't prompt for role
+selection if the contributor has only one role. This saves a page load for
+each contributor association and brings media in line with how story
+contributor association already works. [David]
+
+=item *
+
+Fixed the "Log In" button so that the word "In" is antialiased. [Waldo
+Jaquith]
+
+=item *
+
+Fixed the "Not a GLOB reference" error when using the PHP burner on Perl 5.10.
+[Alex Krohn]
+
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now avoids expired stories
+when searching for aliased stories. Thanks to Zdravko Balorda for the catch
+(Bug #144). [David]
+
+=item *
+
+The field type profile now properly validates code select code and lets the
+user know if it's not valid. [David]
+
+=item *
+
+The validation of code select field code is now consistent between the element
+type profile, the field type profile, and the SOAP element type interface.
+Thanks to Krzysztof Rudnik for the report (Bug #140). [David]
+
+=item *
+
+Setting the C<RELATED_DOC_POD_TAG> F<bricolage.conf> directive to "url" no
+longer breaks bulk edit. Thanks to Phillip for the report (Bug #150). [David]
+
+=item *
+
+The C<best_uri()> method of L<Bric::Util::Burner> now works when creating a
+link to a story on a different site and the protocol for the output channel is
+not set. It defaults to "http://" for the protocol. [David]
+
+=item *
+
+Fixed error handling in the access handler so that it works when a URI is a
+directory. Thanks to Dave Rolsky for the initial patch. [David]
+
+=item *
+
+Updated session error handling to recognize a different error message in
+recent versions of Apache::Session. [Dave Rolsky]
+
+=item *
+
+Fixed bug where publishing a story with multiple categories led to the
+deletion of preview files. Thanks to Guido Buelskaemper for the report (Bug
+#156). [David]
+
+=back
+
+=head1 VERSION 1.10.9 (2010-01-28)
+
+=head2 Improvements
+
+=over
+
+=item *
+
+The SFTP mover now respects a port specification in the host name (e.g,
+"foo.example.com:22"), just like the FTP mover. Thanks to Iván Chavero for the
+report and fix. [David]
+
+=item *
+
+The virtual FTP server now assumes that template files uploaded to it are
+encoded in the user's preferred encoding. So if you have Windows gremlins in
+your templates, you can set your Character Set preference to "CP1252" and it
+will just work. Thanks to Phillip Smith for the report (Bug #124). [David]
+
+=back
+
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Cover dates are no longer exported via the SOAP interface with the wrong year
+(2009) when their dates are in the first three days of 2010. Thanks to Paul
+Orrock for the spot (Bug #122) and David Oliveira via Bret Dawson for the fix!
+[David]
+
+=item *
+
+Fixed an error in L<Bric::Biz::Contact> where a boolean value was not passed
+to the database as a boolean. [David Oliveira]
+
+=item *
+
+Fixed the F<favicon.ico> redirect so that it points to a full URL, not just a
+URI path. [David]
+
+=back
+
 =head1 VERSION 1.10.8 (2009-11-14)
 
 =head2 Improvements
