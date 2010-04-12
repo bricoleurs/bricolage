@@ -10,6 +10,8 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.1.0 ()
 
+=head1 Version 2.0.1 ()
+
 =head1 Version 2.0.0 (2010-04-12)
 
 =head2 Bug Fixes
@@ -23,8 +25,8 @@ directory. Thanks to Dave Rolsky for the initial patch. [David]
 
 =item *
 
-Updated session error handling to recognize new error message from
-Apache::Session. [Dave Rolsky]
+Updated session error handling to recognize a different error message in
+recent versions of Apache::Session. [Dave Rolsky]
 
 =item *
 
@@ -36,9 +38,9 @@ Krzysztof Rudnik for the report (Bug #155). [David]
 
 Fixed subtle category autocomplete issue where it can be difficult to choose
 the root category. It would appear to work, but the "Unable to add category
-that does not exist" message would not clear and the form would not think that
-the category is legal. Could apply to other categories, but was most common
-for the root category. Thanks to Michael Herring for the detailed steps to
+that does not exist" message would not clear and the form would think that the
+category isn't legal. Could apply to other categories, but was most common for
+the root category. Thanks to Michael Herring for the detailed steps to
 reproduce (Bug #157). [David]
 
 =item *
@@ -48,9 +50,9 @@ some browsers. Thanks to Krzysztof Rudnik for the report (Bug #139). [David]
 
 =item *
 
-Fixed bug where publishing a story with multiple categories led to the
-deletion of preivew files. Thanks to Guido Buelskaemper for the report (Bug
-#156). [David]
+Fixed bug where publishing a story with multiple categories (and perhaps
+multiple pages) led to the deletion of preivew files. Thanks to Guido
+Buelskaemper for the report (Bug #156). [David]
 
 =back
 
