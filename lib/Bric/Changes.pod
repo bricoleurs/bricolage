@@ -12,6 +12,20 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.1 ()
 
+=head1 Improvements
+
+=over
+
+=item *
+
+Added C<SKIP_SSL_REDIRECT> F<bricolage.conf> directive. This directive
+prevents Bricolage from redirecting to and from an SSL URL when C<SSL_ENABLE>
+is turned on. The case for this is when Bricolage is running behind a reverse
+proxy server that's handling SSL mappsings. Thanks to Alex Krohn for the
+report. [David]
+
+=back
+
 =head2 Bug Fixes
 
 =over

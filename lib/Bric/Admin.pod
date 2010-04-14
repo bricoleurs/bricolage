@@ -1595,6 +1595,16 @@ also have to enable B<ALWAYS_USE_SSL> so that recirects will work properly.
 
 =item *
 
+B<SKIP_SSL_REDIRECT:> When SSL is enabled and C<ALWAYS_USE_SSL> is not,
+Bricolage will switch back and forth between SSL and non-SSL connections as
+appropriate. Mostly this means that it uses SSL for pages with password
+information, and non-SSL otherwise. If you don't want Bricolage to do this
+kind of switching, enable C<SKIP_SSL_REDIRECT>. This will be most useful if
+Bricolage lives behind a reverse proxy server that handles the SSL stuff
+itself.
+
+=item *
+
 B<NAME_VHOST:> The IP address on which the virtual host name specified in the
 C<VHOST_SERVER_NAME> directive will respond. Note that the syntax for this
 directive is identical to the syntax for Apache's C<NameVirtualHost> directive.
