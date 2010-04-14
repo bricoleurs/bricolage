@@ -11,7 +11,7 @@ use Bric::App::Session qw(:state :user);
 use Bric::App::Util qw(del_redirect redirect_onload);
 use Bric::Util::Priv::Parts::Const qw(:all);
 
-use Bric::Config qw(LISTEN_PORT);
+use Bric::Config qw(LISTEN_PORT SKIP_SSL_REDIRECT);
 
 my $port = LISTEN_PORT == 80 ? '' : ':' . LISTEN_PORT;
 
@@ -26,9 +26,9 @@ sub login : Callback {
     my $redir = del_redirect() || '';
     $redir = '/' if $redir =~ m|^/login|;
     if ($res) {
-        if ($param->{$self->class_key . '|ssl'}) {
+        if (SKIP_SSL_REDIRECT || $param->{$self->class_key . '|ssl'}) {
             # They want to use SSL. Do a simple redirect.
-            set_state_name($self->class_key, 'ssl');
+            set_state_name($self->class_key, 'ssl') unless SKIP_SSL_REDIRECT;
             $self->redirect($redir);
         } else {
             # Redirect them back to port 80 if not using SSL.

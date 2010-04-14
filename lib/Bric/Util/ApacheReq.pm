@@ -139,7 +139,7 @@ sub url {
     my %p = @_;
     my $http = 'http';
     my $port;
-    if ( SSL_ENABLE && (ALWAYS_USE_SSL || $p{ssl}) ) {
+    if ( SSL_ENABLE && !SKIP_SSL_REDIRECT && (ALWAYS_USE_SSL || $p{ssl}) ) {
         $http .= 's';
         # Yes string comparisons, because the constants are inlined.
         $port  = SSL_PORT eq '*' || SSL_PORT eq '443' ? '' : ':' . SSL_PORT;

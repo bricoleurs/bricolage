@@ -66,6 +66,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     VHOST_SERVER_NAME
                     ALWAYS_USE_SSL
                     SSL_ENABLE
+                    SKIP_SSL_REDIRECT
                     SSL_PORT
                     SSL_CERTIFICATE_FILE
                     SSL_CERTIFICATE_KEY_FILE
@@ -298,6 +299,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                     ssl       => [qw(SSL_ENABLE
                                      SSL_PORT
                                      ALWAYS_USE_SSL
+                                     SKIP_SSL_REDIRECT
                                      LISTEN_PORT)],
                     conf      => [qw(SSL_ENABLE
                                      SSL_CERTIFICATE_FILE
@@ -470,7 +472,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
                     MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
                     MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES
-                    EXPIRE_ON_DEACTIVATE))
+                    EXPIRE_ON_DEACTIVATE SKIP_SSL_REDIRECT))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -549,6 +551,7 @@ require Bric; our $VERSION = Bric->VERSION;
 
     # ssl Settings.
     use constant SSL_ENABLE              => $config->{SSL_ENABLE};
+    use constant SKIP_SSL_REDIRECT       => $config->{SKIP_SSL_REDIRECT};
     use constant SSL_CERTIFICATE_FILE    =>
       $config->{SSL_CERTIFICATE_FILE} || '';
     use constant SSL_CERTIFICATE_KEY_FILE =>
