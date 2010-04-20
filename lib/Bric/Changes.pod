@@ -40,7 +40,7 @@ report. [David]
 =item *
 
 The "Checkout" link no longer appears on desk items for users who do not have
-permission to edit an asset [kjallad].
+permission to edit an asset [Kahil Jallad].
 
 =back
 
