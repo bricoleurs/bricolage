@@ -12,6 +12,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 VERSION 1.10.11 ()
 
+=head2 Improvements
+
+=over
+
+=item *
+
+Added the "object" format for datetime values. Pass "object" as the formatting
+string and a L<DateTime> object will be returned, rather than a string.
+[David]
+
+=back
+
 =head1 VERSION 1.10.10 (2010-04-11)
 
 =head2 Improvements

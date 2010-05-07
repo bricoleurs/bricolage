@@ -208,10 +208,11 @@ Takes a date/time string formatted for the database, converts it to the time
 zone set in the "Time Zone" preference, and returns it in the C<strftime>
 format provided by C<$format>. If C<$format> is not provided, the date/time
 will be returned in the format set in the "Date/Time Format" preference. If
-C<$format> is 'epoch', it will return the time in epoch seconds. If
-C<$db_date> is not provided and C<$bool> is false, then C<local_date()>
-returns C<undef>. If C<$db_date> is not provided and C<$bool> is true, then
-C<local_date()> returns the current date/time.
+C<$format> is 'epoch', it will return the time in epoch seconds. If C<$format>
+is 'object', it will return a L<DateTime> object. If C<$db_date> is not
+provided and C<$bool> is false, then C<local_date()> returns C<undef>. If
+C<$db_date> is not provided and C<$bool> is true, then C<local_date()> returns
+the current date/time.
 
 Use this function in Bricolage accessor methods to return a localized
 date/time string.
@@ -242,8 +243,11 @@ sub local_date {
     $format ||= Bric::Util::Pref->lookup_val('Date/Time Format');
     my $dt = $db_date ? db_datetime($db_date) : DateTime->now;
     $dt->set_time_zone(Bric::Util::Pref->lookup_val('Time Zone'));
-    return $format eq 'epoch' ? $dt->epoch : $dt->strftime($format);
-} # strfdate()
+    return $dt if $format eq 'object';
+    return $format eq 'epoch'  ? $dt->epoch
+         : $format eq 'object' ? $dt
+                               : $dt->strftime($format);
+}
 
 ##############################################################################
 
