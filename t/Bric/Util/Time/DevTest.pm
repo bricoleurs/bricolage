@@ -56,7 +56,7 @@ sub test_strfdate : Test(5) {
 
 ##############################################################################
 # Test local_date().
-sub test_local_date : Test(6) {
+sub test_local_date : Test(7) {
     is( local_date($utc_date), $local_date,
         "Check local date is '$local_date'" );
     is( local_date($utc_iso_short_date), $local_date,
@@ -65,6 +65,10 @@ sub test_local_date : Test(6) {
         "Check local date is '$fmt_local'" );
     is( local_date($utc_iso_date, 'epoch'), $epoch,
         "Check that local date is '$epoch'" );
+
+    # Try the "object" format.
+    isa_ok local_date($utc_iso_date, 'object'), 'DateTime',
+        'Should get DateTime object for "object" format';
 
     # Check the local date with a known format argument.
     my $current = DateTime->now(time_zone => $tz)->strftime(ISO_8601_FORMAT);
