@@ -22,6 +22,12 @@ is turned on. The case for this is when Bricolage is running behind a reverse
 proxy server that's handling SSL mappsings. Thanks to Alex Krohn for the
 report. [David]
 
+=item *
+
+Added the "object" format for datetime values. Pass "object" as the formatting
+string and a L<DateTime> object will be returned, rather than a string.
+[David]
+
 =back
 
 =head2 Bug Fixes
@@ -1472,18 +1478,6 @@ will be set to 0 rather than retaining its previous value. [David]
 
 The expire information for sources is now localized in the list view (the
 Sources Manager). [David]
-
-=back
-
-=head2 Improvements
-
-=over
-
-=item *
-
-Added the "object" format for datetime values. Pass "object" as the formatting
-string and a L<DateTime> object will be returned, rather than a string.
-[David]
 
 =back
 
