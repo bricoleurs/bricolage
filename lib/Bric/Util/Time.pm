@@ -243,7 +243,6 @@ sub local_date {
     $format ||= Bric::Util::Pref->lookup_val('Date/Time Format');
     my $dt = $db_date ? db_datetime($db_date) : DateTime->now;
     $dt->set_time_zone(Bric::Util::Pref->lookup_val('Time Zone'));
-    return $dt if $format eq 'object';
     return $format eq 'epoch'  ? $dt->epoch
          : $format eq 'object' ? $dt
                                : $dt->strftime($format);
