@@ -41,6 +41,11 @@ C<LISTEN_PORT> or C<SSL_PORT> F<bricolage.conf> directives were anything other
 than 80 and 443, respectively. Thanks to Héctor Daniel Cortés González for the
 report. [David]
 
+=item *
+
+Fixed a bug where the SFTP mover would not properly finish moving the file,
+leavingescaped tmp files on the destination server. [Matt Rolf]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
