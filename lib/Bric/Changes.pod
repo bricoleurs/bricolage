@@ -38,6 +38,10 @@ string and a L<DateTime> object will be returned, rather than a string.
 
 =item *
 
+Fixed a bug where the SFTP mover would not properly finish moving the file, leavingescaped tmp files on the destination server. [Matt Rolf]
+
+=item *
+
 Fixed a bug in the L<Bric::Util::ApacheReq> tests where they would fail if the
 C<LISTEN_PORT> or C<SSL_PORT> F<bricolage.conf> directives were anything other
 than 80 and 443, respectively. Thanks to Héctor Daniel Cortés González for the

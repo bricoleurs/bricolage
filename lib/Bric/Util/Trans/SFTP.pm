@@ -213,7 +213,7 @@ sub put_res {
                 $sftp->unlink($tmp_dest) if FTP_UNLINK_BEFORE_MOVE;
                 my $f = $ssh2->scp_put($src, $tmp_dest_esc);
                 $sftp->unlink($dest_file) if FTP_UNLINK_BEFORE_MOVE;
-                $sftp->rename($tmp_dest, $dest_file);
+                $sftp->rename($tmp_dest_esc, $dest_file);
             };
             unless (defined $status) {
                 my $msg = "Unable to put file '$dest_file' on remote host"
