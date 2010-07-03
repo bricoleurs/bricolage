@@ -10,7 +10,7 @@
 <& /widgets/wrappers/table_bottom.mc &>
 <& /widgets/wrappers/footer.mc &>
 <%init>;
-my $url = SSL_ENABLE
+my $url = SSL_ENABLE && !SKIP_SSL_REDIRECT
     ? Bric::Util::ApacheReq->url( ssl => 1, uri => $ARGS{referer} )
     : $ARGS{referer};
 </%init>

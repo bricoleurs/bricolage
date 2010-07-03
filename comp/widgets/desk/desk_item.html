@@ -63,7 +63,7 @@
                     </ul>
                 </div>
             </li>
-% } elsif (!$user && $action eq 'checkout_cb') {
+% } elsif (!$user && $can_edit && $action eq 'checkout_cb') {
             <li>
 % my $checkout_uri = $r->uri . '?' . "$widget|checkout_cb=$class\_$id";
 <a href="<% $checkout_uri %>" name="check_out"><img src="/media/images/checkout.gif" title="Check out" />Check out</a>

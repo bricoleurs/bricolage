@@ -190,7 +190,7 @@ sub publish : Callback {
             if ($count <= 3) {
                 my $saved = $expired
                     ? $job->get_comp_time ? 'expired from '   : 'scheduled for expiration from'
-                    : $job->get_comp_time ? 'published to' : 'scheduled for publication to';
+                    : $job->get_comp_time ? 'published to'    : 'scheduled for publication to';
                 $self->add_message(
                     qq{"[_1]" ${saved} [_2].},
                     $doc->get_title,

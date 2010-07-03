@@ -490,6 +490,8 @@ Friends who have spotted bugs include:
 
 =item * Vincent Stemen
 
+=item * Héctor Daniel Cortés González
+
 =back
 
 Bricolage's translation team:
