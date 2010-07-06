@@ -30,6 +30,12 @@ Added the "object" format for datetime values. Pass "object" as the formatting
 string and a L<DateTime> object will be returned, rather than a string.
 [David]
 
+=item *
+
+Refactored the SFTP mover to do proper error handling. Also removed the code
+that "escapes" file names, as with more recent versions of Net::SSH2 it left
+the backslashes in the file names. [David]
+
 =back
 
 =head2 Bug Fixes
@@ -51,7 +57,7 @@ permission to edit an asset [Kahil Jallad].
 =item *
 
 Fixed a bug where the SFTP mover would not properly finish moving the file,
-leavingescaped tmp files on the destination server. [Matt Rolf]
+leaving escaped tmp files on the destination server. [Matt Rolf]
 
 =back
 
