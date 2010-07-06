@@ -124,34 +124,15 @@ B<Notes:> Uses Net::SFTP internally.
 sub put_res {
     my ($pkg, $resources, $st) = @_;
 
-    foreach my $s ($st->get_servers) {
+    foreach my $server ($st->get_servers) {
         # Skip inactive servers.
-        next unless $s->is_active;
+        next unless $server->is_active;
 
-        # Instantiate a Net::SSH2 object and login.
-
-        my ($hn, $port) = split /:/,  $s->get_host_name;
-        my $user = $s->get_login;
-        my $password = $s->get_password;
-
-        my $ssh2 = Net::SSH2->new();
-        my $connect = eval {
-            $ssh2->connect($hn, $port);
-            $ssh2->method('CRYPT_CS', SFTP_MOVER_CIPHER ) if SFTP_MOVER_CIPHER;
-            $ssh2->method('HOSTKEY', SFTP_KEY_TYPE ) if SFTP_KEY_TYPE;
-            $ssh2->auth( username => $user, password => $password,
-                         publickey => SFTP_PUBLIC_KEY_FILE,
-                         privatekey => SFTP_PRIVATE_KEY_FILE);
-        };
-        throw_gen error   => "Unable to login to remote server '$hn'.",
-                  payload => $@
-          if $@ || !$ssh2->auth_ok;
-
-        # Get the document root.
-        my $doc_root = $s->get_doc_root;
-
-        # Create a Net::SSH2::SFTP object to use later
-        my $sftp = $ssh2->sftp;
+        # Connect via SSH2 and establish SFTP channel.
+        my $ssh2     = _connect($server);
+        my $sftp     = $ssh2->sftp;
+        my $doc_root = $server->get_doc_root;
+        my $hn       = $server->get_host_name;
 
         # Now, put each file on the remote server.
         my %dirs;
@@ -162,68 +143,45 @@ sub put_res {
             # haven't created it already.
             my $dest_dir = $fs->dir_name(unescape_uri $res->get_uri);
             my ($status, $dirhandle);
-            unless ($dirs{$dest_dir}) {
-                $dirhandle = eval {
-                    local $SIG{__WARN__} = $no_warn;
-                    $sftp->opendir($fs->cat_dir($doc_root, substr $dest_dir, 1));
-                };
-                unless (defined $dirhandle) {
-                    # The directory doesn't exist.
-                    # Get the list of all of the directories.
-                    my $subdir = $doc_root;
-                    foreach my $dir ($fs->split_dir($dest_dir)) {
-                        # Create each one if it doesn't exist.
-                        $subdir = $fs->cat_dir($subdir, $dir);
-                        # Mark that we've created it, so we don't try to do it
-                        # again.
-                        $dirs{$subdir} = 1;
-                        $dirhandle = eval{
-                            local $SIG{__WARN__} = $no_warn;
-                            $sftp->opendir($subdir);
-                        };
-                        unless (defined $dirhandle) {
-                            $status = eval {
-                                local $SIG{__WARN__} = $no_warn;
-                                $sftp->mkdir($subdir);
-                            };
-                            unless (defined $status) {
-                                my $msg = "Unable to create directory '$subdir'"
-                                  . " on remote server '$hn'";
-                                throw_gen(error => $msg);
-                            }
-                        }
+            unless ($dirs{$dest_dir}++ or $sftp->opendir($fs->cat_dir(
+                $doc_root, substr $dest_dir, 1
+            ))) {
+                # The directory doesn't exist. So create it.
+                my $subdir = $doc_root;
+                foreach my $dir ($fs->split_dir($dest_dir)) {
+                    # Check for existence of subdirectory.
+                    $subdir = $fs->cat_dir($subdir, $dir);
+                    $dirs{$subdir} = 1;
+                    unless ($sftp->opendir($subdir)) {
+                        # Doesn't exist, so create it.
+                        $sftp->mkdir($subdir) or throw_gen(
+                            error   => "Error creating directory '$subdir' on '$hn'",
+                            payload => ($sftp->error)[1],
+                        )
                     }
                 }
             }
+
             # Now, put the file on the server.
-            my $dest_file = $fs->cat_file($doc_root, unescape_uri substr $res->get_uri, 1);
-            # Strip the filename off end of dest and escape it
-            my $orig_base = $fs->base_name($dest_file);
-            my $escaped_base;
-            ($escaped_base = $orig_base) =~ s/(.)/\\$1/g;
-            # Strip off directory destination and
-              # re-name file with escapes included
-            my $base_dir = $fs->dir_name($dest_file);
-            my $dest_file_esc = $fs->cat_dir($base_dir, $escaped_base);
-            # Create temporary destination and put file on server
-            my $tmp_dest = $dest_file . '.tmp';
-            my $tmp_dest_esc = $dest_file_esc . '.tmp';
-            $status = eval{
-                local $SIG{__WARN__} = $no_warn;
-                $sftp->unlink($tmp_dest) if FTP_UNLINK_BEFORE_MOVE;
-                my $f = $ssh2->scp_put($src, $tmp_dest_esc);
-                $sftp->unlink($dest_file) if FTP_UNLINK_BEFORE_MOVE;
-                $sftp->rename($tmp_dest_esc, $dest_file);
-            };
-            unless (defined $status) {
-                my $msg = "Unable to put file '$dest_file' on remote host"
-                  . " '$hn', status '" . $sftp->error. "'";
-                throw_gen(error => $msg);
-            }
+            my $dest_file = $fs->cat_file(
+                $doc_root, unescape_uri substr $res->get_uri, 1
+            );
+            my $temp_dest = "$dest_file.tmp";
+
+            $sftp->unlink($temp_dest) if FTP_UNLINK_BEFORE_MOVE;
+            $ssh2->scp_put($src, $temp_dest) or throw_gen(
+                error   => "Error putting file '$dest_file' on '$hn'",
+                payload => join ' ', $ssh2->error
+            );
+            $sftp->unlink($dest_file) if FTP_UNLINK_BEFORE_MOVE;
+            $sftp->rename($temp_dest, $dest_file) or throw_gen(
+                error   => "Error renaming '$temp_dest' to '$dest_file' on '$hn'",
+                payload => join ' ', $sftp->error
+            );
         }
-        # Disconnect and free memory
+
+        # Disconnect.
         $ssh2->disconnect;
-        undef $sftp;
     }
     return 1;
 }
@@ -258,44 +216,30 @@ B<Notes:> See put_res(), above.
 sub del_res {
     my ($pkg, $resources, $st) = @_;
 
-    foreach my $s ($st->get_servers) {
+    foreach my $server ($st->get_servers) {
         # Skip inactive servers.
-        next unless $s->is_active;
+        next unless $server->is_active;
 
-        # Instantiate a Net::SSH2 object and login.
-        my ($hn, $port) = split /:/,  $s->get_host_name;
-        my $user = $s->get_login;
-        my $password = $s->get_password;
+        # Connect via SSH2 and establish SFTP channel.
+        my $ssh2     = _connect($server);
+        my $sftp     = $ssh2->sftp;
+        my $doc_root = $server->get_doc_root;
+        my $hn       = $server->get_host_name;
 
-        my $ssh2 = Net::SSH2->new();
-        my $connect = eval {
-            $ssh2->connect($hn, $port);
-            $ssh2->method('CRYPT_CS', SFTP_MOVER_CIPHER ) if SFTP_MOVER_CIPHER;
-            $ssh2->method('HOSTKEY', SFTP_KEY_TYPE ) if SFTP_KEY_TYPE;
-            $ssh2->auth( username => $user, password => $password,
-                         publickey => SFTP_PUBLIC_KEY_FILE,
-                         privatekey => SFTP_PRIVATE_KEY_FILE);
-        };
-        throw_gen error   => "Unable to login to remote server '$hn'.",
-                  payload => $@
-          if $@ || !$ssh2->auth_ok;
-
-        # Create a Net::SSH2::SFTP object to use later
-        my $sftp = $ssh2->sftp;
-
-        # Get the document root.
-        my $doc_root = $s->get_doc_root;
         foreach my $res (@$resources) {
             # Get the name of the file to be deleted.
-            my $file = $fs->cat_file($doc_root, unescape_uri substr $res->get_uri, 1);
+            my $file = $fs->cat_file(
+                $doc_root, unescape_uri substr $res->get_uri, 1
+            );
             # Delete the file
-            $sftp->unlink($file);
+            $sftp->unlink($file) or throw_gen(
+                error   => "Error deleting '$file' on '$hn'",
+                payload => join ' ', $sftp->error,
+            );
         }
 
-        # Disconnect and free memory
+        # Disconnect.
         $ssh2->disconnect;
-        undef $sftp;
-        undef $ssh2;
     }
     return 1;
 }
@@ -316,17 +260,46 @@ NONE.
 
 =over 4
 
-=item local $SIG{__WARN__} = $no_warn;
+=item _connect
 
-Anonymous subroutine to prevent warning messages.
-
-B<Throws:> NONE.
-
-B<Notes:> NONE.
+Establishes an SSH2 connection.
 
 =cut
 
-$no_warn = sub { };
+sub _connect_to {
+    my $server = shift;
+
+    my $hn   = $server->get_host_name;
+    my $ssh2 = Net::SSH2->new;
+
+    $ssh2->connect(split /:/ => $hn) or trow_gen(
+        error   => "Error connecting to '$hn' via SSH2",
+        payload => join ' ', $ssh2->error,
+    );
+
+    $ssh2->method('CRYPT_CS', SFTP_MOVER_CIPHER ) or throw_gen(
+        error   => "Error setting cipher for '$hn' to " . SFTP_MOVER_CIPHER,
+        payload => join ' ', $ssh2->error,
+    ) if SFTP_MOVER_CIPHER;
+
+    $ssh2->method('HOSTKEY', SFTP_KEY_TYPE ) or throw_gen(
+        error   => "Error setting key type to " . SFTP_KEY_TYPE,
+        payload => join ' ', $ssh2->error,
+    ) if SFTP_KEY_TYPE;
+
+    my $ret = $ssh2->auth(
+        username   => $server->get_login,
+        password   => $server->get_password,
+        publickey  => SFTP_PUBLIC_KEY_FILE,
+        privatekey => SFTP_PRIVATE_KEY_FILE
+    );
+    throw_gen(
+        error => "Error authenticating to '$hn' via SSH2",
+        payload => join ' ', $ssh2->error,
+    ) unless $ret && $ssh2->auth_ok;
+
+    return $ssh2;
+}
 
 =back
 
