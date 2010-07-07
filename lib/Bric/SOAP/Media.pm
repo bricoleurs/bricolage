@@ -889,10 +889,8 @@ sub load_asset {
             }
         }
 
-        # save the media in an inactive state.  this is necessary to
-        # allow element addition - you can't add elements to an
-        # unsaved media, strangely.
-        $media->deactivate;
+        # save the media. this is necessary to allow element addition - you
+        # can't add elements to an unsaved media, strangely.
         $media->save;
 
         # Manage the output channels if any are included in the XML file.
@@ -952,8 +950,14 @@ sub load_asset {
             data   => $mdata->{elements} || {}
         ) unless $aliased;
 
-        # activate if desired
-        $media->activate if $mdata->{active};
+        # Activate or deactivate if desired.
+        if (defined $mdata->{active}) {
+            if ($mdata->{active}) {
+                $media->activate unless $media->is_active;
+            } else {
+                $media->deactivate if $media->is_active;
+            }
+        }
 
         # checkin and save
         $media->checkin;

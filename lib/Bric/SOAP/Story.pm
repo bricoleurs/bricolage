@@ -1031,10 +1031,8 @@ sub load_asset {
             }
         }
 
-        # save the story in an inactive state.  this is necessary to
-        # allow element addition - you can't add elements to an
-        # unsaved story, strangely.
-        $story->deactivate;
+        # save the story. this is necessary to allow element addition - you
+        # can't add elements to an unsaved story, strangely.
         $story->save;
 
         # Manage the output channels if any are included in the XML file.
@@ -1094,8 +1092,14 @@ sub load_asset {
                                  data   => $sdata->{elements} || {})
               unless $aliased;
 
-        # activate if desired
-        $story->activate if $sdata->{active};
+        # Activate or deactivate if desired.
+        if (defined $sdata->{active}) {
+            if ($sdata->{active}) {
+                $story->activate unless $story->is_active;
+            } else {
+                $story->deactivate if $story->is_active;
+            }
+        }
 
         # checkin and save
         $story->checkin;

@@ -22,6 +22,11 @@ Added the "object" format for datetime values. Pass "object" as the formatting
 string and a L<DateTime> object will be returned, rather than a string.
 [David]
 
+=item *
+
+The SOAP API no longer temporarily deactivates stories, media, or templates
+while updating them. [David]
+
 =back
 
 =head1 VERSION 1.10.10 (2010-04-11)
