@@ -492,6 +492,8 @@ Friends who have spotted bugs include:
 
 =item * Héctor Daniel Cortés González
 
+=item * Nick Legg
+
 =back
 
 Bricolage's translation team:

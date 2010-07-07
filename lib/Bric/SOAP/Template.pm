@@ -745,7 +745,6 @@ sub load_asset {
         }
 
         # need a save here to get the desk stuff working
-        $template->deactivate;
         $template->save;
 
         unless ($update && $no_wf_or_desk_param) {
@@ -766,8 +765,14 @@ sub load_asset {
             log_event('template_moved', $template, { Desk => $desk->get_name });
         }
 
-        # activate if desired
-        $template->activate if $tdata->{active};
+        # Activate or deactivate if desired.
+        if (defined $data->{active}) {
+            if ($data->{active}) {
+                $template->activate unless $template->is_active;
+            } else {
+                $template->deactivate if $template->is_active;
+            }
+        }
 
         # checkin and save
         $template->checkin();
