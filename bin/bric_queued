@@ -229,6 +229,7 @@ sub run_as_daemon {
     my $pkg = fork_to_dist();
     login();
     while (1) {
+        my $has_jobs = 0;
         for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
@@ -237,6 +238,7 @@ sub run_as_daemon {
             Limit      => $Chunks,
         })) {
             logit('Executing ' . $job->get_name . "\n") if $Verbose;
+            $has_jobs = 1;
             eval {
                 $job->execute_me;
                 commit_events();
@@ -244,6 +246,9 @@ sub run_as_daemon {
             logit($@) if $@;
             terminate() if $CaughtSignal;
         }
+
+        # If we found jobs, assume there are more. Don't wait to execute them.
+        next if $has_jobs;
 
         # Flush out the publish_another queue.
         if ($pkg eq PUB_PKG) {

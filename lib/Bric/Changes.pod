@@ -36,6 +36,14 @@ Sponsored by Denison University. [David]
 Added the C<--chunks> option to C<bric_queued>. Sponsored by Denison
 University. [David]
 
+=item *
+
+Modified C<bric_queued> so that it only sleeps for C<--delay> seconds if it
+executed no jobs. Otherwise it immediately runs again, on the assumption that
+there will be more jobs that should be executed sooner rather than later. The
+upshot is that files will now be distributed much sooner after publishling.
+[David]
+
 =back
 
 =head1 Version 2.0.1 ()
