@@ -29,7 +29,12 @@ as the priority of the distribution job created by the publish. [David]
 =item *
 
 Added the C<Limit> parameter to the C<list()> method of L<Bric::Util::Job>.
-[David]
+Sponsored by Denison University. [David]
+
+=item *
+
+Added the C<--chunks> option to C<bric_queued>. Sponsored by Denison
+University. [David]
 
 =back
 

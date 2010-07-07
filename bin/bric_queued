@@ -50,6 +50,13 @@ Specifies a delay in seconds after finding the queue empty.
 Run a single job of C<type> where C<type> is one of 'pub' or 'dist'.
 Implies -verbose.
 
+=head2 -c <number> | --chunks <number>
+
+Specify the maximum number of jobs to select in a single run. This is most
+useful for reducing the memory overhead when a lot of jobs are scheduled, as
+well as allowing for higher-priority jobs not to get caught behind a huge
+pileup of low-priority jobs. Does not apply when C<--single> is specified.
+
 =head2 -v | --verbose
 
 Turn on verbose mode for debugging.
@@ -163,6 +170,7 @@ my $Verbose = undef;
 my $Logfile = '/dev/null';
 my $HelpMode = undef;
 my $CaughtSignal = 0;         # to be set by the signal handler
+my $Chunks;
 
 ##############################################################################
 # The script.
@@ -173,6 +181,7 @@ GetOptions(
     "pid|p=s"    => \$Pidfile,
     "delay|d=i"  => \$Delay,
     "single|s=s" => \$SingleJobMode,
+    'chunks|c=i' => \$Chunks,
     "verbose|v"  => \$Verbose,
     "log|l=s"    => \$Logfile,
     "help|h"     => \$HelpMode,
@@ -220,13 +229,12 @@ sub run_as_daemon {
     my $pkg = fork_to_dist();
     login();
     while (1) {
-        # XXX Add a Limit parameter here? Seems like we should be able to
-        # force it to do no more than a few at a time.
         for my $job ($pkg->list({
             sched_time => [undef, strfdate()],
             comp_time  => undef,
             failed     => '0',
             executing  => '0',
+            Limit      => $Chunks,
         })) {
             logit('Executing ' . $job->get_name . "\n") if $Verbose;
             eval {
@@ -302,6 +310,7 @@ sub run_single_job {
         comp_time  => undef,
         failed     => '0',
         executing  => '0',
+        Limit      => 1,
     });
     exit unless $job;
     logit('Executing ' . $job->get_name . "\n") if $Verbose;
