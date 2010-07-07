@@ -52,6 +52,14 @@ report. [David]
 Fixed a bug where the SFTP mover would not properly finish moving the file,
 leaving escaped tmp files on the destination server. [Matt Rolf]
 
+=item *
+
+Updating published stories or media or deployed templates via the SOAP
+interface with the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf> directive enabled
+no longer expires those assets unless they are active and the
+C<< <expire_date> >> element is set in the XML. Thanks to Nick Legg for the
+report (Bug # 184). [David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
