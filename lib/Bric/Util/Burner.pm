@@ -1234,6 +1234,11 @@ The ID of the user publishing the asset.
 The date to set to schedule publishing job. If not defined it will default set
 up the asset to be published immediately.
 
+=item C<$priority>
+
+Priority to use for the distribution job. Defaults to the priority of the
+business asset being published.
+
 =back
 
 B<Throws:> NONE.
@@ -1247,7 +1252,7 @@ B<Notes:> NONE.
 sub publish {
     my $self = shift;
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
+    my ($ba, $key, $user_id, $publish_date, $die_err, $priority) = @_;
 
     $publish_date ||= strfdate;
     my $published   = 0;
@@ -1321,7 +1326,7 @@ sub publish {
                 name                => $name,
                 server_types        => $bat,
                 "$key\_instance_id" => $ba->get_version_id,
-                priority            => $ba->get_priority,
+                priority            => $priority || $ba->get_priority,
             });
 
             # Burn, baby, burn!

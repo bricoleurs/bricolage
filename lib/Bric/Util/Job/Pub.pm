@@ -116,7 +116,7 @@ Inherited from L<Bric::Util::Job|Bric::Util::Job>
 =head3 $self = $job->_do_it
 
 Carries out the actions that constitute the job. This method is called by
-C<execute_me()> in Bric::Dist::Job and should therefore never be called
+C<execute_me()> in L<Bric::Util::Job> and should therefore never be called
 directly.
 
 Sends the Story or Media object contained by the job to the burner. In case of
@@ -184,15 +184,27 @@ sub _do_it {
         my $s = Bric::Biz::Asset::Business::Story->lookup({
             version_id => $sid,
         });
-        $burner->publish($s, 'story', $self->get_user_id,
-                         $self->get_sched_time(ISO_8601_FORMAT), 1);
+        $burner->publish(
+            $s,
+            'story',
+            $self->get_user_id,
+            $self->get_sched_time(ISO_8601_FORMAT),
+            1,
+            $self->get_priority,
+        );
     } elsif (my $mid = $self->get_media_instance_id) {
         # Instantiate the media.
         my $m = Bric::Biz::Asset::Business::Media->lookup({
             version_id => $mid,
         });
-        $burner->publish($m, 'media', $self->get_user_id,
-                         $self->get_sched_time(ISO_8601_FORMAT), 1);
+        $burner->publish(
+            $m,
+            'media',
+            $self->get_user_id,
+            $self->get_sched_time(ISO_8601_FORMAT),
+            1,
+            $self->get_priority,
+        );
     }
 
     return $self;

@@ -10,6 +10,24 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.1.0 ()
 
+=head1 Improvements
+
+=over
+
+=item *
+
+Added the C<--priority> option to the C<workflow publish> command in
+L<bric_soap> and L<bric_republish>. Sponsored by Denison University. [David]
+
+=item *
+
+Added a C<$priority> argument to the C<publish> method of
+L<Bric::Util::Burner> and modifed L<Bric::Util::Job::Pub> to pass its
+priority. This is so that the priority of the publish job will be replicated
+as the priority of the distribution job created by the publish. [David]
+
+=back
+
 =head1 Version 2.0.1 ()
 
 =head1 Improvements
