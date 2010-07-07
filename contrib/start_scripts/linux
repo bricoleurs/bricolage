@@ -60,7 +60,7 @@ if [ $USE_BRIC_QUEUED ]; then
             "$BRIC_QUEUED" --username "$DIST_USERNAME" \
                 --password "$DIST_PASSWORD" \
                 --log "$DIST_LOG" \
-                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL" \
                 --chunks "$DIST_CHUNKS"
             echo bric_queued: started
             ;;
@@ -77,7 +77,7 @@ if [ $USE_BRIC_QUEUED ]; then
             "$BRIC_QUEUED" --username "$DIST_USERNAME" \
                 --password "$DIST_PASSWORD" \
                 --log "$DIST_LOG" \
-                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL" \
                 --chunks "$DIST_CHUNKS"
             echo bric_queued: restarted
             ;;
