@@ -26,6 +26,11 @@ L<Bric::Util::Burner> and modifed L<Bric::Util::Job::Pub> to pass its
 priority. This is so that the priority of the publish job will be replicated
 as the priority of the distribution job created by the publish. [David]
 
+=item *
+
+Added the C<Limit> parameter to the C<list()> method of L<Bric::Util::Job>.
+[David]
+
 =back
 
 =head1 Version 2.0.1 ()

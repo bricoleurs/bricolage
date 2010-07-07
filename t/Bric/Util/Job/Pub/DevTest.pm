@@ -113,7 +113,7 @@ sub b_test_lookup : Test(7) {
 
 ##############################################################################
 # Test the list() method.
-sub c_test_list : Test(47) {
+sub c_test_list : Test(49) {
     my $self = shift;
 
     # Create a new job group.
@@ -263,6 +263,11 @@ sub c_test_list : Test(47) {
     ok( @jobs = Bric::Util::Job::Pub->list({ story_instance_id => $svid }),
         "Look up story_instance_id '$svid'" );
     is( scalar @jobs, 2, "Check for 2 jobs" );
+
+    # Try Limit.
+    ok( @jobs = Bric::Util::Job::Pub->list({ Limit => 3 }),
+        "Look up 3 jobs" );
+    is( scalar @jobs, 3, "Check for 3 jobs" );
 }
 
 ##############################################################################
