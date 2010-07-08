@@ -238,7 +238,7 @@ sub run_as_daemon {
             Limit      => $Chunks,
         })) {
             logit('Executing ' . $job->get_name . "\n") if $Verbose;
-            $has_jobs = 1;
+            $has_jobs++;
             eval {
                 $job->execute_me;
                 commit_events();
@@ -248,7 +248,7 @@ sub run_as_daemon {
         }
 
         # If we found jobs, assume there are more. Don't wait to execute them.
-        next if $has_jobs;
+        next if $has_jobs && (!$Chunks || $Chunks == $has_jobs);
 
         # Flush out the publish_another queue.
         if ($pkg eq PUB_PKG) {
