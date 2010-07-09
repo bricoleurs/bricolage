@@ -288,10 +288,14 @@ sub _connect_to {
     ) if SFTP_KEY_TYPE;
 
     my $ret = $ssh2->auth(
-        username   => $server->get_login,
-        password   => $server->get_password,
-        publickey  => SFTP_PUBLIC_KEY_FILE,
-        privatekey => SFTP_PRIVATE_KEY_FILE
+        ($server->get_login ? (
+            username   => $server->get_login,
+            password   => $server->get_password,
+        ) : ()),
+        (SFTP_PUBLIC_KEY_FILE ? (
+            publickey  => SFTP_PUBLIC_KEY_FILE,
+            privatekey => SFTP_PRIVATE_KEY_FILE,
+        ) : ()),
     );
     throw_gen(
         error => "Error authenticating to '$hn' via SSH2",
