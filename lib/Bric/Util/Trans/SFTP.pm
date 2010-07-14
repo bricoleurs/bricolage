@@ -34,17 +34,12 @@ use Net::SSH2::SFTP;
 use Bric::Util::Fault qw(throw_gen);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:dist);
-use Bric::Util::ApacheUtil qw(unescape_uri escape_uri);
+use Bric::Util::ApacheUtil qw(unescape_uri);
 
 ################################################################################
 # Inheritance
 ################################################################################
 use base qw(Bric);
-
-################################################################################
-# Function and Closure Prototypes
-################################################################################
-my ($no_warn);
 
 ################################################################################
 # Constants
@@ -181,6 +176,7 @@ sub put_res {
         }
 
         # Disconnect.
+        $ssh2->sock->close;
         $ssh2->disconnect;
     }
     return 1;
@@ -239,6 +235,7 @@ sub del_res {
         }
 
         # Disconnect.
+        $ssh2->sock->close;
         $ssh2->disconnect;
     }
     return 1;
