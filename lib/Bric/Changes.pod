@@ -60,6 +60,11 @@ no longer expires those assets unless they are active and the
 C<< <expire_date> >> element is set in the XML. Thanks to Nick Legg for the
 report (Bug # 184). [David]
 
+=item *
+
+Worked around a bug in L<Net::SSH2> where sockets weren't being closed,
+leading to L<bric_queued> running out of file descriptors. [David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
