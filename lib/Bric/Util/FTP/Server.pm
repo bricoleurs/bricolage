@@ -160,6 +160,17 @@ sub system_error_hook {
   return "Unknown error occurred.";
 }
 
+=item process_limits_hook()
+
+Overrides FTP::Server's implementation to ensure no limits are set. Better to
+just let the OS set them.
+
+=cut
+
+sub process_limits_hook {
+    return 1;
+}
+
 sub find_workflow {
     my ($self, $site_id) = @_;
     my $user = $self->{user_obj};

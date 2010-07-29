@@ -27,6 +27,12 @@ string and a L<DateTime> object will be returned, rather than a string.
 The SOAP API no longer temporarily deactivates stories, media, or templates
 while updating them. [David]
 
+=item *
+
+The virtual FTP server no longer limits itself, but leaves resource limits to
+the OS. This prevents apparently unrelated (and mysterious!) errors from the
+FTP server. [Alex Krohn].
+
 =back
 
 =head1 VERSION 1.10.10 (2010-04-11)
