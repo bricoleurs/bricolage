@@ -113,6 +113,12 @@ report (Bug # 184). [David]
 Worked around a bug in L<Net::SSH2> where sockets weren't being closed,
 leading to L<bric_queued> running out of file descriptors. [David]
 
+=item *
+
+The virtual FTP server no longer limits itself, but leaves resource limits to
+the OS. This prevents apparently unrelated (and mysterious!) errors from the
+FTP server. [Alex Krohn].
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
