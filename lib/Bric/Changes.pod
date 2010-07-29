@@ -24,7 +24,8 @@ L<bric_soap> and L<bric_republish>. Sponsored by Denison University. [David]
 Added a C<$priority> argument to the C<publish> method of
 L<Bric::Util::Burner> and modifed L<Bric::Util::Job::Pub> to pass its
 priority. This is so that the priority of the publish job will be replicated
-as the priority of the distribution job created by the publish. [David]
+as the priority of the distribution job created by the publish, as well as of
+any publish jobs created by calls to C<publish_another()>. [David]
 
 =item *
 
