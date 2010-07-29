@@ -72,6 +72,11 @@ Refactored the SFTP mover to do proper error handling. Also removed the code
 that "escapes" file names, as with more recent versions of Net::SSH2 it left
 the backslashes in the file names. [David]
 
+=item *
+
+Bricolage now supports Apache 2 MPMs other than Prefork. YMMV (Bug #188).
+[David]
+
 =back
 
 =head2 Bug Fixes
