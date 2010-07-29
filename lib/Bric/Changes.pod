@@ -76,6 +76,11 @@ The virtual FTP server no longer limits itself, but leaves resource limits to
 the OS. This prevents apparently unrelated (and mysterious!) errors from the
 FTP server. [Alex Krohn].
 
+=item *
+
+Fixed error message thrown by C<publish_another()> that incorrectly called
+itself C<burn_another()>. [David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)

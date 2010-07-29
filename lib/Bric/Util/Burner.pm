@@ -1255,7 +1255,7 @@ sub publish {
     my $repub       = $ba->get_publish_status;
 
     # Mark the story as published, so that other stories published by
-    # burn_another() can find it as published in the database.
+    # publish_another() can find it as published in the database.
     $ba->set_publish_date($publish_date);
     $ba->set_publish_status(1) unless $repub;
     $ba->save;
@@ -1491,7 +1491,7 @@ sub publish_another {
         throw_burn_error(
             error => qq{Cannot publish $key "$uri" because it is checked out. }
                    . 'Your best bet is to pass `published_version => 1` when '
-                   . 'looking up documents to pass to burn_another()',
+                   . 'looking up documents to pass to publish_another()',
             mode  => $self->get_mode,
         );
     }
