@@ -70,6 +70,13 @@ my $get_cookie = sub {
     my %cookies = map { split /:/ } split /[|]/, $cookie;
     return exists($cookies{$name}) ? $cookies{$name} : '';
 };
+
+my $desk_caption = sub {
+    my ($desk_id, $desk_name) = @_;
+    return $desk_name unless get_pref('Show Desk Asset Counts');
+    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
+    return sprintf("$desk_name (%d)", scalar(@{$desk->assets}));
+};
 </%once>\
 <%perl>;
 my $site_id = $c->get_user_cx(get_user_id);
@@ -192,7 +199,7 @@ foreach my $wf (@$workflows) {
             $printLink->(
                 "/workflow/profile/desk/$wfid/$d->[0]/",
                 $uri,
-                $d->[1],
+                $desk_caption->($d->[0], $d->[1]),
                 1
             ),
             '</li>'
