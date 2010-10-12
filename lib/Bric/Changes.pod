@@ -81,6 +81,11 @@ FTP server. [Alex Krohn].
 Fixed error message thrown by C<publish_another()> that incorrectly called
 itself C<burn_another()>. [David]
 
+=item *
+
+Fixed a bug where desk asset counts would never be displayed regardless of the
+preference setting (Bug #198). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
