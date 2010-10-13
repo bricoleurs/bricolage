@@ -89,7 +89,7 @@ sub update : Callback(priority => 1) {
     my $new;
     foreach (@{ mk_aref($param->{new_keyword}) }) {
         next unless $_;
-        my $kw = Bric::Biz::Keyword->lookup({ name => $_ });
+        my $kw = Bric::Biz::Keyword->lookup({ name => $_, active => 1 });
         if ($kw) {
             chk_authz($kw, READ);
         } else {

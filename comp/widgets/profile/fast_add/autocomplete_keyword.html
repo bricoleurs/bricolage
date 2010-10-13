@@ -15,7 +15,7 @@ $keyword_id => undef
 <%init>
 my $pkg = get_package_name('keyword');
 
-my $possible_keywords = $pkg->list({ name => "%$add_keyword%" });
+my $possible_keywords = $pkg->list({ name => "%$add_keyword%", active => 1 });
 my %existing_keywords = map { $_ => 1 } @{mk_aref($keyword_id)};
 my %other_new_keywords = map { $_ => 1 } @{mk_aref($new_keyword)};
 </%init>

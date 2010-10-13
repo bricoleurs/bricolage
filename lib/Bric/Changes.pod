@@ -86,6 +86,11 @@ itself C<burn_another()>. [David]
 Fixed a bug where desk asset counts would never be displayed regardless of the
 preference setting (Bug #198). [Greg Heo]
 
+=item *
+
+The keyword autocomplete widget no longer suggests deleted keywords on the 
+story and media profiles (Bug #206). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
