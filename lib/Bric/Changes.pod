@@ -47,6 +47,18 @@ upshot is that files will now be distributed much sooner after publishling.
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
+=back
+
 =head1 Version 2.0.1 ()
 
 =head2 Improvements
