@@ -163,8 +163,9 @@ sub get {
           # Find the root category.
           my ($cid) = Bric::Biz::Category->list_ids({ site_id => $site_id,
                                                       uri     => '/' });
+          my $site = Bric::Biz::Site->lookup({ id => $site_id });
           return Bric::Util::FTP::DirHandle->new($self->{ftps},
-                                                 "/" . $filename . "/",
+                                                 "/" . $site->get_name . "/" . $filename . "/",
                                                  $site_id,
                                                  $id,
                                                  $cid,
@@ -384,6 +385,10 @@ sub list {
       my @ocs  = Bric::Biz::OutputChannel->list({name => ($like || '%'),
                                                  site_id => $site_id,
                                                  active => 1});
+
+      my $site = Bric::Biz::Site->lookup({ id => $site_id });
+      my $site_name = $site->get_name;
+
       foreach my $oc (@ocs) {
           next unless $self->{ftps}{user_obj}->can_do($oc, READ);
 
@@ -392,7 +397,7 @@ sub list {
                                                       uri     => '/' });
 
           my $dirh = Bric::Util::FTP::DirHandle->new($self->{ftps},
-                                                     "/" . $oc->get_name . "/",
+                                                     "/$site_name/" . $oc->get_name . "/",
                                                      $site_id,
                                                      $oc->get_id(),
                                                      $cid);
