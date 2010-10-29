@@ -23,6 +23,10 @@ DIST_PASSWORD=
 # The interval between bric_queued runs.
 DIST_INTERVAL=30
 
+# Maximum number of distribution jobs to select for each bric_queued run.
+# 0 is no maximum
+DIST_CHUNKS=0
+
 # Various file locations.
 BRIC_APACHECTL="$BRICOLAGE_ROOT/bin/bric_apachectl"
 BRIC_QUEUED="$BRICOLAGE_ROOT/bin/bric_queued"
@@ -38,7 +42,8 @@ case "$1" in
             "$BRIC_QUEUED" --username "$DIST_USERNAME" \
                 --password "$DIST_PASSWORD" \
                 --log "$DIST_LOG" \
-                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL" \
+                --chunks "$DIST_CHUNKS"
         fi
         echo -n ' bricolage'
         ;;
@@ -61,7 +66,8 @@ case "$1" in
             "$BRIC_QUEUED" --username "$DIST_USERNAME" \
                 --password "$DIST_PASSWORD" \
                 --log "$DIST_LOG" \
-                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL"
+                --pid "$DIST_PIDFILE" --delay "$DIST_INTERVAL" \
+                --chunks "$DIST_CHUNKS"
         fi
         echo -n ' bricolage'
         ;;

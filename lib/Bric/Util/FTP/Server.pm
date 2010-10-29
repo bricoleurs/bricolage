@@ -171,6 +171,17 @@ sub post_bind_hook {
         unless $> == SYS_USER;
 }
 
+=item process_limits_hook()
+
+Overrides FTP::Server's implementation to ensure no limits are set. Better to
+just let the OS set them.
+
+=cut
+
+sub process_limits_hook {
+    return 1;
+}
+
 sub find_workflow {
     my ($self, $site_id) = @_;
     my $user = $self->{user_obj};

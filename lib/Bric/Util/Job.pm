@@ -440,6 +440,11 @@ job.
 A boolean indicating the type of the job. Pass true for an expiring job and
 false for a publishing job.
 
+=item Limit
+
+An integer indicating the maximum number of jobs to be returned. By default,
+all jobs that match the search will be returned.
+
 =back
 
 B<Throws:>
@@ -2030,6 +2035,8 @@ $get_em = sub {
         executing => 'a.executing = ?',
     );
 
+    my $limit;
+
     while (my ($k, $v) = each %$params) {
         if ($map{$k}) {
             $wheres .= ' AND ' . any_where $v, $map{$k}, \@params;
@@ -2076,6 +2083,10 @@ $get_em = sub {
                     . any_where $v, 'm2.grp__id = ?', \@params;
         }
 
+        elsif ($k eq 'Limit') {
+            $limit = $v;
+        }
+
         else {
             # It's a date column.
             if (blessed $v) {
@@ -2119,7 +2130,8 @@ $get_em = sub {
         FROM   $tables
         WHERE  $wheres
         ORDER BY $order
-    }, undef, DEBUG);
+    } . ($limit ? "    LIMIT ?\n" : ''), undef, DEBUG);
+    push @params, $limit if $limit;
 
     # Just return the IDs, if they're what's wanted.
     return col_aref($sel, @params) if $ids;

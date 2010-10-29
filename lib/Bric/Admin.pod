@@ -464,7 +464,7 @@ START MODULE LIST
 
 =item Net::FTPServer (optional)
 
-=item Net::SSH2 0.18 (optional)
+=item Net::SSH2 0.28 (optional)
 
 =item HTTP::DAV (optional)
 

@@ -276,6 +276,7 @@ BEGIN {
         base_uri              => Bric::FIELD_READ,
         burn_again            => Bric::FIELD_RDWR,
         resources             => Bric::FIELD_READ,
+        priority              => Bric::FIELD_READ,
 
         # Private Fields
         _page_extensions      => Bric::FIELD_NONE,
@@ -372,6 +373,7 @@ sub new {
     $init->{_page_extensions}   ||= [''];
     $init->{_notes}               = {};
     $init->{resources}            = [];
+    $init->{priority}           ||= 3;
     $init->{_output_preview_msgs} = 1
         unless defined $init->{_output_preview_msgs};
 
@@ -496,14 +498,14 @@ sub flush_another_queue {
     my $class = shift;
     return $class unless @another_queue_uuids;
     while (my $uuid = shift @another_queue_uuids) {
-        my ($doc, $pub_time, $notes) = @{ $another_queue{$uuid} };
+        my ($doc, $pub_time, $notes, $priority) = @{ $another_queue{$uuid} };
         my $key = $doc->key_name;
         Bric::Util::Job::Pub->new({
             sched_time          => $pub_time,
             user_id             => get_user_id(),
             name                => 'Publish "' . $doc->get_name . '"',
             "$key\_instance_id" => $doc->get_version_id,
-            priority            => $doc->get_priority,
+            priority            => $priority,
             notes               => $notes,
         })->save;
     }
@@ -1234,6 +1236,11 @@ The ID of the user publishing the asset.
 The date to set to schedule publishing job. If not defined it will default set
 up the asset to be published immediately.
 
+=item C<$priority>
+
+Priority to use for the distribution job. Defaults to the priority of the
+business asset being published.
+
 =back
 
 B<Throws:> NONE.
@@ -1247,7 +1254,7 @@ B<Notes:> NONE.
 sub publish {
     my $self = shift;
     my ($ats, $oc_sts) = ({}, {});
-    my ($ba, $key, $user_id, $publish_date, $die_err) = @_;
+    my ($ba, $key, $user_id, $publish_date, $die_err, $priority) = @_;
 
     $publish_date ||= strfdate;
     my $published   = 0;
@@ -1255,11 +1262,14 @@ sub publish {
     my $repub       = $ba->get_publish_status;
 
     # Mark the story as published, so that other stories published by
-    # burn_another() can find it as published in the database.
+    # publish_another() can find it as published in the database.
     $ba->set_publish_date($publish_date);
     $ba->set_publish_status(1) unless $repub;
     $ba->save;
-    $self->_set([qw(mode _republish)], [PUBLISH_MODE, $repub]);
+    $self->_set(
+        [qw(mode _republish priority)],
+        [PUBLISH_MODE, $repub, $priority || $ba->get_priority]
+    );
 
     # Determine if we've published before. Set the expire date if we haven't.
     my $exp_date = $ba->get_expire_date(ISO_8601_FORMAT);
@@ -1321,7 +1331,7 @@ sub publish {
                 name                => $name,
                 server_types        => $bat,
                 "$key\_instance_id" => $ba->get_version_id,
-                priority            => $ba->get_priority,
+                priority            => $self->get_priority,
             });
 
             # Burn, baby, burn!
@@ -1416,7 +1426,7 @@ sub publish {
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
     }
 
-    $self->_set([qw(mode _republish)], [undef, undef]);
+    $self->_set([qw(mode _republish priority)], [undef, undef, 3]);
     return $published;
 }
 
@@ -1491,7 +1501,7 @@ sub publish_another {
         throw_burn_error(
             error => qq{Cannot publish $key "$uri" because it is checked out. }
                    . 'Your best bet is to pass `published_version => 1` when '
-                   . 'looking up documents to pass to burn_another()',
+                   . 'looking up documents to pass to publish_another()',
             mode  => $self->get_mode,
         );
     }
@@ -1521,7 +1531,12 @@ sub publish_another {
     } else {
         # Add it to the publish_another queue.
         push @another_queue_uuids, $uuid;
-        $another_queue{$uuid} = [ $ba, $pub_time, [ $self->_get('_notes') ] ];
+        $another_queue{$uuid} = [
+            $ba,
+            $pub_time,
+            [ $self->_get('_notes') ],
+            $self->get_priority,
+        ];
     }
     return $self;
 }
@@ -2259,7 +2274,7 @@ sub _expire {
         name         => $expname,
         resources    => $res,
         type         => 1,
-        priority     => $ba->get_priority,
+        priority     => $self->get_priority,
         $ba->key_name . '_instance_id' => $ba->get_version_id,
     });
     $exp_job->save;

@@ -42,6 +42,11 @@ bric_republish [options]
     --published-only - Deprecated; kept for backwards compatibility; Only
                 the published version of all stories will be published.
 
+    --priority - Priority for publish. Must be between 1 and 5. Defaults to
+                 the priorities of the assets published. Useful for bulk
+                 publishing with a lower priority, so that normal and
+                 high-priority jobs published by users take priority.
+
     --chunks   - publish stories in chunks of this many.  Defaults to 0,
                 which means to process them all at once.  This option can
                 be used to avoid timing out on large jobs.
@@ -111,7 +116,7 @@ BEGIN {
     our $no_media        = 0;
     our $timeout         = 30;
     our $chunks          = 0;
-    our ($element, $story_id, $category, $help, $man, $site);
+    our ($element, $story_id, $category, $help, $man, $site, $priority);
     GetOptions("help"            => \$help,
                "man"             => \$man,
                "verbose+"        => \$VERBOSE,
@@ -123,6 +128,7 @@ BEGIN {
                "no-media"        => \$no_media,
                "story-id=s"      => \$story_id,
                "published-only"  => \my $published_only,
+               'priority=i'      => \$priority,
                "timeout=s"       => \$timeout,
                "chunks=s"        => \$chunks,
                "site=s"          => \$site,
@@ -245,7 +251,7 @@ sub get_media_ids {
 
 # publish stories and media found
 sub publish_assets {
-    our ($soap, @story_ids, @media_ids, $chunks);
+    our ($soap, @story_ids, @media_ids, $chunks, $priority);
 
     # do nothing if we've got nothing
     return unless @story_ids;
@@ -272,6 +278,7 @@ sub publish_assets {
             my $r = $soap->publish(
                 name( publish_ids    => [ @ids[$start .. $end] ] ),
                 name( published_only => 1 ), # Always published_version only.
+                ($priority ? name(priority => $priority) : ()),
             );
             _print_fault($r) if $r->fault;
         }
@@ -285,6 +292,7 @@ sub publish_assets {
         my $r = $soap->publish(
             name( publish_ids    => \@ids ),
             name( published_only => 1 ), # Always published_version only.
+                ($priority ? name(priority => $priority) : ()),
         );
         _print_fault($r) if $r->fault;
     }

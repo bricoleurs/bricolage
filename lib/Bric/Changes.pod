@@ -10,6 +10,43 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.1.0 ()
 
+=head1 Improvements
+
+=over
+
+=item *
+
+Added the C<--priority> option to the C<workflow publish> command in
+L<bric_soap> and L<bric_republish>. Sponsored by Denison University. [David]
+
+=item *
+
+Added a C<$priority> argument to the C<publish> method of
+L<Bric::Util::Burner> and modifed L<Bric::Util::Job::Pub> to pass its
+priority. This is so that the priority of the publish job will be replicated
+as the priority of the distribution job created by the publish, as well as of
+any publish jobs created by calls to C<publish_another()>. [David]
+
+=item *
+
+Added the C<Limit> parameter to the C<list()> method of L<Bric::Util::Job>.
+Sponsored by Denison University. [David]
+
+=item *
+
+Added the C<--chunks> option to C<bric_queued>. Sponsored by Denison
+University. [David]
+
+=item *
+
+Modified C<bric_queued> so that it only sleeps for C<--delay> seconds if it
+executed no jobs. Otherwise it immediately runs again, on the assumption that
+there will be more jobs that should be executed sooner rather than later. The
+upshot is that files will now be distributed much sooner after publishling.
+[David]
+
+=back
+
 =head1 Version 2.0.1 ()
 
 =head1 Improvements
@@ -28,6 +65,17 @@ report. [David]
 
 Added the "object" format for datetime values. Pass "object" as the formatting
 string and a L<DateTime> object will be returned, rather than a string.
+[David]
+
+=item *
+
+Refactored the SFTP mover to do proper error handling. Also removed the code
+that "escapes" file names, as with more recent versions of Net::SSH2 it left
+the backslashes in the file names. [David]
+
+=item *
+
+Bricolage now supports Apache 2 MPMs other than Prefork. YMMV (Bug #188).
 [David]
 
 =back
@@ -51,7 +99,26 @@ permission to edit an asset [Kahil Jallad].
 =item *
 
 Fixed a bug where the SFTP mover would not properly finish moving the file,
-leavingescaped tmp files on the destination server. [Matt Rolf]
+leaving escaped tmp files on the destination server. [Matt Rolf]
+
+=item *
+
+Updating published stories or media or deployed templates via the SOAP
+interface with the C<EXPIRE_ON_DEACTIVATE> F<bricolage.conf> directive enabled
+no longer expires those assets unless they are active and the
+C<< <expire_date> >> element is set in the XML. Thanks to Nick Legg for the
+report (Bug # 184). [David]
+
+=item *
+
+Worked around a bug in L<Net::SSH2> where sockets weren't being closed,
+leading to L<bric_queued> running out of file descriptors. [David]
+
+=item *
+
+The virtual FTP server no longer limits itself, but leaves resource limits to
+the OS. This prevents apparently unrelated (and mysterious!) errors from the
+FTP server. [Alex Krohn].
 
 =back
 
