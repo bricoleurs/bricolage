@@ -109,6 +109,11 @@ preference setting (Bug #198). [Greg Heo]
 The keyword autocomplete widget no longer suggests deleted keywords on the 
 story and media profiles (Bug #206). [Greg Heo]
 
+=item *
+
+Fixed a bug where some valid date ranges would be rejected as invalid when
+searching for assets. (Bug #211). [David Oliveira]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
