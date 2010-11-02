@@ -10,7 +10,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.1 ()
 
-=head1 Improvements
+=head2 Improvements
 
 =over
 
@@ -80,6 +80,13 @@ FTP server. [Alex Krohn].
 
 Fixed error message thrown by C<publish_another()> that incorrectly called
 itself C<burn_another()>. [David]
+
+=item *
+
+When diffing documents and templates, if the "to" item is the current version,
+the currently-checked out asset is used. This is so that one can see what
+changes have been made since the checkout. Reported by Michael Herring.
+[David]
 
 =back
 

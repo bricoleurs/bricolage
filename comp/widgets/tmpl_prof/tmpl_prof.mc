@@ -100,11 +100,14 @@ if ($id) {
         for my $pos (qw(from to)) {
             my $pos_version = $param->{"$pos\_version"};
 
-            my ($tmpl) = $pos_version == $version
-                ? $fa
-                : Bric::Biz::Asset::Template->list({
-                id      => $id,
-                version => $pos_version,
+            my ($tmpl) = $pos_version == $version ? do {
+                $pos eq 'to' ? $fa : ref($fa)->list({
+                    id         => $id,
+                    checked_in => 1,
+                })
+            } : ref($fa)->list({
+                id          => $id,
+                version     => $pos_version,
             });
 
             # Find the relevant event.
