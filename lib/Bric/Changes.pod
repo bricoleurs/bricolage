@@ -122,6 +122,11 @@ FTP server. [Alex Krohn].
 
 =item *
 
+Fixed error message thrown by C<publish_another()> that incorrectly called
+itself C<burn_another()>. [David]
+
+=item *
+
 When diffing documents and templates, if the "to" item is the current version,
 the currently-checked out asset is used. This is so that one can see what
 changes have been made since the checkout. Reported by Michael Herring.
