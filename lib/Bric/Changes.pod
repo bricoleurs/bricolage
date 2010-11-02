@@ -33,6 +33,13 @@ The virtual FTP server no longer limits itself, but leaves resource limits to
 the OS. This prevents apparently unrelated (and mysterious!) errors from the
 FTP server. [Alex Krohn].
 
+=item *
+
+When diffing documents and templates, if the "to" item is the current version,
+the currently-checked out asset is used. This is so that one can see what
+changes have been made since the checkout. Reported by Michael Herring.
+[David]
+
 =back
 
 =head1 VERSION 1.10.10 (2010-04-11)

@@ -108,11 +108,14 @@ if ($id) {
         for my $pos (qw(from to)) {
             my $pos_version = $param->{"$pos\_version"};
 
-            my ($diff_media) = $pos_version == $version
-                ? $media
-                : Bric::Biz::Asset::Business::Media->list({
-                id      => $id,
-                version => $pos_version,
+            my ($diff_media) = $pos_version == $version ? do {
+                $pos eq 'to' ? $media : ref($media)->list({
+                    id         => $id,
+                    checked_in => 1,
+                })
+            } : ref($media)->list({
+                id          => $id,
+                version     => $pos_version,
             });
 
             # Find the relevant event.

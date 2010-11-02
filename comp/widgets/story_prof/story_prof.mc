@@ -109,14 +109,17 @@ if ($id) {
     if ($param->{diff}) {
         my $version = $story ? $story->get_version : 0;
 
-        for my $pos (qw(from to)) {
+        for my $pos (qw(to from)) {
             my $pos_version = $param->{"$pos\_version"};
 
-            my ($diff_story) = $pos_version == $version
-                ? $story
-                : Bric::Biz::Asset::Business::Story->list({
-                id      => $id,
-                version => $pos_version,
+            my ($diff_story) = $pos_version == $version ? do {
+                $pos eq 'to' ? $story : ref($story)->list({
+                    id         => $id,
+                    checked_in => 1,
+                })
+            } : ref($story)->list({
+                id          => $id,
+                version     => $pos_version,
             });
 
             # Find the relevant event.
