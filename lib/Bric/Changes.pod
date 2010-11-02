@@ -54,6 +54,11 @@ report. [David]
 
 =item *
 
+The "Checkout" link no longer appears on desk items for users who do not have
+permission to edit an asset [Kahil Jallad].
+
+=item *
+
 Fixed a bug where the SFTP mover would not properly finish moving the file,
 leaving escaped tmp files on the destination server. [Matt Rolf]
 
@@ -89,9 +94,6 @@ changes have been made since the checkout. Reported by Michael Herring.
 [David]
 
 =item *
-
-The "Checkout" link no longer appears on desk items for users who do not have
-permission to edit an asset [Kahil Jallad].
 
 =back
 
