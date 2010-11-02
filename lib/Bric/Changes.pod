@@ -88,6 +88,11 @@ the currently-checked out asset is used. This is so that one can see what
 changes have been made since the checkout. Reported by Michael Herring.
 [David]
 
+=item *
+
+The "Checkout" link no longer appears on desk items for users who do not have
+permission to edit an asset [kjallad].
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
