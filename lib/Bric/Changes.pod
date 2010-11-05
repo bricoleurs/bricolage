@@ -93,6 +93,12 @@ the currently-checked out asset is used. This is so that one can see what
 changes have been made since the checkout. Reported by Michael Herring.
 [David]
 
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
