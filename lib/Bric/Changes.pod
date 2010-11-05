@@ -99,6 +99,11 @@ Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
 (missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
 this path after changing directories. [Adrian Yee]
 
+=item *
+
+Fixed a bug where desk asset counts would never be displayed regardless of the
+preference setting (Bug #198). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
