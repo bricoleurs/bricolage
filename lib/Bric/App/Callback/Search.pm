@@ -308,9 +308,12 @@ sub _build_date_fields {
 
         # check date fields
         if ($v_start) {
-            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_start,0,4).
-                ', month=>'.CORE::substr($v_start,5,2).
-                ', day=>'.CORE::substr($v_start,8,2).')');
+            eval {
+                my $check_date = DateTime->new(
+                    year => CORE::substr($v_start, 0, 4),
+                    month => CORE::substr($v_start, 5, 2),
+                    day => CORE::substr($v_start, 8, 2));
+            };
             if ($@) {
                 $cb->raise_conflict(
                     'Invalid start date ' . CORE::substr($v_start, 0, 10) . " ($f)"
@@ -319,9 +322,12 @@ sub _build_date_fields {
             }
         }
         if ($v_end) {
-            eval('my $check_date = DateTime->new(year=>'.CORE::substr($v_end,0,4).
-                ', month=>'.CORE::substr($v_end,5,2).
-                ', day=>'.CORE::substr($v_end,8,2).')');
+            eval {
+                my $check_date = DateTime->new(
+                    year => CORE::substr($v_end, 0, 4),
+                    month => CORE::substr($v_end, 5, 2),
+                    day => CORE::substr($v_end, 8, 2));
+            };
             if ($@) {
                 $cb->raise_conflict(
                     'Invalid end date ' . CORE::substr($v_end, 0, 10) . " ($f)"
