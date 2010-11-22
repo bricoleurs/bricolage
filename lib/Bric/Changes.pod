@@ -10,7 +10,7 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.1.0 ()
 
-=head1 Improvements
+=head2 Improvements
 
 =over
 
@@ -47,9 +47,21 @@ upshot is that files will now be distributed much sooner after publishling.
 
 =back
 
+=head2 Bug Fixes
+
+=over
+
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
+=back
+
 =head1 Version 2.0.1 ()
 
-=head1 Improvements
+=head2 Improvements
 
 =over
 
@@ -119,6 +131,34 @@ leading to L<bric_queued> running out of file descriptors. [David]
 The virtual FTP server no longer limits itself, but leaves resource limits to
 the OS. This prevents apparently unrelated (and mysterious!) errors from the
 FTP server. [Alex Krohn].
+
+=item *
+
+Fixed error message thrown by C<publish_another()> that incorrectly called
+itself C<burn_another()>. [David]
+
+=item *
+
+When diffing documents and templates, if the "to" item is the current version,
+the currently-checked out asset is used. This is so that one can see what
+changes have been made since the checkout. Reported by Michael Herring.
+[David]
+
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
+=item *
+
+Fixed a bug where desk asset counts would never be displayed regardless of the
+preference setting (Bug #198). [Greg Heo]
+
+=item *
+
+The keyword autocomplete widget no longer suggests deleted keywords on the 
+story and media profiles (Bug #206). [Greg Heo]
 
 =back
 
