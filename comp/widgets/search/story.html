@@ -95,7 +95,17 @@ $m->comp("/widgets/wrappers/table_top.mc",
         disp    => $lang->maketext('Category URI'),
         name    => $widget.'|category_uri',
         value   => $state->{category_uri} || '' &>
-        
+
+    <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('ID'),
+        name    => $widget.'|id',
+        value   => $state->{id} || '' &>
+
+    <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('UUID'),
+        name    => $widget.'|uuid',
+        value   => $state->{uuid} || '' &>
+
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Type'),
         name    => $widget.'|element_type_id',

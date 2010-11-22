@@ -69,9 +69,13 @@ sub story : Callback {
             $self, \@field, \@crit,
             [qw(title primary_uri category_uri keyword data_text)],
         );
+        _build_text_id_fields(
+            $self, \@field, \@crit,
+            [qw(uuid)],
+        );
         _build_id_fields(
             $self, \@field, \@crit,
-            [qw(element_type_id site_id subelement_id)],
+            [qw(element_type_id site_id subelement_id id)],
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
         _build_date_fields(
@@ -105,9 +109,13 @@ sub media : Callback {
             $self, \@field, \@crit,
             [qw(name uri keyword data_text)]
         );
+        _build_text_id_fields(
+            $self, \@field, \@crit,
+            [qw(uuid)],
+        );
         _build_id_fields(
             $self, \@field, \@crit,
-            [qw(element_type_id site_id)]
+            [qw(element_type_id site_id id)]
         );
         _build_bool_fields($self, \@field, \@crit, [qw(active)]);
         _build_date_fields(
@@ -239,6 +247,28 @@ sub _build_fields {
 
         push @$field, $f;
         push @$crit, (FULL_SEARCH ? '%' : '') . $v . '%';
+    }
+    set_state_data($widget, $object => $state);
+};
+
+sub _build_text_id_fields {
+    my ($self, $field, $crit, $add) = @_;
+    my $widget = $self->class_key;
+    my $param  = $self->params;
+    my $object = get_state_name($widget);
+    my $state  = get_state_data($widget => $object);
+
+    foreach my $f (@$add) {
+        my $v = $param->{$self->class_key."|$f"};
+
+        # Save the value so we can repopulate the form.
+        $state->{$f} = $v;
+
+        # Skip it if it's blank
+        next unless defined $v && $v ne '';
+
+        push @$field, $f;
+        push @$crit, $v;
     }
     set_state_data($widget, $object => $state);
 };

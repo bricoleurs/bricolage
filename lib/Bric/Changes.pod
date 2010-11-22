@@ -45,6 +45,11 @@ there will be more jobs that should be executed sooner rather than later. The
 upshot is that files will now be distributed much sooner after publishling.
 [David]
 
+=item *
+
+Allow searching for stories and media assets by ID and UUID. Suggested by
+Phillip Smith (Ticket #186). [Greg Heo]
+
 =back
 
 =head2 Bug Fixes
