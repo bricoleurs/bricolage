@@ -71,7 +71,7 @@ $m->comp("/widgets/wrappers/table_top.mc",
         disp    => $lang->maketext('URI'),
         name    => $widget.'|uri',
         value   => $state->{uri} || '' &>
-        
+
     <& /widgets/profile/text.mc,
         disp    => $lang->maketext('Keyword'),
         name    => $widget.'|keyword',
@@ -81,6 +81,16 @@ $m->comp("/widgets/wrappers/table_top.mc",
         disp    => $lang->maketext('Text to search'),
         name    => $widget.'|data_text',
         value   => $state->{data_text} || '' &>
+
+    <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('ID'),
+        name    => $widget.'|id',
+        value   => $state->{id} || '' &>
+
+    <& /widgets/profile/text.mc,
+        disp    => $lang->maketext('UUID'),
+        name    => $widget.'|uuid',
+        value   => $state->{uuid} || '' &>
 
     <& /widgets/profile/select.mc,
         disp    => $lang->maketext('Type'),
