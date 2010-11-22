@@ -160,6 +160,10 @@ preference setting (Bug #198). [Greg Heo]
 The keyword autocomplete widget no longer suggests deleted keywords on the 
 story and media profiles (Bug #206). [Greg Heo]
 
+=item *
+
+Updated breadcrumbs in the User Manager profile to accurately preset the path as 'Admin | System | Users' (Bug #176). [Phillip Smith]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)

@@ -215,7 +215,7 @@ $m->comp('/errors/404.mc') unless $type && $def->{$type};
 
 # Set the title.
 my $title = get_disp_name($type) . " Manager";
-my $context = "Admin | Manager | " . get_class_info($type)->get_plural_name;
+my $context = "Admin | System | " . get_class_info($type)->get_plural_name;
 
 # Set the selection label and widget.
 $sel_label = 'Delete';
