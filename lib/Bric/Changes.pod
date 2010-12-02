@@ -52,6 +52,11 @@ Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
 (missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
 this path after changing directories. [Adrian Yee]
 
+=item *
+
+In the event of a publish failure, a story and media document no longer has
+its publish status, date, and first publish date updated (Bug #200). [David]
+
 =back
 
 =head1 VERSION 1.10.10 (2010-04-11)

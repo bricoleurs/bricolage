@@ -1506,6 +1506,54 @@ sub set_publish_date {
 
 ################################################################################
 
+=item $self = $story->set_first_publish_date($publish_date)
+
+Sets the first publish date.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Bric::_get() - Problems retrieving fields.
+
+=item *
+
+Unable to unpack date.
+
+=item *
+
+Unable to format date.
+
+=item *
+
+Incorrect number of args to Bric::_set().
+
+=item *
+
+Bric::set() - Problems setting fields.
+
+=back
+
+B<Side Effects:>
+
+NONE.
+
+B<Notes:>
+
+NONE
+
+=cut
+
+sub set_first_publish_date {
+    my $self = shift;
+    my $date = db_date(shift);
+    $self->_set(['first_publish_date'], [$date]);
+}
+
+################################################################################
+
 =item $self = $story->set_publish_status($bool)
 
 Sets the publish status to a true or false value.
