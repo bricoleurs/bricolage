@@ -114,6 +114,14 @@ story and media profiles (Bug #206). [Greg Heo]
 Fixed a bug where some valid date ranges would be rejected as invalid when
 searching for assets. (Bug #211). [David Oliveira]
 
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
+=item *
+
 In the event of a publish failure, a story and media document no longer has
 its publish status, date, and first publish date updated (Bug #200). [David]
 
