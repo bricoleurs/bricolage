@@ -1253,6 +1253,7 @@ sub publish {
     my $published   = 0;
     my $baid        = $ba->get_id;
     my $repub       = $ba->get_publish_status;
+    my $prevdate    = $ba->get_publish_date(ISO_8601_FORMAT);
 
     # Mark the story as published, so that other stories published by
     # publish_another() can find it as published in the database.
@@ -1414,6 +1415,18 @@ sub publish {
 
         # Log that we've published and we're done.
         log_event($key . ($repub ? '_republish' : '_publish'), $ba);
+    } else {
+        # Publish failed.
+        if ($repub) {
+            # Republish failed. Reset publish date.
+            $ba->set_publish_date($prevdate);
+        } else {
+            # First publish failed. Reset satus and dates.
+            $ba->set_publish_status(0);
+            $ba->set_publish_date(undef);
+            $ba->set_first_publish_date(undef);
+        }
+        $ba->save;
     }
 
     $self->_set([qw(mode _republish)], [undef, undef]);
