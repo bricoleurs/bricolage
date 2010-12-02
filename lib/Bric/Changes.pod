@@ -8,62 +8,6 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 2.1.0 ()
-
-=head2 Improvements
-
-=over
-
-=item *
-
-Added the C<--priority> option to the C<workflow publish> command in
-L<bric_soap> and L<bric_republish>. Sponsored by Denison University. [David]
-
-=item *
-
-Added a C<$priority> argument to the C<publish> method of
-L<Bric::Util::Burner> and modifed L<Bric::Util::Job::Pub> to pass its
-priority. This is so that the priority of the publish job will be replicated
-as the priority of the distribution job created by the publish, as well as of
-any publish jobs created by calls to C<publish_another()>. [David]
-
-=item *
-
-Added the C<Limit> parameter to the C<list()> method of L<Bric::Util::Job>.
-Sponsored by Denison University. [David]
-
-=item *
-
-Added the C<--chunks> option to C<bric_queued>. Sponsored by Denison
-University. [David]
-
-=item *
-
-Modified C<bric_queued> so that it only sleeps for C<--delay> seconds if it
-executed no jobs. Otherwise it immediately runs again, on the assumption that
-there will be more jobs that should be executed sooner rather than later. The
-upshot is that files will now be distributed much sooner after publishling.
-[David]
-
-=item *
-
-Allow searching for stories and media assets by ID and UUID. Suggested by
-Phillip Smith (Ticket #186). [Greg Heo]
-
-=back
-
-=head2 Bug Fixes
-
-=over
-
-=item *
-
-Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
-(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
-this path after changing directories. [Adrian Yee]
-
-=back
-
 =head1 Version 2.0.1 ()
 
 =head2 Improvements
