@@ -18,10 +18,34 @@
 
       xinha_config = xinha_config ? xinha_config : new Xinha.Config();
       xinha_config.toolbar = <% XINHA_TOOLBAR %>;
-      
-      var xinha_editors = Xinha.makeEditors(editors, xinha_config, xinha_plugins);
 
-      Xinha.startEditors(xinha_editors);
+      // Load visible xinha fields.
+      start_xinhas_below($$('#containerprof > .content > .elements').first().id);
+    }
+
+    function start_xinhas_below(eid) {
+        // Nasty and fragile. We only load Xinha editors when they become visible.
+        // http://www.xinha.org/punbb/viewtopic.php?id=2809
+        // Also called from Container.toggle() in lib.js.
+        // These variables may need to be adjusted if the element structure
+        // changes.
+        var csel = ' > .container > .content > fieldset > .elements';
+        var fsel = ' > li > div > .wysiwyg';
+
+        var containers = $$('#' + eid);
+        while (containers.size() > 0) {
+            var c = containers.shift();
+            var fields = $$('#' + c.id + fsel);
+            if (fields.size() > 0) {
+                Xinha.startEditors(Xinha.makeEditors(fields, xinha_config, xinha_plugins));
+            };
+            // Add any visible subelements to the list.
+            $$('#' + c.id + csel).each(function (e) {
+                if (e.visible()) {
+                    containers.push(e);
+                }
+            });
+        }
     }
 
     Event.observe(window, "load", xinha_init);
