@@ -190,7 +190,6 @@ use constant VERSION_TABLE => 'story_instance';
 use constant ID_COL => 's.id';
 
 use constant COLS       => qw( uuid
-                               source__id
                                usr__id
                                element_type__id
                                first_publish_date
@@ -207,6 +206,7 @@ use constant COLS       => qw( uuid
 use constant VERSION_COLS => qw( name
                                  priority
                                  description
+                                 source__id
                                  story__id
                                  version
                                  usr__id
@@ -219,7 +219,6 @@ use constant VERSION_COLS => qw( name
                                  checked_out);
 
 use constant FIELDS =>  qw( uuid
-                            source__id
                             user__id
                             element_type_id
                             first_publish_date
@@ -236,6 +235,7 @@ use constant FIELDS =>  qw( uuid
 use constant VERSION_FIELDS => qw( name
                                    priority
                                    description
+                                   source__id
                                    id
                                    version
                                    modifier
@@ -322,8 +322,8 @@ use constant PARAM_WHERE_MAP => {
       element_id             => 's.element_type__id = ?',
       element__id            => 's.element_type__id = ?',
       element_key_name       => 's.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
-      source_id              => 's.source__id = ?',
-      source__id             => 's.source__id = ?',
+      source_id              => 'i.source__id = ?',
+      source__id             => 'i.source__id = ?',
       priority               => 'i.priority = ?',
       publish_status         => 's.publish_status = ?',
       first_publish_date_start => 's.first_publish_date >= ?',
@@ -461,8 +461,8 @@ use constant PARAM_ORDER_MAP => {
     element_type_id     => 's.element_type__id',
     element_id          => 's.element_type__id',
     element__id         => 's.element_type__id',
-    source_id           => 's.source__id',
-    source__id          => 's.source__id',
+    source_id           => 'i.source__id',
+    source__id          => 'i.source__id',
     priority            => 'i.priority',
     publish_status      => 's.publish_status',
     first_publish_date  => 's.first_publish_date',

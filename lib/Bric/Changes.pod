@@ -52,8 +52,8 @@ Phillip Smith (Ticket #186). [Greg Heo]
 
 =item *
 
-The story C<priority>, C<expire_date>, and C<primary_uri> attributes are now
-versioned (Bug #185). [David]
+The story C<priority>, C<expire_date>, C<primary_uri>, and C<source_id>
+attributes are now versioned (Bug #185). [David]
 
 =back
 
