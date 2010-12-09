@@ -379,11 +379,13 @@ my %formSubs = (
 
             $out .= qq{        <div class="input">\n} if $useTable;
             if (!$readOnly) {
+                my $class = 'textArea';
+                $class .= ' wysiwyg' if ENABLE_WYSIWYG;
                 $js = $js ? " $js" : '';
                 $out .= qq{            <textarea name="$key" id="$key" rows="$rows" cols="$cols" width="200"}
-                     . qq{ wrap="soft" class="textArea"$js>$value</textarea><br />\n};
+                     . qq{ wrap="soft" class="$class"$js>$value</textarea><br />\n};
 
-                if (ENABLE_WYSIWYG) {
+                if (ENABLE_WYSIWYG && lc WYSIWYG_EDITOR ne 'xinha') {
                     my $code = lc WYSIWYG_EDITOR eq 'js-quicktags'
                         ? "edToolbarBric('$key');"
                         : "editors.push('$key');";
