@@ -50,6 +50,11 @@ upshot is that files will now be distributed much sooner after publishling.
 Allow searching for stories and media assets by ID and UUID. Suggested by
 Phillip Smith (Ticket #186). [Greg Heo]
 
+=item *
+
+The story C<priority>, C<expire_date>, and C<primary_uri> attributes are now
+versioned (Bug #185). [David]
+
 =back
 
 =head2 Bug Fixes
