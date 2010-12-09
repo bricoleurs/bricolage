@@ -60,6 +60,7 @@ unless (test_column 'media_instance', 'priority') {
              WHERE s.id = media__id
         },
 
+        q{ALTER TABLE media_instance ALTER priority SET NOT NULL},
         q{ALTER TABLE media_instance ALTER source__id SET NOT NULL},
         q{CREATE INDEX fkx_media_instance__source ON media_instance(source__id)},
 
@@ -77,5 +78,47 @@ unless (test_column 'media_instance', 'priority') {
         q{ALTER TABLE media DROP COLUMN priority},
         q{ALTER TABLE media DROP COLUMN expire_date},
         q{ALTER TABLE media DROP COLUMN source__id},
+    );
+}
+
+unless (test_column 'template_instance', 'priority') {
+    # Update template_instance.
+    do_sql (
+        q{ALTER TABLE template_instance ADD COLUMN name         VARCHAR(256)},
+        q{ALTER TABLE template_instance ADD COLUMN description  VARCHAR(1024)},
+        q{ALTER TABLE template_instance ADD COLUMN priority     SMALLINT},
+        q{ALTER TABLE template_instance ADD COLUMN category__id INTEGER},
+        q{ALTER TABLE template_instance ADD COLUMN expire_date  TIMESTAMP},
+
+        q{
+            UPDATE template_instance
+               SET name         = s.name,
+                   description  = s.description,
+                   priority     = s.priority,
+                   category__id = s.category__id,
+                   expire_date  = s.expire_date
+              FROM template s
+             WHERE s.id = template__id
+        },
+
+        q{ALTER TABLE template_instance ALTER priority SET NOT NULL},
+
+        q{CREATE INDEX idx_template_instance__name ON template_instance(LOWER(name))},
+        q{CREATE INDEX fkx_template_instance_category ON template_instance(category__id)},
+
+        q{
+            ALTER TABLE template_instance ADD CONSTRAINT ck_template_instance__priority
+            CHECK (priority >= 1 AND priority <= 5)
+        },
+
+        q{ALTER TABLE template_instance
+          ADD CONSTRAINT fk_category__template_instance FOREIGN KEY (category__id)
+          REFERENCES category(id) ON DELETE RESTRICT},
+
+        q{ALTER TABLE template DROP COLUMN name},
+        q{ALTER TABLE template DROP COLUMN description},
+        q{ALTER TABLE template DROP COLUMN priority},
+        q{ALTER TABLE template DROP COLUMN category__id},
+        q{ALTER TABLE template DROP COLUMN expire_date},
     );
 }

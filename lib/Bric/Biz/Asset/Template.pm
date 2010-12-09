@@ -149,57 +149,57 @@ use constant UTILITY_TEMPLATE  => 3;
 use constant TABLE      => 'template';
 use constant VERSION_TABLE => 'template_instance';
 use constant ID_COL => 'f.id';
-use constant COLS       => qw( name
-                               priority
-                               description
-                               usr__id
+use constant COLS       => qw( usr__id
                                output_channel__id
                                tplate_type
                                element_type__id
-                               category__id
                                file_name
                                current_version
                                published_version
                                deploy_status
                                deploy_date
-                               expire_date
                                workflow__id
                                desk__id
                                active
                                site__id);
 
-use constant VERSION_COLS => qw( template__id
+use constant VERSION_COLS => qw( name
+                                 priority
+                                 description
+                                 category__id
+                                 template__id
                                  version
                                  usr__id
                                  data
                                  file_name
+                                 expire_date
                                  note
                                  checked_out);
 
-use constant FIELDS     => qw( name
-                               priority
-                               description
-                               user__id
+use constant FIELDS     => qw( user__id
                                output_channel__id
                                tplate_type
                                element_type_id
-                               category_id
                                file_name
                                current_version
                                published_version
                                deploy_status
                                deploy_date
-                               expire_date
                                workflow_id
                                desk_id
                                _active
                                site_id);
 
-use constant VERSION_FIELDS => qw( id
+use constant VERSION_FIELDS => qw( name
+                                   priority
+                                   description
+                                   category_id
+                                   id
                                    version
                                    modifier
                                    data
                                    file_name
+                                   expire_date
                                    note
                                    checked_out);
 
@@ -221,7 +221,7 @@ use constant WHERE => 'f.id = i.template__id '
   . 'AND fm.object_id = f.id '
   . 'AND m.id = fm.member__id '
   . "AND m.active = '1' "
-  . 'AND c.id = f.category__id '
+  . 'AND c.id = i.category__id '
   . 'AND f.workflow__id = w.id';
 
 use constant COLUMNS => join(', f.', 'f.id', COLS) . ', '
@@ -261,17 +261,17 @@ use constant PARAM_WHERE_MAP => {
     element_key_name      => 'f.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
     output_channel_id     => 'f.output_channel__id = ?',
     output_channel__id    => 'f.output_channel__id = ?',
-    priority              => 'f.priority = ?',
+    priority              => 'i.priority = ?',
     deploy_status         => 'f.deploy_status = ?',
     deploy_date_start     => 'f.deploy_date >= ?',
     deploy_date_end       => 'f.deploy_date <= ?',
-    expire_date_start     => 'f.expire_date >= ?',
-    expire_date_end       => 'f.expire_date <= ?',
+    expire_date_start     => 'i.expire_date >= ?',
+    expire_date_end       => 'i.expire_date <= ?',
     desk_id               => 'f.desk__id = ?',
-    name                  => 'LOWER(f.name) LIKE LOWER(?)',
+    name                  => 'LOWER(i.name) LIKE LOWER(?)',
     file_name             => 'LOWER(f.file_name) LIKE LOWER(?)',
-    title                 => 'LOWER(f.name) LIKE LOWER(?)',
-    description           => 'LOWER(f.description) LIKE LOWER(?)',
+    title                 => 'LOWER(i.name) LIKE LOWER(?)',
+    description           => 'LOWER(i.description) LIKE LOWER(?)',
     version               => 'i.version = ?',
     published_version     => 'f.published_version = i.version AND i.checked_out = 0',
     deployed_version      => 'f.published_version = i.version AND i.checked_out = 0',
@@ -295,15 +295,15 @@ use constant PARAM_WHERE_MAP => {
                            . '(SELECT template__id FROM template_instance '
                            . 'WHERE f.id = template_instance.template__id '
                            . "AND template_instance.checked_out = '1')",
-    category_id           => 'f.category__id = ?',
-    category_uri          => 'f.category__id = c.id AND '
+    category_id           => 'i.category__id = ?',
+    category_uri          => 'i.category__id = c.id AND '
                            . 'LOWER(c.uri) LIKE LOWER(?))',
     _no_return_versions   => 'f.current_version = i.version',
     grp_id                => "m2.active = '1' AND "
                            . 'm2.grp__id = ? AND '
                            . 'f.id = fm2.object_id AND '
                            . 'fm2.member__id = m2.id',
-    simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
+    simple                => '(LOWER(i.name) LIKE LOWER(?) OR '
                            . 'LOWER(f.file_name) LIKE LOWER(?))',
     note                  => 'fi2.template__id = f.id AND LOWER(fi2.note) LIKE LOWER(?)',
 };
@@ -311,7 +311,7 @@ use constant PARAM_WHERE_MAP => {
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name => [ 'f.element_type__id = e.id',
                           'LOWER(e.key_name) LIKE LOWER(?)' ],
-    category_uri     => [ 'f.category__id = c.id',
+    category_uri     => [ 'i.category__id = c.id',
                           'LOWER(c.uri) LIKE LOWER(?))' ],
     grp_id           => [ "m2.active = '1' AND fm2.member__id = m2.id AND f.id = fm2.object_id",
                           'm2.grp__id = ?' ],
@@ -336,21 +336,21 @@ use constant PARAM_ORDER_MAP => {
     element_type_id     => 'f.element_type__id',
     output_channel_id   => 'f.output_channel__id',
     output_channel__id  => 'f.output_channel__id',
-    priority            => 'f.priority',
+    priority            => 'i.priority',
     deploy_status       => 'f.deploy_status',
     deploy_date         => 'f.deploy_date',
-    expire_date         => 'f.expire_date',
-    name                => 'LOWER(f.name)',
-    title               => 'LOWER(f.name)',
+    expire_date         => 'i.expire_date',
+    name                => 'LOWER(i.name)',
+    title               => 'LOWER(i.name)',
     file_name           => 'LOWER(i.file_name)',
     category_uri        => 'LOWER(i.file_name)',
-    description         => 'LOWER(f.description)',
+    description         => 'LOWER(i.description)',
     version             => 'i.version',
     version_id          => 'i.id',
     user_id             => 'i.usr__id',
     user__id            => 'i.usr__id',
     _checked_out        => 'i.checked_out',
-    category_id         => 'f.category__id',
+    category_id         => 'i.category__id',
     return_versions     => 'i.version',
 };
 
