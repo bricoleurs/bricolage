@@ -37,17 +37,11 @@ CREATE TABLE media (
                                       DEFAULT NEXTVAL('seq_media'),
     uuid              TEXT            NOT NULL,
     element_type__id  INTEGER   NOT NULL,
-    priority          INT2      NOT NULL
-                                      DEFAULT 3
-                                      CONSTRAINT ck_media__priority
-                                        CHECK (priority BETWEEN 1 AND 5),
-    source__id        INTEGER   NOT NULL,
     current_version   INTEGER,
     published_version INTEGER,
     usr__id           INTEGER,
     first_publish_date TIMESTAMP,
     publish_date      TIMESTAMP,
-    expire_date       TIMESTAMP,
     workflow__id      INTEGER   NOT NULL,
     desk__id          INTEGER   NOT NULL,
     publish_status    BOOLEAN    NOT NULL DEFAULT FALSE,
@@ -71,8 +65,14 @@ CREATE TABLE media_instance (
     name                VARCHAR(256),
     description         VARCHAR(1024),
     media__id           INTEGER   NOT NULL,
+    source__id          INTEGER   NOT NULL,
+    priority            INT2      NOT NULL
+                                  DEFAULT 3
+                                  CONSTRAINT ck_media__priority
+                                  CHECK (priority BETWEEN 1 AND 5),
     usr__id             INTEGER   NOT NULL,
     version             INTEGER,
+    expire_date         TIMESTAMP,
     category__id        INTEGER   NOT NULL,
     media_type__id      INTEGER   NOT NULL,
     primary_oc__id      INTEGER   NOT NULL,
@@ -172,7 +172,6 @@ CREATE INDEX idx_media__uuid ON media(uuid);
 CREATE INDEX idx_media__first_publish_date ON media(first_publish_date);
 CREATE INDEX idx_media__publish_date ON media(publish_date);
 CREATE INDEX idx_media_instance__cover_date ON media_instance(cover_date);
-CREATE INDEX fkx_source__media ON media(source__id);
 CREATE INDEX fkx_usr__media ON media(usr__id);
 CREATE INDEX fkx_element_type__media ON media(element_type__id);
 CREATE INDEX fkx_site_id__media ON media(site__id);
@@ -181,6 +180,7 @@ CREATE INDEX fkx_alias_id__media ON media(alias_id);
 -- media_instance
 CREATE INDEX idx_media_instance__name ON media_instance(LOWER(name));
 CREATE INDEX idx_media_instance__description ON media_instance(LOWER(description));
+CREATE INDEX fkx_media_instance__source ON media_instance(source__id);
 CREATE INDEX idx_media_instance__file_name ON media_instance(LOWER(file_name));
 CREATE INDEX idx_media_instance__uri ON media_instance(LOWER(uri));
 CREATE UNIQUE INDEX udx_media__media_instance ON media_instance(media__id, version, checked_out);

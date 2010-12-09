@@ -20,10 +20,6 @@ ADD CONSTRAINT ck_media__publish_status CHECK (
 );
 
 ALTER TABLE media
-ADD CONSTRAINT fk_source__media FOREIGN KEY (source__id)
-	REFERENCES source(id) ON DELETE RESTRICT;
-
-ALTER TABLE media
 ADD CONSTRAINT fk_usr__media FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE RESTRICT;
 
@@ -69,6 +65,10 @@ ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)
 	REFERENCES output_channel(id) ON DELETE CASCADE;
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_source__media_instance FOREIGN KEY (source__id)
+	REFERENCES source(id) ON DELETE RESTRICT;
 
 -- Media URI constraint.
 ALTER TABLE media_uri

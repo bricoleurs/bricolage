@@ -44,3 +44,38 @@ unless (test_column 'story_instance', 'priority') {
         q{ALTER TABLE story DROP COLUMN source__id},
     );
 }
+
+unless (test_column 'media_instance', 'priority') {
+    # Update media_instance.
+    do_sql (
+        q{ALTER TABLE media_instance ADD COLUMN priority    SMALLINT},
+        q{ALTER TABLE media_instance ADD COLUMN expire_date TIMESTAMP},
+        q{ALTER TABLE media_instance ADD COLUMN source__id  INTEGER},
+        q{
+            UPDATE media_instance
+               SET priority    = s.priority,
+                   expire_date = s.expire_date,
+                   source__id  = s.source__id
+              FROM media s
+             WHERE s.id = media__id
+        },
+
+        q{ALTER TABLE media_instance ALTER source__id SET NOT NULL},
+        q{CREATE INDEX fkx_media_instance__source ON media_instance(source__id)},
+
+        q{ALTER TABLE media_instance
+          ADD CONSTRAINT fk_source__media_instance FOREIGN KEY (source__id)
+          REFERENCES source(id) ON DELETE RESTRICT},
+
+        q{
+            ALTER TABLE media_instance ADD CONSTRAINT ck_media_instance__priority
+            CHECK (priority >= 1 AND priority <= 5)
+        },
+
+        q{ALTER TABLE media_instance ALTER priority SET NOT NULL},
+
+        q{ALTER TABLE media DROP COLUMN priority},
+        q{ALTER TABLE media DROP COLUMN expire_date},
+        q{ALTER TABLE media DROP COLUMN source__id},
+    );
+}

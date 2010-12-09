@@ -55,6 +55,11 @@ Phillip Smith (Ticket #186). [Greg Heo]
 The story C<priority>, C<expire_date>, C<primary_uri>, and C<source_id>
 attributes are now versioned (Bug #185). [David]
 
+=item *
+
+The media C<priority>, C<expire_date>, and C<source_id> attributes are now
+versioned (Bug #185). [David]
+
 =back
 
 =head2 Bug Fixes
