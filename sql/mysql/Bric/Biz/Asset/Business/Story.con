@@ -20,10 +20,6 @@ ADD CONSTRAINT ck_story__publish_status CHECK (
 );
 
 ALTER TABLE story
-ADD CONSTRAINT fk_source__story FOREIGN KEY (source__id)
-	REFERENCES source(id) ON DELETE RESTRICT;
-
-ALTER TABLE story
 ADD CONSTRAINT fk_usr__story FOREIGN KEY (usr__id)
 	REFERENCES usr(id) ON DELETE RESTRICT;
 
@@ -60,6 +56,10 @@ ADD CONSTRAINT fk_usr__story_instance FOREIGN KEY (usr__id)
 ALTER TABLE story_instance
 ADD CONSTRAINT fk_primary_oc__story_instance FOREIGN KEY (primary_oc__id)
 	REFERENCES output_channel(id) ON DELETE RESTRICT;
+
+ALTER TABLE story_instance
+ADD CONSTRAINT fk_source__story_instance FOREIGN KEY (source__id)
+	REFERENCES source(id) ON DELETE RESTRICT;
 
 -- Story URI constraint.
 ALTER TABLE story_uri
@@ -100,29 +100,28 @@ ADD CONSTRAINT fk_member__story__contributor FOREIGN KEY (member__id)
 -- Trigger creation to replace check constraints until MySQL supports them
 
 DELIMITER |
-
-CREATE TRIGGER ck_priority_alias_id_insert_story BEFORE INSERT ON story
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-    	    IF ((NEW.alias_id = NEW.id))
-	        THEN SET NEW.id=NULL;
-		END IF;        
-        END;
+CREATE TRIGGER ck_alias_id_insert_story BEFORE INSERT ON story
+FOR EACH ROW BEGIN
+    IF (NEW.alias_id = NEW.id) THEN SET NEW.id = NULL; END IF;
+END;
 |
 
-CREATE TRIGGER ck_priority_alias_id_update_story BEFORE UPDATE ON story
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-    	    IF ((NEW.alias_id = NEW.id))
-	        THEN SET NEW.id=NULL;
-		END IF;        
-        END;
+CREATE TRIGGER ck_priority_insert_story_instance BEFORE INSERT ON story_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
+|
+
+CREATE TRIGGER ck_alias_id_update_story BEFORE UPDATE ON story
+FOR EACH ROW BEGIN
+    IF (NEW.alias_id = NEW.id) THEN SET NEW.id = NULL; END IF;
+END;
+|
+
+CREATE TRIGGER ck_priority_update_story_instance BEFORE UPDATE ON story_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
 |
 
 DELIMITER ;

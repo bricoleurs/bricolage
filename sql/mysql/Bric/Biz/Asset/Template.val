@@ -9,150 +9,29 @@
 * Don't forget to update the event log in Bric/Util/EventType.val!
 ***************************************************************************/
 
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('502', 'Book Profile', 'A default book profile', '3', NULL,
-        '1', '1', '11',
-        '1', '/book_profile.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('503', 'Book Review', 'A default book review', '3', NULL,
-        '1', '1', '3',
-        '1', '/book_review.mc', '1', '0', '0',
-        '1', '1','2001-07-30 13:34:22',NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('504', 'Column', 'A default column', '3', NULL,
-        '1', '1', '2',
-        '1', '/column.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('506', 'Inset', 'A generic inset', '3', NULL,
-        '1', '1', '6',
-        '1', '/inset.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:23', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ( '507', 'Page', 'A generic page', '3', NULL,
-       '1', '1', '10',
-       '1', '/page.mc', '1', '0', '0',
-       '1', '1', '2001-07-30 13:34:20', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('509', 'Pull Quote', 'A generic pull quote', '3', NULL,
-       '1', '1', '7',
-       '1', '/pull_quote.mc', '1', '0', '0',
-       '1', '1', '2001-07-30 13:34:20', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('510', 'Related Stories', 'A generic related stories template', '3', NULL,
-        '1', '1', '8',
-        '1', '/related_stories.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('511', 'Related Story', 'A generic related story', '3', NULL,
-        '1', '1', '9',
-        '1', '/related_story.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:21', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('512', 'Story', 'A generic story template', '3', NULL,
-        '1', '1', '1',
-        '1', '/story.mc', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('513', 'autohandler', 'A generic root level category template', '3', NULL,
-        '1', '2', NULL,
-        '1', '/autohandler', '1', '0', '0',
-        '1', '1', '2001-07-30 13:34:22', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('514', 'Related Media', 'A default related media template', '3', NULL,
-        '1', '1', '12',
-        '1', '/related_media.mc', '1', '0', '0',
-        '1', '1', '2001-08-01 14:51:34', NULL,
-        '1', '100');
-
-INSERT INTO template (id, name, description, priority, usr__id,
-                        output_channel__id, tplate_type, element_type__id,
-                        category__id, file_name, current_version, workflow__id, desk__id,
-                        published_version, deploy_status, deploy_date, expire_date,
-                        active, site__id)
-VALUES ('515', 'Cover', 'A default cover template', '3', NULL,
-        '1', '1', '13',
-        '1', '/cover.mc', '1', '0', '0',
-        '1', '1', '2001-08-01 14:51:34', NULL,
-        '1', '100');
-
 --
--- Data for TOC Entry ID 5 (OID '391725')
---
--- Name: template_instance Type: TABLE DATA Owner: castellan
---
--- id,template__id,version,usr__id,data,checked_out
+-- Data for Name: template; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('501','502','1','0', '/book_profile.mc','0',
-        '<!-- Start "Book Profile" -->
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (502, NULL, 1, 1, 11, '/book_profile.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:21', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (503, NULL, 1, 1, 3, '/book_review.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:22', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (504, NULL, 1, 1, 2, '/column.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:22', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (506, NULL, 1, 1, 6, '/inset.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:23', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (507, NULL, 1, 1, 10, '/page.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:20', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (509, NULL, 1, 1, 7, '/pull_quote.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:20', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (510, NULL, 1, 1, 8, '/related_stories.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:21', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (511, NULL, 1, 1, 9, '/related_story.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:21', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (512, NULL, 1, 1, 1, '/story.mc', 1, 0, 0, 1, true, '2001-07-30 13:34:22', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (513, NULL, 1, 2, NULL, '/autohandler', 1, 0, 0, 1, true, '2001-07-30 13:34:22', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (514, NULL, 1, 1, 12, '/related_media.mc', 1, 0, 0, 1, true, '2001-08-01 14:51:34', true, 100);
+INSERT INTO template (id, usr__id, output_channel__id, tplate_type, element_type__id, file_name, current_version, workflow__id, desk__id, published_version, deploy_status, deploy_date, active, site__id) VALUES (515, NULL, 1, 1, 13, '/cover.mc', 1, 0, 0, 1, true, '2001-08-01 14:51:34', true, 100);
+
+
+--
+-- Data for Name: template_instance; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (501, 502, 1, 0, '/book_profile.mc', '<!-- Start "Book Profile" -->
 <table>
 <tr>
 <td>Title</td>
@@ -168,12 +47,8 @@ VALUES ('501','502','1','0', '/book_profile.mc','0',
 </tr>
 </table>
 <!-- End "Book Profile" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('502','503','1','0','/book_review.mc','0',
-        '<!-- Start "Book Review" -->
+', NULL, false, 'Book Profile', 'A default book profile', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (502, 503, 1, 0, '/book_review.mc', '<!-- Start "Book Review" -->
 
 %# Only show this if we are on the first page
 % unless ($burner->get_page) {
@@ -188,12 +63,8 @@ VALUES ('502','503','1','0','/book_review.mc','0',
 <br>
 Page <% $burner->get_page + 1 %>
 <!-- End "Book Review" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('503','504','1','0','/column.mc', '0',
-        '<!-- Start "Column" -->
+', NULL, false, 'Book Review', 'A default book review', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (503, 504, 1, 0, '/column.mc', '<!-- Start "Column" -->
 
 %# Only show this if we are on the first page
 % unless ($burner->get_page) {
@@ -208,12 +79,8 @@ VALUES ('503','504','1','0','/column.mc', '0',
 <br>
 Page <% $burner->get_page + 1 %>
 <!-- End "Column" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('505','506','1','0','/inset.mc', '0',
-        '
+', NULL, false, 'Column', 'A default column', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (505, 506, 1, 0, '/inset.mc', '
 <!-- Start ''Inset'' -->
 <table>
 <tr><td>
@@ -221,12 +88,8 @@ VALUES ('505','506','1','0','/inset.mc', '0',
 </td></tr>
 </table>
 <!-- End ''Inset'' -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('506','507','1','0','/page.mc', '0',
-        '<!-- Start "Page" -->
+', NULL, false, 'Inset', 'A generic inset', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (506, 507, 1, 0, '/page.mc', '<!-- Start "Page" -->
 <%perl>
 foreach my $e ($element->get_elements) {
     if ($e->has_name(''paragraph'')) {
@@ -267,19 +130,11 @@ foreach my $e ($element->get_elements) {
 % }
 
 <!-- End "Page" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('508','509','1','0','/pull_quote.mc', '0',
-        '<!-- Start "Pull Quote" -->
+', NULL, false, 'Page', 'A generic page', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (508, 509, 1, 0, '/pull_quote.mc', '<!-- Start "Pull Quote" -->
 &quot;<% $element->get_value(''quote'') %>&quot;
-<!-- End "Pull Quote" -->');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('509','510','1','0','/related_stories.mc', '0',
-        '<!-- Start "Related Stories" -->
+<!-- End "Pull Quote" -->', NULL, false, 'Pull Quote', 'A generic pull quote', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (509, 510, 1, 0, '/related_stories.mc', '<!-- Start "Related Stories" -->
 % my @rel = $element->get_elements;
 
 % if (@rel > 0) {
@@ -294,12 +149,8 @@ VALUES ('509','510','1','0','/related_stories.mc', '0',
 </table>
 % }
 <!-- End "Related Stories" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('510','511','1','0','/related_story.mc', '0',
-        '<!-- Start "Related Story" -->
+', NULL, false, 'Related Stories', 'A generic related stories template', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (510, 511, 1, 0, '/related_story.mc', '<!-- Start "Related Story" -->
 % my $rel_story = $element->get_related_story;
 <b>Title:</b>&nbsp;
 <% $element->get_value(''alternate_title'') || $rel_story->get_title %><br />
@@ -307,12 +158,8 @@ VALUES ('510','511','1','0','/related_story.mc', '0',
 <% $element->get_value(''alternate_teaser'') ||
 $rel_story->get_description %><br />
 <!-- End "Related Story" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('511','512','1','0','/story.mc', '0',
-        '<!-- Start "Story" -->
+', NULL, false, 'Related Story', 'A generic related story', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (511, 512, 1, 0, '/story.mc', '<!-- Start "Story" -->
 
 %# Only show this if we are on the first page
 % unless ($burner->get_page     ) {
@@ -327,12 +174,8 @@ VALUES ('511','512','1','0','/story.mc', '0',
 <br>
 Page <% $burner->get_page + 1 %>
 <!-- End "Story" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('512','513','1','0','/autohandler', '0',
-       '<!-- Start "autohandler" -->
+', NULL, false, 'Story', 'A generic story template', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (512, 513, 1, 0, '/autohandler', '<!-- Start "autohandler" -->
 <html>
     <head>
         <title><% $story->get_title %></title>
@@ -342,24 +185,16 @@ VALUES ('512','513','1','0','/autohandler', '0',
     </body>
 </html>
 <!-- End "autohandler" -->
-');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('513','514','1','0','/related_media.mc', '0',
-        '<!-- Start "Related Media" -->
+', NULL, false, 'autohandler', 'A generic root level category template', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (513, 514, 1, 0, '/related_media.mc', '<!-- Start "Related Media" -->
 % my $rel_media = $element->get_related_media;
 
 %# This template only handles images.
 % if (substr($rel_media->get_media_type->get_name, 0, 5) eq ''image'') {
 <img src="<% $rel_media->get_uri %>">
 % }
-<!-- End "Related Media" -->');
-
-INSERT INTO template_instance (id, template__id, version, usr__id, file_name,
-                                 checked_out, data)
-VALUES ('514','515','1','0','/cover.mc', '0',
-        '<!-- Start "Cover" -->
+<!-- End "Related Media" -->', NULL, false, 'Related Media', 'A default related media template', 3, 1, NULL);
+INSERT INTO template_instance (id, template__id, version, usr__id, file_name, data, note, checked_out, name, description, priority, category__id, expire_date) VALUES (514, 515, 1, 0, '/cover.mc', '<!-- Start "Cover" -->
 %# Lets make this a 3 column cover.
 % my @elem = $element->get_elements;
 %# Find the elements per column
@@ -380,7 +215,7 @@ while (scalar @elem) {
 </tr>
 </table>
 <!-- End "Cover" -->
-');
+', NULL, false, 'Cover', 'A default cover template', 3, 1, NULL);
 
 
 --

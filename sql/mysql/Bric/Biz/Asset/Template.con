@@ -19,11 +19,6 @@ ALTER TABLE template
     ADD CONSTRAINT fk_element_type__template FOREIGN KEY (element_type__id)
     REFERENCES element_type(id) ON DELETE RESTRICT;
 
-ALTER TABLE template
-    ADD CONSTRAINT fk_category__template FOREIGN KEY (category__id)
-    REFERENCES category(id) ON DELETE RESTRICT;
-
-
  ALTER TABLE template
      ADD CONSTRAINT fk_workflow__template FOREIGN KEY (workflow__id)
      REFERENCES workflow(id) ON DELETE RESTRICT;
@@ -48,6 +43,10 @@ ALTER TABLE template_instance
      ADD CONSTRAINT fk_usr__template_instance FOREIGN KEY (usr__id)
      REFERENCES usr(id) ON DELETE RESTRICT;
 
+ALTER TABLE template_instance
+    ADD CONSTRAINT fk_category__template_instance FOREIGN KEY (category__id)
+    REFERENCES category(id) ON DELETE RESTRICT;
+
 -- -----------------------------------------------------------------------------
 -- Table: template_member
 
@@ -64,28 +63,32 @@ REFERENCES     member(id) ON DELETE CASCADE;
 
 DELIMITER |
 
-CREATE TRIGGER ck_priority_tplate_type_insert_template BEFORE INSERT ON template
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-	    IF ((NEW.tplate_type <> 1) AND (NEW.tplate_type <> 2) AND (NEW.tplate_type <> 3))
-	        THEN SET NEW.tplate_type=NULL;
-		END IF;        		
-        END;
+CREATE TRIGGER ck_priority_insert_template_instance BEFORE INSERT ON template_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
 |
 
-CREATE TRIGGER ck_priority_tplate_type_update_template BEFORE UPDATE ON template
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-	    IF ((NEW.tplate_type <> 1) AND (NEW.tplate_type <> 2) AND (NEW.tplate_type <> 3))
-	        THEN SET NEW.tplate_type=NULL;
-		END IF;        		
-        END;
+CREATE TRIGGER ck_tplate_type_insert_template BEFORE INSERT ON template
+FOR EACH ROW BEGIN
+    IF (NEW.tplate_type <> 1 AND NEW.tplate_type <> 2 AND NEW.tplate_type <> 3) THEN
+        SET NEW.tplate_type = NULL;
+    END IF;
+END;
+|
+
+CREATE TRIGGER ck_priority_update_template_instance BEFORE UPDATE ON template_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
+|
+
+CREATE TRIGGER ck_tplate_type_update_template BEFORE UPDATE ON template
+FOR EACH ROW BEGIN
+    IF (NEW.tplate_type <> 1 AND NEW.tplate_type <> 2 AND NEW.tplate_type <> 3) THEN
+        SET NEW.tplate_type = NULL;
+    END IF;
+END;
 |
 
 DELIMITER ;
