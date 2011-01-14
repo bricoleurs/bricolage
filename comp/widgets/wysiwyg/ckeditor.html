@@ -1,0 +1,14 @@
+<script type="text/javascript" src="/media/wysiwyg/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+var editors = new Array();
+var ckCallback = function () {
+    $A(editors).each(function(editor) {
+	    delete CKEDITOR.instances[editor];
+	    var oCK = CKEDITOR.instances[editor];
+	    if (oCK) oCK.destroy();
+	    CKEDITOR.replace( editor, {customConfig : '/widgets/wysiwyg/ckconfig.js'});
+	})
+};
+// Load 'em up.
+Event.observe(window, 'load', ckCallback);
+</script>

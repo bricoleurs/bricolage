@@ -581,6 +581,10 @@ FCKeditor WYSIWYG editor (optional)
 
 =item *
 
+CKeditor WYSIWYG editor (optional)
+
+=item *
+
 JS-Quicktags WYSIWYG editor (optional)
 
 =item *
@@ -1340,6 +1344,26 @@ You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
 F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
 
 For Bricolage 2.0 you will need Xinha release 0.91beta or higher. 
+
+=head2 CKeditor (Optional)
+
+To install CKeditor, an optional application that offers WYSIWYG editing in
+the Bricolage UI, simply L<download it|http://ckeditor.com//>, decompress
+the files, and move them to the F<comp/media/wysiwyg/ckeditor> directory in
+your Bricolage root.
+
+You will also need to enable the C<ENABLE_WYSIWYG> and C<WYSIWYG_EDITOR>
+F<bricolage.conf> directives (see L<UI Configuration|/"UI Configuration">).
+
+You may configure editor to your own likings from F<comp/media/wysiwyg/ckconfig.js>. 
+
+CKeditor is smart enough to use related media and story subelements from
+your story. Plugins image, flash and link will offer you a select list of
+related media to choose from. There is no need for cutting and pasting the
+URIs. The attributes alt and title are also filled in. This requires
+a rewriting URIs by user templates (see F<comp/widgets/wysiwyg/bricolage-wysiwyg.mc>).
+If URIs change, republishing the document will rewrite URIs to reflect 
+the changes avoiding broken links.
 
 =head2 FCKeditor (Optional)
 
