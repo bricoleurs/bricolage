@@ -10,6 +10,17 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.1.0 ()
 
+=head2 New Features
+
+=over
+
+=item *
+
+Added support for the L<CKeditor WYSIWYG editor|http://ckeditor.com/>.
+[Zdravko Balorda]
+
+=back
+
 =head2 Improvements
 
 =over
