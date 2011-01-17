@@ -150,6 +150,11 @@ configuration files specified with paths relative to the C<HTTPD_ROOT> (Bug
 Using pagination controls when selecting from a list of stories to relate no
 longer throws an error (Bug #183). [Greg Heo]
 
+=item *
+
+Adjusted style of Check In and Move popup menu. Allows for easier selection of
+appropriate action (Bug #193). [Phillip Smith]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
