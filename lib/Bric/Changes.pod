@@ -145,6 +145,11 @@ The Apache 2 detection during installation now properly finds C<Include>d
 configuration files specified with paths relative to the C<HTTPD_ROOT> (Bug
 #174). [Michael Herring]
 
+=item *
+
+Using pagination controls when selecting from a list of stories to relate no
+longer throws an error (Bug #183). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
