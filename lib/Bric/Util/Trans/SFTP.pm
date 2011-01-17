@@ -124,7 +124,7 @@ sub put_res {
         next unless $server->is_active;
 
         # Connect via SSH2 and establish SFTP channel.
-        my $ssh2     = _connect($server);
+        my $ssh2     = _connect_to($server);
         my $sftp     = $ssh2->sftp;
         my $doc_root = $server->get_doc_root;
         my $hn       = $server->get_host_name;
@@ -217,7 +217,7 @@ sub del_res {
         next unless $server->is_active;
 
         # Connect via SSH2 and establish SFTP channel.
-        my $ssh2     = _connect($server);
+        my $ssh2     = _connect_to($server);
         my $sftp     = $ssh2->sftp;
         my $doc_root = $server->get_doc_root;
         my $hn       = $server->get_host_name;
