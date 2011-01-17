@@ -82,6 +82,9 @@ this path after changing directories. [Adrian Yee]
 In the event of a publish failure, a story and media document no longer has
 its publish status, date, and first publish date updated (Bug #200). [David]
 
+=item * 
+
+Fixed a user interface layout issue (Bug #194). [Phillip Smith]
 
 =back
 

@@ -214,7 +214,7 @@ my $sort_by = $type eq 'template' ? 'uri'
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 
-<div style="float: right">
+<div class="workflow-buttons">
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',
