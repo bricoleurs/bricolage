@@ -1,0 +1,35 @@
+<%init>
+# Grab the media UUID.
+ my $uuid = $r->uri;
+ $uuid =~ s|/preview/media/||o;
+
+ my (@rm, $mfile);
+ ($mfile) = Bric::Biz::Asset::Business::Media->list({ uuid => "$uuid" });
+ if ($mfile) {
+   $m->clear_buffer;
+   my $buffer;
+   my $fh = $mfile->get_file();
+   while (read($fh, $buffer, 4096)) { $m->print($buffer); };
+   $m->abort;
+ }
+ else {
+   $m->comp('/errors/404.mc');
+ }
+</%init>
+<%doc>
+###############################################################################
+
+=head1 NAME
+
+dhandler -- Implement preview media specified by UUID;
+
+=head1 DATE
+
+$LastChangedDate$
+
+=head1 DESCRIPTION
+
+Sends raw media file.
+
+=cut
+</%doc>

@@ -13,7 +13,6 @@ CKEDITOR.editorConfig = function( config )
     config.extraPlugins = 'autogrow';
     config.enableTabKeyTools = true;
 
-    config.format_tags = 'p;h2;h3;pre';
     // Load from a list of definitions.
     config.stylesSet = [
         { name : 'Emphasis', element : 'em' }, 
@@ -21,8 +20,6 @@ CKEDITOR.editorConfig = function( config )
         { name : 'Small', element : 'small' },
         { name : 'Big', element : 'big' }
 			];
-    config.fontSize_sizes = '100% Medium/100%;Smaller/89%;Very Small/75%';
-
 config.toolbar =
 [
  ['Source'],//'-','Save','NewPage','Preview','-','Templates'],

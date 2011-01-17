@@ -1,6 +1,10 @@
 % if (ENABLE_WYSIWYG && lc WYSIWYG_EDITOR ne 'js-quicktags') {
 <script>
     editors = new Array();
+%   my %java_vars = $m->comp('/widgets/wysiwyg/bricolage-wysiwyg.mc');
+%   foreach my $key_name (keys %java_vars) {
+    <% $key_name %> = <% $java_vars{$key_name} %>;
+%   }
 </script>
 % }
 <& 'container.mc',

@@ -12,3 +12,209 @@ var ckCallback = function () {
 // Load 'em up.
 Event.observe(window, 'load', ckCallback);
 </script>
+<script type="text/javascript">
+    CKEDITOR.on( 'dialogDefinition', function( ev )
+		 {
+		     // Take the dialog name and its definition from the event
+		     // data.
+		     var dialogName = ev.data.name;
+		     var dialogDefinition = ev.data.definition;
+		     var editor = ev.editor;
+		     // Check if the definition is from the dialog we're
+		     // interested on (the "Link" dialog).
+		     if ( dialogName == 'link' )
+			 {
+			     // Add a new tab to the "Link" dialog.
+			     // Get a reference to the "Link Info" tab.
+			     var infoTab = dialogDefinition.getContents( 'info' );
+			     // Add a text field to the "info" tab.
+			     infoTab.add( {
+				     type : 'select',
+					 id : 'url',
+					 label : 'Related non-image',
+					 items: related_nonImages,
+					 required: true,
+					 onLoad : function ()
+					 {
+					     this.allowOnChange = true;
+					 },
+					 onKeyUp : function()
+					 {
+					     var title;
+					     url = this.getValue();
+					     for (i=0; i < related_nonImages.length; i++)
+						 {
+						     if (related_nonImages[i][1] == url)
+							 title = related_nonImages[i][0].substr(7);
+						 }
+					     var dialog = this.getDialog();
+					     this.allowOnChange = false;
+					     dialog.setValueOf( 'info', 'linkType', 'url' );
+					     dialog.setValueOf( 'info', 'url', url );
+					     protocolCmb = this.getDialog().getContentElement( 'info', 'protocol' ),
+						 protocolCmb.setValue( 'http://' );
+					     titleCmb = this.getDialog().getContentElement( 'advanced', 'advTitle' ),
+						 titleCmb.setValue( title );
+					     this.allowOnChange = true;
+					 },
+					 onChange : function()
+					 {
+					     if ( this.allowOnChange )  // Dont't call on dialog load.
+						 this.onKeyUp();
+					 },
+					 validate : function()
+					 {
+					     var dialog = this.getDialog();
+
+					 },
+					 setup : function( data )
+					 {
+					     this.allowOnChange = false;
+					     if ( data.url )
+						 this.setValue( data.url.url );
+					     this.allowOnChange = true;
+
+					 },
+					 commit : function( data )
+					 {
+					     // IE will not trigger the onChange event if the mouse has been used
+					     // to carry all the operations #4724
+					     this.onChange();
+
+					     if ( !data.url )
+						 data.url = {};
+
+					     data.url.url = this.getValue();
+					     this.allowOnChange = false;
+					 }
+				 });
+			 } else if ( dialogName == 'image' )
+			 {
+			     // Load image preview.
+			     var IMAGE = 1,
+			     LINK = 2,
+			     PREVIEW = 4,
+			     CLEANUP = 8;
+			     // Add a new tab to the "image" dialog.
+			     // Get a reference to the "Link Info" tab.
+			     var infoTab = dialogDefinition.getContents( 'info' );
+			     //return; //it doesnt work.
+			     // Add a text field to the "info" tab.
+			     infoTab.add( {
+				     type : 'select',
+					 id : 'selectUrl',
+					 label : 'Related image',
+					 items : related_images,
+					 required: true,
+					 onLoad : function ()
+					 {
+					     this.allowOnChange = true;
+					 },
+					 onChange : function()
+					 {
+					     var dialog = this.getDialog(),
+						 newUrl = this.getValue();
+
+					     //Update original image
+					     if ( newUrl.length > 0 ) //Prevent from load before onShow
+						 {
+						     dialog = this.getDialog();
+						     var title,uuid;
+						     for (i=0; i < related_images.length; i++)
+							 {
+							     if (related_images[i][1] == newUrl)
+								 {
+								     title = related_images[i][0];
+								     uuid = newUrl.substr(15);
+								 }
+           
+							 }
+						     titleCmb = this.getDialog().getContentElement( 'advanced', 'txtGenTitle' );
+						     titleCmb.setValue( title );
+						     altCmb = this.getDialog().getContentElement( 'info', 'txtAlt' );
+						     altCmb.setValue( uuid );
+						     var dialog = this.getDialog();
+
+						     dialog.setValueOf( 'info', 'txtUrl', newUrl );
+						     titleCmb = this.getDialog().getContentElement( 'advanced', 'txtGenTitle' );
+						     titleCmb.setValue( title );
+						 };
+					 },
+					 setup : function( type, element )
+					 {
+					     if ( type == IMAGE )
+						 {
+						     var url = element.getAttribute( '_cke_saved_src' ) || element.getAttribute( 'src' );
+						     var field = this;
+
+						     this.getDialog().dontResetSize = true;
+
+						     field.setValue( url );  // And call this.onChange()
+						     // Manually set the initial value.(#4191)
+						     field.setInitValue();
+						 }
+					 },
+					 commit : function( type, element )
+					 {
+					     if ( type == IMAGE && ( this.getValue() || this.isChanged() ) )
+						 {
+						     element.setAttribute( '_cke_saved_src', decodeURI( this.getValue() ) );
+						     element.setAttribute( 'src', decodeURI( this.getValue() ) );
+						 }
+					     else if ( type == CLEANUP )
+						 {
+						     element.setAttribute( 'src', '' ); // If removeAttribute doesn't work.
+						     element.removeAttribute( 'src' );
+						 }
+					 },
+					 validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing ),
+
+					 });
+
+			 } else if ( dialogName == 'flash' )
+			 {
+			     // Load image preview.
+			     // Add a new tab to the "image" dialog.
+			     // Get a reference to the "Link Info" tab.
+
+			     var infoTab = dialogDefinition.getContents( 'info' );
+			     //return; //it doesnt work.
+			     // Add a text field to the "info" tab.
+			     infoTab.add( {
+				     id : 'src',
+					 type : 'select',
+					 label : 'Related media objects',
+					 required : true,
+					 items : related_objects,
+					 validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.flash.validateSrc ),
+					 setup : editor.loadValue,
+					 commit : editor.commitValue,
+					 onChange : function()
+					 {
+					     var dialog = this.getDialog(),
+						 newUrl = this.getValue();
+
+					     //Update original image
+					     if ( newUrl.length > 0 ) //Prevent from load before onShow
+						 {
+						     dialog = this.getDialog();
+						     var title,uuid;
+						     for (i=0; i < related_objects.length; i++)
+							 {
+							     if (related_objects[i][1] == newUrl)
+								 {
+								     title = related_objects[i][0];
+								     uuid = newUrl.substr(15);
+								 }
+          
+							 }
+						     titleCmb = this.getDialog().getContentElement( 'advanced', 'title' );
+						     titleCmb.setValue( title );
+						     dialog.setValueOf( 'info', 'src', newUrl );
+						 };
+					 }
+				 } );
+                 
+			 };
+		 } );
+</script>

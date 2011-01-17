@@ -176,6 +176,8 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_TIME_ZONES
                     ENABLE_WYSIWYG
                     WYSIWYG_EDITOR
+                    RELATED_MEDIA_TYPE_NAMES
+                    RELATED_STORY_TYPE_NAMES
                     XINHA_PLUGINS
                     XINHA_TOOLBAR
                     FCKEDITOR_CONFIG
@@ -281,6 +283,8 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      CATEGORY_MIN_CHARS_TMPL
                                      ENABLE_WYSIWYG
                                      WYSIWYG_EDITOR
+                                     RELATED_MEDIA_TYPE_NAMES
+                                     RELATED_STORY_TYPE_NAMES
                                      XINHA_PLUGINS
                                      XINHA_TOOLBAR
                                      FCKEDITOR_CONFIG
@@ -688,6 +692,8 @@ require Bric; our $VERSION = Bric->VERSION;
     # Enable WYSIWYG editor?
     use constant ENABLE_WYSIWYG          => $config->{ENABLE_WYSIWYG};
     use constant WYSIWYG_EDITOR          => $config->{WYSIWYG_EDITOR};
+    use constant RELATED_MEDIA_TYPE_NAMES => $config->{RELATED_MEDIA_TYPE_NAMES} || 'related_media';
+    use constant RELATED_STORY_TYPE_NAMES => $config->{RELATED_STORY_TYPE_NAMES} || 'related_story';
 
     # WYSIWYG editor settings
     use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
