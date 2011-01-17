@@ -160,6 +160,11 @@ appropriate action
 Fixed the Xinha editor when using the Create Link button (Bug #180). [Phillip
 Smith]
 
+=item *
+
+The "Content Type" column in the Element Type manager will now properly sort
+when you click its header (Bug #190). [David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
