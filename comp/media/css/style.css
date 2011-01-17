@@ -869,8 +869,8 @@ pre {
  * FIND/REPLACE                                       *
  ******************************************************/
 
-.dialog { 
-    display: none; 
+.dialog-box { 
+    /*display: none; */
     position: absolute; left: 0; top:0; 
     z-index: 300; 
     background: #e8e8cd; 
@@ -881,14 +881,19 @@ pre {
 .dragger:hover { cursor: move; }
 .dialogcontent { margin: 1em; }
 
-.dialog dl { margin: 0; }
-.dialog dl dt {
+.dialog-box dl { margin: 0; }
+.dialog-box dl dt {
     float: left;
     width: 60px;
     text-align: right;
     font-weight: bold;
 }
-.dialog dl dd { margin-left: 70px; padding: 0 0 5px 0; }
+.dialog-box dl dd { margin-left: 70px; padding: 0 0 5px 0; }
+
+/*Fix for Xinha dialog box issue (Bug #180)*/
+.xinha_dialog_background_modal_greyout {
+    width: 100% !important;
+}
 
 .buttons {
     margin: 0;
