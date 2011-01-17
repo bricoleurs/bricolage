@@ -65,6 +65,12 @@ versioned (Bug #185). [David]
 The template C<priority>, C<expire_date>, C<name>, C<description>, and
 C<category_id> attributes are now versioned (Bug #185). [David]
 
+=item *
+
+Adjusted placement of the Checkout and Publish buttons in search results and
+elsewhere so that they're not so close to the border of the box that contains
+them (Bug #194). [Phillip Smith]
+
 =back
 
 =head2 Bug Fixes
