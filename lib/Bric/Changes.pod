@@ -50,6 +50,21 @@ upshot is that files will now be distributed much sooner after publishling.
 Allow searching for stories and media assets by ID and UUID. Suggested by
 Phillip Smith (Ticket #186). [Greg Heo]
 
+=item *
+
+The story C<priority>, C<expire_date>, C<primary_uri>, and C<source_id>
+attributes are now versioned (Bug #185). [David]
+
+=item *
+
+The media C<priority>, C<expire_date>, and C<source_id> attributes are now
+versioned (Bug #185). [David]
+
+=item *
+
+The template C<priority>, C<expire_date>, C<name>, C<description>, and
+C<category_id> attributes are now versioned (Bug #185). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -61,6 +76,12 @@ Phillip Smith (Ticket #186). [Greg Heo]
 Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
 (missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
 this path after changing directories. [Adrian Yee]
+
+=item *
+
+In the event of a publish failure, a story and media document no longer has
+its publish status, date, and first publish date updated (Bug #200). [David]
+
 
 =back
 

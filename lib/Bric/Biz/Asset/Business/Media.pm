@@ -80,14 +80,11 @@ use constant ID_COL => 'mt.id';
 
 use constant COLS           => qw( uuid
                                    element_type__id
-                                   priority
-                                   source__id
                                    current_version
                                    published_version
                                    usr__id
                                    first_publish_date
                                    publish_date
-                                   expire_date
                                    workflow__id
                                    desk__id
                                    publish_status
@@ -97,9 +94,12 @@ use constant COLS           => qw( uuid
 
 use constant VERSION_COLS   => qw( name
                                    description
+                                   priority
+                                   source__id
                                    media__id
                                    usr__id
                                    version
+                                   expire_date
                                    media_type__id
                                    primary_oc__id
                                    category__id
@@ -113,14 +113,11 @@ use constant VERSION_COLS   => qw( name
 
 use constant FIELDS         => qw( uuid
                                    element_type_id
-                                   priority
-                                   source__id
                                    current_version
                                    published_version
                                    user__id
                                    first_publish_date
                                    publish_date
-                                   expire_date
                                    workflow_id
                                    desk_id
                                    publish_status
@@ -130,9 +127,12 @@ use constant FIELDS         => qw( uuid
 
 use constant VERSION_FIELDS => qw( name
                                    description
+                                   priority
+                                   source__id
                                    id
                                    modifier
                                    version
+                                   expire_date
                                    media_type_id
                                    primary_oc_id
                                    category__id
@@ -216,9 +216,9 @@ use constant PARAM_WHERE_MAP => {
       element_id            => 'mt.element_type__id = ?',
       version_id            => 'i.id = ?',
       element_key_name      => 'mt.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
-      source__id            => 'mt.source__id = ?',
-      source_id             => 'mt.source__id = ?',
-      priority              => 'mt.priority = ?',
+      source__id            => 'i.source__id = ?',
+      source_id             => 'i.source__id = ?',
+      priority              => 'i.priority = ?',
       publish_status        => 'mt.publish_status = ?',
       first_publish_date_start => 'mt.publish_date >= ?',
       first_publish_date_end   => 'mt.publish_date <= ?',
@@ -226,9 +226,9 @@ use constant PARAM_WHERE_MAP => {
       publish_date_end      => 'mt.publish_date <= ?',
       cover_date_start      => 'i.cover_date >= ?',
       cover_date_end        => 'i.cover_date <= ?',
-      expire_date_start     => 'mt.expire_date >= ?',
-      expire_date_end       => 'mt.expire_date <= ?',
-      unexpired             => '(mt.expire_date IS NULL OR mt.expire_date > CURRENT_TIMESTAMP)',
+      expire_date_start     => 'i.expire_date >= ?',
+      expire_date_end       => 'i.expire_date <= ?',
+      unexpired             => '(i.expire_date IS NULL OR i.expire_date > CURRENT_TIMESTAMP)',
       desk_id               => 'mt.desk__id = ?',
       name                  => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name   => 'i.id = mct.object_instance_id AND mct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
@@ -335,14 +335,14 @@ use constant PARAM_ORDER_MAP => {
     element_type_id     => 'mt.element_type__id',
     element__id         => 'mt.element_type__id',
     element_id          => 'mt.element_type__id',
-    source__id          => 'mt.source__id',
-    source_id           => 'mt.source__id',
-    priority            => 'mt.priority',
+    source__id          => 'i.source__id',
+    source_id           => 'i.source__id',
+    priority            => 'i.priority',
     publish_status      => 'mt.publish_status',
     first_publish_date  => 'mt.first_publish_date',
     publish_date        => 'mt.publish_date',
     cover_date          => 'i.cover_date',
-    expire_date         => 'mt.expire_date',
+    expire_date         => 'i.expire_date',
     name                => 'LOWER(i.name)',
     title               => 'LOWER(i.name)',
     file_name           => 'LOWER(i.file_name)',

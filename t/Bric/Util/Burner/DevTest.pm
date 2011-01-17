@@ -844,7 +844,7 @@ sub test_modes : Test(10) {
 }
 
 ##############################################################################
-sub test_story_publish : Test(27) {
+sub test_story_publish {
     my $self = shift;
 
     # Where we at?
@@ -927,7 +927,7 @@ sub test_story_publish : Test(27) {
 }
 
 ##############################################################################
-sub test_media_publish : Test(44) {
+sub test_media_publish : Test(60) {
     my $self = shift;
 
     # Where we at?
@@ -958,8 +958,36 @@ sub test_media_publish : Test(44) {
         comp_dir => $fs->cat_dir(TEMP_DIR, 'comp')
     }), 'Create a burner';
 
+
+    # First, make the publish fail.
+    ok !$media->get_publish_status, 'Publish status should be false';
+    is $media->get_publish_date, undef, 'Publish date should be undef';
+    is $media->get_first_publish_date, undef, 'First publish date should be undef';
+
+    # Prevent the publish by having no server types.
+    my $stmock = Test::MockModule->new('Bric::Dist::ServerType');
+    $stmock->mock(list => sub {[]});
+
+    my $msg = 'Cannot publish asset "Flubberman" to "Web" because there are no Destinations associated with this output channel.';
+    my $bmock = Test::MockModule->new('Bric::Util::Burner');
+    $bmock->mock(add_msg => sub { is shift, $msg, 'Failure message should be correct' });
+    ok !$burner->publish($media, 'media', $self->user_id),
+        'Try to publish the media document';
+
+    # Publish status and dates should be unchanged.
+    ok !$media->get_publish_status, 'Publish status should still be false';
+    is $media->get_publish_date, undef, 'Publish date should still be undef';
+    is $media->get_first_publish_date, undef, 'First publish date should still be undef';
+
+    # Okay, let it go now.
+    $stmock->unmock_all;
+    $bmock->unmock_all;
     ok $burner->publish($media, 'media', $self->user_id),
         'Publish the media document';
+
+    ok $media->get_publish_status, 'Publish status should now be true';
+    isnt $media->get_publish_date, undef, 'Publish date should not be undef';
+    isnt $media->get_first_publish_date, undef, 'First publish date should not be undef';
 
     # Now, find the resource that was distributed.
     ok my $res = Bric::Dist::Resource->lookup({ path => $path }),
@@ -970,7 +998,22 @@ sub test_media_publish : Test(44) {
     # Make sure the file was distributed!
     file_exists_ok $file, 'The file should have been distributed';
 
+    # Make the publish fail again.
+    $stmock->mock(list => sub {[]});
+    $bmock->mock(add_msg => sub { is shift, $msg, 'Failure message should be correct' });
+    my $date = '2010-12-02 19:29:00';
+    $media->set_publish_date($date);
+    $media->set_first_publish_date($date);
+    $media->save;
+    ok !$burner->publish($media, 'media', $self->user_id),
+        'Fail to publish the media document again';
+    ok $media->get_publish_status, 'Publish status should still be true';
+    is $media->get_publish_date, $date, 'Publish date should not be updated';
+    is $media->get_first_publish_date, $date, 'First publish date should not be updated';
+
     # Now create a new version of the media document, with a new file.
+    $stmock->unmock_all;
+    $bmock->unmock_all;
     ok $media->checkout({ user__id => $self->user_id }), 'Check out the media';
     ok $media->checkin, 'Check it in';
     ok $media->checkout({ user__id => $self->user_id }), 'Check it out again';

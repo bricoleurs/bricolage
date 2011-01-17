@@ -190,25 +190,23 @@ use constant VERSION_TABLE => 'story_instance';
 use constant ID_COL => 's.id';
 
 use constant COLS       => qw( uuid
-                               priority
-                               source__id
                                usr__id
                                element_type__id
                                first_publish_date
                                publish_date
-                               expire_date
                                current_version
                                published_version
                                workflow__id
                                publish_status
-                               primary_uri
                                active
                                desk__id
                                site__id
                                alias_id);
 
 use constant VERSION_COLS => qw( name
+                                 priority
                                  description
+                                 source__id
                                  story__id
                                  version
                                  usr__id
@@ -216,28 +214,28 @@ use constant VERSION_COLS => qw( name
                                  slug
                                  cover_date
                                  note
+                                 primary_uri
+                                 expire_date
                                  checked_out);
 
 use constant FIELDS =>  qw( uuid
-                            priority
-                            source__id
                             user__id
                             element_type_id
                             first_publish_date
                             publish_date
-                            expire_date
                             current_version
                             published_version
                             workflow_id
                             publish_status
-                            primary_uri
                             _active
                             desk_id
                             site_id
                             alias_id);
 
 use constant VERSION_FIELDS => qw( name
+                                   priority
                                    description
+                                   source__id
                                    id
                                    version
                                    modifier
@@ -245,6 +243,8 @@ use constant VERSION_FIELDS => qw( name
                                    slug
                                    cover_date
                                    note
+                                   primary_uri
+                                   expire_date
                                    checked_out);
 
 use constant AD_PARAM => '_AD_PARAM';
@@ -316,15 +316,15 @@ use constant PARAM_WHERE_MAP => {
       workflow__id           => 's.workflow__id = ?',
       workflow_id            => 's.workflow__id = ?',
       _null_workflow_id      => 's.workflow__id IS NULL',
-      primary_uri            => 'LOWER(s.primary_uri) LIKE LOWER(?)',
+      primary_uri            => 'LOWER(i.primary_uri) LIKE LOWER(?)',
       uri                    => 's.id = uri.story__id AND LOWER(uri.uri) LIKE LOWER(?)',
       element_type_id        => 's.element_type__id = ?',
       element_id             => 's.element_type__id = ?',
       element__id            => 's.element_type__id = ?',
       element_key_name       => 's.element_type__id = e.id AND LOWER(e.key_name) LIKE LOWER(?)',
-      source_id              => 's.source__id = ?',
-      source__id             => 's.source__id = ?',
-      priority               => 's.priority = ?',
+      source_id              => 'i.source__id = ?',
+      source__id             => 'i.source__id = ?',
+      priority               => 'i.priority = ?',
       publish_status         => 's.publish_status = ?',
       first_publish_date_start => 's.first_publish_date >= ?',
       first_publish_date_end   => 's.first_publish_date <= ?',
@@ -332,9 +332,9 @@ use constant PARAM_WHERE_MAP => {
       publish_date_end       => 's.publish_date <= ?',
       cover_date_start       => 'i.cover_date >= ?',
       cover_date_end         => 'i.cover_date <= ?',
-      expire_date_start      => 's.expire_date >= ?',
-      expire_date_end        => 's.expire_date <= ?',
-      unexpired              => '(s.expire_date IS NULL OR s.expire_date > CURRENT_TIMESTAMP)',
+      expire_date_start      => 'i.expire_date >= ?',
+      expire_date_end        => 'i.expire_date <= ?',
+      unexpired              => '(i.expire_date IS NULL OR i.expire_date > CURRENT_TIMESTAMP)',
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
@@ -406,7 +406,7 @@ use constant PARAM_WHERE_MAP => {
                               . 'JOIN story_instance si2 ON story__id = ss.id '
                               . 'WHERE LOWER(si2.name) LIKE LOWER(?) '
                               . 'OR LOWER(si2.description) LIKE LOWER(?) '
-                              . 'OR LOWER(ss.primary_uri) LIKE LOWER(?) '
+                              . 'OR LOWER(si2.primary_uri) LIKE LOWER(?) '
                               . 'UNION SELECT story_id FROM story_keyword '
                               . 'JOIN keyword kk ON (kk.id = keyword_id) '
                               . 'WHERE LOWER(kk.name) LIKE LOWER(?))',
@@ -457,18 +457,18 @@ use constant PARAM_ORDER_MAP => {
     site_id             => 's.site__id',
     workflow__id        => 's.workflow__id',
     workflow_id         => 's.workflow__id',
-    primary_uri         => 'LOWER(s.primary_uri)',
+    primary_uri         => 'LOWER(i.primary_uri)',
     element_type_id     => 's.element_type__id',
     element_id          => 's.element_type__id',
     element__id         => 's.element_type__id',
-    source_id           => 's.source__id',
-    source__id          => 's.source__id',
-    priority            => 's.priority',
+    source_id           => 'i.source__id',
+    source__id          => 'i.source__id',
+    priority            => 'i.priority',
     publish_status      => 's.publish_status',
     first_publish_date  => 's.first_publish_date',
     publish_date        => 's.publish_date',
     cover_date          => 'i.cover_date',
-    expire_date         => 's.expire_date',
+    expire_date         => 'i.expire_date',
     name                => 'LOWER(i.name)',
     title               => 'LOWER(i.name)',
     description         => 'LOWER(i.description)',

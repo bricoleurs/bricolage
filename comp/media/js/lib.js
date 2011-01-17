@@ -1728,20 +1728,26 @@ var Container = {
     },
 
     toggle: function( eid, anchor ) {
-        Effect.toggle('element_' + eid, 'blind', {duration: 0.3});
-        var hint_element = $('element_' + eid + '_hint');
-        if (hint_element) {
-            Effect.toggle(hint_element, 'blind', {duration: 0.3});
-        }
         var displayed = $('container_' + eid + '_displayed');
+        var afterFinish;
         if ( displayed.value == '0' ) {
             // Display it.
             anchor.innerHTML = '&#x25bc;';
             displayed.value = '1';
+            if (typeof Xinha != 'undefined') {
+                // Load Xinha editors. Nasty and fragile. :-(
+                afterFinish = function () { start_xinhas_below('element_' + eid) };
+            }
         } else {
             // Hide it.
             anchor.innerHTML = '&#x25b6;';
             displayed.value = '0';
+        }
+
+        Effect.toggle('element_' + eid, 'blind', {duration: 0.3, afterFinish: afterFinish});
+        var hint_element = $('element_' + eid + '_hint');
+        if (hint_element) {
+            Effect.toggle(hint_element, 'blind', {duration: 0.3});
         }
         return false;
     }

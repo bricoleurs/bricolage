@@ -18,16 +18,10 @@
 CREATE TABLE story (
     id                INTEGER         NOT NULL AUTO_INCREMENT,
     uuid              TEXT            NOT NULL,
-    priority          INT2            NOT NULL
-                                      DEFAULT 3
-                                        CHECK (priority BETWEEN 1 AND 5),
-    source__id        INTEGER         NOT NULL, 
     usr__id           INTEGER,
     element_type__id  INTEGER         NOT NULL,
-    primary_uri       VARCHAR(128),
     first_publish_date TIMESTAMP      NULL DEFAULT NULL,
     publish_date      TIMESTAMP       NULL DEFAULT NULL,
-    expire_date       TIMESTAMP       NULL DEFAULT NULL,
     current_version   INTEGER         NOT NULL,
     published_version INTEGER,
     workflow__id      INTEGER         NOT NULL,
@@ -53,7 +47,13 @@ CREATE TABLE story_instance (
     name           VARCHAR(256),
     description    VARCHAR(1024),
     story__id      INTEGER      NOT NULL,
+    source__id     INTEGER      NOT NULL, 
+    primary_uri    VARCHAR(128),
+    priority       INT2         NOT NULL
+                                DEFAULT 3
+                                CHECK (priority BETWEEN 1 AND 5),
     version        INTEGER,
+    expire_date    TIMESTAMP    NULL DEFAULT NULL,
     usr__id        INTEGER,
     slug           VARCHAR(64),
     primary_oc__id INTEGER      NOT NULL,
@@ -137,9 +137,7 @@ CREATE TABLE story__contributor (
 
 -- story
 CREATE INDEX idx_story__uuid ON story("uuid" (254));
-CREATE INDEX idx_story__primary_uri ON story(primary_uri(128));
 CREATE INDEX fkx_usr__story ON story(usr__id);
-CREATE INDEX fkx_source__story ON story(source__id);
 CREATE INDEX fkx_element_type__story ON story(element_type__id);
 CREATE INDEX fkx_site_id__story ON story(site__id);
 CREATE INDEX fkx_alias_id__story ON story(alias_id);
@@ -150,7 +148,9 @@ CREATE INDEX idx_story_instance__cover_date ON story_instance(cover_date);
 -- story_instance
 CREATE INDEX idx_story_instance__name ON story_instance(name(254));
 CREATE INDEX idx_story_instance__description ON story_instance(description(254));
+CREATE INDEX fkx_story_instance__source ON story_instance(source__id);
 CREATE INDEX idx_story_instance__slug ON story_instance(slug(64));
+CREATE INDEX idx_story_instance__primary_uri ON story_instance(primary_uri(128));
 CREATE UNIQUE INDEX udx_story__story_instance ON story_instance(story__id, version, checked_out);
 CREATE INDEX fkx_usr__story_instance ON story_instance(usr__id);
 CREATE INDEX fkx_primary_oc__story_instance ON story_instance(primary_oc__id);

@@ -14,51 +14,49 @@ sub test_fetch_objects: Test(4) {
     eval {
     my $sth = prepare(q{
         INSERT INTO story (
-            site__id, uuid, source__id, desk__id, element_type__id, current_version, workflow__id, primary_uri, published_version
+            site__id, uuid, desk__id, element_type__id, current_version, workflow__id, published_version
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?
         )
     });
 
     for my $row (
-        [100, 1, 1, 0, 1, 1, 0, 1, undef],
-        [100, 1, 1, 0, 1, 1, 0, undef, 4],
-        [100, 1, 1, 0, 1, 1, 0, 3, 5],
+        [100, 1, 0, 1, 1, 0, undef],
+        [100, 1, 0, 1, 1, 0, 4],
+        [100, 1, 0, 1, 1, 0, 5],
 
-        [100, 2, 1, 0, 2, 2, 0, 1, 4],
-        [100, 2, 1, 0, 2, 2, 0, 2, 5],
-        [100, 2, 1, 0, 2, 2, 0, 3, 6],
+        [100, 2, 0, 2, 2, 0, 4],
+        [100, 2, 0, 2, 2, 0, 5],
+        [100, 2, 0, 2, 2, 0, 6],
 
-        [100, 3, 1, 0, 3, 3, 0, 3, undef],
-        [100, 3, 1, 0, 3, 3, 0, 6, 0],
-        [100, 3, 1, 0, 3, 3, 0, 4, 0],
+        [100, 3, 0, 3, 3, 0, undef],
+        [100, 3, 0, 3, 3, 0, 0],
+        [100, 3, 0, 3, 3, 0, 0],
 
-        [100, 4, 1, 0, 4, 4, 0, 4, 0],
-        [100, 4, 1, 0, 4, 4, 0, 0, 8],
-        [100, 4, 1, 0, 4, 4, 0, 0, 0],
+        [100, 4, 0, 4, 4, 0, 0],
+        [100, 4, 0, 4, 4, 0, 8],
+        [100, 4, 0, 4, 4, 0, 0],
     ) {
         execute($sth, @$row);
     }
 
     # check that _fetch_objects produces the right objs
-    my $sql = ' SELECT site__id, uuid, source__id, desk__id, element_type__id, '
+    my $sql = ' SELECT site__id, uuid, desk__id, element_type__id, '
             . 'current_version, workflow__id, '
             . group_concat_sql('alias_id') . ', '
             . group_concat_sql('published_version') . '
                  FROM story
-                 GROUP BY site__id, uuid, source__id, desk__id,
+                 GROUP BY site__id, uuid, desk__id,
                           element_type__id, current_version, workflow__id
                  ORDER BY site__id, workflow__id ASC ';
     my $sqltemp=$sql;
-    my $fields = [ qw( site__id uuid source__id desk__id element_type__id current_version workflow__id alias_id ) ];
+    my $fields = [ qw( site__id uuid desk__id element_type__id current_version workflow__id alias_id ) ];
     my $stories = fetch_objects('Bric::Biz::Asset', \$sql, $fields, 2, undef, undef , undef);
-#    print ('//'.$stories->[0]{priority}.'//');
     $_->{alias_id} = [sort { $a <=> $b } @{$_->{alias_id}}] for @$stories;
     my $expect = [
              bless( {
                       site__id     => 100,
                       uuid     => 1,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 1,
                       current_version   => 1,
@@ -69,7 +67,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 2,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 2,
                       current_version   => 2,
@@ -80,7 +77,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 3,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 3,
                       current_version   => 3,
@@ -91,7 +87,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 4,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 4,
                       current_version   => 4,
@@ -110,7 +105,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 1,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 1,
                       current_version   => 1,
@@ -121,7 +115,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 2,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 2,
                       current_version   => 2,
@@ -141,7 +134,6 @@ sub test_fetch_objects: Test(4) {
                  bless( {
                       site__id     => 100,
                       uuid     => 3,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 3,
                       current_version   => 3,
@@ -152,7 +144,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 4,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 4,
                       current_version   => 4,
@@ -171,7 +162,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 2,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 2,
                       current_version   => 2,
@@ -182,7 +172,6 @@ sub test_fetch_objects: Test(4) {
              bless( {
                       site__id     => 100,
                       uuid     => 3,
-                      source__id    => 1,
                       desk__id    => 0,
                       element_type__id     => 3,
                       current_version   => 3,

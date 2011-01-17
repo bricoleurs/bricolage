@@ -20,24 +20,20 @@ ADD CONSTRAINT ck_media__publish_status CHECK (
 );
 
 ALTER TABLE media
-ADD CONSTRAINT fk_source__media FOREIGN KEY (source__id)
-	REFERENCES source(id) ON DELETE RESTRICT;
-
-ALTER TABLE media
 ADD CONSTRAINT fk_usr__media FOREIGN KEY (usr__id)
-	REFERENCES usr(id) ON DELETE RESTRICT;
+    REFERENCES usr(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
 ADD CONSTRAINT fk_element_type__media FOREIGN KEY (element_type__id)
-	REFERENCES element_type(id) ON DELETE RESTRICT;
+    REFERENCES element_type(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
 ADD CONSTRAINT fk_workflow__media FOREIGN KEY (workflow__id)
-	REFERENCES workflow(id) ON DELETE RESTRICT;
+    REFERENCES workflow(id) ON DELETE RESTRICT;
 
 ALTER TABLE media
 ADD CONSTRAINT fk_site__media FOREIGN KEY (site__id)
-	REFERENCES site(id) ON DELETE RESTRICT;
+    REFERENCES site(id) ON DELETE RESTRICT;
 
 -- MySQL compatibility measure until same table foreign key works as it should
 --
@@ -47,30 +43,34 @@ ADD CONSTRAINT fk_site__media FOREIGN KEY (site__id)
 
 ALTER TABLE media
 ADD CONSTRAINT fk_desk__media FOREIGN KEY (desk__id)
-	REFERENCES desk(id) ON DELETE RESTRICT;
+    REFERENCES desk(id) ON DELETE RESTRICT;
 
 -- -----------------------------------------------------------------------------
 -- Table media_instance
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_media__media_instance FOREIGN KEY (media__id)
-	REFERENCES media(id) ON DELETE CASCADE;
+    REFERENCES media(id) ON DELETE CASCADE;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_category__media_instance FOREIGN KEY (category__id)
-	REFERENCES category(id) ON DELETE CASCADE;
+    REFERENCES category(id) ON DELETE CASCADE;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_media_type__media_instance FOREIGN KEY (media_type__id)
-	REFERENCES media_type(id) ON DELETE CASCADE;
+    REFERENCES media_type(id) ON DELETE CASCADE;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_usr__media_instance FOREIGN KEY (usr__id)
-	REFERENCES usr(id) ON DELETE CASCADE;
+    REFERENCES usr(id) ON DELETE CASCADE;
+
+ALTER TABLE media_instance
+ADD CONSTRAINT fk_source__media_instance FOREIGN KEY (source__id)
+    REFERENCES source(id) ON DELETE RESTRICT;
 
 ALTER TABLE media_instance
 ADD CONSTRAINT fk_primary_oc__media_instance FOREIGN KEY (primary_oc__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
+    REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- Media URI constraint.
 ALTER TABLE media_uri
@@ -83,22 +83,22 @@ REFERENCES site(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Media to output channel mapping constraints
-ALTER TABLE media__output_channel 
+ALTER TABLE media__output_channel
 ADD CONSTRAINT fk_media__oc__media FOREIGN KEY (media_instance__id)
-	REFERENCES media_instance(id) ON DELETE CASCADE;
+    REFERENCES media_instance(id) ON DELETE CASCADE;
 
-ALTER TABLE media__output_channel 
+ALTER TABLE media__output_channel
 ADD CONSTRAINT fk_media__oc__oc FOREIGN KEY (output_channel__id)
-	REFERENCES output_channel(id) ON DELETE CASCADE;
+    REFERENCES output_channel(id) ON DELETE CASCADE;
 
 -- Media to Contributor mapping constraints
 ALTER TABLE media__contributor
 ADD CONSTRAINT fk_media__media__contributor FOREIGN KEY (media_instance__id)
-	REFERENCES media_instance(id) ON DELETE CASCADE;
+    REFERENCES media_instance(id) ON DELETE CASCADE;
 
 ALTER TABLE media__contributor
 ADD CONSTRAINT fk_member__media__contributor FOREIGN KEY (member__id)
-	REFERENCES member(id) ON DELETE CASCADE;
+    REFERENCES member(id) ON DELETE CASCADE;
 
 -- -----------------------------------------------------------------------------
 -- Table: media_member
@@ -115,30 +115,28 @@ REFERENCES     member(id) ON DELETE CASCADE;
 -- Trigger creation to replace check constraints until MySQL supports them
 
 DELIMITER |
-
-CREATE TRIGGER ck_priority_alias_id_insert_media BEFORE INSERT ON media
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-    	    IF ((NEW.alias_id = NEW.id))
-	        THEN SET NEW.id=NULL;
-		END IF;        
-    
-        END;
+CREATE TRIGGER ck_alias_id_insert_media BEFORE INSERT ON media
+FOR EACH ROW BEGIN
+    IF (NEW.alias_id = NEW.id) THEN SET NEW.id = NULL; END IF;
+END;
 |
 
-CREATE TRIGGER ck_priority_alias_id_update_media BEFORE UPDATE ON media
-    FOR EACH ROW 
-	BEGIN
-	    IF ((NEW.priority < 1) OR (NEW.priority > 5))
-	        THEN SET NEW.priority=NULL;
-		END IF;        
-    	    IF ((NEW.alias_id = NEW.id))
-	        THEN SET NEW.id=NULL;
-		END IF;        
-        END;
+CREATE TRIGGER ck_priority_insert_media_instance BEFORE INSERT ON media_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
+|
+
+CREATE TRIGGER ck_alias_id_update_media BEFORE UPDATE ON media
+FOR EACH ROW BEGIN
+    IF (NEW.alias_id = NEW.id) THEN SET NEW.id = NULL; END IF;
+END;
+|
+
+CREATE TRIGGER ck_priority_update_media_instance BEFORE UPDATE ON media_instance
+FOR EACH ROW BEGIN
+    IF (NEW.priority < 1 OR NEW.priority > 5) THEN SET NEW.priority = NULL; END IF;
+END;
 |
 
 DELIMITER ;

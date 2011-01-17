@@ -20,10 +20,6 @@ ALTER TABLE template
     REFERENCES element_type(id) ON DELETE RESTRICT;
 
 ALTER TABLE template
-    ADD CONSTRAINT fk_category__template FOREIGN KEY (category__id)
-    REFERENCES category(id) ON DELETE RESTRICT;
-
-ALTER TABLE template
     ADD CONSTRAINT fk_workflow__template FOREIGN KEY (workflow__id)
     REFERENCES workflow(id) ON DELETE RESTRICT;
 
@@ -45,6 +41,10 @@ ALTER TABLE template_instance
 ALTER TABLE template_instance
     ADD CONSTRAINT fk_usr__template_instance FOREIGN KEY (usr__id)
     REFERENCES usr(id) ON DELETE RESTRICT;
+
+ALTER TABLE template_instance
+    ADD CONSTRAINT fk_category__template_instance FOREIGN KEY (category__id)
+    REFERENCES category(id) ON DELETE RESTRICT;
 
 -- -----------------------------------------------------------------------------
 -- Table: template_member
