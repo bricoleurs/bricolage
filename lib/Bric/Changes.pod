@@ -165,6 +165,12 @@ Smith]
 The "Content Type" column in the Element Type manager will now properly sort
 when you click its header (Bug #190). [David]
 
+=item *
+
+Bricolage no longer throws an error when the description of a category is
+longer than 256 characters. Thanks to Vladimir for the report (Bug # 215).
+[Phllip Smith]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
