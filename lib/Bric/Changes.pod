@@ -153,7 +153,12 @@ longer throws an error (Bug #183). [Greg Heo]
 =item *
 
 Adjusted style of Check In and Move popup menu. Allows for easier selection of
-appropriate action (Bug #193). [Phillip Smith]
+appropriate action
+
+=item *
+
+Fixed the Xinha editor when using the Create Link button (Bug #180). [Phillip
+Smith]
 
 =back
 
