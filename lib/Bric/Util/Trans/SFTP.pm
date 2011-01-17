@@ -257,7 +257,7 @@ NONE.
 
 =over 4
 
-=item _connect
+=item _connect_to
 
 Establishes an SSH2 connection.
 
@@ -269,7 +269,7 @@ sub _connect_to {
     my $hn   = $server->get_host_name;
     my $ssh2 = Net::SSH2->new;
 
-    $ssh2->connect(split /:/ => $hn) or trow_gen(
+    $ssh2->connect(split /:/ => $hn) or throw_gen(
         error   => "Error connecting to '$hn' via SSH2",
         payload => join ' ', $ssh2->error,
     );
