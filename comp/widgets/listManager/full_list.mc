@@ -10,7 +10,8 @@
   <tr>
 <%perl>;
   my $field_disp = shift @$data;
-  $sort_params = "&$sort_params" if $sort_params && $sort_params !~ /^[&]/;
+  my $local_params = "";
+  $local_params = "&$sort_params" if $sort_params && $sort_params !~ /^[&]/;
   # Output the table header.
   foreach my $i (0..$#{$fields}) {
       my $f = $fields->[$i];
@@ -29,7 +30,7 @@
 
       # Only make a link if user sorting is enabled.
       if ($userSort) {
-          $m->out(qq{<a href="$url?listManager|sortBy_cb=$sort_sign$f$sort_params">} . ($disp || "") . "</a>");
+          $m->out(qq{<a href="$url?listManager|sortBy_cb=$sort_sign$f$local_params">} . ($disp || "") . "</a>");
       } else {
           $m->out($disp);
       }
@@ -88,7 +89,7 @@
     <tr><td colspan="<% scalar @$fields %>"><% $message %>&nbsp;</td></tr>
 % }
 </table>
-% $m->comp('.footer', pagination => $pagination, cols => $cols)
+% $m->comp('.footer', pagination => $pagination, cols => $cols, sort_params => $sort_params)
 %    if $pagination->{pages} > 1;
 <%once>;
 # Returns a link to the page specified with the given label. Used by .footer.
@@ -96,7 +97,8 @@ my $page_link = sub {
     my ($page_num, $label, $limit, $url, $title) = @_;
     $title = qq{ title="$title"} if $title;
     my $offset = ($page_num - 1) * $limit;
-    return qq{<a href="$url?listManager|set_offset_cb=$offset"$title>} .
+    $url .= ($url =~ m/\?/ ? '&' : '?') . "listManager|set_offset_cb=$offset";
+    return qq{<a href="$url"$title>} .
       $lang->maketext($label) . q{</a> };
 };
 </%once>
@@ -133,13 +135,14 @@ $addition = &$addition($pkg) if ref $addition eq 'CODE';
 <%args>
 $pagination
 $cols
+$sort_params => ''
 </%args>
 <%init>;
-my $url = $r->uri;
+my $url = $r->uri . ($r->uri =~ m/\?/ ? '&' : '?') . $sort_params;
 $m->out(qq{<div class="paginate">\n});
 unless ($pagination->{pagination}) {
     $m->out(qq{<div class="all">} .
-            $page_link->(0, 'Paginate Results', 0, $url) . "</div>\n");
+            $page_link->(0, 'Paginate Results', 0, "$url") . "</div>\n");
 } else {
     $m->out(qq{<div class="pages">});
     # previous link, if applicable
@@ -166,7 +169,8 @@ unless ($pagination->{pagination}) {
                                         $pagination->{limit}, $url, 'Next Page'));
     }
     $m->out(qq{</div>});
-    $m->print(qq{<div class="all"><a href="$url?listManager|show_all_records_cb=1">},
+    my $showall_url = $url . ($url =~ m/\?/ ? '&' : '?') . "listManager|show_all_records_cb=1";
+    $m->print(qq{<div class="all"><a href="$showall_url">},
             $lang->maketext('Show All'), '</a></div>');
 }
 $m->out(qq{</div>});
