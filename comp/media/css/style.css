@@ -510,6 +510,8 @@ table td.order { width: 30px; text-align: center; white-space: nowrap; }
 .listManager td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
+.workflow-buttons { text-align: right; margin-bottom: 10px; }
+
 th.checkbox, th.radio,
 td.checkbox, td.radio { width: 10%; text-align: center; }
 
