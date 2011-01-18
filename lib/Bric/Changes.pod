@@ -47,6 +47,12 @@ session. This makes it one bit easier to create a bunch of objects in a row
 all in the same category, as used to be the case before 2.0 turned these into
 autocompleting fields (Bug #159). [David]
 
+=item *
+
+The lists of the container and field subelement key names in a template are
+now displayed above the code in the read view as well as the edit view.
+Suggested by Phillip Smith (Bug #228). [David]
+
 =back
 
 =head2 Bug Fixes
