@@ -112,10 +112,8 @@ new Ajax.Autocompleter(
     <dt><% $lang->maketext('Container Elements') %>:</dt>
     <dd>
 %       $m->print(join ', ', map { $_->get_key_name } $at->get_containers);
-        <% $search_button %>
     </dd>
 %   }
-% } else {
   <dt>&nbsp;</dt>
   <dd><% $search_button %></dd>
 % }
