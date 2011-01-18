@@ -39,6 +39,14 @@ the backslashes in the file names. [David]
 Bricolage now supports Apache 2 MPMs other than Prefork. YMMV (Bug #188).
 [David]
 
+=item *
+
+The "Category" autocompleting field in the New Story/Media/Template profile
+now remembers the last value selected for that screen within the current
+session. This makes it one bit easier to create a bunch of objects in a row
+all in the same category, as used to be the case before 2.0 turned these into
+autocompleting fields (Bug #159). [David]
+
 =back
 
 =head2 Bug Fixes
