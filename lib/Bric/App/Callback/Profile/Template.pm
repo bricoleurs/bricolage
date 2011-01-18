@@ -656,7 +656,7 @@ $create_fa = sub {
     # Create a new template asset.
     my $fa = eval {
         Bric::Biz::Asset::Template->new({
-            element_type            => $at,
+            element_type       => $at,
             file_type          => $param->{file_type},
             output_channel__id => $oc_id,
             category_id        => $cat_id,
@@ -675,6 +675,7 @@ $create_fa = sub {
             # XXX: it should never return more than one asset, right?
             ($fa) = Bric::Biz::Asset::Template->list({
                 active => 0,
+                tplate_type => $tplate_type,
                 output_channel_id => $oc_id,
                 category_id => $cat_id,
                 element_type_id => $at_id,
