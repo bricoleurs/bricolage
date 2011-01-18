@@ -1,4 +1,4 @@
 Makefile
 inst/*.sql
 comp/data/
-
+comp/media/wysiwyg/
