@@ -191,6 +191,12 @@ Attempting to create a category template that already exists in a category and
 output channel no longer reactivates an element type template (Bug # 195).
 [David]
 
+=item *
+
+Deactivated element types no longer appear as available to add to stories,
+though existing elements of those types will remain unless they're
+individually deleted (Bug #230). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
