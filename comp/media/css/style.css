@@ -869,8 +869,8 @@ pre {
  * FIND/REPLACE                                       *
  ******************************************************/
 
-.dialog-box { 
-    /*display: none; */
+.dialog-box {
+    display: none;
     position: absolute; left: 0; top:0; 
     z-index: 300; 
     background: #e8e8cd; 
