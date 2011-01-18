@@ -179,6 +179,12 @@ Bricolage no longer throws an error when the description of a category is
 longer than 256 characters. Thanks to Vladimir for the report (Bug # 215).
 [Phllip Smith]
 
+=item *
+
+Attempting to create a category template that already exists in a category and
+output channel no longer reactivates an element type template (Bug # 195).
+[David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
