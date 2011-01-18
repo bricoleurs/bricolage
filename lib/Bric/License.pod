@@ -274,6 +274,8 @@ Folks who have submitted patches include:
 
 =item * Iván Chavero
 
+=item * Nick Legg
+
 =back
 
 Friends who have spotted bugs include:
