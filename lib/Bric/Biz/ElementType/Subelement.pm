@@ -301,6 +301,7 @@ sub href {
     my @params;
     my $wheres = $pkg->SEL_WHERES
                . ' AND a.id = subet.child_id AND '
+               . " a.active = '1' AND "
                . any_where $p->{parent_id}, 'subet.parent_id = ?', \@params;
     my $sel = prepare_c(qq{
         SELECT $cols
