@@ -49,6 +49,9 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
 <& '/widgets/wrappers/table_top.mc',
     caption => $caption,
     number  => 2 &>
+% if (my $et = $fa->get_element_type) {
+%     $m->comp('codemeta.mc', et => $et);
+% }
 <pre><% $code %></pre>
 <& '/widgets/wrappers/table_bottom.mc' &>
 % if ($curr_ver > 1) {
