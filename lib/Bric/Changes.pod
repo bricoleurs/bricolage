@@ -197,6 +197,12 @@ Deactivated element types no longer appear as available to add to stories,
 though existing elements of those types will remain unless they're
 individually deleted (Bug #230). [Greg Heo]
 
+=item *
+
+Document and template search results no longer provide a "Republish" checkbox
+for deactivated assets, which are shown when "Include deleted" checkbox is
+selected in the advanced search interface (Bug #201). [Nick Legg]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
