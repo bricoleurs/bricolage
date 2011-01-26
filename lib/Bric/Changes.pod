@@ -209,6 +209,12 @@ The buttons once again work in the media document category browser when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
 Michael Herring for the report (Bug #155). [David]
 
+=item *
+
+The story and media profiles now allow only output channels associated with
+the site the document element type is associated with to be associated with
+the story or media document (Bug # 212). [Zdravko Balorda]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
