@@ -203,6 +203,12 @@ Document and template search results no longer provide a "Republish" checkbox
 for deactivated assets, which are shown when "Include deleted" checkbox is
 selected in the advanced search interface (Bug #201). [Nick Legg]
 
+=item *
+
+The buttons once again work in the media document category browser when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
+Michael Herring for the report (Bug #155). [David]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
@@ -223,7 +229,7 @@ recent versions of Apache::Session. [Dave Rolsky]
 
 =item *
 
-The buttons once again work in the category browser when the
+The buttons once again work in the story document category browser when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
 Krzysztof Rudnik for the report (Bug #155). [David]
 
