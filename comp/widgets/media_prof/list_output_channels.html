@@ -53,8 +53,9 @@ new Effect.Highlight('oc-<% $new_oc_id %>');
 % }
 % }
 
+% my $sid = $media->get_site_id;
 % my $all_ocs = [
-%    grep { ! $curr_ocs->{$_->get_id} && chk_authz($_, READ, 1) }
+%    grep { $_->get_site_id == $sid && !$curr_ocs->{$_->get_id} && chk_authz($_, READ, 1) }
 %    $media->get_element_type->get_output_channels
 % ];
 % if (scalar @$all_ocs) {
