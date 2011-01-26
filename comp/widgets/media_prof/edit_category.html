@@ -1,3 +1,4 @@
+<form action="<% $r->uri %>" method="post" name="theForm">
 <%perl>;
 $m->comp('/widgets/wrappers/table_top.mc', caption => 'Current Category' );
 $m->comp('/widgets/listManager/listManager.mc',
@@ -17,13 +18,41 @@ $m->comp('/widgets/profile/hidden.mc',
 $m->comp('/widgets/wrappers/table_bottom.mc');
 </%perl>
 
+<div id="assocbuttons">
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save',
+    widget  => $widget,
+    cb      => 'save_category_cb',
+    button  => 'save_red',
+    value   => 'Save',
+    useTable => 0
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Save and Stay',
+    widget  => $widget,
+    cb      => 'save_and_stay_category_cb',
+    button  => 'save_and_stay_lgreen',
+    value   => 'Save and Stay',
+    useTable => 0
+&>
+<& '/widgets/buttons/submit.mc',
+    disp    => 'Return',
+    widget  => $widget,
+    cb      => 'leave_category_cb',
+    button  => 'return_dgreen',
+    value   => 'Return',
+    useTable => 0
+&>
+</div>
+</form>
+<form action="<% $r->uri %>" method="post" name="searchForm">
 <& /widgets/search/search.mc,
    object       => 'category',
    field        => 'uri',
    type         => 'singular',
    use_form_tag => 0
 &>
-<& '/widgets/wrappers/table_top.mc', caption => 'Choose Categories' &>
+<& '/widgets/wrappers/table_top.mc', caption => 'Choose a Category' &>
 <& /widgets/listManager/listManager.mc,
    object    => 'category',
    title     => 'Choose Categories',
@@ -35,29 +64,6 @@ $m->comp('/widgets/wrappers/table_bottom.mc');
    behavior => 'expand',
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
-
-<& '/widgets/buttons/submit.mc',
-    disp    => 'Save',
-    widget  => $widget,
-    cb      => 'save_category_cb',
-    button  => 'save_red',
-    value   => 'Save',
-&>
-<& '/widgets/buttons/submit.mc',
-    disp    => 'Save and Stay',
-    widget  => $widget,
-    cb      => 'save_and_stay_category_cb',
-    button  => 'save_and_stay_lgreen',
-    value   => 'Save and Stay',
-&>
-<& '/widgets/buttons/submit.mc',
-    disp    => 'Return',
-    widget  => $widget,
-    cb      => 'leave_category_cb',
-    button  => 'return_dgreen',
-    value   => 'Return',
-&>
-
 <%args>
 $widget
 </%args>
