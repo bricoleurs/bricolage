@@ -121,6 +121,11 @@ sub slurp_conf {
 
     if ($file =~ /\*/) {
         @files = glob($file);
+
+        # try fully qualified path
+        if (!@files && !File::Spec::Functions::file_name_is_absolute($file)) {
+            @files = glob(File::Spec::Functions::catfile($AP{HTTPD_ROOT}, $file));
+        }
     }
     else {
         return '' unless -e $file and ! -d _;

@@ -73,6 +73,7 @@ my $select = sub {
         # Add a republish checkbox
     if ($type ne 'template' && $o->get_publish_status
         && !$o->get_workflow_id && chk_authz($o, PUBLISH, 1)
+        && $o->is_active
     ) {
         push @$ret, [
             $lang->maketext('Republish'),
@@ -214,7 +215,7 @@ my $sort_by = $type eq 'template' ? 'uri'
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 
-<div style="float: right">
+<div class="workflow-buttons">
 <& '/widgets/profile/button.mc',
     disp    => $lang->maketext('Checkout'),
     name    => 'Checkout',

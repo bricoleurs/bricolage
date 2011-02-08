@@ -306,6 +306,7 @@ use constant PARAM_WHERE_MAP => {
     simple                => '(LOWER(f.name) LIKE LOWER(?) OR '
                            . 'LOWER(f.file_name) LIKE LOWER(?))',
     note                  => 'fi2.template__id = f.id AND LOWER(fi2.note) LIKE LOWER(?)',
+    tplate_type           => 'f.tplate_type = ?',
 };
 
 use constant PARAM_ANYWHERE_MAP => {
@@ -806,6 +807,12 @@ C<ANY> for a list of possible values.
 
 Returns a list of templates associated with an element with the given key
 name. May use C<ANY> for a list of possible values.
+
+=item tplate_type
+
+Return a list of templates of the given template type. The supported types are
+defined by the constants C<ELEMENT_TEMPLATE>, <CCATEGORY_TEMPLATE>, and
+C<UTILITY_TEMPLATE>.
 
 =item note
 

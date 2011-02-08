@@ -402,9 +402,9 @@ div.popup-menu {
     border: 1px solid #888;
     margin: 0;
     padding: 0;
-    padding-bottom: .4em !important;
     z-index: 1000;
     display: block;
+    font-size: 1.1em;
 }
 div.popup-menu.checkin {
 	left: 0px;    
@@ -413,7 +413,6 @@ div.popup-menu ul {
     list-style: none outside;
     width: 100%;
     margin: 0 !important;
-    margin-bottom: 0.2em !important;
     padding: 0 !important;
     display: block;
 }
@@ -441,9 +440,10 @@ div.popup-menu a {
     text-align: left !important;
     color: black;
     text-decoration: none;
+    padding: 3px 0 3px 1px;
 }
 div.popup-menu a:hover {
-    background-color: #336FCB;
+    background-color: #000;
     color: white;
 }
 
@@ -509,6 +509,8 @@ table td.order { width: 30px; text-align: center; white-space: nowrap; }
 .listManager th.sortdown a { padding: 5px 17px 5px 5px; color: white; }
 .listManager td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
+
+.workflow-buttons { text-align: right; margin-bottom: 10px; }
 
 th.checkbox, th.radio,
 td.checkbox, td.radio { width: 10%; text-align: center; }
@@ -867,8 +869,8 @@ pre {
  * FIND/REPLACE                                       *
  ******************************************************/
 
-.dialog { 
-    display: none; 
+.dialog-box {
+    display: none;
     position: absolute; left: 0; top:0; 
     z-index: 300; 
     background: #e8e8cd; 
@@ -879,14 +881,19 @@ pre {
 .dragger:hover { cursor: move; }
 .dialogcontent { margin: 1em; }
 
-.dialog dl { margin: 0; }
-.dialog dl dt {
+.dialog-box dl { margin: 0; }
+.dialog-box dl dt {
     float: left;
     width: 60px;
     text-align: right;
     font-weight: bold;
 }
-.dialog dl dd { margin-left: 70px; padding: 0 0 5px 0; }
+.dialog-box dl dd { margin-left: 70px; padding: 0 0 5px 0; }
+
+/*Fix for Xinha dialog box issue (Bug #180)*/
+.xinha_dialog_background_modal_greyout {
+    width: 100% !important;
+}
 
 .buttons {
     margin: 0;

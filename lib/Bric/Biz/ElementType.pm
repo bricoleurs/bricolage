@@ -906,6 +906,19 @@ sub my_meths {
             }
         },
 
+        content_type => {
+            name     => 'content_type',
+            get_meth => sub {
+                return 'Subelement' unless $_[0]->get_top_level;
+                return Bric::Util::Class->lookup({ id => $_[0]->get_biz_class_id })->get_disp_name;
+            },
+            get_args => [],
+            set_meth => sub { die 'You cannot set the content type; use biz_class_id' },
+            set_args => [],
+            disp     => 'Content Type',
+            type     => 'short',
+        },
+
         active => {
             name     => 'active',
             get_meth => sub { shift->is_active(@_) ? 1 : 0 },

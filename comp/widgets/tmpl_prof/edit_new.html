@@ -82,12 +82,14 @@ $m->comp('/widgets/select_object/select_object.mc',
          req         => 1,
          'disp'      => 'Output Channel');
 
-$m->comp('/widgets/profile/text.mc',
+$m->comp('/widgets/profile/autocomplete.mc',
     disp => 'Category',
     name => 'new_category_autocomplete',
     id   => 'new_category_uri',
     req  => 1,
     value => $param->{new_category_autocomplete},
+    object => 'category',
+    reset_key => $widget,
 );
 </%perl>
 <div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>

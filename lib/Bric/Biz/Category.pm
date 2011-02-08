@@ -573,7 +573,8 @@ sub my_meths {
                               type     => 'short',
                               props    => { type => 'textarea',
                                             cols => 40,
-                                            rows => 4
+                                            rows => 4,
+                                            maxlength => 256
                                           }
                              },
               directory        => {

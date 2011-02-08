@@ -97,29 +97,7 @@ new Ajax.Autocompleter(
    caption => 'Template Code',
    number  => 2
 &>
-<dl class="viewmeta">
-% if ($at) {
-    <dt><% $lang->maketext('Key Name') %>:</dt>
-    <dd><% $at->get_key_name  . $show_element_flags->($at) %></dd>
-%   if (@{$at->get_field_types}) {
-    <dt><% $lang->maketext('Field Elements') %>:</dt>
-    <dd>
-%       $m->print(join ', ', map { $_->get_key_name . $show_data_flags->($_) } $at->get_field_types);
-    </dd>
-%   }
-
-%   if (@{$at->get_containers}) {
-    <dt><% $lang->maketext('Container Elements') %>:</dt>
-    <dd>
-%       $m->print(join ', ', map { $_->get_key_name } $at->get_containers);
-        <% $search_button %>
-    </dd>
-%   }
-% } else {
-  <dt>&nbsp;</dt>
-  <dd><% $search_button %></dd>
-% }
-</dl>
+% $m->comp('codemeta.mc', et => $at, button => $search_button) if $at;
 <& /widgets/dialog_box/find.mc,
     field_id  => "$widget|code",
     dialog_id => 'finddialog',
@@ -177,36 +155,3 @@ my $search_button = '<button title="' . $lang->maketext('Open the search and rep
 
 my $sites = $c->get('__SITES__') || Bric::Biz::Site->list({ active => 1 });
 </%init>
-
-<%once>
-my $show_element_flags = sub {
-    my ($at) = @_;
-    my @flags;
-
-    push @flags, 'paginated'     if $at->is_paginated;
-    push @flags, 'top level'     if $at->is_top_level;
-    push @flags, 'fixed url'     if $at->is_fixed_uri;
-    push @flags, 'media'         if $at->is_media;
-    push @flags, 'related media' if $at->is_related_media;
-    push @flags, 'related story' if $at->is_related_story;
-
-    return unless @flags;
-    return '&nbsp;<span class="orangeLink">('.join(', ', @flags).')</span>';
-};
-
-my $show_data_flags = sub {
-    my ($dt) = @_;
-    my @flags;
-
-    if (my $min = $dt->get_min_occurrence) {
-          push @flags, "Minimum: $min";
-    }
-
-    if(my $max = $dt->get_max_occurrence) {
-          push @flags, "Maximum: $max";
-    }
-
-    return unless @flags;
-    return '&nbsp;<span class="orangeLink">('.join(', ', @flags).')</span>';
-};
-</%once>

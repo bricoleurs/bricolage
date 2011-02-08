@@ -57,6 +57,7 @@ use HTML::Mason::ApacheHandler;
 use Bric::App::Callback::Alert;
 use Bric::App::Callback::Alias;
 use Bric::App::Callback::AssetMeta;
+use Bric::App::Callback::Autocomplete;
 use Bric::App::Callback::BulkPublish;
 # Only load CharTrans if we have Perl 5.8 or later.
 BEGIN { require Bric::App::Callback::CharTrans if ENCODE_OK }

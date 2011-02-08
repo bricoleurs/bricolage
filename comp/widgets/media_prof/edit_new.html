@@ -51,11 +51,13 @@ $m->comp(
    selected   => $sel_source,
    useTable   => 1,
 &>
-<& /widgets/profile/text.mc,
+<& /widgets/profile/autocomplete.mc,
     disp => 'Category',
     name => 'new_category_autocomplete',
     id   => 'new_category_uri',
     req  => 1,
+    object => 'category',
+    reset_key => $widget,
 &>
 <div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
 <script type="text/javascript">

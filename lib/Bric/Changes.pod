@@ -39,6 +39,20 @@ the backslashes in the file names. [David]
 Bricolage now supports Apache 2 MPMs other than Prefork. YMMV (Bug #188).
 [David]
 
+=item *
+
+The "Category" autocompleting field in the New Story/Media/Template profile
+now remembers the last value selected for that screen within the current
+session. This makes it one bit easier to create a bunch of objects in a row
+all in the same category, as used to be the case before 2.0 turned these into
+autocompleting fields (Bug #159). [David]
+
+=item *
+
+The lists of the container and field subelement key names in a template are
+now displayed above the code in the read view as well as the edit view.
+Suggested by Phillip Smith (Bug #228). [David]
+
 =back
 
 =head2 Bug Fixes
@@ -114,6 +128,93 @@ story and media profiles (Bug #206). [Greg Heo]
 Fixed a bug where some valid date ranges would be rejected as invalid when
 searching for assets. (Bug #211). [David Oliveira]
 
+=item *
+
+Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
+(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
+this path after changing directories. [Adrian Yee]
+
+=item *
+
+In the event of a publish failure, a story and media document no longer has
+its publish status, date, and first publish date updated (Bug #200). [David]
+
+=item *
+
+Xinha now works properly, as the WYSIWYG fields are now created only when
+they're displayed (they didn't work right when they were created while
+hidden). Thanks to Aaron Fuleki and Denison University for the report and
+Phillip Smith for finding the relevant Xinha support explaining the problem
+(Bug # 217). [David]
+
+=item *
+
+Adjusted placement of the Checkout and Publish buttons in search results and
+elsewhere so that they're not so close to the border of the box that contains
+them (Bug #194). [Phillip Smith]
+
+=item *
+
+The Apache 2 detection during installation now properly finds C<Include>d
+configuration files specified with paths relative to the C<HTTPD_ROOT> (Bug
+#174). [Michael Herring]
+
+=item *
+
+Using pagination controls when selecting from a list of stories to relate no
+longer throws an error (Bug #183). [Greg Heo]
+
+=item *
+
+Adjusted style of Check In and Move popup menu. Allows for easier selection of
+appropriate action
+
+=item *
+
+Fixed the Xinha editor when using the Create Link button (Bug #180). [Phillip
+Smith]
+
+=item *
+
+The "Content Type" column in the Element Type manager will now properly sort
+when you click its header (Bug #190). [David]
+
+=item *
+
+Bricolage no longer throws an error when the description of a category is
+longer than 256 characters. Thanks to Vladimir for the report (Bug # 215).
+[Phllip Smith]
+
+=item *
+
+Attempting to create a category template that already exists in a category and
+output channel no longer reactivates an element type template (Bug # 195).
+[David]
+
+=item *
+
+Deactivated element types no longer appear as available to add to stories,
+though existing elements of those types will remain unless they're
+individually deleted (Bug #230). [Greg Heo]
+
+=item *
+
+Document and template search results no longer provide a "Republish" checkbox
+for deactivated assets, which are shown when "Include deleted" checkbox is
+selected in the advanced search interface (Bug #201). [Nick Legg]
+
+=item *
+
+The buttons once again work in the media document category browser when the
+C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
+Michael Herring for the report (Bug #155). [David]
+
+=item *
+
+The story and media profiles now allow only output channels associated with
+the site the document element type is associated with to be associated with
+the story or media document (Bug # 212). [Zdravko Balorda]
+
 =back
 
 =head1 Version 2.0.0 (2010-04-12)
@@ -134,7 +235,7 @@ recent versions of Apache::Session. [Dave Rolsky]
 
 =item *
 
-The buttons once again work in the category browser when the
+The buttons once again work in the story document category browser when the
 C<ENABLE_CATEGORY_BROWSER> F<bricolage.conf> directive is true. Thanks to
 Krzysztof Rudnik for the report (Bug #155). [David]
 

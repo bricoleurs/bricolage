@@ -11,6 +11,7 @@ use File::Spec::Unix;
 # Test class loading.
 ##############################################################################
 sub _test_load : Test(3) {
+    eval { require Net::SSH2; 1 } or return 'Net::SSH2 not installed';
     use_ok('Bric::Util::Trans::SFTP');
     isa_ok 'Bric::Util::Trans::SFTP', 'Bric';
 
