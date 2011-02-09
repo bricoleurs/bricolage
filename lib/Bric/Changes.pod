@@ -8,7 +8,7 @@ Bric::Changes - Bricolage Changes
 
 This document lists the Changes to Bricolage introduced with each release.
 
-=head1 Version 2.0.1 (2011-02-07)
+=head1 Version 2.0.1 (2011-02-09)
 
 =head2 Improvements
 
@@ -19,7 +19,7 @@ This document lists the Changes to Bricolage introduced with each release.
 Added C<SKIP_SSL_REDIRECT> F<bricolage.conf> directive. This directive
 prevents Bricolage from redirecting to and from an SSL URL when C<SSL_ENABLE>
 is turned on. The case for this is when Bricolage is running behind a reverse
-proxy server that's handling SSL mappsings. Thanks to Alex Krohn for the
+proxy server that's handling SSL mappings. Thanks to Alex Krohn for the
 report. [David]
 
 =item *
@@ -167,7 +167,7 @@ longer throws an error (Bug #183). [Greg Heo]
 =item *
 
 Adjusted style of Check In and Move popup menu. Allows for easier selection of
-appropriate action
+appropriate action.
 
 =item *
 
