@@ -176,11 +176,10 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     LOAD_TIME_ZONES
                     ENABLE_WYSIWYG
                     WYSIWYG_EDITOR
-                    RELATED_MEDIA_TYPE_NAMES
-                    RELATED_STORY_TYPE_NAMES
                     XINHA_PLUGINS
                     XINHA_TOOLBAR
                     FCKEDITOR_CONFIG
+                    CKEDITOR_CONFIG
                     HTMLAREA_TOOLBAR
                     ENABLE_GZIP
                     RELATED_DOC_POD_TAG
@@ -283,11 +282,10 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      CATEGORY_MIN_CHARS_TMPL
                                      ENABLE_WYSIWYG
                                      WYSIWYG_EDITOR
-                                     RELATED_MEDIA_TYPE_NAMES
-                                     RELATED_STORY_TYPE_NAMES
                                      XINHA_PLUGINS
                                      XINHA_TOOLBAR
                                      FCKEDITOR_CONFIG
+                                     CKEDITOR_CONFIG
                                      LOAD_CHAR_SETS
                                      HTMLAREA_TOOLBAR)],
                     email     => [qw(SMTP_SERVER)],
@@ -453,6 +451,21 @@ require Bric; our $VERSION = Bric->VERSION;
                       . q{['Cut','Copy','Paste','PasteText','PasteWord','-',}
                       . q{'Undo','Redo'],['Link','Unlink','Anchor','Source',}
                       . q{'SpellCheck']];};
+            } elsif ($ed eq 'ckeditor') {
+                # Set default toolbar for CKeditor.
+                $config->{CKEDITOR_CONFIG}
+                    ||= q{config.toolbar = }
+                      . q{[['Source'],}
+                      . q{['Cut','Copy','Paste','PasteText','PasteFromWord', 'Scayt'],}
+                      . q{['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],}
+                      . q{'/',['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],}
+                      . q{['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],}
+                      . q{['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],}
+                      . q{['Link','Unlink','Anchor'],}
+                      . q{['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'],}
+                      . q{'/',['Styles','Format'],}
+                      . q{['TextColor','BGColor'],}
+                      . q{['Maximize', 'ShowBlocks','-']];}
             }
         }
 
@@ -692,13 +705,12 @@ require Bric; our $VERSION = Bric->VERSION;
     # Enable WYSIWYG editor?
     use constant ENABLE_WYSIWYG          => $config->{ENABLE_WYSIWYG};
     use constant WYSIWYG_EDITOR          => $config->{WYSIWYG_EDITOR};
-    use constant RELATED_MEDIA_TYPE_NAMES => $config->{RELATED_MEDIA_TYPE_NAMES} || 'related_media';
-    use constant RELATED_STORY_TYPE_NAMES => $config->{RELATED_STORY_TYPE_NAMES} || 'related_story';
 
     # WYSIWYG editor settings
     use constant XINHA_PLUGINS           => $config->{XINHA_PLUGINS};
     use constant XINHA_TOOLBAR           => $config->{XINHA_TOOLBAR};
     use constant FCKEDITOR_CONFIG        => $config->{FCKEDITOR_CONFIG};
+    use constant CKEDITOR_CONFIG        => $config->{CKEDITOR_CONFIG};
     use constant HTMLAREA_TOOLBAR        => $config->{HTMLAREA_TOOLBAR};
 
     # The minimum login name and password lengths users can enter.
