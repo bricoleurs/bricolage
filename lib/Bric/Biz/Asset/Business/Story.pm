@@ -334,7 +334,8 @@ use constant PARAM_WHERE_MAP => {
       cover_date_end         => 'i.cover_date <= ?',
       expire_date_start      => 'i.expire_date >= ?',
       expire_date_end        => 'i.expire_date <= ?',
-      unexpired              => '(i.expire_date IS NULL OR i.expire_date > CURRENT_TIMESTAMP)',
+      unexpired              => '((i.expire_date IS NULL OR i.expire_date > CURRENT_TIMESTAMP)=?)',
+      expired                => '((i.expire_date IS NOT NULL AND i.expire_date <= CURRENT_TIMESTAMP)=?)',
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
@@ -865,8 +866,13 @@ Returns a list of stories with a expire date on or before a given date/time.
 
 =item unexpired
 
-A boolean parameter. Returns a list of stories without an expire date, or with
-an expire date set in the future.
+A boolean value indicating whether to return only unexpired stories (i.e.
+without an expire date or one set in the future).
+
+=item expired
+
+A boolean value indicating whether to return only expired stories (i.e. where
+the expire date is in the past).
 
 =item element_key_name
 
