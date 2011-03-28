@@ -838,8 +838,10 @@ sub clean_params {
     # Make sure to set active explictly if its not passed.
     $param->{'active'} = exists $param->{'active'} ? $param->{'active'} : 1;
     # Map inverse alias inactive to active.
-    $param->{'active'} = ($param->{'inactive'} ? 0 : 1)
-      if exists $param->{'inactive'};
+    if (exists $param->{'inactive'}) {
+        $param->{'active'} = ($param->{'inactive'} ? 0 : 1);
+        delete $param->{'inactive'};
+    }
     # Help out Template.
     $param->{pubished_version} = $param->{deployed_version}
         if exists $param->{deployed_version};
