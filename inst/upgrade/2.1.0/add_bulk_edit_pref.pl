@@ -10,7 +10,7 @@ exit if fetch_sql q{SELECT 1 FROM pref WHERE id = 19};
 
 do_sql q{
     INSERT INTO pref (id, name, description, value, def, manual, opt_type)
-    VALUES ('19', 'Show Bulk Edit', 'Show button t bulk edit document elements.',
+    VALUES ('19', 'Show Bulk Edit', 'Show button to bulk edit document elements.',
             '1', '1', '0', 'select')},
 
     q{INSERT INTO member (id, grp__id, class__id, active)

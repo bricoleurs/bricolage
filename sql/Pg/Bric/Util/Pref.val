@@ -1699,7 +1699,7 @@ VALUES ('18', '1', 'On');
 
 INSERT INTO pref (id, name, description, value, def, manual, opt_type)
 VALUES ('19', 'Show Bulk Edit',
-        'Show button t bulk edit document elements.',
+        'Show button to bulk edit document elements.',
         '1', '1', '0', 'select');
 
 INSERT INTO member (id, grp__id, class__id, active)
