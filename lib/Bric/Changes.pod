@@ -83,6 +83,14 @@ Adjusted placement of the Checkout and Publish buttons in search results and
 elsewhere so that they're not so close to the border of the box that contains
 them (Bug #194). [Phillip Smith]
 
+=item *
+
+Added the "Show Bulk Edit" preference. When turned off, the "Bulk Edit" button
+no longer appears in the container element interface. Useful for organizations
+where users don't know or care about bulk editing, and the button might
+otherwise confuse them. As with all preferences, its setting can be overridden
+for individual users. Sponsored by Denision University. [David]
+
 =back
 
 =head2 Bug Fixes

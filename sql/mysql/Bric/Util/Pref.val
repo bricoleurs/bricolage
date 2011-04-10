@@ -1694,3 +1694,23 @@ VALUES ('18', '0', 'Off');
 
 INSERT INTO pref_opt (pref__id, value, description)
 VALUES ('18', '1', 'On');
+
+-- Show/hide bulk edit button
+
+INSERT INTO pref (id, name, description, value, def, manual, opt_type)
+VALUES ('19', 'Show Bulk Edit',
+        'Show button to bulk edit document elements.',
+        '1', '1', '0', 'select');
+
+INSERT INTO member (id, grp__id, class__id, active)
+VALUES ('905', '22', '48', '1');
+
+INSERT INTO pref_member (id, object_id, member__id)
+VALUES ('19', '19', '905');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('19', '0', 'Off');
+
+INSERT INTO pref_opt (pref__id, value, description)
+VALUES ('19', '1', 'On');
+

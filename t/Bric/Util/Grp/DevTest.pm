@@ -269,7 +269,7 @@ sub test_members : Test(36) {
 
     # Now test the get_members method.
     ok( my @mems = $grp->get_members, "Get pref members" );
-    is( scalar @mems, 14, "Check number of pref mems" );
+    is( scalar @mems, 15, "Check number of pref mems" );
     ok( my ($mem) = (grep { $_->get_id == 401 } @mems), "Get tz member" );
     ok( UNIVERSAL::isa($mem, 'Bric::Util::Grp::Parts::Member'),
         "Check tz member class" );
@@ -280,14 +280,14 @@ sub test_members : Test(36) {
     # Try deleting a member.
     ok( $grp->delete_member($mem), "Delete Member" );
     ok( @mems = $grp->get_members, "Get pref members again" );
-    is( scalar @mems, 13, "Check number of pref mems 2" );
+    is( scalar @mems, 14, "Check number of pref mems 2" );
     ok( ! (grep { $_->get_id == 401 } @mems), "Don't get tz member" );
 
     # Now add the member back.
     ok( $grp->add_member({ package => 'Bric::Util::Pref', id => 1 }),
         "Add the preference again" );
     ok( @mems = $grp->get_members, "Get pref members 3" );
-    is( scalar @mems, 14, "Check number of pref mems 3" );
+    is( scalar @mems, 15, "Check number of pref mems 3" );
 
     # Play around with has_member().
     ok( $grp->has_member({ package => 'Bric::Util::Pref', id => 2 }),
@@ -307,7 +307,7 @@ sub test_get_objects : Test(8) {
 
     # Now get the objects.
     ok( my @prefs = $grp->get_objects, "Get pref objects" );
-    is( scalar @prefs, 14, "Check number of pref mems" );
+    is( scalar @prefs, 15, "Check number of pref mems" );
     isa_ok( $prefs[0], 'Bric::Util::Pref' );
 
 }
