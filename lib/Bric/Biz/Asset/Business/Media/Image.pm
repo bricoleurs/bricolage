@@ -55,6 +55,7 @@ use Bric::Config qw(:media :thumb);
 use Bric::App::Util ();
 use Bric::App::Event ();
 use Bric::Biz::Workflow qw(MEDIA_WORKFLOW);
+use Bric::Biz::OutputChannel qw(MIXEDCASE LOWERCASE UPPERCASE);
 use Bric::Util::Priv::Parts::Const qw(:all);
 use Bric::Util::Fault qw(throw_error throw_gen throw_forbidden);
 use Imager;
@@ -540,6 +541,10 @@ sub find_or_create_alternate {
         # a hack, but it's the cleanest way to do it without creating
         # unnecesary pain.
         local $self->{_element_type_object} = $et;
+        my $uri_case =  $self->get_primary_oc->get_uri_case;
+        $image_fn = $uri_case == LOWERCASE ? lc $image_fn
+                  : $uri_case == UPPERCASE ? uc $image_fn
+                  : $image_fn;
         (my $u = URI::Escape::uri_unescape($self->get_uri($self->get_primary_oc)))
             =~ s{\Q$image_fn\E$}{$alt_fn};
         $u;
