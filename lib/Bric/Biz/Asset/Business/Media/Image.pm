@@ -535,14 +535,13 @@ sub find_or_create_alternate {
     (my $alt_fn = $p->{file_prefix} . $image_fn)
         =~ s{(\.[^.\\/]+)$}{$p->{file_suffix}$1}gs;
     my $uri = do {
-        # We need to use the same element type, so that the URI is correct. So
-        # we trick get_element_type() to return the object we want. Yeah, it's
-        # a hack, but it's the cleanest way to do it without creating
-        # unnecesary pain.
+        # We need to use the same element type and the new file name, so that
+        # the URI is correct. So we trick get_element_type() to return the
+        # element type and file name we need. Yeah, it's a hack, but it's the
+        # cleanest way to do it without creating unnecesary pain.
         local $self->{_element_type_object} = $et;
-        (my $u = URI::Escape::uri_unescape($self->get_uri($self->get_primary_oc)))
-            =~ s{\Q$image_fn\E$}{$alt_fn};
-        $u;
+        local $self->{file_name} = $alt_fn;
+        URI::Escape::uri_unescape($self->get_uri($self->get_primary_oc))
     };
 
     # Return it if it already exists.
