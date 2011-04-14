@@ -528,9 +528,6 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .noneFound { padding: 8px 10px; }
 .addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
 
-.noneFound { position: relative; }
-.noneFound .button { position: absolute; top: 0; right: 4px; }
-
 .paginate { position: relative; background: #cccc99; padding: 7px 10px;
             font-size: 1.1em; font-weight: bold; }
 .paginate a { color: #993300; }
@@ -753,22 +750,37 @@ div.addelement { text-align: right;}
 }
 
 #containerprof .content .delete,
-#containerprof .content .copy {
+#containerprof .content .copy,
+#containerprof .content .reledit {
+  float:right;
+}
+#containerprof .container .delete,
+#containerprof .container .copy,
+#containerprof .container .reledit {
+  padding:0 0 8px 4px;
+}
+#containerprof fieldset hr {
+  clear:both;
+}
+
+#containerprof .content .fdelete,
+#containerprof .content .fcopy {
   position: absolute;
   right: 0;
 }
-#containerprof .container .delete {
+#containerprof .container .dfelete {
   top: 8px;
 }
-#containerprof .element .delete {
+#containerprof .element .fdelete {
   top: 0;
 }
-#containerprof .container .copy {
+#containerprof .container .fcopy {
   top: 27px;
 }
-#containerprof .element .copy {
+#containerprof .element .fcopy {
   top: 19px;
 }
+
 
 #containerprof .actions { background: transparent; }
 #containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }

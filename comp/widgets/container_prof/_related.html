@@ -28,13 +28,18 @@ $container ||= $find_subelement->(
 my $rel = $type eq 'story' ? $container->get_related_story
                            : $container->get_related_media;
 
-my $button = $m->scomp(
+$m->print('<div class="reledit">');
+$m->comp(
     '/widgets/profile/button.mc',
     name     => "pick_related_".$type,
-    button   => "edit_lgreen",
+    button   => "edit_element_button",
+    extension => 'png',
+    globalImage  => 1,
+    class    => 'edit',
     js       => qq{onclick="openWindow('/workflow/profile/} . $container->get_object_type . qq{/container/edit_related_$type.html?id=} . $container->get_id . qq{', 'RelatedBricolagePopup', { closeOnUnload: true, width: 780 }); return false"},
     useTable => 0
 );
+$m->print('</div>');
 
 if ($rel) {
     add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
@@ -48,7 +53,7 @@ if ($rel) {
             $thumb = $m->comp(
                 '/widgets/profile/preview_link.mc',
                 doc   => $rel,
-                value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                value => qq{<img src="$thumb" style="border: 0" />},
                 type  => $type,
             );
         }
@@ -59,12 +64,11 @@ if ($rel) {
               type   => $type,
               header => 'Currently Related '.ucfirst($type),
               frame  => 0,
-              button => $thumb . $button
+              button => $thumb
     );
 } else {
     $m->out('<div class="noneFound">',
         $lang->maketext('No related [_1]', ucfirst($type)),
-        qq{<div class="button">$button</div>},
         '</div>'
     );
 }

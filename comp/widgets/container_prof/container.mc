@@ -6,6 +6,36 @@
 <span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
+% if ( $parent && !$top_level) {
+%     my $minimum_occurrence = 0;
+%     if (my $sub_type = $parent->get_element_type->get_containers($element->get_key_name) ) {
+%         $minimum_occurrence = $sub_type->get_min_occurrence;
+%     }
+%     if ( $minimum_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
+<div class="delete">
+    <& '/widgets/profile/button.mc',
+        disp        => $lang->maketext("Delete"),
+        name        => 'delete_' . $name,
+        button      => 'delete',
+        extension   => 'png',
+        globalImage => 1,
+        js          => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
+        useTable    => 0
+    &>
+</div>
+%     }
+<div class="copy">
+    <& '/widgets/profile/button.mc',
+        disp        => $lang->maketext("Copy"),
+        name        => 'copy_' . $name,
+        button      => 'copy',
+        extension   => 'png',
+        globalImage => 1,
+        js          => q{onclick="Container.copyElement(} . $element->get_parent_id . ', ' . $element->get_id . qq{); return false;"},
+        useTable    => 0
+    &>
+</div>
+% }
 % if ($hint_val) {
 <p class="hint" id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
 % }
@@ -29,6 +59,8 @@
     &>
 </div>
 % }
+
+<hr />
 <ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {
@@ -92,37 +124,6 @@ Container.updateOrder('element_<% $id %>');
 </div>
 % unless ($top_level) {
 </fieldset>
-% }
-
-% if ( $parent && !$top_level) {
-%     my $minimum_occurrence = 0;
-%     if (my $sub_type = $parent->get_element_type->get_containers($element->get_key_name) ) {
-%         $minimum_occurrence = $sub_type->get_min_occurrence;
-%     }
-%     if ( $minimum_occurrence < $parent->get_elem_occurrence($element->get_key_name) ) {
-<div class="delete">
-    <& '/widgets/profile/button.mc',
-        disp        => $lang->maketext("Delete"),
-        name        => 'delete_' . $name,
-        button      => 'delete',
-        extension   => 'png',
-        globalImage => 1,
-        js          => q{onclick="Container.deleteElement(} . $element->get_parent_id . qq{, '$name'); return false;"},
-        useTable    => 0
-    &>
-</div>
-%     }
-<div class="copy">
-    <& '/widgets/profile/button.mc',
-        disp        => $lang->maketext("Copy"),
-        name        => 'copy_' . $name,
-        button      => 'copy',
-        extension   => 'png',
-        globalImage => 1,
-        js          => q{onclick="Container.copyElement(} . $element->get_parent_id . ', ' . $element->get_id . qq{); return false;"},
-        useTable    => 0
-    &>
-</div>
 % }
 
 </div>

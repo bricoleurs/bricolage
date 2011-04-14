@@ -22,7 +22,7 @@
 % }
 
 % if ($parent->get_field_occurrence($at_obj->get_key_name) > $at_obj->get_min_occurrence) {
-    <div class="delete">
+    <div class="fdelete">
     <& '/widgets/profile/button.mc',
         disp      => $lang->maketext("Delete"),
         name      => 'delete_' . $name,
@@ -37,7 +37,7 @@
 % # Can't copy an element that's required and already prepopulated since it won't be pastable anywhere.
 % my $min = $at_obj->get_min_occurrence;
 % unless ($element->is_autopopulated or ($min && $min >= $at_obj->get_max_occurrence)) {
-    <div class="copy">
+    <div class="fcopy">
         <& '/widgets/profile/button.mc',
             disp      => $lang->maketext("Copy"),
             name      => 'copy_' . $name,
