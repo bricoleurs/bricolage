@@ -9,6 +9,7 @@
     req        => 1,
     objs       => \@elems,
     useTable   => 0,
+    default    => ['',''],
 &></td>
     <td><input type="file" name="<% $file_widget %>|file" /></td>
     <td align="right">
