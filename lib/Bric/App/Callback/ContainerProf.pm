@@ -205,7 +205,14 @@ sub create_related_media : Callback( priority => 6) {
     # Bail on error or when there is no file.
     my $param = $self->params;
     return if $param->{_inconsistent_state_};
-    return unless $param->{"$widget|file"};
+    if (!$param->{'media_prof|at_id'}) {
+        $self->add_message('Please select a media type to upload.');
+        return;
+    }
+    if (!$param->{"$widget|file"}) {
+        $self->add_message('Please select a file to upload.');
+        return;
+    }
 
     # Get a handle on things to restore later.
     my $element = $self->_locate_subelement(
