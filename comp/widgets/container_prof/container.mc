@@ -39,27 +39,6 @@
 % if ($hint_val) {
 <p class="hint" id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
 % }
-% if ($type->is_related_story) {
-<div id="element_<% $id %>_rel_story">
-    <& '_related.html',
-        widget => $widget,
-        container => $element,
-        type => 'story',
-        asset => $story
-    &>
-</div>
-% }
-% if ($type->is_related_media) {
-<div id="element_<% $id %>_rel_media">
-    <& '_related.html',
-        widget => $widget,
-        container => $element,
-        type => 'media',
-        asset => $story
-    &>
-</div>
-% }
-
 <hr />
 <ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
@@ -81,19 +60,35 @@
     </li>
 %   }
 % }
+% if ($type->is_related_story) {
+<li>
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'story',
+        asset => $story,
+        displayed => $displayed,
+    &>
+</li>
+% }
+% if ($type->is_related_media) {
+<li>
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'media',
+        asset => $story,
+        displayed => $displayed,
+    &>
+</li>
+% }
+
 </ul>
 <input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
 % unless ($top_level ) {
 <input type="hidden" name="container_prof|element_<% $id %>_displayed" id="container_<% $id %>_displayed" value="<% $element->get_displayed %>" />
 % }
 <script type="text/javascript">
-Sortable.create('element_<% $id %>', {
-    onUpdate: function(elem) {
-        Container.updateOrder(elem);
-    },
-    handle: 'name',
-    scroll: window
-});
 Container.updateOrder('element_<% $id %>');
 </script>
 

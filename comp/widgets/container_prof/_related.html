@@ -3,6 +3,7 @@ $widget
 $container    => undef
 $container_id => undef
 $type         => 'story'
+$displayed
 </%args>
 
 <%once>
@@ -24,10 +25,19 @@ $container ||= $find_subelement->(
     get_state_data('container_prof', 'element'),
     $container_id
 );
+$container_id ||= $container->get_id;
 
 my $rel = $type eq 'story' ? $container->get_related_story
                            : $container->get_related_media;
-
+</%init>
+<div id="element_<% $container_id %>_rel_<% $type %>">
+  <fieldset>
+<legend>
+<a href="#" style="" id="<% $type %>_<% $container_id %>_showhide" onclick="Container.toggle_related('<% $type %>', <% $container_id %>, this); return false;" title="<% escape_html $lang->maketext('Toggle Related ' . ucfirst $type)  %>">&#x25b<% $displayed ? 'c' : 'a' %>;</a>
+<% escape_html $lang->maketext('Related ' . ucfirst $type) %>
+</legend>
+<input type="hidden" name="container_prof|element_<% $container_id %>_<% $type %>_displayed" id="container_<% $container_id %>_<% $type %>_displayed" value="<% $container->get_displayed %>" />
+<%perl>
 $m->print('<div class="reledit">');
 $m->comp(
     '/widgets/profile/button.mc',
@@ -42,34 +52,39 @@ $m->comp(
 $m->print('</div>');
 
 if ($rel) {
+    $m->print(qq{<div class="reldata" id="container_$container_id\_rel_$type\_data">\n});
     add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
           $type, $rel->get_title)
       unless $rel->is_active;
 
-    my $thumb = '';
     if (USE_THUMBNAILS && $type ne 'story') {
-        $thumb = eval { $rel->thumbnail_uri };
+        my $thumb = eval { $rel->thumbnail_uri };
         if (! $@ && $thumb) {
             $thumb = $m->comp(
                 '/widgets/profile/preview_link.mc',
                 doc   => $rel,
-                value => qq{<img src="$thumb" style="border: 0" />},
+                value => qq{<img src="$thumb" id="container_$container_id\_rel_thumb" class="thumb" style="border: 0" />},
                 type  => $type,
             );
+            $m->print(qq{$thumb\n});
         }
     }
     # The summary info
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">\n});
     $m->comp('/widgets/summary/summary.mc',
               asset  => $rel,
               type   => $type,
               header => 'Currently Related '.ucfirst($type),
               frame  => 0,
-              button => $thumb
     );
+    $m->print("</div>\n");
 } else {
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">&nbsp;</div>\n});
     $m->out('<div class="noneFound">',
         $lang->maketext('No related [_1]', ucfirst($type)),
         '</div>'
     );
 }
-</%init>
+</%perl>
+  </fieldset>
+</div>

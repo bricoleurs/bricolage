@@ -1602,6 +1602,7 @@ var Container = {
                 Container.updateOrder(elem);
             },
             handle: 'name',
+            only: ['container', 'element'],
             scroll: window
         });
 
@@ -1749,6 +1750,37 @@ var Container = {
         if (hint_element) {
             Effect.toggle(hint_element, 'blind', {duration: 0.3});
         }
+        return false;
+    },
+
+    toggle_related: function( type, eid, anchor ) {
+        var displayed = $('container_' + eid + '_' + type + '_displayed');
+        var thumb = $('container_' + eid + '_rel_thumb');
+        var data  = $('container_' + eid + '_rel_' + type + '_data');
+        var afterFinish;
+        var thumbClass;
+        var dataClass;
+        if ( displayed.value == '0' ) {
+            // Display it.
+            anchor.innerHTML = '&#x25bc;';
+            displayed.value = '1';
+            thumbClass = 'thumb';
+            dataClass = 'reldata';
+        } else {
+            // Hide it.
+            anchor.innerHTML = '&#x25b6;';
+            displayed.value = '0';
+            thumbClass = 'smallthumb';
+            dataClass = 'smallreldata';
+        }
+        if (thumb != null) thumb.className = thumbClass;
+        if (data != null) data.className = dataClass;
+
+        Effect.toggle(
+            'container_' + eid + '_rel_' + type + '_summary',
+            'blind',
+            {duration: 0.3, afterFinish: afterFinish}
+        );
         return false;
     }
 };
