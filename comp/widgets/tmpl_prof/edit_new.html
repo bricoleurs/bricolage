@@ -82,37 +82,20 @@ $m->comp('/widgets/select_object/select_object.mc',
          req         => 1,
          'disp'      => 'Output Channel');
 
-$m->comp('/widgets/profile/autocomplete.mc',
-    disp => 'Category',
-    name => 'new_category_autocomplete',
-    id   => 'new_category_uri',
-    req  => 1,
-    value => $param->{new_category_autocomplete},
-    object => 'category',
-    reset_key => $widget,
-);
+$m->comp( '/widgets/select_object/select_object.mc',
+          object     => 'category',
+          disp       => 'Primary Category',
+          name       => 'new_category_autocomplete',
+          constrain  => { site_id => $site_id },
+          exclude    => $excl_sub,
+          size       => 25,
+          req        => 1,
+          field      => 'uri',
+          sort_field => 'uri',
+          localize   => 0,
+          useTable   => 1
+          );
 </%perl>
-<div id="category_autocomplete_choices" class="autocomplete"></div><span id="new_cat_warning" style="display: none"><img src="/media/images/dialog-warning.gif" alt="Warning" /> <% $lang->maketext(qq{Unable to add category that does not exist}) %></span>
-<script type="text/javascript">
-// add throbber after Primary Category text field
-var throbber = new Element('img', { id: 'category_autocomplete_indicator',
-                                    src: '/media/images/busy_indicator.gif' });
-Element.hide(throbber);
-$('new_category_uri').insert({ after: throbber });
-
-new Ajax.Autocompleter(
-    "new_category_uri",
-    "category_autocomplete_choices",
-    "/widgets/profile/autocomplete_categories.html",
-    {
-        onEmpty:    function() { Element.show('new_cat_warning'); },
-        onNotEmpty: function() { Element.hide('new_cat_warning') },
-        minChars:   <% CATEGORY_MIN_CHARS_TMPL %>,
-        indicator: 'category_autocomplete_indicator',
-        parameters: 'site_id=<% $site_id %>&key=template'
-    }
-);
-</script>
 <%perl>;
 $m->comp('/widgets/profile/displayFormElement.mc',
          key => "priority",

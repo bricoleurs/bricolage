@@ -544,8 +544,10 @@ sub create : Callback {
         return;
     }
 
+    my $id_or_uri = 'id';
+    $id_or_uri = 'uri' if ($curi =~ m/\//);
     my ($cat_id) = Bric::Biz::Category->list_ids({
-        uri     => $curi,
+        $id_or_uri     => $curi,
         site_id => $wf->get_site_id,
     }) or $self->raise_conflict(
         'Unable to add category that does not exist'

@@ -626,7 +626,7 @@ $create_fa = sub {
     }
 
     my ($cat_id) = Bric::Biz::Category->list_ids({
-        uri     => $curi,
+        id     => $curi,
         site_id => $wf->get_site_id,
     }) or $self->raise_conflict(
         'Unable to add category that does not exist'
