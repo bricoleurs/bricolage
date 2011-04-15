@@ -11,7 +11,7 @@ code       { font-size: 1.3em; }
 h3         { font-size: 1.1em; }
 
 img        { vertical-align: middle; }
-a          { color: #006666; }
+a          { color: #CC0000; }
 a img      { border: none; }
 button img { vertical-align: bottom; }
 
@@ -28,13 +28,13 @@ textarea {
 .codearea { width: 100%; }
 .codearea textarea { font-family: monospace; font-size: 1.2em; }
 
-#navFrame         { background: #666633; }
+#navFrame         { background: #8C0000; }
 #help             { background: white; padding: 10px; }
 
 #bricLogo { position: absolute; top: 0; left: 0; background: white; padding-top: 8px; }
 #mainContainer { position: relative; margin: 0px 8px 8px 8px; min-width: 740px; height: 100%; }
 body.popup #mainContainer { min-width: 450px; }
-#sideNav { position: absolute; top: 55px; left: 0; width: 150px; z-index: 200; border: 0; padding-bottom: 20px; }
+#sideNav { position: absolute; top: 100px; left: 0; width: 150px; z-index: 200; border: 0; padding-bottom: 20px; }
 #contentContainer { padding: 8px 0 0 158px; }
 body.popup #contentContainer { padding: 0; }
 #help #contentContainer { padding: 0; }
@@ -45,7 +45,7 @@ body.popup #contentContainer { padding: 0; }
 .searchBox,
 .errorsBox,
 .helpBox { margin-bottom: 10px; line-height: 1.4em; }
-.helpBox h3 { color: #006666; }
+.helpBox h3 { color: #8C0000; }
 .helpBox dt { font-weight: bold; }
 .helpBox dd { margin: 0; padding: 0 0 .7em 0; }
 .helpBox dl dl { margin: 0 0 0 2em; }
@@ -76,27 +76,27 @@ body.popup #headerContainer    { padding-top: 8px; }
 #headerContainer .workflowBox,
 #headerContainer .loginBox,
 #headerContainer .helpBox,
-#headerContainer .errorsBox    { margin-bottom: 0; margin-right: 240px; }
-#headerContainer .buttons      { position: absolute; top: 20px; right: 0; width: 240px; text-align: right; }
+#headerContainer .errorsBox    { margin-bottom: 0; margin-right: 260px; }
+#headerContainer .buttons      { position: absolute; top: 20px; right: 0; text-align: right; }
 #headerContainer .buttons a    { margin: 0 2px; }
 #headerContainer .userinfo     { position: absolute; bottom: 35px; right: 0; }
-#breadcrumbs                   { position: relative; width: 100%; background-color: #999966; margin-bottom: 1em; }
+#breadcrumbs                   { position: relative; width: 100%; background-color: #CCCCCC; margin-bottom: 1em; border: 1px solid #777777; }
 #breadcrumbs p                 { margin: 0; padding: 5px 6px; }
 #breadcrumbs .siteContext      { position: absolute; top: 0; right: 0; }
 
 
 .header      { position: relative; width: 100%; }
 .fullHeader  { position: relative; width: 100%; color: white; font-weight: bold; }
-.header      .caption           { background-color: #CCCC99; }
+.header      .caption           { background-color: #CCCCCC; }
 .fullHeader  .caption a     { color: white; }
 .fullHeader  .number,
 .fullHeader  .rightText     { width: 8px; }
-.adminBox    .fullHeader    { background-color: #CC6633; }
-.workflowBox .fullHeader    { background-color: #006666; }
-.loginBox    .fullHeader    { background-color: #006666; }
-.searchBox   .fullHeader    { background-color: #666633; }
-.errorsBox   .fullHeader    { background-color: #CC0000; }
-.helpBox     .fullHeader    { background-color: #006666; }
+.adminBox    .fullHeader    { background-color: #8C0000; }
+.workflowBox .fullHeader    { background-color: #8C0000; }
+.loginBox    .fullHeader    { background-color: #8C0000; }
+.searchBox   .fullHeader    { background-color: #8C0000; }
+.errorsBox   .fullHeader    { background-color: #8C0000; }
+.helpBox     .fullHeader    { background-color: #8C0000; }
 
 .number { 
     position: absolute; top: 0; left: 0;
@@ -107,8 +107,8 @@ body.popup #headerContainer    { padding-top: 8px; }
     font-weight: bold;
     text-align: center;
 }
-.workflowBox .header .number { background-color: #669999; }
-.adminBox    .header .number { background-color: #D7713E; }
+.workflowBox .header .number { background-color: #8C0000; }
+.adminBox    .header .number { background-color: #8C0000; }
             
 .caption { text-transform: uppercase; line-height: 2em; padding-left: 3em; }
 .fullHeader .caption { padding-left: 10px; }
@@ -123,11 +123,11 @@ body.popup #headerContainer    { padding-top: 8px; }
     text-align: right;
 }
 .border              { border-style: solid; border-width: 0 1px 1px 1px; }
-.adminBox .border    { border-color: #999966; }
-.workflowBox .border { border-color: #669999; }
-.helpBox .border     { border-color: #669999; padding: 1px 10px; }
-.loginBox .border    { border-color: #669999; padding: 5px; }
-.searchBox .border   { border-color: #666633; background-color: #CCCC99; padding: 5px; }
+.adminBox .border    { border-color: #777777; }
+.workflowBox .border { border-color: #777777; }
+.helpBox .border     { border-color: #777777; padding: 1px 10px; }
+.loginBox .border    { border-color: #777777; padding: 5px; }
+.searchBox .border   { border-color: #777777; background-color: #CCCCCC; padding: 5px; }
 
 /***************************************************
  * SEARCH BOXES
@@ -137,19 +137,19 @@ body.popup #headerContainer    { padding-top: 8px; }
 .searchBox div.alpha span { font-weight: bold; }
 .searchBox div.alpha a { color: black; font-weight: bold; }
 
-.uploader { border-top: 1px solid #666633; margin-top: 10px; padding: 5px; }
+.uploader { border-top: 1px solid #8C0000; margin-top: 10px; padding: 5px; }
 
 a.small         { font-size: .9em; }
-.orangeLink     { font-size:10px; color:#CC6633;}
-.orangeLinkBold { font-size:10px; font-weight:bold; color:#CC6633;}
+.orangeLink     { font-size:10px; color:#8C0000;}
+.orangeLinkBold { font-size:10px; font-weight:bold; color:#8C0000;}
 .redLink        { font-size:10px; color:#993300; font-weight:bold}
 .whiteLink      { font-size:10px; color:#ffffff; text-decoration:none}
 .whiteUnderlinedLink      { font-size:10px; color:#ffffff;}
 .blackLink      { font-size:10px; color:#000000; text-decoration:none}
 .blackLinkBold  { font-size:10px; color:#000000; font-weight:bold}
 .whiteMedUnderlinedLink { font-size:11px; color:#ffffff;}
-.blackUnderlinedLink { font-size:10px; color:#006666;}
-.blackMedUnderlinedLink { font-size:11px; color:#006666;}
+.blackUnderlinedLink { font-size:10px; color:#8C0000;}
+.blackMedUnderlinedLink { font-size:11px; color:#8C0000;}
 
 .label          { font-weight: bold }
 .label.required { font-weight: bold; color: #cc0000}
@@ -157,9 +157,9 @@ a.small         { font-size: .9em; }
 .radioLabel  { font-size:12px; font-weight:bold;}
 .shortCategory  { border-bottom: dashed #666 1px; cursor: help; }
 
-.darkHeader     {background:#666633;  font-size:10px; color:white; font-weight:bold;}
-.medHeader      {background:#999966;}
-.lightHeader    {background-color: #cccc99;}
+.darkHeader     {background:#8C0000;  font-size:10px; color:white; font-weight:bold;}
+.medHeader      {background:#CCCCCC;}
+.lightHeader    {background-color: #777777;}
 .alias          { font-style:italic; }
 
 #errors      { margin: 10px 0; }
@@ -202,7 +202,7 @@ div.debug dt:after {
 }
 
 .jump { float: right; padding-top: 3px; }
-.desk-top { background-color: #666633; color: white; padding: 3px 5px; margin: 0px 0px 10px 0px; }
+.desk-top { background-color: #444444; color: white; padding: 3px 5px; margin: 0px 0px 10px 0px; }
 .jump a { color:#ffffff; font-weight: bold; line-height: 1.7em; padding-right: .5em; }
 
 .desk-top h1 { float: left; font-size: 1.2em; padding: 2px 5px; line-height: 1.4em; margin: 0; }
@@ -215,7 +215,7 @@ div.debug dt:after {
     position: relative;
     margin-bottom: 10px;
     border-style: solid;
-    border-color: #CCCC99;
+    border-color: #CCCCCC;
     border-width: 0 1px 1px 1px;  
 }
 
@@ -225,12 +225,12 @@ div.debug dt:after {
 
 .desk .item dd.sorted,
 .desk .item div.sorted {
-    background: #99cc99 !important;
+    background: #D2C2C2 !important;
 }
 
 .desk .item .head { 
     position: relative;
-    background: #cccc99; 
+    background: #777777; 
     line-height: 2em;
     font-weight: bold;
 }
@@ -243,7 +243,7 @@ div.debug dt:after {
 .desk .item .head .version { 
     float: left; 
     width: 10em; 
-    background: #cccc99;
+    background: #CCCCCC;
     border-right: solid white 1px;
     text-align: right;
     padding: 0 .5em;
@@ -278,7 +278,7 @@ div.debug dt:after {
 .desk .item .head .pub { background: #999934; }
 
 .listManager .need { font-weight: bold; color: #993300; font-size: 130% }
-.listManager .pub  { font-weight: bold; color: #999934; font-size: 130% }
+.listManager .pub  { font-weight: bold; color: #993300; font-size: 130% }
 
 .desk .item .body { position: relative; }
 
@@ -286,7 +286,7 @@ div.debug dt:after {
     margin: 0 255px 0 0; 
     padding: 0; 
     border-style: solid;
-    border-color: #CCCC99;
+    border-color: #CCCCCC;
     border-width: 0 1px 0 0; 
 }
 .desk .item dt, .desk .item dd {
@@ -298,7 +298,7 @@ div.debug dt:after {
     float: left; 
     width: 10em; /* plus 1em padding */ 
     text-align: right;
-    background: #999966;
+    background: #AAAAAA;
     border-right: solid white 1px;
 }
 .desk .item dd { margin-left: 11em; word-wrap: break-word; }
@@ -344,7 +344,7 @@ div.debug dt:after {
     font-weight: normal;
     font-family: Verdana, Helvetica, Arial, sans-serif;
     line-height: 11px;
-    color: #006666;
+    color: #8C0000;
     border: 0px;
     background: transparent;
     padding: 0px;
@@ -397,7 +397,6 @@ div.debug dt:after {
 
 div.popup-menu {
     position: absolute;
-    width: 10em;
     background-color: white;
     border: 1px solid #888;
     margin: 0;
@@ -472,7 +471,7 @@ form .row .input p {
 form .alpha .row .input { line-height: 1.3em; }
 
 table { padding: 0; border-collapse: collapse; position: relative; border: none; }
-table tr.odd { background: #f5f5e6; }
+table tr.odd { background: #EEEEEE; }
 table td.action,
 table td.delete,
 table td.order { width: 30px; text-align: center; white-space: nowrap; }
@@ -485,29 +484,29 @@ table td.order { width: 30px; text-align: center; white-space: nowrap; }
 /* IE hack to make sure the popup menu goes on top of the table */
     *z-index: -1;
 }
-.listManager th { background: #999966; color: black; padding: 5px;
+.listManager th { background: #999999; color: black; padding: 5px;
                   text-align: left; vertical-align: bottom;
-                  border: solid #cccc99 1px; font-size: .9em; }
+                  border: solid #777777 1px; font-size: .9em; }
 .listManager th.sortup { 
-    background: #669999 url("../images/listsort_up_teal.gif") center right no-repeat;
+    background: #555555 url("../images/listsort_up_teal.gif") center right no-repeat;
     padding: 0;
     color: white;
 }
 .listManager th.sortdown { 
-    background: #669999 url("../images/listsort_down_teal.gif") center right no-repeat;
+    background: #555555 url("../images/listsort_down_teal.gif") center right no-repeat;
     padding: 0;
     color: white;
 }
 .adminBox .listManager th.sortup { 
-    background: #993300 url("../images/listsort_up_red.gif") center right no-repeat;
+    background: #555555 url("../images/listsort_up_red.gif") center right no-repeat;
 }
 .adminBox .listManager th.sortdown { 
-    background: #993300 url("../images/listsort_down_red.gif") center right no-repeat;
+    background: #555555 url("../images/listsort_down_red.gif") center right no-repeat;
 }
 .listManager th a { display: block; color: black; text-decoration: none; }
 .listManager th.sortup a,
 .listManager th.sortdown a { padding: 5px 17px 5px 5px; color: white; }
-.listManager td { padding: 2px 5px; border-bottom: solid #e7e7c8 1px; border-right: solid #e7e7c8 1px; height: 2.3em; }
+.listManager td { padding: 2px 5px; border-bottom: solid #777777 1px; border-right: solid #777777 1px; height: 2.3em; }
 .listManager td.selected { font-weight: bold; }
 
 .workflow-buttons { text-align: right; margin-bottom: 10px; }
@@ -518,7 +517,7 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .containerProf td { border: none; }
 .containerProf .name { width: 15%; text-align: right; }
 .containerProf .position,
-.containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCC99 1px; }
+.containerProf .delete { width: 8%; text-align: center; border-left: solid #CCCCCC 1px; }
 
 .listManager .action { text-align: center; }
 
@@ -526,14 +525,14 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 
 .addnewitem,
 .noneFound { padding: 8px 10px; }
-.addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
+.addnewitem a { font-size: 1.1em; font-weight: bold; }
 
 .noneFound { position: relative; }
 .noneFound .button { position: absolute; top: 0; right: 4px; }
 
-.paginate { position: relative; background: #cccc99; padding: 7px 10px;
+.paginate { position: relative; background: #CCCC99; padding: 7px 10px;
             font-size: 1.1em; font-weight: bold; }
-.paginate a { color: #993300; }
+.paginate a { color: #8C0000; }
 .paginate .pages { float: left; width: 70%; }
 .paginate .all { float: right; width: 25%; text-align: right; }
 
@@ -556,7 +555,7 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
     font-size: 1em;
     vertical-align: top; 
     border-style: solid; 
-    border-color: #cccc99; 
+    border-color: #777777; 
     border-width: 1px 0; 
 }
 .associations td.edit { width: 20px; vertical-align: top; }
@@ -575,7 +574,7 @@ dl.viewmeta dt {
     padding-right: 5px;
     text-align: right;
     font-weight: bold;
-    background-color: #E8E8CD;
+    background-color: #DDDDDD;
 }
 
 dl.viewmeta dt {
@@ -587,7 +586,7 @@ dl.viewmeta dt {
 dl.viewmeta dd { margin: 0 0 0 5px; }
 dl.viewmeta dd a { font-size: inherit; }
 
-div.actions { background: #999966; padding: 2px 4px; }
+div.actions { background: #999999; padding: 2px 4px; }
 div.addelement { text-align: right;}
 
 .content legend a { font-size: 160%; text-decoration:none; }
@@ -601,7 +600,7 @@ div.addelement { text-align: right;}
 .buttonBar .checkin {
     padding: 4px 0;
     float: left;
-    border-top: solid #CCCC99 1px;
+    border-top: solid #CCCCCC 1px;
 }
 
 .buttonBar .revert {
@@ -612,7 +611,7 @@ div.addelement { text-align: right;}
 
 .buttonBar .buttons {
     clear: both;
-    border-top: solid #CCCC99 1px;
+    border-top: solid #CCCCCC 1px;
 }
 
 .buttonBar .cancel { 
@@ -698,7 +697,7 @@ div.addelement { text-align: right;}
 .alertTypeVars { position: absolute; right: 5px; margin-top: 3px; z-index: 1000; }
 
 #containerprof fieldset {
-    border: solid #CC9 1px;
+    border: solid #777777 1px;
     background: #F3F3F3;
     margin-right: 24px;
 }
@@ -729,7 +728,7 @@ div.addelement { text-align: right;}
 }
 #containerprof ul.elements li.element h3.name {
   margin: 0; clear: both;
-  float: left; width: 75px;
+  float: left; width: 100px;
   text-align: right;
   padding: 3px 10px 0 0 !important;
   background: transparent !important;
@@ -873,11 +872,11 @@ pre {
     display: none;
     position: absolute; left: 0; top:0; 
     z-index: 300; 
-    background: #e8e8cd; 
+    background: #EEEEEE; 
     padding: 0; 
-    border-color: #996; border-style: solid; border-width: 0 5px 5px 5px; 
+    border-color: #999999; border-style: solid; border-width: 0 5px 5px 5px; 
 }
-.dragger { line-height: 2.2em; background: #996; font-weight: bold;}
+.dragger { line-height: 2.2em; background: #999999; font-weight: bold;}
 .dragger:hover { cursor: move; }
 .dialogcontent { margin: 1em; }
 
@@ -912,15 +911,8 @@ button {
     font-weight: bold;
     font-size: .9em;
     color: black;
-    background: #cc9;
     padding: 2px 7px;
     margin: 0;
-    border-style: solid;
-    border-width: 2px;
-    border-top-color: #e8e8cd;
-    border-left-color: #e8e8cd;
-    border-right-color: #663;
-    border-bottom-color: #663;
     vertical-align: middle; /* Needed to prevent extra space from showing up! */
 }
 

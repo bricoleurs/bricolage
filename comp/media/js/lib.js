@@ -1588,7 +1588,16 @@ var Container = {
             on403: Bricolage.handleForbidden,
             on409: Bricolage.handleConflict,
             onSuccess: function(request) {
-                Container.updateOrder('element_' + container_id)
+                Container.updateOrder('element_' + container_id);
+            },
+            onComplete: function() {
+                // Load Xinha editor on newly created Element. Nasty and fragile. :-(
+                if (typeof Xinha != 'undefined') {
+                    var elements = document.getElementsByClassName('elements');
+                    for (var i = 0; i < elements.length; i++) {
+                        start_xinhas_below(elements[i].id);
+                    }
+                }
             }
         });
     },

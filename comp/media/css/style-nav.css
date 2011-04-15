@@ -11,16 +11,17 @@ ul {
   padding: 0;
 }
 #nav {
-  border-top: solid white 1px;
-  border-bottom: solid white 1px;
+  border-top: solid #333333 1px;
+  border-bottom: solid #333333 1px;
 }
 #nav #workflows,
 #nav #admin {
-  border-top: solid white 1px;
+  border-top: solid #333333 1px;
+  border-bottom: solid #333333 1px;
 }
 #nav li a {
   display: block;
-  padding: 4px 0 4px 23px;
+  padding: 6px 0 6px 23px;
   color: white;
   text-decoration: none;
   text-transform: uppercase;
@@ -32,60 +33,61 @@ ul {
   text-decoration: none;
   text-transform: uppercase;
 }
-#nav ul.submenu ul.sections { background-color: white; padding: 10px 0 5px 0; }
-#nav ul.submenu ul.sections li { font-weight: bold; color: #666633; padding: 0 0 10px 23px; }
+#nav ul.submenu ul.sections { background-color: #EEEEEE; padding: 10px 0 5px 0; }
+#nav ul.submenu ul.sections li { font-weight: bold; color: #222222; padding: 0 0 10px 23px; }
 #nav ul.submenu ul.sections ul.items li { padding: 0; }
 #nav ul.submenu ul.sections ul.items li a {
   text-transform: none;
   font-weight: normal;
   padding: 0;
   display: inline;
-  color: #669999;
+  color: #CC0000;
   text-decoration: underline;
   font-size: .9em;
   line-height: 1.5em;
 }
-#nav #admin ul.submenu ul.items { padding: 5px 0 5px 25px; background-color: white; }
+#nav #admin a { color: #000000; }
+#nav #admin ul.submenu ul.items { padding: 5px 0 5px 25px; background-color: #EEEEEE; }
 #nav #admin ul.submenu ul.items li a { 
   text-transform: none;
   font-weight: normal;
   padding: 0;
   display: inline;
-  color: #CC6633;
+  color: #CC0000;
   text-decoration: underline;
   font-size: .9em;
   line-height: 1.5em;
 }
 
 #nav .selected { font-weight: bold; }
-#nav #admin .selected { color: #CC6633; }
+#nav #admin .selected { color: #CC0000; }
 
 /* IE6 hack to not show extra space */
 #nav #workspace {
   _height: 1%;
 }
 #nav #workspace .open   { 
-  background: #CC9900 url("../images/my_workspace.gif") 4px 3px no-repeat;
+  background: #444444 url("../images/my_workspace.gif") 4px 3px no-repeat;
   font-weight: bold;
 }
 #nav #workspace .closed { 
-  background: #006666 url("../images/my_workspace.gif") 4px 3px no-repeat;
+  background: #444444 url("../images/my_workspace.gif") 4px 3px no-repeat;
   font-weight: bold;
 }
 #nav li.open {
-  background: #999966 url("../images/white_arrow_open.gif") 4px 6px no-repeat;
+  background: #999999 url("../images/white_arrow_open.gif") 4px 6px no-repeat;
   font-weight: bold;
 }
 #nav li.closed {
-  background: #999966 url("../images/white_arrow_closed.gif") 6px 3px no-repeat;
+  background: #BBBBBB url("../images/white_arrow_closed.gif") 6px 3px no-repeat;
   font-weight: bold;
 }
 #nav ul.submenu li.open {
-  background: #CCCC99 url("../images/dkgreen_arrow_open.gif") 5px 7px no-repeat;
+  background: #999999 url("../images/dkgreen_arrow_open.gif") 5px 7px no-repeat;
   font-weight: bold;
 }
 #nav ul.submenu li.closed {
-  background: #CCCC99 url("../images/mdgreen_arrow_closed.gif") 6px 5px no-repeat;
+  background: #BBBBBB url("../images/mdgreen_arrow_closed.gif") 6px 5px no-repeat;
   font-weight: normal;
 }
 /* Hide or show menus depending on the <li>'s class */

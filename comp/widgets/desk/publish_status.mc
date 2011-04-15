@@ -7,6 +7,7 @@ my ($letter, $action) = $asset->key_name eq 'template'
   ? ('D (for Deployed)',  'Deployed')
   : ('P (for Published)', 'Published');
 if ($asset->needs_publish) {
+    $letter = 'N';
     return qq{<span class="need" title="}
         . $lang->maketext("Needs to be $action")
         . '">' . $lang->maketext($letter) . '</span>';

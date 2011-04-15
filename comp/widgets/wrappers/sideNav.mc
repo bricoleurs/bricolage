@@ -132,6 +132,57 @@ my $cookie = exists($cookies{BRICOLAGE_MENUS})
 <li id="workflows"><ul class="submenu">
 <%perl>
 
+# Begin Admin --------------------------------------
+my $adminclass = $get_cookie->($cookie, 'admin') || 'closed';
+$m->print(
+    qq{<li id="admin" class="$adminclass">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'admin')">},
+    $lang->maketext('Admin'), qq{</a><ul class="submenu">},
+);
+
+# Begin system submenus
+my $sysclass = $get_cookie->($cookie, 'adminSys') || 'closed';
+$m->print(
+    qq{<li id="adminSys" class="$sysclass">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminSys')">},
+    $lang->maketext('System'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(alert_type grp pref site user));
+$m->print('</ul></li>');
+# End system submenus
+
+# Begin publishing submenus
+my $pubclass = $get_cookie->($cookie, 'adminPub') || 'closed';
+$m->print(
+    qq{<li id="adminPub" class="$pubclass">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminPub')">},
+    $lang->maketext('Publishing'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(category contrib_type contrib element_type keyword
+                        media_type output_channel source workflow));
+
+$m->print(
+    qq{<li style="padding-top: 1em;">},
+    $printLink->('/admin/control/publish/', $uri, 'Bulk Publish'),
+    qq{</li></ul></li>}
+);
+# End publishing submenus
+
+# Begin distribution submenus
+my $distclass = $get_cookie->($cookie, 'adminDist') || 'closed';
+$m->print(
+    qq{<li id="adminDist" class="$distclass">},
+    qq{<a href="#" onclick="return toggleMenu(this, 'adminDist')">},
+    $lang->maketext('Distribution'), qq{</a><ul class="items">},
+);
+$admin_links->($uri, qw(dest job));
+
+$m->print('</ul></li>');
+# End distribution submenus
+
+$m->print('</ul></li>');
+# End Admin --------------------------------------
+
 # iterate thru workflows
 foreach my $wf (@$workflows) {
     next if $site_id && $site_id != $wf->{site_id};
@@ -209,57 +260,6 @@ foreach my $wf (@$workflows) {
 }
 $m->print('</ul></li>');
 # End Workflows -------------------------------------
-
-# Begin Admin --------------------------------------
-my $adminclass = $get_cookie->($cookie, 'admin') || 'closed';
-$m->print(
-    qq{<li id="admin" class="$adminclass">},
-    qq{<a href="#" onclick="return toggleMenu(this, 'admin')">},
-    $lang->maketext('Admin'), qq{</a><ul class="submenu">},
-);
-
-# Begin system submenus
-my $sysclass = $get_cookie->($cookie, 'adminSys') || 'closed';
-$m->print(
-    qq{<li id="adminSys" class="$sysclass">},
-    qq{<a href="#" onclick="return toggleMenu(this, 'adminSys')">},
-    $lang->maketext('System'), qq{</a><ul class="items">},
-);
-$admin_links->($uri, qw(alert_type grp pref site user));
-$m->print('</ul></li>');
-# End system submenus
-
-# Begin publishing submenus
-my $pubclass = $get_cookie->($cookie, 'adminPub') || 'closed';
-$m->print(
-    qq{<li id="adminPub" class="$pubclass">},
-    qq{<a href="#" onclick="return toggleMenu(this, 'adminPub')">},
-    $lang->maketext('Publishing'), qq{</a><ul class="items">},
-);
-$admin_links->($uri, qw(category contrib_type contrib element_type keyword
-                        media_type output_channel source workflow));
-
-$m->print(
-    qq{<li style="padding-top: 1em;">},
-    $printLink->('/admin/control/publish/', $uri, 'Bulk Publish'),
-    qq{</li></ul></li>}
-);
-# End publishing submenus
-
-# Begin distribution submenus
-my $distclass = $get_cookie->($cookie, 'adminDist') || 'closed';
-$m->print(
-    qq{<li id="adminDist" class="$distclass">},
-    qq{<a href="#" onclick="return toggleMenu(this, 'adminDist')">},
-    $lang->maketext('Distribution'), qq{</a><ul class="items">},
-);
-$admin_links->($uri, qw(dest job));
-
-$m->print('</ul></li>');
-# End distribution submenus
-
-$m->print('</ul></li>');
-# End Admin --------------------------------------
 </%perl>
 </ul>
 </form>
