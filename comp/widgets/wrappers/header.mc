@@ -66,6 +66,7 @@ if(ref($title) eq 'ARRAY') {
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
 <meta name="bricolage-version" content="<% Bric->VERSION %>" />
 <link rel="stylesheet" type="text/css" href="/media/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/media/css/style-nav.css" />
