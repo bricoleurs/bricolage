@@ -2,14 +2,14 @@
     name    => 'container_prof|update_cb',
     value   => 1,
 &>
-% if (get_pref('Show Bulk Edit')) {
+
 <& '/widgets/profile/hidden.mc',
     name    => 'container_prof|bulk_edit_cb',
 &>
 <& '/widgets/profile/hidden.mc',
     name    => 'container_prof|bulk_edit_this_cb',
 &>
-% }
+
 % if (ENABLE_WYSIWYG) {
 <& /widgets/wysiwyg/load.mc &>
 %}
