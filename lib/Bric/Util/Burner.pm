@@ -1525,6 +1525,15 @@ sub publish_another {
         if $ba->get_publish_status
         && $ba->get_version > $ba->get_published_version;
 
+    # Immediately burn the asset if QUEUE_PUBLISH_JOBS is enabled
+    use Bric::Config qw(:dist :temp STAGE_ROOT);
+    if (QUEUE_PUBLISH_JOBS) {
+      my $b2 = __PACKAGE__->new;
+      $b2->_set(['_notes'] => [$self->_get('_notes')]);
+      $b2->publish($ba, $key, get_user_id, $pub_time, 1, $self->get_priority);
+      return;
+    }
+
     my $uuid = $ba->get_uuid;
     if (my $queue = $another_queue{$uuid}) {
         # Set up the earliest publish time.
