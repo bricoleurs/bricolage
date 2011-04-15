@@ -290,7 +290,7 @@ sub publish {
                 user_id     => get_user_id,
                 name        => $name,
                 "$type\_id" => $obj->get_id,
-                priority    => $obj->get_priority,
+                priority    => $args->{priority} || $obj->get_priority,
             })->save;
             log_event('job_new', $job);
             push @published, name( "$type\_id" => $id );
@@ -1213,7 +1213,7 @@ sub is_allowed_param {
                                          publish_related_stories
                                          publish_related_media
                                          publish_date published_only
-                                         to_preview) },
+                                         to_preview priority) },
         deploy   => { map { $_ => 1 } qw(template_id deploy_ids) },
         checkout => { map { $_ => 1 } qw(story_id media_id template_id checkout_ids) },
         checkin  => { map { $_ => 1 } qw(story_id media_id template_id checkin_ids) },
@@ -1530,3 +1530,4 @@ L<Bric::SOAP|Bric::SOAP>, L<Bric::Biz::Workflow|Bric::Biz::Workflow>
 =cut
 
 1;
+
