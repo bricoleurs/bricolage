@@ -46,8 +46,8 @@ $m->comp(
     extension => 'png',
     globalImage  => 1,
     class    => 'edit',
-    js       => qq{onclick="openWindow('/workflow/profile/} . $container->get_object_type . qq{/container/edit_related_$type.html?id=} . $container->get_id . qq{', 'RelatedBricolagePopup', { closeOnUnload: true, width: 780 }); return false"},
-    useTable => 0
+    js       => 'onclick="Container.find_related(' . $container->get_id . q{, '} . $container->get_object_type . qq{', '$type'); return false;"},
+    useTable => 0,
 );
 $m->print('</div>');
 

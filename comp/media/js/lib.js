@@ -1782,7 +1782,20 @@ var Container = {
             {duration: 0.3, afterFinish: afterFinish}
         );
         return false;
-    }
+    },
+
+    find_related: function ( eid, type, rel_type ) {
+        openWindow(
+            '/workflow/profile/' + type + '/container/edit_related_' + rel_type + '.html?id=' + eid,
+            'RelatedBricolagePopup',
+            { closeOnUnload: true, width: 780 }
+        );
+        var displayed = $('container_' + eid + '_' + rel_type + '_displayed');
+        if (!displayed.value == 0) {
+            this.toggle_related(rel_type, eid, $(rel_type + '_' + eid + '_showhide'));
+        }
+        return false;
+    },
 };
 
 Event.observe(window, 'load', function() {
