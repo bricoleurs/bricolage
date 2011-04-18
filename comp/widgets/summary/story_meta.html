@@ -5,9 +5,8 @@
 &>
 % }
 <div style="float: right;"><% $button %></div>
-<dl class="viewmeta">
-<dt><% $lang->maketext('UUID') %>:</dt>
-<dd title="ID: <% $story->get_id %>"><% $story->get_uuid %></dd>
+<dl class="viewmeta" title="ID: <% $story->get_id %>
+UUID: <% $story->get_uuid %>">
 <dt><% $lang->maketext('Title') %>:</dt>
 <dd><% $story->get_title %></dd>
 <dt><% $lang->maketext('Story Type') %>:</dt>

@@ -5,9 +5,8 @@
 &>
 % }
 <div style="float: right;"><% $button %></div>
-<dl class="viewmeta">
-<dt><% $lang->maketext('UUID') %>:</dt>
-<dd title="ID: <% $media->get_id %>"><% $media->get_uuid %></dd>
+<dl class="viewmeta" title="ID: <% $media->get_id %>
+UUID: <% $media->get_uuid %>">
 <dt><% $lang->maketext('Title') %>:</dt>
 <dd><% $media->get_title %></dd>
 <dt><% $lang->maketext('Media Type') %>:</dt>

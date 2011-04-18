@@ -4,10 +4,8 @@
    number  => $number
 &>
 % }
-<dl class="viewmeta">
-  <dt><% $lang->maketext('ID') %>:</dt>
-  <dd><% $tmpl->get_id %></dd>
-  
+<dl class="viewmeta" title="ID: <% $tmpl->get_id %>
+UUID: <% $tmpl->get_uuid %>">
   <dt><% $lang->maketext('Name') %>:</dt>
   <dd><% $tmpl->get_name %></dd>
   
