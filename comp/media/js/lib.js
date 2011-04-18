@@ -1641,7 +1641,7 @@ var Container = {
             '/widgets/container_prof/_related.html', {
                 parameters: 'type=' + type + '&widget=' + widget +
                     '&container_id=' + container_id + '&container_prof|' +
-                     action + '_' + type + '_cb=' + asset_id,
+                     action + '_' + type + '_cb=' + asset_id + '&displayed=1',
                 asynchronous: !sync,
                 onSuccess: function(r) { window.close(); },
                 onFailure: Bricolage.handleError,
@@ -1670,7 +1670,7 @@ var Container = {
            },
            '/widgets/container_prof/_related.html', {
                parameters: 'type=' + type + '&widget=' + widget +
-                   '&container_id=' + container_id,
+                   '&container_id=' + container_id + '&displayed=1',
                asynchronous: !sync,
                onSuccess: function(r) { window.close(); },
                onFailure: Bricolage.handleError,
