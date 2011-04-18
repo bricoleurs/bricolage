@@ -70,6 +70,12 @@ if ($rel) {
         }
     }
     # The summary info
+    $m->comp(
+        '.short_summary',
+        doc => $rel,
+        cid => $container_id,
+        type => $type,
+    );
     $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">\n});
     $m->comp('/widgets/summary/summary.mc',
               asset  => $rel,
@@ -88,3 +94,19 @@ if ($rel) {
 </%perl>
   </fieldset>
 </div>
+<%def .short_summary>
+<%args>
+$cid
+$type
+$doc
+</%args>
+<div id="container_<% $cid %>_rel_<% $type %>_shortsum" style="display:none;">
+<dl class="viewmeta shortsum" title="<% $lang->maketext('ID') %>: <% $doc->get_id %>
+<% $lang->maketext('UUID') %>: <% $doc->get_uuid %>">
+<dt><% $lang->maketext('Title') %>:</dt>
+<dd><% $doc->get_title %></dd>
+<dt><% $lang->maketext('Media Type') %>:</dt>
+<dd><% $doc->get_element_name %></dd>
+</dl>
+</div>
+</%def>

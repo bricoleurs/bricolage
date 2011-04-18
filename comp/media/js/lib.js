@@ -1757,7 +1757,6 @@ var Container = {
         var displayed = $('container_' + eid + '_' + type + '_displayed');
         var thumb = $('container_' + eid + '_rel_thumb');
         var data  = $('container_' + eid + '_rel_' + type + '_data');
-        var afterFinish;
         var thumbClass;
         var dataClass;
         if ( displayed.value == '0' ) {
@@ -1777,9 +1776,14 @@ var Container = {
         if (data != null) data.className = dataClass;
 
         Effect.toggle(
+            'container_' + eid + '_rel_' + type + '_shortsum',
+            'blind',
+            {duration: 0.3}
+        );
+        Effect.toggle(
             'container_' + eid + '_rel_' + type + '_summary',
             'blind',
-            {duration: 0.3, afterFinish: afterFinish}
+            {duration: 0.3}
         );
         return false;
     },
