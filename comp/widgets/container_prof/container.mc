@@ -36,10 +36,25 @@
     &>
 </div>
 % }
-% if ($hint_val) {
-<p class="hint" id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
+<div id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>
+% if ($hint_val || $element->get_related_story || $element->get_related_media) {
+<p class="hint">
+<%perl>;
+my @hints;
+push @hints, "<strong>$hint_name:</strong> " . escape_html($hint_val) if $hint_val;
+if (my $rel = $element->get_related_story) {
+    push @hints, '<strong>' . $lang->maketext('Related Story') . ':</strong> ' . escape_html($rel->get_title);
+}
+if (my $rel = $element->get_related_media) {
+    push @hints, '<strong>' . $lang->maketext('Related Media') . ':</strong> ' . escape_html($rel->get_title);
+}
+$m->print(join '<br />' => @hints);
+</%perl>
+</p>
 % }
+</div>
 <hr id="element_<% $id %>_hr"<% $displayed ? '' : ' style="display: none"' %> />
+
 <ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {

@@ -102,12 +102,7 @@ $type
 $doc
 </%args>
 <div id="container_<% $cid %>_rel_<% $type %>_shortsum" style="display:none;">
-<dl class="viewmeta shortsum" title="<% $lang->maketext('ID') %>: <% $doc->get_id %>
-<% $lang->maketext('UUID') %>: <% $doc->get_uuid %>">
-<dt><% $lang->maketext('Title') %>:</dt>
-<dd><% $doc->get_title %></dd>
-<dt><% $lang->maketext('Media Type') %>:</dt>
-<dd><% $doc->get_element_name %></dd>
-</dl>
+<p class="hint"><strong><% $lang->maketext('Title') %>:</strong> <% $doc->get_title %><br />
+<strong><% $lang->maketext('Media Type') %>:</strong> <% $doc->get_element_name %></p>
 </div>
 </%def>
