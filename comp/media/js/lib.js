@@ -1795,7 +1795,7 @@ var Container = {
             { closeOnUnload: true, width: 780 }
         );
         var displayed = $('container_' + eid + '_' + rel_type + '_displayed');
-        if (!displayed.value == 0) {
+        if (displayed.value == '0') {
             this.toggle_related(rel_type, eid, $(rel_type + '_' + eid + '_showhide'));
         }
         return false;
