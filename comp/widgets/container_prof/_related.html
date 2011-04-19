@@ -85,6 +85,7 @@ if ($rel) {
     );
     $m->print("</div>\n");
 } else {
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_shortsum">&nbsp;</div>\n});
     $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">&nbsp;</div>\n});
     $m->out('<div class="noneFound">',
         $lang->maketext('No related [_1]', ucfirst($type)),
