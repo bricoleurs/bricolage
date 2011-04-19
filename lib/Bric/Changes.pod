@@ -33,6 +33,12 @@ L<Bric::Biz::Asset::Business::Media::Image> now properly respects the URI case
 settings of the output channel when searching for an existing alternate image.
 Thanks to Bret Dawson for the catch and the fix. [David]
 
+=item *
+
+Fixed the C<inactive> parameter to the Template, Story, and Media C<list()>
+methods so that it returns the appropriate records, instead of always
+returning no records. [Greg Heo].
+
 =back
 
 =head1 Version 2.0.1 (2011-02-09)
