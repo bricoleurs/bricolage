@@ -53,7 +53,9 @@ $m->print(join '<br />' => @hints);
 </p>
 % }
 </div>
+% if (!$top_level) {
 <hr id="element_<% $id %>_hr"<% $displayed ? '' : ' style="display: none"' %> />
+% }
 
 <ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
