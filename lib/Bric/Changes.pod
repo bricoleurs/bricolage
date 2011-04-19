@@ -10,6 +10,18 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =head1 Version 2.0.2 ()
 
+=head2 Improvements
+
+=over
+
+=item *
+
+When creating a related media, if clicking the "Create" button without both
+selecting an element type and seleting a file to upload now returns a message
+to the user suggesting that she do so. [Nick Legg]
+
+=back
+
 =head2 Bug Fixes
 
 =over
