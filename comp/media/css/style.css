@@ -561,6 +561,10 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .reldata { clear:both; margin-right:25px; }
 .smallreldata { margin-right:25px; }
 
+dl.viewmeta {
+  margin:0;
+}
+
 dl.viewmeta dt,
 dl.viewmeta dd {
     font-size: 11px;
