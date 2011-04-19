@@ -39,7 +39,7 @@
 % if ($hint_val) {
 <p class="hint" id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
 % }
-<hr />
+<hr id="element_<% $id %>_hr"<% $displayed ? '' : ' style="display: none"' %> />
 <ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
 % foreach my $dt ($element->get_elements()) {
 %   if ($dt->is_container) {

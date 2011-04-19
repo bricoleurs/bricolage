@@ -1750,6 +1750,11 @@ var Container = {
         if (hint_element) {
             Effect.toggle(hint_element, 'blind', {duration: 0.3});
         }
+        Effect.toggle(
+            'element_' + eid + '_hr',
+            'blind',
+            {duration: 0.3}
+        );
         return false;
     },
 
