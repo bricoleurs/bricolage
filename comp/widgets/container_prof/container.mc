@@ -36,7 +36,7 @@
     &>
 </div>
 % }
-<div id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>
+<div id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>>
 % if ($hint_val || $element->get_related_story || $element->get_related_media) {
 <p class="hint">
 <%perl>;
