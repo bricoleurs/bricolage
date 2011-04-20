@@ -6,93 +6,6 @@
 <span title="<% $lang->maketext('Drag to reorder') %>"><% $element->get_name %></span>
 </legend>
 % }
-% if ($hint_val) {
-<p class="hint" id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>><strong><% $hint_name %>:</strong> <% escape_html($hint_val) %></p>
-% }
-% if ($type->is_related_story) {
-<div id="element_<% $id %>_rel_story">
-    <& '_related.html',
-        widget => $widget,
-        container => $element,
-        type => 'story',
-        asset => $story
-    &>
-</div>
-% }
-% if ($type->is_related_media) {
-<div id="element_<% $id %>_rel_media">
-    <& '_related.html',
-        widget => $widget,
-        container => $element,
-        type => 'media',
-        asset => $story
-    &>
-</div>
-% }
-<ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
-% foreach my $dt ($element->get_elements()) {
-%   if ($dt->is_container) {
-    <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
-    <& 'container.mc',
-        widget  => $widget,
-        parent  => $element,
-        element => $dt
-    &>
-    </li>
-%   } else {
-    <li id="subelement_dat<% $dt->get_id %>" class="element clearboth">
-    <& 'field.mc',
-        widget  => $widget,
-        parent  => $element,
-        element => $dt
-    &>
-    </li>
-%   }
-% }
-</ul>
-<input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
-% unless ($top_level ) {
-<input type="hidden" name="container_prof|element_<% $id %>_displayed" id="container_<% $id %>_displayed" value="<% $element->get_displayed %>" />
-% }
-<script type="text/javascript">
-Sortable.create('element_<% $id %>', {
-    onUpdate: function(elem) {
-        Container.updateOrder(elem);
-    },
-    handle: 'name',
-    scroll: window
-});
-Container.updateOrder('element_<% $id %>');
-</script>
-
-<div class="actions">
-%   if (scalar @$elem_opts) {
-%   # XXX mroch: Don't leave this hard-coded! Make a component.
-    <div style="display: inline; position: relative;">
-    <button id="element_<% $id %>_add" onclick="Desk.menuHandler(this, event); return false"><img src="/media/images/add-element.png" alt="Add Element" /> Add Element</button>
-    <div id="element_<% $id %>_add_desks" class="popup-menu" style="display: none; width: 10em; padding: 0;">
-        <ul>
-%           foreach my $opt (@$elem_opts) {
-            <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false" rel="<% $opt->[0] %>"><% $opt->[1] %></a></li>
-%           }
-            <li style="display: none !important"><a href="#" onclick="Container.addElement(<% $id %>, 'copy_buffer'); return false">Paste</a></li>
-        </ul>
-    </div>
-    </div>
-%   if (keys %paste) {
-    <script type="text/javascript">
-        Container.updatePaste('<% $paste{id} %>', '<% $paste{text} %>');
-    </script>
-%   }
-%   }
-% if (get_pref('Show Bulk Edit')) {
-<span style="cursor: pointer;" id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" onclick="customSubmit('theForm','<% $top_level ? 'container_prof|bulk_edit_this_cb' : 'container_prof|bulk_edit_cb' %>','<% $id %>')" > <img src="/media/images/bulk-edit.png" alt="Bulk Edit" />Bulk Edit</span>
-% }
-</div>
-% unless ($top_level) {
-</fieldset>
-% }
-
 % if ( $parent && !$top_level) {
 %     my $minimum_occurrence = 0;
 %     if (my $sub_type = $parent->get_element_type->get_containers($element->get_key_name) ) {
@@ -122,6 +35,106 @@ Container.updateOrder('element_<% $id %>');
         useTable    => 0
     &>
 </div>
+% }
+<div id="element_<% $id %>_hint"<% $displayed ? ' style="display: none"' : '' %>>
+% if ($hint_val || $element->get_related_story || $element->get_related_media) {
+<p class="hint">
+<%perl>;
+my @hints;
+push @hints, "<strong>$hint_name:</strong> " . escape_html($hint_val) if $hint_val;
+if (my $rel = $element->get_related_story) {
+    push @hints, '<strong>' . $lang->maketext('Related Story') . ':</strong> ' . escape_html($rel->get_title);
+}
+if (my $rel = $element->get_related_media) {
+    push @hints, '<strong>' . $lang->maketext('Related Media') . ':</strong> ' . escape_html($rel->get_title);
+}
+$m->print(join '<br />' => @hints);
+</%perl>
+</p>
+% }
+</div>
+% if (!$top_level) {
+<hr id="element_<% $id %>_hr"<% $displayed ? '' : ' style="display: none"' %> />
+% }
+
+<ul id="element_<% $id %>" class="elements"<% $top_level || $displayed ? '' : ' style="display: none"' %>>
+% foreach my $dt ($element->get_elements()) {
+%   if ($dt->is_container) {
+    <li id="subelement_con<% $dt->get_id %>" class="container clearboth">
+    <& 'container.mc',
+        widget  => $widget,
+        parent  => $element,
+        element => $dt
+    &>
+    </li>
+%   } else {
+    <li id="subelement_dat<% $dt->get_id %>" class="element clearboth">
+    <& 'field.mc',
+        widget  => $widget,
+        parent  => $element,
+        element => $dt
+    &>
+    </li>
+%   }
+% }
+% if ($type->is_related_story) {
+<li>
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'story',
+        asset => $story,
+        displayed => $displayed,
+    &>
+</li>
+% }
+% if ($type->is_related_media) {
+<li>
+    <& '_related.html',
+        widget => $widget,
+        container => $element,
+        type => 'media',
+        asset => $story,
+        displayed => $displayed,
+    &>
+</li>
+% }
+
+</ul>
+<input type="hidden" name="container_prof|element_<% $id %>" id="container_prof_element_<% $id %>" value="" />
+% unless ($top_level ) {
+<input type="hidden" name="container_prof|element_<% $id %>_displayed" id="container_<% $id %>_displayed" value="<% $element->get_displayed %>" />
+% }
+<script type="text/javascript">
+Container.updateOrder('element_<% $id %>');
+</script>
+
+<div class="actions">
+%   if (scalar @$elem_opts) {
+%   # XXX mroch: Don't leave this hard-coded! Make a component.
+    <div style="display: inline; position: relative;">
+    <button id="element_<% $id %>_add" onclick="Desk.menuHandler(this, event); return false"><img src="/media/images/add_element_with_arrow.png" alt="Add Element" /> Add Element</button>
+    <div id="element_<% $id %>_add_desks" class="popup-menu" style="display: none; width: 10em; padding: 0;">
+        <ul>
+%           foreach my $opt (@$elem_opts) {
+            <li><a href="#" onclick="Container.addElement(<% $id %>, '<% $opt->[0] %>'); return false" rel="<% $opt->[0] %>"><% $opt->[1] %></a></li>
+%           }
+            <li style="display: none !important"><a href="#" onclick="Container.addElement(<% $id %>, 'copy_buffer'); return false">Paste</a></li>
+        </ul>
+    </div>
+    </div>
+%   if (keys %paste) {
+    <script type="text/javascript">
+        Container.updatePaste('<% $paste{id} %>', '<% $paste{text} %>');
+    </script>
+%   }
+%   }
+% if (get_pref('Show Bulk Edit')) {
+<span style="cursor: pointer;" id="<% $top_level ? 'bulk_edit_this_cb' : 'bulk_edit_' . $id %>" onclick="customSubmit('theForm','<% $top_level ? 'container_prof|bulk_edit_this_cb' : 'container_prof|bulk_edit_cb' %>','<% $id %>')" > <img src="/media/images/bulk-edit.png" alt="Bulk Edit" />Bulk Edit</span>
+% }
+</div>
+% unless ($top_level) {
+</fieldset>
 % }
 
 </div>
