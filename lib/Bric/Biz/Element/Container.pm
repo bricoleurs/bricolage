@@ -2179,6 +2179,11 @@ sub _do_update {
         WHERE  id = ?
     }, undef);
 
+    # leggn 20110425 - temporary fix for SQL error involving 'undef' displayed field
+    if ($self->_get_displayed() == undef) {
+        $self->_set_displayed(0);
+    }
+
     execute($upd, $self->_get(@FIELDS, 'id'));
     return $self;
 }
