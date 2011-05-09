@@ -91,23 +91,58 @@ where users don't know or care about bulk editing, and the button might
 otherwise confuse them. As with all preferences, its setting can be overridden
 for individual users. Sponsored by Denision University. [David]
 
-=back
+=item *
 
-=head2 Bug Fixes
+Improved the UI of the document editing interface:
 
 =over
 
 =item *
 
-Fixed bug in bric_ftpd where the ftp PWD command returns an incorrect path
-(missing the site name).  Some ftp clients (eg. FileZilla) call PWD and use
-this path after changing directories. [Adrian Yee]
+The copy and delete icons now appear inside the box for the container elements
+they affect, rather than floating outside. This creates a tighter, more obvious
+relationship between the controls and their elements.
 
 =item *
 
-In the event of a publish failure, a story and media document no longer has
-its publish status, date, and first publish date updated (Bug #200). [David]
+The "Add Element" icon now has a dropdown triangle on it, similar to that seen
+on other drop-down icons.
 
+=item *
+
+The related story and media displayed for a container element now appear below
+the fields and subelements in the container, and have their own detail/summary
+twisty like container elements do. This allows them to be displayed more
+consistently with the rest of the content editing interface.
+
+=item *
+
+In their "less detail" states, related stories and media now show only two
+fields: Title and Element Type. In their "more detail" states, they show all
+the same detail as before, except for the UUID, which is now included in a
+tooltip along with the ID. Hover over the details to see these identifiers.
+
+=item *
+
+The related document edit button has been replaced with an icon.
+
+=item *
+
+The related document edit icon will both open the related document popup
+I<and> toggle the related document display to its "more detail" state, so that
+all the data can be easily reviewed when the user returns from the popup.
+
+=item *
+
+Related media show a thumbnail for a related image in both the "more detail"
+and "less detail" states. The "less detail" thumbnail is displayed at no more
+than 40 pixels tall, while the full size from the C<THUMBNAIL_SIZE>
+F<bricolage.conf> directive is used as usual in the "more detail" state.
+
+=back
+
+Thanks to Denison University for sponsoring these improvements (Bug #244).
+[David]
 
 =back
 

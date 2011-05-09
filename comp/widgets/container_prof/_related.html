@@ -3,6 +3,7 @@ $widget
 $container    => undef
 $container_id => undef
 $type         => 'story'
+$displayed
 </%args>
 
 <%once>
@@ -24,48 +25,84 @@ $container ||= $find_subelement->(
     get_state_data('container_prof', 'element'),
     $container_id
 );
+$container_id ||= $container->get_id;
 
 my $rel = $type eq 'story' ? $container->get_related_story
                            : $container->get_related_media;
-
-my $button = $m->scomp(
+</%init>
+<div id="element_<% $container_id %>_rel_<% $type %>">
+  <fieldset>
+<legend>
+<a href="#" style="" id="<% $type %>_<% $container_id %>_showhide" onclick="Container.toggle_related('<% $type %>', <% $container_id %>, this); return false;" title="<% escape_html $lang->maketext('Toggle Related ' . ucfirst $type)  %>">&#x25b<% $displayed ? 'c' : 'a' %>;</a>
+<% escape_html $lang->maketext('Related ' . ucfirst $type) %>
+</legend>
+<input type="hidden" name="container_prof|element_<% $container_id %>_<% $type %>_displayed" id="container_<% $container_id %>_<% $type %>_displayed" value="<% $container->get_displayed %>" />
+<%perl>
+$m->print('<div class="reledit">');
+$m->comp(
     '/widgets/profile/button.mc',
     name     => "pick_related_".$type,
-    button   => "edit_lgreen",
-    js       => qq{onclick="openWindow('/workflow/profile/} . $container->get_object_type . qq{/container/edit_related_$type.html?id=} . $container->get_id . qq{', 'RelatedBricolagePopup', { closeOnUnload: true, width: 780 }); return false"},
-    useTable => 0
+    button   => "edit_element_button",
+    extension => 'png',
+    globalImage  => 1,
+    class    => 'edit',
+    js       => 'onclick="Container.find_related(' . $container->get_id . q{, '} . $container->get_object_type . qq{', '$type'); return false;"},
+    useTable => 0,
 );
+$m->print('</div>');
 
 if ($rel) {
+    $m->print(qq{<div class="reldata" id="container_$container_id\_rel_$type\_data">\n});
     add_msg('Related [_1] "[_2]" is not active. Please relate another [_1].',
           $type, $rel->get_title)
       unless $rel->is_active;
 
-    my $thumb = '';
     if (USE_THUMBNAILS && $type ne 'story') {
-        $thumb = eval { $rel->thumbnail_uri };
+        my $thumb = eval { $rel->thumbnail_uri };
         if (! $@ && $thumb) {
             $thumb = $m->comp(
                 '/widgets/profile/preview_link.mc',
                 doc   => $rel,
-                value => qq{<img src="$thumb" style="border: 0" />&nbsp;},
+                value => qq{<img src="$thumb" id="container_$container_id\_rel_thumb" class="thumb" style="border: 0" />},
                 type  => $type,
             );
+            $m->print(qq{$thumb\n});
         }
     }
     # The summary info
+    $m->comp(
+        '.short_summary',
+        doc => $rel,
+        cid => $container_id,
+        type => $type,
+    );
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">\n});
     $m->comp('/widgets/summary/summary.mc',
               asset  => $rel,
               type   => $type,
               header => 'Currently Related '.ucfirst($type),
               frame  => 0,
-              button => $thumb . $button
     );
+    $m->print("</div>\n");
 } else {
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_shortsum">&nbsp;</div>\n});
+    $m->print(qq{<div id="container_$container_id\_rel_$type\_summary">&nbsp;</div>\n});
     $m->out('<div class="noneFound">',
         $lang->maketext('No related [_1]', ucfirst($type)),
-        qq{<div class="button">$button</div>},
         '</div>'
     );
 }
-</%init>
+</%perl>
+  </fieldset>
+</div>
+<%def .short_summary>
+<%args>
+$cid
+$type
+$doc
+</%args>
+<div id="container_<% $cid %>_rel_<% $type %>_shortsum" style="display:none;">
+<p class="hint"><strong><% $lang->maketext('Title') %>:</strong> <% $doc->get_title %><br />
+<strong><% $lang->maketext('Media Type') %>:</strong> <% $doc->get_element_name %></p>
+</div>
+</%def>

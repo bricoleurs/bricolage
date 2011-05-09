@@ -528,9 +528,6 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 .noneFound { padding: 8px 10px; }
 .addnewitem a { font-size: 1.1em; color: #993300; font-weight: bold; }
 
-.noneFound { position: relative; }
-.noneFound .button { position: absolute; top: 0; right: 4px; }
-
 .paginate { position: relative; background: #cccc99; padding: 7px 10px;
             font-size: 1.1em; font-weight: bold; }
 .paginate a { color: #993300; }
@@ -561,7 +558,13 @@ td.checkbox, td.radio { width: 10%; text-align: center; }
 }
 .associations td.edit { width: 20px; vertical-align: top; }
 
-dl.viewmeta { margin: 0; }
+.reldata { clear:both; margin-right:25px; }
+.smallreldata { margin-right:25px; }
+
+dl.viewmeta {
+  margin:0;
+}
+
 dl.viewmeta dt,
 dl.viewmeta dd {
     font-size: 11px;
@@ -591,7 +594,7 @@ div.actions { background: #999966; padding: 2px 4px; }
 div.addelement { text-align: right;}
 
 .content legend a { font-size: 160%; text-decoration:none; }
-.content legend:hover, .content h3:hover { cursor: move; }
+.content legend.name:hover, .content h3:hover { cursor: move; }
 .buttonBar .delete {
     font-weight: bold;
     text-align: center;
@@ -753,22 +756,42 @@ div.addelement { text-align: right;}
 }
 
 #containerprof .content .delete,
-#containerprof .content .copy {
+#containerprof .content .copy,
+#containerprof .content .reledit,
+#containerprof .content fieldset .thumb,
+#containerprof .content fieldset .smallthumb {
+  float:right;
+}
+#containerprof .content fieldset .smallthumb {
+  height:40px;
+}
+#containerprof .container .delete,
+#containerprof .container .copy,
+#containerprof .container .reledit {
+  padding:0 0 8px 4px;
+}
+#containerprof fieldset hr {
+  clear:both;
+}
+
+#containerprof .content .fdelete,
+#containerprof .content .fcopy {
   position: absolute;
   right: 0;
 }
-#containerprof .container .delete {
+#containerprof .container .dfelete {
   top: 8px;
 }
-#containerprof .element .delete {
+#containerprof .element .fdelete {
   top: 0;
 }
-#containerprof .container .copy {
+#containerprof .container .fcopy {
   top: 27px;
 }
-#containerprof .element .copy {
+#containerprof .element .fcopy {
   top: 19px;
 }
+
 
 #containerprof .actions { background: transparent; }
 #containerprof .actions button { background: transparent; border: none; margin: 0 10px 0 0; padding: 2px; }
