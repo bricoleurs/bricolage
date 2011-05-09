@@ -143,6 +143,12 @@ F<bricolage.conf> directive is used as usual in the "more detail" state.
 Thanks to Denison University for sponsoring these improvements (Bug #244).
 [David]
 
+=item *
+
+Added C<expired> parameter to the C<list()> methods of
+L<Bric::Biz::Asset::Business::Story> and L<Bric::Biz::Asset::Business::Media>.
+[Gred Heo]
+
 =back
 
 =head1 Version 2.0.1 ()

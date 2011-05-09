@@ -46,7 +46,7 @@ sub new_args {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(142) {
+sub test_select_methods: Test(144) {
     my $self = shift;
     my $class = $self->class;
 
@@ -627,6 +627,8 @@ sub test_select_methods: Test(142) {
     ok( $media[2]->save, 'Save future expire media');
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 5, 'Check for five media now');
+    ok($got = $self->class->list({ expired => 1 }), "List by expired");
+    is(scalar @$got, 1, "Check for one expired media");
 
     # User ID should return only assets checked out to the user.
     ok $got = $class->list({
