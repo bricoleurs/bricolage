@@ -42,7 +42,7 @@ for (@context){
     s/\s+$//g;
     if (/^(\"?)(.+?)(\"?)$/) {
         my ($startquote, $text, $endquote) = ($1, $2, $3);
-        $text =~ s/([\[\],~])/~$1/g;
+        $text =~ s/([\[\]~])/~$1/g;
         my $underscores = ($text =~ s/^(_+)//) ? $1 : '';
         $_ = qq{$startquote<span class="110n">$underscores}
           . $lang->maketext($text) . "</span>$endquote";
