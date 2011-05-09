@@ -2826,7 +2826,7 @@ user (often "nobody") like this:
 This will run nightly at 2AM and clean out all files older than 12 hours. See
 L<bric_clean_tmp> for more details.
 
-=head1 Cloing an Installation
+=head1 Cloning an Installation
 
 Bricolage includes the ability to clone an existing Bricolage system.
 This is useful if you've developed a working Bricolage and need to
