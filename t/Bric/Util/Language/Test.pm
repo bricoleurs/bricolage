@@ -19,5 +19,17 @@ sub _test_load : Test(17) {
     closedir LANGS;
 }
 
+##############################################################################
+# Test escaped special characters
+##############################################################################
+sub test_localize : Test(3) {
+    use_ok('Bric::Util::Language');
+    ok(my $lang = Bric::Util::Language->get_handle("de_de"),
+       'Get German translation');
+    is($lang->maketext('Me, ~~myself~~, and ~[I~] ~,'),
+       'Me, ~myself~, and [I] ~,',
+       "Special characters are unescaped properly");
+}
+
 1;
 __END__
