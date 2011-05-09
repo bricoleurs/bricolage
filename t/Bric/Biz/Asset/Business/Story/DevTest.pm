@@ -100,7 +100,7 @@ sub test_clone : Test(18) {
 # Test the SELECT methods
 ##############################################################################
 
-sub test_select_methods: Test(209) {
+sub test_select_methods: Test(211) {
     my $self = shift;
     my $class = $self->class;
     my $all_stories_grp_id = $class->INSTANCE_GROUP_ID;
@@ -820,6 +820,8 @@ sub test_select_methods: Test(209) {
     ok( $story[2]->save, 'Save future expire story');
     ok( $got = $self->class->list({ unexpired => 1 }), "List by unexpired");
     is( scalar @$got, 5, 'Check for five stories now');
+    ok($got = $self->class->list({ expired => 1 }), "List by expired");
+    is(scalar @$got, 1, "Check for one expired story");
 
     # User ID should return only assets checked out to the user.
     ok $got = class->list({

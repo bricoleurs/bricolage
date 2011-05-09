@@ -335,6 +335,7 @@ use constant PARAM_WHERE_MAP => {
       expire_date_start      => 'i.expire_date >= ?',
       expire_date_end        => 'i.expire_date <= ?',
       unexpired              => '(i.expire_date IS NULL OR i.expire_date > CURRENT_TIMESTAMP)',
+      expired                => '(i.expire_date IS NOT NULL AND i.expire_date <= CURRENT_TIMESTAMP)',
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
       subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
@@ -863,9 +864,13 @@ Returns a list of stories with a expire date on or after a given date/time.
 
 Returns a list of stories with a expire date on or before a given date/time.
 
+=item expired
+
+If set, returns a list of media with an expire date set in the past.
+
 =item unexpired
 
-A boolean parameter. Returns a list of stories without an expire date, or with
+If set, returns a list of stories without an expire date, or with
 an expire date set in the future.
 
 =item element_key_name
