@@ -39,6 +39,11 @@ Fixed the C<inactive> parameter to the Template, Story, and Media C<list()>
 methods so that it returns the appropriate records, instead of always
 returning no records. [Greg Heo].
 
+=item *
+
+Commas no longer appear escaped with a backslash in the breadcrumb. Thanks to
+Michael Herring for the report (Bug #245). [Greg Heo]
+
 =back
 
 =head1 Version 2.0.1 (2011-02-09)
