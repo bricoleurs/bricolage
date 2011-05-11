@@ -63,6 +63,11 @@ Document and template search results no longer provide a "Republish" checkbox
 for deactivated assets, which are shown when "Include deleted" checkbox is
 selected in the advanced search interface (Bug #201). [Nick Legg]
 
+=item *
+
+Commas no longer appear escaped with a backslash in the breadcrumb. Thanks to
+Michael Herring for the report (Bug #245). [Greg Heo]
+
 =back
 
 =head1 VERSION 1.10.10 (2010-04-11)
