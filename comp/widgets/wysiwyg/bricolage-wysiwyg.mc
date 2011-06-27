@@ -3,39 +3,46 @@
 =head1 NAME
 
 bricolage-wysiwyg interface - Pass the available Bricolage internals to 
-external Java applets (Wysiwyg editor)
+external JavaScript applications (like Wysiwyg editor)
 
 =head1 SYNOPSIS
 
-%java_vars = <& '/widgets/wysiwyg/bricolage-wysiwyg.mc' &>;
+%js_vars = <& '/widgets/wysiwyg/bricolage-wysiwyg.mc' &>;
 
 =head1 DESCRIPTION
 
-Pick up any variable from Bricolage and pass to any java applet that knows
-how to use it. In this case it's wysiwyg editor, but it could be anything.
-Returns a hash that will be delivered in <head> section as java variables:
+Pick up any variable from Bricolage and pass to any JavaScript applications
+that knows how to use it. In this case it's wysiwyg editor, but it could be 
+anything. Returns a hash that will be delivered in <head> section as JS variables:
 var $key_name = $value;
 
-Here, the three strings (java arrays) are returned, namely: related_images,
+Here, the three strings (JS arrays) are returned, namely: related_images,
 related_nonImages, and related_objects, containing all related media of MIME 
 type image/, then all related stories together with all media of MIME type
 other than image/, and finally all related media of MIME type suitable
 for html object tag (audio, video, flash). 
 
 To extend for passing other Bricolage internals just set 
-$java{your_java_variable} = $value;
+$js_vars{your_js_variable} = $value;
 
 =cut
 
 </%doc>
 <%init>
-my %java_vars;
+my %js_vars;
 my ($title,$uuid);
 
 my $doc = get_state_data(story_prof => 'story'); 
+return unless ($doc);
+my (@el) = $doc->get_elements();
+my (@relmedii,@relstory);
+foreach my $e (@el)  #make lists of all related stories and all related media
+{
+   if ($e->is_container) { push (@relmedii,$e) if $e->can_relate_media; };
+   if ($e->is_container) { push (@relstory,$e) if $e->can_relate_story; }
+}
 
-my @relmedii;
-@relmedii = map ($doc->get_elements($_), split("[, ]", RELATED_MEDIA_TYPE_NAMES));
+@relmedii = map ($_->can_relate_media ? $_ : undef, @relmedii) if (@relmedii);
 my (@mlist, @othermlist, @objectmlist, $rm, $media);
 foreach $rm (@relmedii) {
    ($media) = $rm->get_related_media;
@@ -59,12 +66,10 @@ foreach $media (@mlist) {
     $uuid = $media->get_uuid;
     push (@items, "[ '$title', '/preview/media/$uuid' ]"); #cleanup /preview/media inside templates!
 }
-$java_vars{"related_images"} = "[ ['select image',''],".join(",",@items)." ];";
+$js_vars{"related_images"} = "[ ['select image',''],".join(",",@items)." ];";
 
 @items = ();
 # make link-able objects: non-images, and stories
-my @relstory;
-@relstory = map ($doc->get_elements($_), split("[, ]", RELATED_STORY_TYPE_NAMES));
 my ($rs, $stories);
 foreach $rs (@relstory) {
    ($stories) = $rs->get_related_story;
@@ -79,7 +84,7 @@ foreach $media (@othermlist) {
     $uuid = $media->get_uuid;
     push (@items, "[ 'media: $title', '/preview/media/$uuid' ]");
 }
-$java_vars{"related_nonImages"} = "[  ['select story/media',''],".join(",",@items)." ];";
+$js_vars{"related_nonImages"} = "[  ['select story/media',''],".join(",",@items)." ];";
 
 @items = ();
 # make flash objects: flash and video
@@ -89,6 +94,6 @@ foreach $media (@objectmlist) {
     $uuid = $media->get_uuid;
     push (@items, "[ '$title', '/preview/media/$uuid' ]");
 }
-$java_vars{"related_objects"} = "[  ['select flash/video/audio',''],".join(",",@items)." ];";
-return %java_vars;
+$js_vars{"related_objects"} = "[  ['select flash/video/audio',''],".join(",",@items)." ];";
+return %js_vars;
 </%init>

@@ -3,12 +3,20 @@
 var editors = new Array();
 var ckCallback = function () {
     $A(editors).each(function(editor) {
-	    delete CKEDITOR.instances[editor];
-	    var oCK = CKEDITOR.instances[editor];
-	    if (oCK) oCK.destroy();
-	    CKEDITOR.replace( editor, {customConfig : '/widgets/wysiwyg/ckconfig.js'});
-	})
+       delete CKEDITOR.instances[editor];
+       CKEDITOR.replace( editor, {customConfig : '/widgets/wysiwyg/ckconfig.js'});
+    });
 };
+
+var sub = $('theForm').onsubmit;
+$('theForm').onsubmit = function () {
+    if ( !arguments.callee.caller) return sub();
+    $A(editors).each(function(editor) {
+        if (document.getElementById( editor ))
+           CKEDITOR.instances[editor].updateElement(); });
+    return sub();
+}
+
 // Load 'em up.
 Event.observe(window, 'load', ckCallback);
 </script>
@@ -40,13 +48,11 @@ Event.observe(window, 'load', ckCallback);
 					 },
 					 onKeyUp : function()
 					 {
-					     var title;
+					     var title,uuid;
 					     url = this.getValue();
-					     for (i=0; i < related_nonImages.length; i++)
-						 {
-						     if (related_nonImages[i][1] == url)
-							 title = related_nonImages[i][0].substr(7);
-						 }
+					     uuid = url.substr(15);
+					     title = '::title::' + uuid;
+
 					     var dialog = this.getDialog();
 					     this.allowOnChange = false;
 					     dialog.setValueOf( 'info', 'linkType', 'url' );
@@ -120,15 +126,8 @@ Event.observe(window, 'load', ckCallback);
 						 {
 						     dialog = this.getDialog();
 						     var title,uuid;
-						     for (i=0; i < related_images.length; i++)
-							 {
-							     if (related_images[i][1] == newUrl)
-								 {
-								     title = related_images[i][0];
-								     uuid = newUrl.substr(15);
-								 }
-           
-							 }
+						     uuid = newUrl.substr(15);
+						     title = '::title::' + uuid;
 						     titleCmb = this.getDialog().getContentElement( 'advanced', 'txtGenTitle' );
 						     titleCmb.setValue( title );
 						     altCmb = this.getDialog().getContentElement( 'info', 'txtAlt' );
@@ -199,15 +198,8 @@ Event.observe(window, 'load', ckCallback);
 						 {
 						     dialog = this.getDialog();
 						     var title,uuid;
-						     for (i=0; i < related_objects.length; i++)
-							 {
-							     if (related_objects[i][1] == newUrl)
-								 {
-								     title = related_objects[i][0];
-								     uuid = newUrl.substr(15);
-								 }
-          
-							 }
+						     uuid = newUrl.substr(15);
+						     title = '::title::' + uuid;
 						     titleCmb = this.getDialog().getContentElement( 'advanced', 'title' );
 						     titleCmb.setValue( title );
 						     dialog.setValueOf( 'info', 'src', newUrl );
