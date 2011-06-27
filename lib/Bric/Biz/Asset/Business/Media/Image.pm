@@ -728,7 +728,7 @@ sub create_thumbnail {
 
     # Save the image or die.
     my $thumbfile = $self->_thumb_file;
-    $img->write(file => $thumbfile) or throw_gen(
+    $img->write(file => $thumbfile, jpegquality => 100) or throw_gen(
         error   => "Imager cannot write '$thumbfile'",
         payload => $img->errstr
     );

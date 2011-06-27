@@ -1562,7 +1562,7 @@ sub upload_file {
     my $path = Bric::Util::Trans::FS->cat_dir($dir, $name);
 
     if (ref $fh eq 'Imager') {
-        $fh->write( file => $path ) or throw_gen(
+        $fh->write( file => $path, jpegquality => 100  ) or throw_gen(
             error   => "Imager cannot write '$path'",
             payload => $fh->errstr
         );
