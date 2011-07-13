@@ -101,6 +101,7 @@ my $osen = { mac => 'MacOS',
              msdos => 'MSDOS',
              amiga => 'AmigaOS',
              amigaos => 'AmigaOS',
+             awss3 => 'AWSS3',
            };
 
 ################################################################################
