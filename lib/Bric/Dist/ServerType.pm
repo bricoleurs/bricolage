@@ -567,7 +567,7 @@ sub list_move_methods {
     my $sel = prepare_ca(qq{
         SELECT disp_name
         FROM   class
-        WHERE  distributor = '1' $and_sftp $and_dav 
+        WHERE  distributor = '1' $and_sftp $and_dav
         ORDER BY disp_name
     }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
