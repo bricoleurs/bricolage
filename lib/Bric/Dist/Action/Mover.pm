@@ -35,7 +35,6 @@ use Bric::App::Event qw(log_event);
 use Bric::Util::Fault qw(throw_ap);
 use Bric::Util::Trans::FS;
 use Bric::Util::Trans::FTP;
-use Bric::Util::Trans::S3;
 use Bric::Config qw(:dist);
 if (ENABLE_SFTP_MOVER) {
     require Bric::Util::Trans::SFTP;
