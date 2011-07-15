@@ -529,6 +529,7 @@ sub find_or_create_alternate {
     my $et = $p->{et_key_name}
         ? Bric::Biz::ElementType->lookup({ key_name => $p->{et_key_name} })
         : $p->{element_type} || $self->get_element_type;
+    my ($oc) = $et->get_output_channels;
 
     # Construct a URI for the alternate image.
     my $image_fn  = $self->get_file_name;
@@ -541,7 +542,7 @@ sub find_or_create_alternate {
         # cleanest way to do it without creating unnecesary pain.
         local $self->{_element_type_object} = $et;
         local $self->{file_name} = $alt_fn;
-        URI::Escape::uri_unescape($self->get_uri($self->get_primary_oc))
+        URI::Escape::uri_unescape($self->get_uri($oc))
     };
 
     # Return it if it already exists.
