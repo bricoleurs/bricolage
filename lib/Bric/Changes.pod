@@ -16,6 +16,10 @@ This document lists the Changes to Bricolage introduced with each release.
 
 =item *
 
+Added Amazon S3 mover. [John Durkin and Darren Embry]
+
+=item *
+
 Added support for the L<CKeditor WYSIWYG editor|http://ckeditor.com/>.
 [Zdravko Balorda]
 
