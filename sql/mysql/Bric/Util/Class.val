@@ -258,5 +258,5 @@ INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, 
 VALUES ('81', 'element', 'Bric::Biz::Element', 'Element', 'Elements', 'Element objects.', '0');
 
 INSERT INTO class (id, key_name, pkg_name, disp_name, plural_name, description, distributor)
-VALUES ('82', 's3', 'Bric::Util::Trans::S3, 'Amazon S3', 'Amazon S3 Transport', 'Class with methods to move files via Amazon S3.', '1');
+VALUES ('82', 's3', 'Bric::Util::Trans::S3', 'Amazon S3', 'Amazon S3 Transport', 'Class with methods to move files via Amazon S3.', '1');
 
