@@ -247,7 +247,7 @@ NONE.
 
 =head1 Author
 
-David Wheeler E<lt>david@justatheory.comE<gt>
+John Durkin E<lt>john@j2d3.comE<gt>
 
 =head1 See Also
 
