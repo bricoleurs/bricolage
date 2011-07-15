@@ -25,7 +25,6 @@ The distribution API uses this class to distribute resources to AWS S3 buckets.
 # Standard Dependencies
 use strict;
 use Net::Amazon::S3;
-use File::MimeInfo;
 
 ################################################################################
 # Programmatic Dependences
@@ -140,7 +139,7 @@ sub put_res {
             # Get the source and destination paths for the resource.
             my $src = $res->get_tmp_path || $res->get_path;
             my $dest = $s->get_doc_root . substr $res->get_uri, 1;
-            my $mime = mimetype($src);
+            my $mime = $res->get_media_type;
             #throw_gen error => 'fail', payload => "src: $src\ndest: $dest\nmime: $mime";
             # store a file in the bucket
             $bucket->add_key_filename( $dest, $src,
