@@ -2102,6 +2102,14 @@ entered in the Bricolage interface when setting up the destination.
 
 =item *
 
+B<ENABLE_S3_MOVER:> This directive indicates whether the Bricolage
+server may distribute resources using the Amazon S3 mover. Setting
+this to "On" or "Yes" or "1" will enable the Amazon S3 mover. In order
+to use the Amazon S3 mover, you must install the Net::Amazon::S3
+module from the CPAN (and its prerequisites).
+
+=item *
+
 B<ENABLE_WEBDAV_MOVER:> Bricolage also supports resource distribution through
 the WebDAV protocol. Set this directive to "On" or "Yes" or "1" to enable it.
 You need to have installed HTTP::DAV from the CPAN, in order to use WebDAV
