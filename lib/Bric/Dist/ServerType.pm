@@ -561,13 +561,13 @@ B<Notes:> NONE.
 =cut
 
 sub list_move_methods {
-    my $and_sftp = ENABLE_SFTP_MOVER ? '' : q{AND key_name <> 'sftp'};
-    #my $and_s3 = ENABLE_S3_MOVER ? '' : q{AND key_name <> 's3'};
-    my $and_dav = ENABLE_WEBDAV_MOVER ? '' : q{AND key_name <> 'webdav'};
+    my $and_sftp = ENABLE_SFTP_MOVER   ? '' : q{AND key_name <> 'sftp'};
+    my $and_s3   = ENABLE_S3_MOVER     ? '' : q{AND key_name <> 's3'};
+    my $and_dav  = ENABLE_WEBDAV_MOVER ? '' : q{AND key_name <> 'webdav'};
     my $sel = prepare_ca(qq{
         SELECT disp_name
         FROM   class
-        WHERE  distributor = '1' $and_sftp $and_dav
+        WHERE  distributor = '1' $and_sftp $and_s3 $and_dav
         ORDER BY disp_name
     }, undef);
     return wantarray ? @{ col_aref($sel) } : col_aref($sel);
