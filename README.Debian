@@ -54,8 +54,8 @@ There was no Net::SFTP installer from Debian, so proceed with
 Amazon S3 Mover
 ---------------
 
-If you use the optional SFTP mover, you have to install Net::SFTP by
-doing the following:
+If you use the optional Amazon S3 mover, you have to install
+Net::Amazon::S3 by doing the following:
 
     $ sudo apt-get install libnet-amazon-s3-perl
 
