@@ -1,4 +1,4 @@
-wpackage Bric::Biz::Asset::Business::Media::Image;
+package Bric::Biz::Asset::Business::Media::Image;
 
 ################################################################################
 
