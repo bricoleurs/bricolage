@@ -280,7 +280,7 @@ use constant PARAM_WHERE_MAP => {
                              . 'mt.id = mm2.object_id',
       simple                => 'mt.id IN ('
                              . 'SELECT mmt.id FROM media mmt '
-                             . 'JOIN media_instance mi2 ON media__id = mmt.id '
+                             . 'JOIN media_instance mi2 ON (media__id = mmt.id AND version = mmt.current_version) '
                              . 'WHERE LOWER(mi2.name) LIKE LOWER(?) '
                              . 'OR LOWER(mi2.description) LIKE LOWER(?) '
                              . 'OR LOWER(mi2.uri) LIKE LOWER(?) '
