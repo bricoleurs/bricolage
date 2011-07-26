@@ -428,7 +428,6 @@ sub testclean_params: Test(8) {
              active => 0,
              _no_return_versions => 1,
              _not_simple => 1,
-             inactive => 1,
              _checked_in_or_out => 1,
              Order => 'cover_date',
            };
