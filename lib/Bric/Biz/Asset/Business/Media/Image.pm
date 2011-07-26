@@ -529,7 +529,7 @@ sub find_or_create_alternate {
     my $et = $p->{et_key_name}
         ? Bric::Biz::ElementType->lookup({ key_name => $p->{et_key_name} })
         : $p->{element_type} || $self->get_element_type;
-        my ($oc) = $et->get_output_channels;
+    my $oc = Bric::Biz::OutputChannel->lookup({id => $et->get_primary_oc_id});
 
     # Construct a URI for the alternate image.
     my $image_fn  = $self->get_file_name;
