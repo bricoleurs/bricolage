@@ -151,6 +151,16 @@ L<Bric::Biz::Asset::Business::Story> and L<Bric::Biz::Asset::Business::Media>.
 
 =back
 
+=head2 Bug fixes
+
+=over
+
+=item *
+
+Forcing find_or_create_alternate to use the correct OC and respect URI format. [Bret Dawson]
+
+=back
+
 =head1 Version 2.0.1 ()
 
 =head2 Improvements
