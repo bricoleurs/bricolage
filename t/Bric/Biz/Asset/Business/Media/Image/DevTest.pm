@@ -33,7 +33,8 @@ sub test_thumbnail : Test(9) {
     }
 
     unless ($Imager::formats{png}) {
-        is $image->thumbnail_uri, undef, 'Should get no thumbnail URI';
+        diag $image->thumbnail_uri;
+        is $image->thumbnail_uri, '/media/mime/none.png', 'Should get no thumbnail URI';
         return 'PNG support not built in to Imager';
     }
 
