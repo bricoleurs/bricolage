@@ -434,11 +434,11 @@ sub asset_counts {
     # Use desk__id > 0 because the index is defined that way.
     my $sth = prepare_c qq{
         SELECT desk__id, COUNT(*) FROM (
-            SELECT desk__id FROM story    WHERE desk__id > 0
+            SELECT desk__id FROM story    WHERE active AND desk__id > 0
              UNION ALL
-            SELECT desk__id FROM media    WHERE desk__id > 0
+            SELECT desk__id FROM media    WHERE active AND desk__id > 0
              UNION ALL
-            SELECT desk__id FROM template WHERE desk__id > 0
+            SELECT desk__id FROM template WHERE active AND desk__id > 0
          ) AS c
          GROUP BY desk__id
     };
