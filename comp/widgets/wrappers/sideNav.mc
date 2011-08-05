@@ -74,7 +74,7 @@ my $get_cookie = sub {
 my $asset_counts;
 my $desk_caption = sub {
     my ($desk_id, $desk_name) = @_;
-    return $desk_name unless get_pref('Show Desk Asset Counts');
+    return $desk_name unless $asset_counts;
     return sprintf "$desk_name (%d)", $asset_counts->{$desk_id} || 0;
 };
 </%once>\
