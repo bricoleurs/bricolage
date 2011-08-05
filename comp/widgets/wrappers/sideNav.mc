@@ -71,13 +71,18 @@ my $get_cookie = sub {
     return exists($cookies{$name}) ? $cookies{$name} : '';
 };
 
+my $asset_counts;
 my $desk_caption = sub {
     my ($desk_id, $desk_name) = @_;
     return $desk_name unless get_pref('Show Desk Asset Counts');
-    my $desk = Bric::Biz::Workflow::Parts::Desk->lookup({ id => $desk_id });
-    return sprintf("$desk_name (%d)", scalar(@{$desk->assets}));
+    return sprintf "$desk_name (%d)", $asset_counts->{$desk_id} || 0;
 };
 </%once>\
+<%init>;
+$asset_counts = get_pref('Show Desk Asset Counts')
+    ? Bric::Biz::Workflow::Parts::Desk->asset_counts
+    : undef;
+</%init>
 <%perl>;
 my $site_id = $c->get_user_cx(get_user_id);
 # Make sure we always have a site ID. If the server has just been restarted,
