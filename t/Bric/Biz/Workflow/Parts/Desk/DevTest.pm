@@ -189,7 +189,7 @@ sub test_save : Test(8) {
 
 ##############################################################################
 # Make sure that we can put different assets on a desk and get them back.
-sub test_assets : Test(39) {
+sub test_assets : Test(46) {
     my $self = shift;
     is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { },
         'Should have no assets on any desks';
@@ -260,6 +260,17 @@ sub test_assets : Test(39) {
     is( scalar keys %$assets, 2, "Check for two types of asset" );
     is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
     is( scalar @{$assets->{media}}, 2, "Check for two media assets" );
+
+
+    # Deactivate that media.
+    ok $m->deactivate, 'Deactivate a media document';
+    ok $m->save, 'Save the deactivated media document';
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { 101 => 3 },
+        'Should again have three assets on desk 101';
+    ok( $assets = $desk->get_assets_href, "Get assets href again" );
+    is( scalar keys %$assets, 2, "Check for two types of asset" );
+    is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
+    is( scalar @{$assets->{media}}, 1, "Check for one media asset" );
 }
 
 1;
