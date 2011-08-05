@@ -31,10 +31,10 @@ sub cancel_checkout {
 
     my ($desks, $cos) = (0, 0);
     while (@events && $events[0]->get_key_name ne "$kn\_add_workflow") {
-        my $kn = shift(@events)->get_key_name;
-        if ($kn eq "$kn\_moved") {
+        my $ekn = shift(@events)->get_key_name;
+        if ($ekn eq "$kn\_moved") {
             $desks++;
-        } elsif ($kn eq "$kn\_checkout") {
+        } elsif ($ekn eq "$kn\_checkout") {
             $cos++
         }
     }
