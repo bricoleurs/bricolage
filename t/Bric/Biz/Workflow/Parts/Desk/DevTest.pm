@@ -189,8 +189,11 @@ sub test_save : Test(8) {
 
 ##############################################################################
 # Make sure that we can put different assets on a desk and get them back.
-sub test_assets : Test(31) {
+sub test_assets : Test(39) {
     my $self = shift;
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { },
+        'Should have no assets on any desks';
+
     ok( my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
         ({ id => $edit_desk_id }),
         "Look up story workflow" );
@@ -204,6 +207,8 @@ sub test_assets : Test(31) {
     ok( $desk->save, "Save desk" );
 
     # Check the assets.
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { 101 => 1 },
+        'Should now have one asset on desk 101';
     ok( my $assets = $desk->get_assets_href, "Get assets href" );
     is( scalar keys %$assets, 1, "Check for one type of asset" );
     is( scalar @{$assets->{story}}, 1, "Check for one story asset" );
@@ -215,8 +220,11 @@ sub test_assets : Test(31) {
     $self->add_del_ids($s->get_id, 'story');
     ok( $desk->accept({ asset => $s }), "Check new story into desk" );
     ok( $desk->save, "Save desk again" );
+    ok( $s->save, "Save new story" );
 
     # Check the assets again.
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { 101 => 2 },
+        'Should now have two assets on desk 101';
     ok( $assets = $desk->get_assets_href, "Get assets href 2" );
     is( scalar keys %$assets, 1, "Check for one type of asset 2" );
     is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
@@ -230,6 +238,8 @@ sub test_assets : Test(31) {
     ok( $desk->save, "Save desk" );
 
     # Check the assets again.
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { 101 => 3 },
+        'Should now have three assets on desk 101';
     ok( $assets = $desk->get_assets_href, "Get assets href again" );
     is( scalar keys %$assets, 2, "Check for two types of asset" );
     is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
@@ -244,6 +254,8 @@ sub test_assets : Test(31) {
     ok( $desk->save, "Save desk" );
 
     # Check the assets again.
+    is_deeply +Bric::Biz::Workflow::Parts::Desk->asset_counts, { 101 => 4 },
+        'Should now have four assets on desk 101';
     ok( $assets = $desk->get_assets_href, "Get assets href again" );
     is( scalar keys %$assets, 2, "Check for two types of asset" );
     is( scalar @{$assets->{story}}, 2, "Check for two story assets" );
