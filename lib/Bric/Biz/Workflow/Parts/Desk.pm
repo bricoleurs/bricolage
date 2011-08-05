@@ -398,6 +398,54 @@ B<Notes:> Searches against C<name> and C<description> use the LIKE operator, so
 
 sub list_ids { wantarray ? @{ &$get_em(@_, 1) } : &$get_em(@_, 1) }
 
+##############################################################################
+
+=item $asset_counts = Bric::Biz::Workflow::Parts::Desk->asset_counts
+
+Returns a hash reference mapping desk IDs to the number of assets on the desk.
+
+B<Throws:>
+
+=over 4
+
+=item *
+
+Unable to prepare SQL statement.
+
+=item *
+
+Unable to connect to database.
+
+=item *
+
+Unable to select column into arrayref.
+
+=item *
+
+Unable to execute SQL statement.
+
+=back
+
+B<Side Effects:> NONE.
+
+=cut
+
+sub asset_counts {
+    # Use desk__id > 0 because the index is defined that way.
+    my $sth = prepare_c qq{
+        SELECT desk__id, COUNT(*) FROM (
+            SELECT desk__id FROM story    WHERE desk__id > 0
+             UNION ALL
+            SELECT desk__id FROM media    WHERE desk__id > 0
+             UNION ALL
+            SELECT desk__id FROM template WHERE desk__id > 0
+         ) AS c
+         GROUP BY desk__id
+    };
+    $sth->execute;
+    return { map { @{ $_ }  } @{ $sth->fetchall_arrayref } };
+}
+
 #--------------------------------------#
 
 =back
