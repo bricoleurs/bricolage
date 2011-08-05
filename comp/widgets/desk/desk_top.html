@@ -106,7 +106,7 @@ my $jump_to = sub {
     my @links;
 
     if ($show_all || !$per_page) {
-        for my $what qw(story media template) {
+        for my $what (qw(story media template)) {
             push @links, {
                 link => "#$what",
                 label => $pl_names->{$what},
@@ -115,7 +115,7 @@ my $jump_to = sub {
         return @links;
     }
 
-    for my $what qw(story media template) {
+    for my $what (qw(story media template)) {
         next if $type eq $what or !$others->{$what};
         my $starts_on = $offset_by->($type, $offset, $others);
         if (defined $starts_on) {
