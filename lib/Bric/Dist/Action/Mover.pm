@@ -40,6 +40,10 @@ if (ENABLE_SFTP_MOVER) {
     require Bric::Util::Trans::SFTP;
 }
 
+if (ENABLE_S3_MOVER) {
+    require Bric::Util::Trans::S3;
+}
+
 if (ENABLE_WEBDAV_MOVER) {
     require Bric::Util::Trans::WebDAV;
 }
@@ -150,6 +154,11 @@ sub do_it {
     unless (ENABLE_SFTP_MOVER or $class !~ /::SFTP$/) {
         throw_ap(error => "Output channel is associated with SFTP " .
                  "but SFTP Mover is disabled.");
+    }
+
+    unless (ENABLE_S3_MOVER or $class !~ /::S3$/) {
+        throw_ap(error => "Output channel is associated with S3 " .
+                 "but S3 Mover is disabled.");
     }
 
     unless (ENABLE_WEBDAV_MOVER or $class !~ /::WebDAV$/) {

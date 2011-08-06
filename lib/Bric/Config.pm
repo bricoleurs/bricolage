@@ -102,6 +102,7 @@ our @EXPORT_OK = qw(DBD_PACKAGE
                     MEDIA_URI_ROOT
                     DEF_MEDIA_TYPE
                     ENABLE_SFTP_MOVER
+                    ENABLE_S3_MOVER
                     ENABLE_SFTP_V2
                     SFTP_MOVER_CIPHER
                     SFTP_KEY_TYPE
@@ -251,6 +252,7 @@ our %EXPORT_TAGS = (all       => \@EXPORT_OK,
                                      FTP_UNLINK_BEFORE_MOVE
                                      ENABLE_SFTP_MOVER
                                      ENABLE_SFTP_V2
+                                     ENABLE_S3_MOVER
                                      SFTP_MOVER_CIPHER
                                      SFTP_KEY_TYPE
                                      SFTP_PRIVATE_KEY_FILE
@@ -472,7 +474,7 @@ require Bric; our $VERSION = Bric->VERSION;
                     ENABLE_WYSIWYG AUTOGENERATE_SLUG ENABLE_GZIP
                     MEDIA_UNIQUE_FILENAME LDAP_TLS AUTO_PREVIEW_MEDIA
                     MASON_STATIC_SOURCE ALLOW_URIS_WITHOUT_CATEGORIES
-                    EXPIRE_ON_DEACTIVATE SKIP_SSL_REDIRECT))
+                    EXPIRE_ON_DEACTIVATE SKIP_SSL_REDIRECT ENABLE_S3_MOVER))
         {
             my $d = exists $config->{$_} ? lc($config->{$_}) : '0';
             $config->{$_} = $d eq 'on' || $d eq 'yes' || $d eq '1' ? 1 : 0;
@@ -588,6 +590,7 @@ require Bric; our $VERSION = Bric->VERSION;
     use constant PREVIEW_MASON           => $config->{PREVIEW_MASON};
     use constant DEF_MEDIA_TYPE          => $config->{DEF_MEDIA_TYPE} || 'text/html';
     use constant ENABLE_SFTP_MOVER       => $config->{ENABLE_SFTP_MOVER};
+    use constant ENABLE_S3_MOVER         => $config->{ENABLE_S3_MOVER};
     use constant ENABLE_SFTP_V2          => $config->{ENABLE_SFTP_V2};
     use constant SFTP_MOVER_CIPHER       => $config->{SFTP_MOVER_CIPHER} || 0;
     use constant SFTP_KEY_TYPE           => $config->{SFTP_KEY_TYPE};
