@@ -50,6 +50,12 @@ The C<find_or_create_alternate()> method of
 L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> now
 uses the correct output channel and respects the URI format. [Bret Dawson]
 
+=item *
+
+Searching for assets by category (in simple search) will no longer return
+items that used to be in that category in previous versions (Bug #242). [Greg
+Heo]
+
 =back
 
 =head1 Version 2.0.1 (2011-02-09)
