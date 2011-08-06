@@ -404,7 +404,7 @@ use constant PARAM_WHERE_MAP => {
                               . 's.id = sm2.object_id',
       simple                 => 's.id IN ('
                               . 'SELECT ss.id FROM story ss '
-                              . 'JOIN story_instance si2 ON story__id = ss.id '
+                              . 'JOIN story_instance si2 ON (story__id = ss.id AND version = ss.current_version) '
                               . 'WHERE LOWER(si2.name) LIKE LOWER(?) '
                               . 'OR LOWER(si2.description) LIKE LOWER(?) '
                               . 'OR LOWER(si2.primary_uri) LIKE LOWER(?) '
