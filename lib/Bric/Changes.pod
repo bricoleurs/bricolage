@@ -44,6 +44,12 @@ returning no records. [Greg Heo].
 Commas no longer appear escaped with a backslash in the breadcrumb. Thanks to
 Michael Herring for the report (Bug #245). [Greg Heo]
 
+=item *
+
+The C<find_or_create_alternate()> method of
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> now
+uses the correct output channel and respects the URI format. [Bret Dawson]
+
 =back
 
 =head1 Version 2.0.1 (2011-02-09)
