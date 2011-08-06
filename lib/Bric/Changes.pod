@@ -161,7 +161,9 @@ L<Bric::Biz::Asset::Business::Story> and L<Bric::Biz::Asset::Business::Media>.
 
 =item *
 
-Forcing find_or_create_alternate to use the correct OC and respect URI format. [Bret Dawson]
+The C<find_or_create_alternate()> method of
+L<Bric::Biz::Asset::Business::Media|Bric::Biz::Asset::Business::Media> now
+uses the correct output channel and respects the URI format. [Bret Dawson]
 
 =back
 
