@@ -104,6 +104,14 @@ The lists of the container and field subelement key names in a template are
 now displayed above the code in the read view as well as the edit view.
 Suggested by Phillip Smith (Bug #228). [David]
 
+=item *
+
+Added the C<asset_counts()> method to L<Bric::Biz::Workflow::Parts::Desk> and
+put it to use providing the desk counts in the side navigation. This provides
+a huge performance improvement over the previous method of showing counts,
+which was to load every asset on every desk on every load. Didn't scale well
+for desks with lots of assets on them (Bug #239). [David]
+
 =back
 
 =head2 Bug Fixes
