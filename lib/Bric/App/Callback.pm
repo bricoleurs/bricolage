@@ -6,8 +6,8 @@ __PACKAGE__->register_subclass;
 use constant CLASS_KEY => 'Callback';
 use HTML::Entities;
 use Bric::App::Cache;
-use Bric::App::Util qw(get_pref add_msg);
-use Bric::Util::ApacheConst qw(HTTP_CONFLICT HTTP_FORBIDDEN);
+use Bric::App::Util qw(get_pref add_msg get_msg clear_msg);
+use Bric::Util::ApacheConst qw(HTTP_CONFLICT HTTP_FORBIDDEN HTTP_ACCEPTED);
 use Bric::Util::DBI qw(begin rollback);
 use Bric::Util::Language;
 
@@ -24,33 +24,48 @@ sub add_message {
 
 sub raise_status {
     my ($self, $status) = (shift, shift);
-    my $r = $self->apache_req or return $self->add_message(@_);
+    $self->add_message(@_);
+    my $r = $self->apache_req or return;
 
     # If it's not an Ajax request, it's just a message.
-    return $self->add_message(@_)
-        if ($r->headers_in->{'X-Requested-With'} || '') ne 'XMLHttpRequest';
+    return if ($r->headers_in->{'X-Requested-With'} || '') ne 'XMLHttpRequest';
 
     # Abort the database transaction.
     rollback(1);
     begin(1);
 
-    # Prep the error message.
-    my $txt = Bric::Util::Language->instance->maketext(@_);
-    if ($txt =~ /(.*)<span class="l10n">(.*)<\/span>(.*)/) {
-        $txt = encode_entities($1) . '<span class="l10n">'
-          . encode_entities($2) . '</span>' . encode_entities($3);
-    } else {
-        $txt = encode_entities($txt);
-    }
-
     # Send the status to the browser and abort.
-    $r->status($status);
-    $r->print(qq{<div class="errorMsg">$txt</div>});
+    $self->_print_messages($r, $status);
     $self->abort;
 }
 
 sub raise_conflict  { shift->raise_status( HTTP_CONFLICT,  @_ ) }
 sub raise_forbidden { shift->raise_status( HTTP_FORBIDDEN, @_ ) }
+
+sub show_accepted   {
+    my $self = shift;
+    $self->add_message(@_);
+    my $r = $self->apache_req or return;
+
+    # If it's not an Ajax request, it's just a message.
+    return if ($r->headers_in->{'X-Requested-With'} || '') ne 'XMLHttpRequest';
+
+    $self->_print_messages($r, HTTP_ACCEPTED);
+}
+
+sub _print_messages {
+    my ($self, $r, $status) = @_;
+    # Prep the error message(s).
+    my $txt = join '<br /><br />', map {
+        /(.*)<span class="l10n">(.*)<\/span>(.*)/
+            ? encode_entities($1) . '<span class="l10n">'
+              . encode_entities($2) . '</span>' . encode_entities($3)
+            : encode_entities($_)
+    } get_msg;
+    clear_msg;
+    $r->status($status);
+    $r->print(qq{<div class="errorMsg">$txt</div>});
+}
 
 1;
 

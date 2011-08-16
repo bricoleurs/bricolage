@@ -366,16 +366,15 @@ sub publish : Callback {
     # By this point we now know if we're going to fail this publish
     # if we set the fail behaviour to fail rather than warn
     if (PUBLISH_RELATED_ASSETS && @messages) {
+        $self->add_message(@$_) for @messages;
         if (PUBLISH_RELATED_FAIL_BEHAVIOR eq 'fail') {
-            $self->add_message(@$_) for @messages;
-            my $msg = 'Publish aborted due to errors above. Please fix the '
-                . ' above problems and try again.';
-            throw_error error    => $msg,
-                        maketext => $msg;
+            $self->raise_conflict(
+                ['Publish aborted due to errors above. Please fix the above problems and try again.']);
         } else {
             # we are set to warn, should we add a further warning to the msg ?
-            $self->raise_conflict(@$_) for @messages,
-                'Some of the related assets were not published.';
+            $self->show_accepted(
+                ['Some of the related assets were not published.']
+            );
         }
     } else {
         $self->raise_conflict(@$_) for @messages;
@@ -408,6 +407,10 @@ sub publish : Callback {
     } else {
         $self->set_redirect('/workflow/profile/publish');
     }
+
+    # Don't render anything for Ajax requests.
+    my $r = $self->apache_req or return;
+    $self->abort if ($r->headers_in->{'X-Requested-With'} || '') eq 'XMLHttpRequest';
 }
 
 sub deploy : Callback {

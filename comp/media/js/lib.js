@@ -1239,7 +1239,11 @@ var Desk = {
             onSuccess: onSuccess,
             onFailure: Bricolage.handleError,
             on403: Bricolage.handleForbidden,
-            on409: Bricolage.handleConflict
+            on409: Bricolage.handleConflict,
+            on202: function(req) {
+                Bricolage.handleConflict(req);
+                onSuccess(req);
+            }
         } );
     },
 
