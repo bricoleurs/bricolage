@@ -372,16 +372,30 @@ sub publish : Callback {
     if (PUBLISH_RELATED_ASSETS && @messages) {
         $self->add_message(@$_) for @messages;
         if (PUBLISH_RELATED_FAIL_BEHAVIOR eq 'fail') {
-            $self->raise_conflict(
-                ['Publish aborted due to errors above. Please fix the above problems and try again.']);
+            # If it was on a desk, we need to revert its workflow status.
+            $self->_revert_to_original_state;
+            my $err = 'Publish aborted due to errors above. Please fix the '
+                    . 'above problems and try again.';
+            # Throw an error or a conflict as appropriate.
+            throw_error(
+                error    => $err,
+                maketext => [$err]
+            ) if $allow_fatal;
+            $self->raise_conflict([$err]);
         } else {
             # we are set to warn, should we add a further warning to the msg ?
             $self->show_accepted(
                 ['Some of the related assets were not published.']
             );
         }
-    } else {
-        $self->raise_conflict(@$_) for @messages;
+    } elsif (@messages) {
+        # If it was on a desk, we need to revert its workflow status.
+        $self->_revert_to_original_state;
+
+        # Add all messages and raise a conflict.
+        my $last = pop @messages;
+        $self->add_message(@$_) for @messages;
+        $self->raise_conflict(@$last);
     }
 
     # For publishing from a desk, I added two new 'publish'
@@ -422,6 +436,8 @@ sub publish : Callback {
             $self->_log_desk_move;
         }
     } else {
+        # Just leave it to the queue.
+        $self->_log_desk_move;
         $self->set_redirect('/workflow/profile/publish');
     }
 
