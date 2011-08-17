@@ -147,6 +147,8 @@ sub checkin : Callback(priority => 6) {
                   { Workflow => $wf->get_name });
         $story->checkout({ user__id => get_user_id() })
           unless $story->get_checked_out;
+    } else {
+        $work_id = $story->get_workflow_id;
     }
 
     $story->checkin;
@@ -188,24 +190,13 @@ sub checkin : Callback(priority => 6) {
                                       asset => $story });
                 $cur_desk->save;
             } else {
+                $cur_desk = $pub_desk;
                 $pub_desk->accept({ asset => $story });
             }
             $pub_desk->save;
         }
 
         $story->save;
-
-        # Log it!
-        log_event('story_save', $story);
-        log_event('story_checkin', $story, { Version => $story->get_version });
-        my $dname = $pub_desk->get_name;
-        log_event('story_moved', $story, { Desk => $dname })
-          unless $no_log;
-        $self->add_message(
-            'Story "[_1]" saved and checked in to "[_2]".',
-            '<span class="l10n">' . $story->get_title . '</span>',
-            $dname,
-        );
 
         # Prevent loss of data due to publish failure.
         commit(1);
@@ -218,11 +209,32 @@ sub checkin : Callback(priority => 6) {
             params       => { story_pub => { $story->get_version_id => $story } },
         );
 
-        # Clear the state out, set redirect, and publish.
-        $self->clear_my_state;
-        $self->set_redirect('/');
-        $pub->publish;
-
+        # Make it so!
+        eval { $pub->publish(1) };
+        if (my $err = $@) {
+            # FAIL! Put the story back into workflow and act as if nothing
+            # ever happened to its workflow status.
+            $story->checkout({ user__id => get_user_id() });
+            $story->set_workflow_id($work_id);
+            $cur_desk->accept({ asset => $story });
+            $cur_desk->save;
+            $story->save;
+            die $err;
+        } else {
+            # Log it, clear the state out, and set redirect.
+            $self->clear_my_state;
+            $self->set_redirect('/');
+            log_event('story_save', $story);
+            log_event('story_checkin', $story, { Version => $story->get_version });
+            my $dname = $pub_desk->get_name;
+            log_event('story_moved', $story, { Desk => $dname })
+                unless $no_log;
+            $self->add_message(
+                'Story "[_1]" saved and checked in to "[_2]".',
+                '<span class="l10n">' . $story->get_title . '</span>',
+                $dname,
+            );
+        }
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
