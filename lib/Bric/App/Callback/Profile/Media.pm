@@ -257,6 +257,8 @@ sub checkin : Callback(priority => 6) {
                   { Workflow => $wf->get_name });
         $media->checkout({ user__id => get_user_id() })
           unless $media->get_checked_out;
+    } else {
+        $work_id = $media->get_workflow_id;
     }
 
     $media->checkin;
@@ -300,18 +302,6 @@ sub checkin : Callback(priority => 6) {
 
         $media->save;
 
-        # Log it!
-        log_event('media_save', $media);
-        log_event('media_checkin', $media, { Version => $media->get_version });
-        my $dname = $pub_desk->get_name;
-        log_event('media_moved', $media, { Desk => $dname })
-          unless $no_log;
-        $self->add_message(
-            'Media "[_1]" saved and checked in to "[_2]".',
-            $media->get_title,
-            $dname
-        );
-
         # Prevent loss of data due to publish failure.
         commit(1);
         begin(1);
@@ -324,16 +314,38 @@ sub checkin : Callback(priority => 6) {
             params     => { media_pub => { $media->get_version_id => $media } },
         );
 
-        # Clear the state out, set redirect, and publish.
-        $self->clear_my_state;
-        $pub->publish;
-        if (my $prev = get_state_data('_profile_return')) {
-            $self->return_to_other($prev);
+        # Make it so!
+        eval { $pub->publish(1) };
+        if (my $err = $@) {
+            # FAIL! Put the story back into workflow and act as if nothing
+            # ever happened to its workflow status.
+            $media->checkout({ user__id => get_user_id() });
+            $media->set_workflow_id($work_id);
+            $cur_desk->accept({ asset => $media });
+            $cur_desk->save;
+            $media->save;
+            die $err;
         } else {
-            $self->set_redirect('/');
+            # Log it, clear the state out, and set redirect.
+            $self->clear_my_state;
+            $pub->publish;
+            if (my $prev = get_state_data('_profile_return')) {
+                $self->return_to_other($prev);
+            } else {
+                $self->set_redirect('/');
+            }
+
+            log_event('media_save', $media);
+            log_event('media_checkin', $media, { Version => $media->get_version });
+            my $dname = $pub_desk->get_name;
+            log_event('media_moved', $media, { Desk => $dname })
+                unless $no_log;
+            $self->add_message(
+                'Media "[_1]" saved and checked in to "[_2]".',
+                $media->get_title,
+                $dname
+            );
         }
-
-
     } else {
         # Look up the selected desk.
         my $desk = Bric::Biz::Workflow::Parts::Desk->lookup
