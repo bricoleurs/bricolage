@@ -223,6 +223,7 @@ sub publish : Callback {
         my $r = $self->apache_req;
         $r && ($r->headers_in->{'X-Requested-With'} || '') eq 'XMLHttpRequest';
     };
+    $allow_fatal ||= !$is_ajax;
 
     # If we were passed a string instead of an object, find the object
     for my $pub (\$story_pub, \$media_pub) {
@@ -384,7 +385,7 @@ sub publish : Callback {
             throw_error(
                 error    => $err,
                 maketext => [$err]
-            ) if $allow_fatal || !$is_ajax;
+            ) if $allow_fatal;
             $self->raise_conflict([$err]);
         } else {
             # we are set to warn, should we add a further warning to the msg ?
@@ -431,7 +432,7 @@ sub publish : Callback {
             # If it was on a desk, we need to revert its workflow status.
             $self->_revert_to_original_state;
             # Continue with normal error handling.
-            die $err if $allow_fatal || !$is_ajax;
+            die $err if $allow_fatal;
             $self->raise_conflict($err->maketext);
         } else {
             # Success! Need to log the move to a desk. Yes, this is late, but
