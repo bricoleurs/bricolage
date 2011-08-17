@@ -214,10 +214,14 @@ sub checkin : Callback(priority => 6) {
         if (my $err = $@) {
             # FAIL! Put the story back into workflow and act as if nothing
             # ever happened to its workflow status.
-            $story->checkout({ user__id => get_user_id() });
-            $story->set_workflow_id($work_id);
+            $story->checkout({ user__id => get_user_id() })
+                unless $story->get_checked_out;
+            $story->set_workflow_id($work_id) unless defined $story->get_workflow_id;
             $cur_desk->accept({ asset => $story });
             $cur_desk->save;
+            # Need to commit in order to make it stick!
+            commit(1);
+            begin(1);
             $story->save;
             die $err;
         } else {
