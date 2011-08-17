@@ -20,6 +20,19 @@ When creating a related media, if clicking the "Create" button without both
 selecting an element type and seleting a file to upload now returns a message
 to the user suggesting that she do so. [Nick Legg]
 
+=item *
+
+Fixed a number of issues related to UI behavior in the event of a publish
+failure. A publish failure from a desk, workspace, or document profile now
+behaves consistently and properly respects the
+C<PUBLISH_RELATED_FAIL_BEHAVIOR> F<bricolage.conf> directive. Furthermore,
+failed publishes no longer result in a document being checked in when it was
+checked out. Instead, the document will look just like it did before the
+publish failed. The only difference is that the version will increment. This
+is somewhat annoying, but far better than what we had before, and most folks
+likely won't notice the change. Thanks to Nick Legg for the report and Denison
+University for sponsoring this work (Bug #277). [David]
+
 =back
 
 =head2 Bug Fixes
