@@ -211,7 +211,7 @@ use strict;
 # Programatic Dependencies
 
 use Bric::Util::Fault qw(throw_gen throw_burn_error throw_burn_user
-                         rethrow_exception);
+                         rethrow_exception throw_invalid);
 use Bric::Util::Trans::FS;
 use Bric::Config qw(:burn :mason :time PREVIEW_LOCAL ENABLE_DIST :prev :l10n);
 use Bric::Biz::OutputChannel qw(:burners);
@@ -1289,12 +1289,14 @@ sub publish {
             my $errstr = q{Cannot publish asset "} . $ba->get_name
               . q{" to "} . $oc->get_name . q{" because there }
                . "are no Destinations associated with this output channel.";
-            throw_burn_error error   => $errstr,
-                             mode    => $self->get_mode,
-                             oc      => $oc->get_name,
-                             elem    => $at->get_name,
-                             element => $at
-                if $die_err;
+            throw_invalid(
+                error => $errstr,
+                maketext => [
+                    'Cannot publish asset "[_1]" to "[_2]" because there are no Destinations associated with this output channel.',
+                    $ba->get_name,
+                    $oc->get_name
+                ]
+            ) if $die_err;
             add_msg($errstr);
             next;
         }
