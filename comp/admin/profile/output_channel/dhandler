@@ -144,6 +144,7 @@ if (defined $id) {
                 field      => 'name',
                 objs       => \@avail_ocs,
                 no_persist => 1,
+                getter     => $oc_name_getter,
                 name       => 'output_channel|include_oc_id_cb',
                 default    => ['' => 'Add to Include'],
                 js         => "onChange='submit()'",
