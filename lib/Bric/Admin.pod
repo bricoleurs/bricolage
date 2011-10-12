@@ -179,8 +179,8 @@ to find the appropriate one to use for the default.
 
 A boolean indicating whether or not the databse should be created. Defaults to
 true. If you set this to a false value, the database should already exist and
-the Bricolage database user will need to have permission to create objects in
-it (tables, indexes, sequences, etc.).
+include PL/pgSQL. The Bricolage database user will need to have permission to
+create objects in it (tables, indexes, sequences, etc.).
 
 =item * BRICOLAGE_PG_SUPERUSER
 

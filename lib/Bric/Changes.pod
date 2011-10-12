@@ -153,6 +153,16 @@ Added C<expired> parameter to the C<list()> methods of
 L<Bric::Biz::Asset::Business::Story> and L<Bric::Biz::Asset::Business::Media>.
 [Gred Heo]
 
+=item *
+
+Added triggers to the PostgreSQL database to ensure that stories, media, and
+templates are always on the desks they think they should be on. Because that
+information is stored in two different places (one for performance, the other
+for permissions), there can be some drift between them. The new triggers throw
+an error whenever such drift is detected, in an effort to prevent it from
+happening at all. The migration that adds the triggers also corrects any
+existing drift. [David]
+
 =back
 
 =head2 Bug fixes

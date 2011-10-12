@@ -57,6 +57,7 @@ if ($DB->{create_db}) {
 
     $DBDEFDB = 'template1';
     create_db();
+    create_plpgsql();
     create_user();
 } else {
     # Set environment variables for psql.
@@ -126,6 +127,21 @@ sub create_db {
         }
     }
     print "Database created.\n";
+}
+
+# create PL/pgSQL
+sub create_plpgsql {
+    print "Creating PL/pgSQL in $DB->{db_name}...\n";
+    my $err = exec_sql(qq{CREATE LANGUAGE plpgsql}, 0, $DB->{db_name});
+
+    if ($err && $err !~ /language "plpgsql" already exists/) {
+        # There was an error.
+        hard_fail(
+            "Failed to create PL/pgSQL. The database error was\n\n",
+            "$err\n"
+        );
+    }
+    print "PL/pgSQL created.\n";
 }
 
 # create SYS_USER, optionally dropping an existing syst

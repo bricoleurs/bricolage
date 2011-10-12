@@ -1171,12 +1171,12 @@ sub save {
             $self->_set(['_asset_grp_obj'], [$asset_grp_obj]);
             $self->_set__dirty($dirty);
         }
+        # Save all the grouped objects.
+        $asset_grp_obj->save;
+
         $self->_sync_checkin;
         $self->_sync_checkout;
         $self->_sync_transfer;
-
-        # Save all the grouped objects.
-        $asset_grp_obj->save;
 
         # Save the IDs if we have them.
         my $ag = $self->get_asset_grp;

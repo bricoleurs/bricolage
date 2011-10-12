@@ -108,3 +108,99 @@ REFERENCES     media(id) ON DELETE CASCADE;
 ALTER TABLE    media_member
 ADD CONSTRAINT fk_member__media_member FOREIGN KEY (member__id)
 REFERENCES     member(id) ON DELETE CASCADE;
+
+-- Add triggers for media desk memberships.
+CREATE OR REPLACE FUNCTION desk_has_media(
+) RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
+BEGIN
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.desk__id = OLD.desk__id THEN RETURN NEW; END IF;
+    END IF;
+    IF NEW.desk__id > 0 THEN
+        IF EXISTS (
+            SELECT media_member.object_id
+              FROM desk
+              JOIN member       ON member.grp__id = desk.asset_grp
+              JOIN media_member ON media_member.member__id = member.id
+             WHERE desk.id                = NEW.desk__id
+               AND media_member.object_id = NEW.id
+        ) THEN RETURN NEW; END IF;
+        RAISE EXCEPTION 'Desk % should have media % in its group but does not',
+            NEW.desk__id, NEW.id;
+    ELSIF TG_OP = 'UPDATE' THEN
+        IF NOT EXISTS (
+            SELECT media_member.object_id
+              FROM desk
+              JOIN member       ON member.grp__id = desk.asset_grp
+              JOIN media_member ON media_member.member__id = member.id
+             WHERE desk.id                = OLD.desk__id
+               AND media_member.object_id = NEW.id
+        ) THEN RETURN NEW; END IF;
+        RAISE EXCEPTION 'Desk % should not have media % in its group but does',
+            OLD.desk__id, NEW.id;
+    ELSE
+        RETURN NEW;
+    END IF;
+END;
+$$;
+
+CREATE CONSTRAINT TRIGGER media_is_on_desk
+ AFTER INSERT OR UPDATE ON media
+DEFERRABLE INITIALLY DEFERRED
+ FOR EACH ROW EXECUTE PROCEDURE desk_has_media();
+
+CREATE OR REPLACE FUNCTION desk_hasnt_media(
+) RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT media_member.object_id
+          FROM desk
+          JOIN member       ON member.grp__id = desk.asset_grp
+          JOIN media_member ON media_member.member__id = member.id
+         WHERE desk.id                = OLD.desk__id
+           AND media_member.object_id = OLD.id
+    ) THEN RETURN NEW; END IF;
+    RAISE EXCEPTION 'Desk % should not have media % in its group but does',
+        NEW.desk__id, NEW.id;
+END;
+$$;
+
+CREATE CONSTRAINT TRIGGER media_not_on_desk
+ AFTER DELETE ON media
+DEFERRABLE INITIALLY DEFERRED
+ FOR EACH ROW EXECUTE PROCEDURE desk_hasnt_media();
+
+CREATE OR REPLACE FUNCTION set_member_media_desk_id(
+) RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
+BEGIN
+    UPDATE media
+       SET desk__id = desk.id
+      FROM member
+      JOIN desk ON member.grp__id = desk.asset_grp
+     WHERE media.id  = NEW.object_id
+       AND member.id = NEW.member__id;
+     RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER set_member_media_desk_id
+  AFTER INSERT OR UPDATE ON media_member
+  FOR EACH ROW EXECUTE PROCEDURE set_member_media_desk_id();
+
+CREATE OR REPLACE FUNCTION unset_member_media_desk_id(
+) RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
+BEGIN
+    UPDATE media
+       SET desk__id = 0
+      FROM member
+      JOIN desk ON member.grp__id = desk.asset_grp
+     WHERE media.id  = OLD.object_id
+       AND member.id = OLD.member__id
+       AND media.desk__id = desk.id;
+     RETURN OLD;
+END;
+$$;
+
+CREATE TRIGGER unset_member_media_desk_id
+  BEFORE DELETE ON media_member
+  FOR EACH ROW EXECUTE PROCEDURE unset_member_media_desk_id();
