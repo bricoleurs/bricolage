@@ -33,6 +33,12 @@ is somewhat annoying, but far better than what we had before, and most folks
 likely won't notice the change. Thanks to Nick Legg for the report and Denison
 University for sponsoring this work (Bug #277). [David]
 
+=item *
+
+The select list for output channel includes in the output channel profile now
+includes the names of the sites each output channel is part of (Bug # 279).
+[Zdravko Balorda]
+
 =back
 
 =head2 Bug Fixes
