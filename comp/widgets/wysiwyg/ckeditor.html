@@ -8,15 +8,13 @@ var ckCallback = function () {
     });
 };
 
-var sub = $('theForm').onsubmit;
 $('theForm').onsubmit = function () {
-    if ( !arguments.callee.caller) return sub();
     $A(editors).each(function(editor) {
-        if (document.getElementById( editor ))
-           CKEDITOR.instances[editor].updateElement(); });
-    return sub();
+        if (document.getElementById( editor )) {
+           CKEDITOR.instances[editor].updateElement();
+        };
+    });
 }
-
 // Load 'em up.
 Event.observe(window, 'load', ckCallback);
 </script>
