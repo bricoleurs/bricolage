@@ -80,14 +80,15 @@ Heo]
 
 Fixed bug where, after opening the media search options in advanced mode, one
 could not return to a simple search. Thanks to Michael Herring for the report
-(L<Bug #282|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/282>)
-and to Nick Legg for the fix.
+(L<Bug #282|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/282>).
+[Nick Legg]
 
 =item *
 
 The "Return" button now works when viewing an asset in IE or Firefox 4+.
 Thanks to Michael Herring for the report
 (L<Bug #282|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/240>).
+[David]
 
 =back
 
