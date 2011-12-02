@@ -1,4 +1,5 @@
 <%args>
+$disp      => ''
 $formName  => 'theForm'
 $callback  => undef
 $value     => 1
@@ -12,10 +13,12 @@ $alt       => ''
 </%args>
 <%init>;
 my $localorno = $useGlobalImage ? '' : "$lang_key/";
+$disp = $lang->maketext($disp) if $disp;
 $m->print(
     qq{<a href="#" $js>},
     qq{<img src="/media/images/$localorno$image.gif" },
     qq{alt="$alt" },
+    qq{title="$disp" },
     qq{style="vertical-align: middle; margin: ${vspace}px ${hspace}px;" /></a>},
     ($useHidden ? qq{<input type="hidden" name="$callback" value="" />} : ()),
 );

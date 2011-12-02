@@ -33,14 +33,14 @@
         &>
     </td>
     <td class="action">
-        <& '/widgets/profile/button.mc',
+        <&'/widgets/profile/imageSubmit.mc',
             disp      => $lang->maketext("Delete Category"),
             name      => 'delete_category',
             value     => $cat_id,
-            button    => 'delete_red',
-            useTable  => 0,
+            image     => 'delete_red',
             js        => ($cat_id == $primary_category_id ? qq{style="display: none" } : '') .
-                         qq{onclick="catListMan.remove(this.parentNode.parentNode); return false"}
+                         qq{onclick="catListMan.remove(this.parentNode.parentNode); return false"},
+            useHidden => 0,
         &>
     </td>
   </tr>
