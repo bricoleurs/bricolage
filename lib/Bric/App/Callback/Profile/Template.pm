@@ -246,9 +246,7 @@ sub return : Callback(priority => 6) {
     my $version_view = get_state_data($widget, 'version_view');
     my $fa = get_state_data($widget, 'template');
 
-    # note: $self->value =~ /^\d+$/ is for IE which sends the .x or .y position
-    # of the mouse for <input type="image"> buttons
-    if ($version_view || $self->value eq 'diff' || $self->value =~ /^\d+$/) {
+    if ($version_view || $self->value eq 'diff') {
         my $fa_id = $fa->get_id;
         clear_state($widget) if $version_view;
         $self->set_redirect("/workflow/profile/template/$fa_id/?checkout=1");

@@ -78,13 +78,17 @@ $rightText .= $m->scomp( '/widgets/profile/imageSubmit.mc',
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 % }
-<& '/widgets/profile/button.mc',
-    disp   => 'Return',
-    widget  => $widget,
-    cb      => 'return_cb',
-    button  => 'return_dgreen',
-    value   => $param->{diff} ? 'diff' : undef,
-    useTable => 0 &>
+% if ($param->{diff}) {
+    <& '/lib/util/back_button.mc' &>
+% } else {
+    <& '/widgets/profile/button.mc',
+        disp   => 'Return',
+        widget  => $widget,
+        cb      => 'return_cb',
+        button  => 'return_dgreen',
+        useTable => 0
+&>
+% }
 <%args>
 $widget
 $param
