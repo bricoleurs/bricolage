@@ -87,7 +87,15 @@ could not return to a simple search. Thanks to Michael Herring for the report
 
 The "Return" button now works when viewing an asset in IE or Firefox 4+.
 Thanks to Michael Herring for the report
-(L<Bug #282|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/240>).
+(L<Bug #240|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/240>).
+[David]
+
+=item *
+
+Deleting an output channel or category from a story or media document no
+longer causes the Notes, Trail, Bulk Edit, and Diff/View buttons to stop
+working. Thanks to Michael Herring for the report
+(L<Bug #281|http://bricolage.lighthouseapp.com/projects/29601-bricolage/tickets/281>).
 [David]
 
 =back
