@@ -190,13 +190,17 @@ $m->out(scalar(@contribs) ? join(", ", @contribs) : $lang->maketext("No contribu
 &>
 <& '/widgets/wrappers/table_bottom.mc' &>
 % }
-<& '/widgets/profile/button.mc',
-    disp      => $lang->maketext("Return"),
-    value     => $param->{diff} ? 'diff' : undef,
-    widget    => $widget,
-    cb        => 'return_cb',
-    button    => 'return_dgreen',
-    useTable  => 0 &>
+% if ($param->{diff}) {
+    <& '/lib/util/back_button.mc' &>
+% } else {
+    <& '/widgets/profile/button.mc',
+        disp      => $lang->maketext("Return"),
+        widget    => $widget,
+        cb        => 'return_cb',
+        button    => 'return_dgreen',
+        useTable  => 0
+    &>
+% }
 <%args>
 $widget
 $param
