@@ -163,6 +163,11 @@ an error whenever such drift is detected, in an effort to prevent it from
 happening at all. The migration that adds the triggers also corrects any
 existing drift. [David]
 
+=item *
+
+Upgraded to Prototype 1.7 and script.taculo.us 1.9.0 to support newer browsers
+(especially IE 9). [David]
+
 =back
 
 =head2 Bug fixes
