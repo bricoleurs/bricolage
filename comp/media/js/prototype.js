@@ -3813,10 +3813,18 @@ Object.extend(Event, {
   }
 });
 
+// Fix for isButton on IE9 cribbed from:
+// https://prototype.lighthouseapp.com/projects/8886/tickets/1229-eventisleftbutton-failure-in-ie9
+// Proper fix is in Prototype 1.7.
+if (Prototype.Browser.IE && /MSIE (\d+\.\d+);/.test(navigator.userAgent)) {
+	var IEVersion = new Number(RegExp.$1); // capture x.x portion and store as a number
+	Prototype.Browser.IE9 = IEVersion == 9;
+}
+
 Event.Methods = (function() {
   var isButton;
 
-  if (Prototype.Browser.IE) {
+  if (Prototype.Browser.IE && !Prototype.Browser.IE9) {
     var buttonMap = { 0: 1, 1: 4, 2: 2 };
     isButton = function(event, code) {
       return event.button == buttonMap[code];
