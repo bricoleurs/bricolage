@@ -39,6 +39,10 @@ The select list for output channel includes in the output channel profile now
 includes the names of the sites each output channel is part of (Bug # 279).
 [Zdravko Balorda]
 
+=item *
+
+Relative F<http.conf> directives are now properly processed. [Florian Ragwitz]
+
 =back
 
 =head2 Bug Fixes
