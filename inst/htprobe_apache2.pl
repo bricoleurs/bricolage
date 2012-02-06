@@ -27,7 +27,7 @@ use strict;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use Bric::Inst qw(:all);
-use File::Spec::Functions;
+use File::Spec::Functions ':ALL';
 use Data::Dumper;
 
 # check whether questions should be asked
@@ -110,7 +110,11 @@ sub read_conf {
     # (note: this is wrong in htprobe_apache.pl, where I left it alone.)
     my $included = '';
     while ($AP{conf} =~ /^\s*Include\s+(.+)$/gim) {
-        $included .= "\n" . slurp_conf($1);
+        $included .= "\n" . slurp_conf(
+            file_name_is_absolute($1)
+                ? $1
+                : rel2abs($1, $AP{HTTPD_ROOT})
+        );
     }
     $AP{conf} .= $included;
 }
