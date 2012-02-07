@@ -244,16 +244,16 @@ Apache 2.x.
 
 =back
 
-=item * APACHE_EXE
+=item * BRICOLAGE_APACHE_EXE
 
-=item * APACHE2_EXE
+=item * BRICOLAGE_APACHE2_EXE
 
 The base name of the Apache executable, usually "httpd", which happens to be
 the default.
 
-=item * APACHE_PATH
+=item * BRICOLAGE_APACHE_PATH
 
-=item * APACHE2_PATH
+=item * BRICOLAGE_APACHE2_PATH
 
 A C<$PATH> environment variable-style list of directories to search for the
 Apache executable. Defaults to the value returned by
