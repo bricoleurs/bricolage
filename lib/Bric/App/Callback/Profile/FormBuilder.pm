@@ -368,7 +368,7 @@ $do_element_type = sub {
         for my $sub_type ( @sub_types ) {
             my $seid = $sub_type->get_id;
             my $modified = 0;
-            for my $occ qw(min max) {
+            for my $occ (qw(min max)) {
                 my $val = $param->{"subelement_type|$occ\_occurrence_$seid"};
                 $val =~ s/^\s+//;
                 $val =~ s/\s+$//;
