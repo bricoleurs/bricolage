@@ -56,7 +56,7 @@
   # Output for each field.
   my $remainingCols = $cols;
   for my $class_idx (0..$#{$data->[$row]}) {
-      my $val   = $data->[$row]->[$class_idx];
+      my $val   = escape_html($data->[$row]->[$class_idx]);
       my @classes;
       push @classes, "selected" if $class_idx == $sort_col;
       push @classes, $fields->[$class_idx];
