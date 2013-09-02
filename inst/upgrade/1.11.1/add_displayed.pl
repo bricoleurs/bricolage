@@ -13,7 +13,7 @@ unless (test_column 'element_type', 'displayed') {
     };
 }
 
-for my $doc qw(story media) {
+for my $doc (qw(story media)) {
     next if test_column "$doc\_element", 'displayed';
     do_sql qq{
         ALTER TABLE $doc\_element

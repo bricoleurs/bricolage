@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-for my $doc qw(story media) {
+for my $doc (qw(story media)) {
     # Skip it if the cover_date column is already NOT NULL.
     next if test_column "$doc\_instance", 'cover_date', undef, 1;
 

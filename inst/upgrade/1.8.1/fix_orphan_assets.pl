@@ -6,7 +6,7 @@ use FindBin;
 use lib catdir $FindBin::Bin, updir, 'lib';
 use bric_upgrade qw(:all);
 
-for my $type qw(story formatting media) {
+for my $type (qw(story formatting media)) {
     do_sql "DELETE from member
             WHERE  id IN (SELECT member__id
                           FROM   $type\_member, $type, member, grp
