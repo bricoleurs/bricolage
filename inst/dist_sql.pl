@@ -25,7 +25,7 @@ use strict;
 my @rdbmss = map { s{^sql/}{}; $_ } grep { $_ !~ /[.]svn/ } @ARGV;
 
 for my $rdbms (@rdbmss) {
-    for my $type qw(sql val con) {
+    for my $type (qw(sql val con)) {
         my $dir = $type eq 'sql' ? '>' : '>>';
         system (
             "grep -vh '^--' `find sql/$rdbms -name '*.$type' | env "

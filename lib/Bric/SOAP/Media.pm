@@ -701,7 +701,7 @@ sub load_asset {
         # mix in dates
         $mdata->{publish_date} ||= $mdata->{first_publish_date}
             if $mdata->{first_publish_date};
-        for my $name qw(cover_date expire_date publish_date first_publish_date) {
+        for my $name (qw(cover_date expire_date publish_date first_publish_date)) {
             my $date = $mdata->{$name};
             if ($date) {
                 throw_ap error => __PACKAGE__ . "::create : $name must be undefined if publish_status is false"
@@ -1059,7 +1059,7 @@ sub serialize_asset {
     $writer->dataElement(source => $src->get_source_name);
 
     # get dates and output them in dateTime format
-    for my $name qw(cover_date expire_date publish_date first_publish_date) {
+    for my $name (qw(cover_date expire_date publish_date first_publish_date)) {
         my $date = $media->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);

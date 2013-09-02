@@ -633,7 +633,7 @@ sub load_asset {
         }
 
         # mix in dates
-        for my $name qw(expire_date deploy_date) {
+        for my $name (qw(expire_date deploy_date)) {
             my $date = $tdata->{$name};
             if ($date) {
                 throw_ap error => __PACKAGE__ . "::create : $name must be undefined if deploy_status is false"
@@ -848,7 +848,7 @@ sub serialize_asset {
     $writer->dataElement(output_channel => $oc->get_name);
 
     # get dates and output them in dateTime format
-    for my $name qw(expire_date deploy_date) {
+    for my $name (qw(expire_date deploy_date)) {
         my $date = $template->_get($name);
         next unless $date; # skip missing date
         my $xs_date = db_date_to_xs_date($date);
