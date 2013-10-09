@@ -168,6 +168,10 @@ existing drift. [David]
 Upgraded to Prototype 1.7 and script.taculo.us 1.9.0 to support newer browsers
 (especially IE 9). [David]
 
+=item *
+
+Fix for the possibility that a FTP server would return a list, not a text message, per http://www.gossamer-threads.com/lists/bricolage/users/40893#40893 [Phillip Smith]
+
 =back
 
 =head2 Bug fixes
