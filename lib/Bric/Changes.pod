@@ -182,7 +182,9 @@ uses the correct output channel and respects the URI format. [Bret Dawson]
 
 =item *
 
-Fix for the possibility that a FTP server would return a list, not a text message, per http://www.gossamer-threads.com/lists/bricolage/users/40893#40893 [Phillip Smith]
+Fix for the possibility that a FTP server would return a list, not a text message, as
+reported in L<this thread|http://www.gossamer-threads.com/lists/bricolage/users/40893>.
+[Phillip Smith]
 
 =back
 
