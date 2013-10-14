@@ -150,11 +150,11 @@ sub put_res {
                        payload => $@;
         $ftp->login($s->get_login, $s->get_password)
           or throw_gen error   => "Unable to login to remote server '$hn'.",
-                       payload => $ftp->message;
+                       payload => scalar $ftp->message;
         $ftp->binary
           or throw_gen error   => 'Unable to change to binary mode on' .
                                   " remote server '$hn'.",
-                       payload => $ftp->message;
+                       payload => scalar $ftp->message;
 
         # Get the FTP and document roots.
         my $ftp_root = $ftp->pwd || '/';
@@ -181,7 +181,7 @@ sub put_res {
                               error   => "Unable to create directory '$dir'" .
                                          " in path '$dest_dir' on remote" .
                                          " server '$hn'.",
-                              payload => $ftp->message;
+                              payload => scalar $ftp->message;
                         }
                     }
                 }
@@ -200,7 +200,7 @@ sub put_res {
             $ftp->put($src, $tmpdest)
               or throw_gen error => "Unable to put file '$tmpdest' on remote" .
                                   " server '$hn'",
-                         payload => $ftp->message;
+                         payload => scalar $ftp->message;
 
             # Delete any existing copy of the file if the FTP server is Windows
             # or if Bricolage has been explicitly configured to do so.
@@ -210,13 +210,13 @@ sub put_res {
             $ftp->rename($tmpdest, $dest)
               or throw_gen error => "Unable to rename file '$tmpdest' to" .
                                   " '$dest' on remote server '$hn'.",
-                         payload => $ftp->message;
+                         payload => scalar $ftp->message;
         }
         # Log off.
         $ftp->quit
           or throw_gen error => 'Unable to properly close connection to' .
                               " remote server '$hn'.",
-                     payload => $ftp->message;
+                     payload => scalar $ftp->message;
     }
     return 1;
 }
@@ -290,7 +290,7 @@ sub del_res {
                 $ftp->delete($file)
                   or throw_gen error => "Unable to delete resource '$file'" .
                                       " from remote server '$hn'.",
-                             payload => $ftp->message;
+                             payload => scalar $ftp->message;
                 last;
             }
         }
