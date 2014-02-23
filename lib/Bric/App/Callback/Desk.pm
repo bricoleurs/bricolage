@@ -215,7 +215,6 @@ sub move : Callback {
 
 sub publish : Callback {
     my ($self, $allow_fatal) = @_;
-    my $self = shift;
     my $param = $self->params;
     my $story_pub = $param->{story_pub} || {};
     my $media_pub = $param->{media_pub} || {};
