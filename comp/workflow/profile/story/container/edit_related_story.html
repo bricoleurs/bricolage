@@ -22,12 +22,18 @@ my $context = "Workflow | Profile | $sdisp | $disp |";
 </%once>
 
 <%args>
-$id
+$id => undef
 </%args>
 
 <%init>;
 my $crumb = get_state_data('container_prof', 'crumb') || '';
 $crumb .= ' |' if $crumb;
+if ($id) {
+    set_state_data('container_prof', relate_to_id => $id);
+} else {
+    $id = get_state_data('container_prof', 'relate_to_id');
+}
+die "no value sent for required parameter 'id'" unless $id;
 </%init>
 
 <%doc>
