@@ -175,7 +175,8 @@ A asset type object for $ba . Note that this is not currently used by Mason.
 sub burn_one {
     my $self = shift;
     my ($ba, $oc, $cat) = @_;
-    my ($outbuf, $retval);
+    my $outbuf = '';
+    my $retval;
     # Determine the component roots.
     my $comp_dir = $self->get_comp_dir;
     my $comp_root = [];
