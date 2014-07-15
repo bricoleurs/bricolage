@@ -186,6 +186,11 @@ Fix for the possibility that a FTP server would return a list, not a text messag
 reported in L<this thread|http://www.gossamer-threads.com/lists/bricolage/users/40893>.
 [Phillip Smith]
 
+=item *
+
+Fix fatal error when using paging on desk/workspace and correctly highlight the
+current page. [Adrian Yee]
+
 =back
 
 =head1 Version 2.0.1 ()

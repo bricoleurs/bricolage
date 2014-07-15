@@ -5,7 +5,7 @@
     <div class="pages">
         <% $prev_link %>
 %       foreach my $page (0 .. $num_pages) {
-%           if ($page == $offset) {
+%           if ($page * $limit == $offset) {
                 <span class="current"><% $page + 1 %></span>&nbsp;
 %           } else {
 %               my $off = $page * $limit;

@@ -243,7 +243,7 @@ if ($class eq 'template') {
     $obj_offset -= $num_media if $offset;
 }
 
-if (defined $objs && @$objs > $obj_offset) {
+if (defined $objs && @$objs && @$objs > $obj_offset) {
     $m->comp(
         '/widgets/desk/desk_top.html',
         class       => $class,
