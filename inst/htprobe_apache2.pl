@@ -109,14 +109,19 @@ sub read_conf {
     # Read in any included configuration files.
     # (note: this is wrong in htprobe_apache.pl, where I left it alone.)
     my $included = '';
-    while ($AP{conf} =~ /^\s*Include\s+(.+)$/gim) {
-        $included .= "\n" . slurp_conf(
-            file_name_is_absolute($1)
-                ? $1
-                : rel2abs($1, $AP{HTTPD_ROOT})
-        );
+    while ($AP{conf} =~ /^\s*Include(?:Optional)?\s+(.+)$/gim) {
+        for my $file ( _include_files($1) ) {
+            $included .= "\n" . slurp_conf($file);
+        }
     }
     $AP{conf} .= $included;
+}
+
+sub _include_files {
+    my $base = shift;
+    $base = rel2abs($base, $AP{HTTPD_ROOT}) unless file_name_is_absolute($base);
+    return $base if -f $base;
+    return glob -d $base ? catfile($base, '*') : $base;
 }
 
 sub slurp_conf {

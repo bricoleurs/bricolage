@@ -186,6 +186,12 @@ Fix for the possibility that a FTP server would return a list, not a text messag
 reported in L<this thread|http://www.gossamer-threads.com/lists/bricolage/users/40893>.
 [Phillip Smith]
 
+=item *
+
+The installer now recognizes and handles C<IncludeOptional> directives when
+loading the Apache configuration to probe. Thanks to GitHub user C<@streaps>
+for the report! [David]
+
 =back
 
 =head1 Version 2.0.1 ()
