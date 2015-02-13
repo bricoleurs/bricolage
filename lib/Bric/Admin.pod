@@ -354,8 +354,6 @@ START MODULE LIST
 
 =item Digest::MD5
 
-=item Digest::SHA1 2.01
-
 =item URI
 
 =item HTML::Tagset
