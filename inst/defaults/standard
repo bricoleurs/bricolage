@@ -10,7 +10,7 @@ MYSQL_CONFIG_PATH = /usr/local/mysql/bin, /usr/lib/mysql/bin, /opt/mysql/bin, /u
 APACHE_PATH = /usr/local/apache/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
 APACHE_EXE  = httpd, httpsd, apache-perl, apache
 APACHE2_PATH = /usr/local/apache2/bin, /usr/local/bin, /usr/local/sbin, /usr/bin, /usr/sbin, /bin
-APACHE2_EXE  = httpd, httpd2, httpsd2, apache2
+APACHE2_EXE  = httpd, httpd2, httpsd2, apache2ctl, apache2
 EXPAT_PATH  = /sw/lib
 EXPAT_FILE  = libexpat.so, libexpat.so.0, libexpat.so.0.0.1, libexpat.dylib, libexpat.0.dylib, libexpat.0.0.1.dylib, libexpat.a, libexpat.la
 

@@ -253,9 +253,13 @@ sub check_modules {
     print "Checking for required Apache modules...\n";
 
     my (@missing);
+    my @required = (qw(apreq expires perl log_config mime alias apache_ssl ssl));
+    if ($REQ->{APACHE_VERSION}[1] >= 4) {
+        push @required, 'authn_core', 'authz_core', 'mpm_prefork', 'socache_dbm';
+    }
     # loop over required modules
  MOD:
-    foreach my $mod (qw(apreq expires perl log_config mime alias apache_ssl ssl)) {
+    foreach my $mod (@required) {
         # first look in static modules
         if (exists $AP{static_modules}{"mod_$mod"} ||
            ($mod eq 'apache_ssl' && exists $AP{static_modules}{$mod})) {
