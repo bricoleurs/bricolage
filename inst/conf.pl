@@ -315,10 +315,15 @@ sub create_apache2_conf {
 
         set_httpd_var(\$httpd, SSLSessionCache => "dbm:" .
                       catfile($log, "ssl_scache"));
-        set_httpd_var(\$httpd, SSLMutex        => "file:" .
-                      catfile($log, "ssl_mutex"));
         set_httpd_var(\$httpd, SSLLog          => catfile($log,
                                                           "ssl_engine_log"));
+        if ($REQ->{APACHE_VERSION}[1] >= 4) {
+            $httpd =~ s/^(\s*)SSLMutex/${1}Mutex/mg;
+            set_httpd_var(\$httpd, Mutex        => "default ssl-cache");
+        } else {
+            set_httpd_var(\$httpd, SSLMutex        => "file:" .
+                          catfile($log, "ssl_mutex"));
+        }
     }
 
     # DSO Apache's need that sweet DSO spike in the vein just to get
@@ -327,7 +332,11 @@ sub create_apache2_conf {
         my $dso_section = "# Load DSOs\n\n";
         # XXX: need to verify relevance of config_log, apache_ssl, and gzip
         # since there is no more AddModule; I imagine this can be simplified now.
-        foreach my $mod (qw(perl expires apreq log_config config_log mime alias ssl gzip)) {
+        my @required = (qw(perl expires apreq log_config config_log mime alias ssl gzip));
+        if ($REQ->{APACHE_VERSION}[1] >= 4) {
+            push @required, 'authn_core', 'authz_core', 'mpm_prefork', 'socache_dbm';
+        }
+        foreach my $mod (@required) {
             # static modules need no load
             next if exists $AP->{static_modules}{"mod_$mod"};
             next if $mod eq 'apache_ssl' && exists $AP->{static_modules}{$mod};
@@ -360,6 +369,11 @@ sub create_apache2_conf {
 
         # put DSO loads at the top.  This could be prettier.
         $httpd = $dso_section . "\n\n" . $httpd;
+    }
+    if ($REQ->{APACHE_VERSION}[1] >= 4) {
+        # Not sure why, but Apache 2.4 generates errors if an accesshandler
+        # is specified without any auth setting
+        $httpd .= "\n<Directory />\nRequire all granted\n</Directory>\n";
     }
 
     # write out new httpd.conf.

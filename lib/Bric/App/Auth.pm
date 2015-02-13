@@ -133,7 +133,7 @@ sub auth {
         # Oh-oh, someone's been monkeying with the cookie (or maybe the secret
         # changed?).
         my $c = $r->connection;
-        $ip = $c->remote_ip;
+        $ip = $c->can('remote_ip') ? $c->remote_ip : $r->useragent_ip;
         my $host = $c->remote_host;
         return &$fail($r, "Cookie hash mismatch from $ip (Hostname '$host') "
                       . "for user '$val{user}.'");
@@ -318,7 +318,7 @@ $make_hash = sub {
     $lul ||= $time;
     $exp ||= $time + AUTH_TTL;
     unless ($ip) {
-        $ip = $r->connection->remote_ip;
+        $ip = $r->connection->can('remote_ip') ? $r->connection->remote_ip : $r->useragent_ip;
         $ip = substr($ip, 0, rindex($ip, '.'));
     }
 
