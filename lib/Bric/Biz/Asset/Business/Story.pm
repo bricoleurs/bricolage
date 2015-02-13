@@ -338,7 +338,7 @@ use constant PARAM_WHERE_MAP => {
       expired                => '(i.expire_date IS NOT NULL AND i.expire_date <= CURRENT_TIMESTAMP)',
       desk_id                => 's.desk__id = ?',
       name                   => 'LOWER(i.name) LIKE LOWER(?)',
-      subelement_key_name    => 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
+      subelement_key_name    => 'i.id = sct.object_instance_id AND sct.active = TRUE AND sct.element_type__id = subet.id AND LOWER(subet.key_name) LIKE LOWER(?)',
       subelement_id          => 'i.id = sse.object_instance_id AND sse.active = TRUE AND sse.element_type__id = ?',
       related_story_id       => 'i.id = sctrs.object_instance_id AND sctrs.related_story__id = ?',
       related_media_id       => 'i.id = sctrm.object_instance_id AND sctrm.related_media__id = ?',
@@ -418,7 +418,7 @@ use constant PARAM_WHERE_MAP => {
 use constant PARAM_ANYWHERE_MAP => {
     element_key_name       => [ 's.element_type__id = e.id',
                                 'LOWER(e.key_name) LIKE LOWER(?)' ],
-    subelement_key_name    => [ 'i.id = sct.object_instance_id AND sct.element_type__id = subet.id',
+    subelement_key_name    => [ 'i.id = sct.object_instance_id AND sct.active = TRUE AND sct.element_type__id = subet.id',
                                 'LOWER(subet.key_name) LIKE LOWER(?)' ],
     subelement_id          => [ 'i.id = sse.object_instance_id AND sse.active = TRUE',
                                 'sse.element_type__id = ?' ],
