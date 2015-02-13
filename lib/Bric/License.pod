@@ -300,6 +300,8 @@ Folks who have submitted patches include:
 
 =item * Nick Legg
 
+=item * John Lightsey
+
 =back
 
 Friends who have spotted bugs include:

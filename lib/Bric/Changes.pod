@@ -168,6 +168,10 @@ existing drift. [David]
 Upgraded to Prototype 1.7 and script.taculo.us 1.9.0 to support newer browsers
 (especially IE 9). [David]
 
+=item *
+
+Added support for Apache 2.4 to the installer. [John Lightsey]
+
 =back
 
 =head2 Bug fixes
