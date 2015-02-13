@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 Name
 
 Bric::License - The Bricolage License.
