@@ -1,0 +1,11 @@
+--- inst/defaults/standard.orig	2013-06-18 12:06:20.000000000 +1000
++++ inst/defaults/standard	2013-06-18 12:07:30.000000000 +1000
+@@ -31,7 +31,7 @@
+ # (Pg, mysql) when selecting the DB_TYPE, for the web server we're using
+ # the names 'apache' and 'apache2'.
+ 
+-HTTPD_VERSION = apache
++HTTPD_VERSION = apache2
+ 
+ 
+ # PostgreSQL settings. PG_SUPERUSER is the username of the Postgres superuser

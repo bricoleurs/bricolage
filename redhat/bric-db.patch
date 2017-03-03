@@ -1,0 +1,24 @@
+--- inst/db.pl.orig	2013-06-24 11:52:33.000000000 +1000
++++ inst/db.pl	2013-06-24 11:52:47.000000000 +1000
+@@ -19,6 +19,9 @@
+ 
+ =cut
+ 
++exit 0;
++__END__
++
+ use strict;
+ use FindBin;
+ use lib "$FindBin::Bin/lib";
+--- inst/dbgrant.pl.orig	2013-06-24 12:57:46.000000000 +1000
++++ inst/dbgrant.pl	2013-06-24 12:57:58.000000000 +1000
+@@ -19,6 +19,9 @@
+ 
+ =cut
+ 
++exit 0;
++__END__
++
+ use strict;
+ use FindBin;
+ use lib "$FindBin::Bin/lib";

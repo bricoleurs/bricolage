@@ -1,0 +1,11 @@
+--- inst/defaults/standard.orig	2013-06-26 15:22:39.000000000 +1000
++++ inst/defaults/standard	2013-06-26 15:22:50.000000000 +1000
+@@ -90,7 +90,7 @@
+ 
+ # Installation locations.
+ 
+-INSTALL_STYLE      = m                          # How Files are to be installed
++INSTALL_STYLE      = s                          # How Files are to be installed
+ BRICOLAGE_ROOT     = /usr/local/bricolage       # Bricolage Root Directory
+ BRICOLAGE_TMP_DIR  = $CONFIG{BRICOLAGE_ROOT}/tmp   # Temporary Directory
+ BRICOLAGE_PERL_DIR = $CONFIG{BRICOLAGE_ROOT}/lib   # Perl Module Directory
