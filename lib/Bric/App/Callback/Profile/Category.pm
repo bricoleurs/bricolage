@@ -67,8 +67,12 @@ sub save : Callback {
           if exists $param->{site_id};
 
         # if this is not ROOT, we have work to do
-        if (((defined $id and $id != $root_id) or not defined $id)
-            and defined $param->{parent_id}) {
+        if ((defined $id and $id != $root_id) or not defined $id) {
+            unless (defined $param->{parent_id}) {
+                $self->raise_conflict('Please select a parent category.');
+                $param->{'obj'} = $cat;
+                return;
+            }
 
             # get and set the parent
             my $par = $class->lookup({id => $param->{parent_id}});
